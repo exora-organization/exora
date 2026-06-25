@@ -1,0 +1,22 @@
+{
+  "id": "country_vietnam",
+  "title": "Vietnam Country Risk Profile",
+  "category": "country_risk",
+  "source": "Curated by WacanaTech BA Team",
+  "lastUpdated": "2026-06-01",
+  "content": {
+    "country": "Vietnam",
+    "riskLevel": "Medium",
+    "summary": "Vietnam is a fast-growing economy with increasing consumer demand. ASEAN trade benefits apply. Some regulatory complexity and documentation requirements.",
+    "currency": "VND",
+    "paymentPreference": "T/T (30-60 days); L/C for first orders",
+    "bestPractices": [
+      "ASEAN Form D certificate significantly reduces import duties",
+      "Ministry of Health registration required for food supplements and cosmetics",
+      "Vietnamese language labeling required",
+      "Quarantine certificate required for plants and animals"
+    ],
+    "exportRequirements": ["Certificate of Origin (ASEAN Form D)", "Health Certificate", "Commercial Invoice", "Packing List"],
+    "leadTime": "7-14 days sea freight from Indonesia"
+  }
+}

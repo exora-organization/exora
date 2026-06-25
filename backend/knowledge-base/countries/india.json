@@ -1,0 +1,22 @@
+{
+  "id": "country_india",
+  "title": "India Country Risk Profile",
+  "category": "country_risk",
+  "source": "Curated by WacanaTech BA Team",
+  "lastUpdated": "2026-06-01",
+  "content": {
+    "country": "India",
+    "riskLevel": "Medium",
+    "summary": "India is a large and growing market with complex regulatory environment. High import tariffs on some goods but significant demand for palm oil, rubber, and specialty commodities. RCEP not signed by India.",
+    "currency": "INR",
+    "paymentPreference": "L/C recommended; T/T with advance payment for new buyers",
+    "bestPractices": [
+      "FSSAI (Food Safety and Standards Authority of India) registration mandatory for food",
+      "BIS certification required for electronics and safety products",
+      "High import duties — factor into pricing (15-40% for processed foods)",
+      "GSP scheme may provide duty reduction"
+    ],
+    "exportRequirements": ["Certificate of Origin", "FSSAI NOC (food)", "Phytosanitary Certificate", "Commercial Invoice"],
+    "leadTime": "14-21 days sea freight from Indonesia"
+  }
+}

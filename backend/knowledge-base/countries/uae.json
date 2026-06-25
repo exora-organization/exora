@@ -1,0 +1,22 @@
+{
+  "id": "country_uae",
+  "title": "UAE Country Risk Profile",
+  "category": "country_risk",
+  "source": "Curated by WacanaTech BA Team",
+  "lastUpdated": "2026-06-01",
+  "content": {
+    "country": "UAE",
+    "riskLevel": "Low",
+    "summary": "The UAE is a major trading hub and gateway to GCC and Middle East markets. Strong contract enforcement and excellent logistics infrastructure. Dubai acts as a re-export hub.",
+    "currency": "AED",
+    "paymentPreference": "L/C standard; T/T for trusted partners",
+    "bestPractices": [
+      "Halal certification mandatory for food products (ESMA or IFRC approved)",
+      "ESMA conformity marking required for regulated products",
+      "UAE-Indonesia CEPA in effect — preferential tariffs apply",
+      "Products may be re-exported to Saudi Arabia, Qatar, Kuwait"
+    ],
+    "exportRequirements": ["Certificate of Origin", "Halal Certificate (food)", "Certificate of Conformity", "Commercial Invoice"],
+    "leadTime": "12-18 days sea freight from Indonesia"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "id": "country_thailand",
+  "title": "Thailand Country Risk Profile",
+  "category": "country_risk",
+  "source": "Curated by WacanaTech BA Team",
+  "lastUpdated": "2026-06-01",
+  "content": {
+    "country": "Thailand",
+    "riskLevel": "Medium",
+    "summary": "Thailand is a competitive market with moderate risk. Political instability occasional but business environment generally stable. Strong manufacturing base creates competition.",
+    "currency": "THB",
+    "paymentPreference": "T/T standard; L/C for large orders",
+    "bestPractices": [
+      "ASEAN ATIGA reduces tariffs to 0-5% for qualifying products",
+      "Thai FDA approval required for food imports",
+      "Packaging must include Thai language labeling"
+    ],
+    "exportRequirements": ["Certificate of Origin (ASEAN Form D)", "Phytosanitary Certificate (food)", "Commercial Invoice"],
+    "leadTime": "5-10 days sea freight from Indonesia"
+  }
+}

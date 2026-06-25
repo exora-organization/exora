@@ -1,0 +1,22 @@
+{
+  "id": "country_south_korea",
+  "title": "South Korea Country Risk Profile",
+  "category": "country_risk",
+  "source": "Curated by WacanaTech BA Team",
+  "lastUpdated": "2026-06-01",
+  "content": {
+    "country": "South Korea",
+    "riskLevel": "Low",
+    "summary": "South Korea is a stable, high-income economy with strong legal protection and efficient port infrastructure. IKCEPA provides preferential tariffs for Indonesian exporters.",
+    "currency": "KRW",
+    "paymentPreference": "L/C standard; T/T for trusted partners",
+    "bestPractices": [
+      "IKCEPA (Indonesia-Korea CEPA) provides 0% tariff for many agricultural products",
+      "Korea Ministry of Food and Drug Safety (MFDS) approval for food",
+      "K-REACH compliance for chemical exports",
+      "Korean buyers expect high and consistent quality"
+    ],
+    "exportRequirements": ["Certificate of Origin (CEPA)", "Health Certificate (food)", "Commercial Invoice"],
+    "leadTime": "14-18 days sea freight from Indonesia"
+  }
+}

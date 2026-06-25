@@ -1,0 +1,33 @@
+# OS Metadata
+.DS_Store
+Thumbs.db
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Go Build Artifacts
+backend/backend
+backend/backend.exe
+*.test
+*.out
+*.exe
+bin/
+
+# Environment and Credentials (CRITICAL SECURITY)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.pem
+serviceAccountKey.json
+backend/serviceAccountKey.json
+
+# Go Dependencies
+vendor/

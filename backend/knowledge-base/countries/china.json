@@ -1,0 +1,22 @@
+{
+  "id": "country_china",
+  "title": "China Country Risk Profile",
+  "category": "country_risk",
+  "source": "Curated by WacanaTech BA Team",
+  "lastUpdated": "2026-06-01",
+  "content": {
+    "country": "China",
+    "riskLevel": "Medium",
+    "summary": "China is the world's second-largest economy and a key market for Indonesian commodities. RCEP provides significant tariff reductions. Regulatory compliance is complex.",
+    "currency": "CNY",
+    "paymentPreference": "L/C strongly recommended for new buyers; T/T for established partners",
+    "bestPractices": [
+      "RCEP reduces tariffs significantly for Indonesian exporters",
+      "GACC (General Administration of Customs China) registration required for food facilities",
+      "Chinese mandatory certification (CCC) for electronics and safety goods",
+      "Import quotas may apply for certain agricultural products"
+    ],
+    "exportRequirements": ["Certificate of Origin (RCEP Form)", "GACC Registration (food)", "Phytosanitary Certificate", "Commercial Invoice"],
+    "leadTime": "12-20 days sea freight from Indonesia"
+  }
+}

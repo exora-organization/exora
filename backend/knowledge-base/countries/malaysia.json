@@ -1,0 +1,21 @@
+{
+  "id": "country_malaysia",
+  "title": "Malaysia Country Risk Profile",
+  "category": "country_risk",
+  "source": "Curated by WacanaTech BA Team",
+  "lastUpdated": "2026-06-01",
+  "content": {
+    "country": "Malaysia",
+    "riskLevel": "Medium",
+    "summary": "Malaysia is a key export destination with moderate risk. Political stability is generally good. ASEAN free trade agreement benefits apply. Some bureaucratic delays in customs.",
+    "currency": "MYR",
+    "paymentPreference": "T/T standard; L/C for large orders",
+    "bestPractices": [
+      "Halal certification (JAKIM) is mandatory for food products",
+      "ASEAN Certificate of Origin reduces import duties",
+      "Standard Nasional Malaysia (SIRIM) certification for electronics"
+    ],
+    "exportRequirements": ["Certificate of Origin (ASEAN Form D)", "Packing List", "Commercial Invoice"],
+    "leadTime": "3-5 days sea freight from Indonesia"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "id": "country_usa",
+  "title": "United States Country Risk Profile",
+  "category": "country_risk",
+  "source": "Curated by WacanaTech BA Team",
+  "lastUpdated": "2026-06-01",
+  "content": {
+    "country": "United States",
+    "riskLevel": "Low",
+    "summary": "The USA is the world's largest consumer market with strong contract enforcement. GSP (Generalized System of Preferences) may apply for Indonesian exports. FDA approval required for food/health products.",
+    "currency": "USD",
+    "paymentPreference": "L/C for first shipments; open account for established buyers",
+    "bestPractices": [
+      "FDA registration mandatory for food, cosmetics, and devices",
+      "USDA organic certification increases price premium",
+      "Anti-dumping duties may apply on certain commodities",
+      "Strict labeling requirements (English, nutrition facts, allergen info)"
+    ],
+    "exportRequirements": ["Certificate of Origin", "FDA Prior Notice (food)", "Commercial Invoice", "Packing List"],
+    "leadTime": "25-35 days sea freight from Indonesia"
+  }
+}

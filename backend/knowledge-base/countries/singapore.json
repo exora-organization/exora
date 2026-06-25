@@ -1,0 +1,22 @@
+{
+  "id": "country_singapore",
+  "title": "Singapore Country Risk Profile",
+  "category": "country_risk",
+  "source": "Curated by WacanaTech BA Team",
+  "lastUpdated": "2026-06-01",
+  "content": {
+    "country": "Singapore",
+    "riskLevel": "Low",
+    "summary": "Singapore has a highly stable trade environment with strong rule of law, efficient customs, and zero tariffs on most goods. It is the primary regional trading hub in Southeast Asia.",
+    "currency": "SGD",
+    "paymentPreference": "T/T preferred for established relationships; L/C for new buyers",
+    "bestPractices": [
+      "Halal certification increases market access",
+      "ASEAN FTA reduces tariffs significantly",
+      "Ensure MSDS documentation for chemical products",
+      "Singapore Food Agency (SFA) approval required for food products"
+    ],
+    "exportRequirements": ["Certificate of Origin", "Phytosanitary Certificate (food)", "Invoice"],
+    "leadTime": "3-7 days sea freight from Indonesia"
+  }
+}

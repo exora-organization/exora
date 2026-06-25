@@ -1,0 +1,50 @@
+{
+  "id": "payment_terms_guide",
+  "title": "Export Payment Terms Risk Guide",
+  "category": "trade_finance",
+  "source": "Curated by WacanaTech BA Team",
+  "lastUpdated": "2026-06-01",
+  "content": {
+    "title": "Export Payment Terms — Risk and Recommendations",
+    "terms": [
+      {
+        "name": "L/C (Letter of Credit)",
+        "riskScore": 100,
+        "riskLevel": "Low",
+        "description": "Bank-guaranteed payment. Seller receives payment upon presentation of compliant documents. Best protection for new or unknown buyers.",
+        "bestFor": "New buyers, large orders, high-risk countries",
+        "drawbacks": "Higher bank fees, complex documentation, slow processing"
+      },
+      {
+        "name": "T/T (Telegraphic Transfer)",
+        "riskScore": 80,
+        "riskLevel": "Low-Medium",
+        "description": "Wire transfer. 30-50% advance payment with balance on B/L or against documents. Common for established relationships.",
+        "bestFor": "Established buyers in stable countries",
+        "drawbacks": "Partial risk if buyer defaults on balance payment"
+      },
+      {
+        "name": "Doc. Collection (Documentary Collection)",
+        "riskScore": 60,
+        "riskLevel": "Medium",
+        "description": "Bank handles document exchange. D/P (Documents against Payment) or D/A (Documents against Acceptance). Less secure than L/C.",
+        "bestFor": "Buyers in countries with strong banking systems",
+        "drawbacks": "Buyer may refuse documents; bank doesn't guarantee payment"
+      },
+      {
+        "name": "Open Account",
+        "riskScore": 30,
+        "riskLevel": "High",
+        "description": "Goods shipped before payment. Payment due in 30-90 days. Highest risk for exporter.",
+        "bestFor": "Long-established, trusted buyers in low-risk countries only",
+        "drawbacks": "Full payment risk; requires export credit insurance"
+      }
+    ],
+    "recommendations": {
+      "newBuyer": "Always use L/C or minimum 50% T/T advance",
+      "establishedBuyer": "T/T with 30% advance acceptable",
+      "highRiskCountry": "L/C only — do not accept open account",
+      "exportInsurance": "Consider LPEI (Indonesia Eximbank) export credit insurance for open account"
+    }
+  }
+}

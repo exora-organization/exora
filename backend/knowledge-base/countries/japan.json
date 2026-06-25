@@ -1,0 +1,22 @@
+{
+  "id": "country_japan",
+  "title": "Japan Country Risk Profile",
+  "category": "country_risk",
+  "source": "Curated by WacanaTech BA Team",
+  "lastUpdated": "2026-06-01",
+  "content": {
+    "country": "Japan",
+    "riskLevel": "Low",
+    "summary": "Japan is a highly reliable export destination with low sovereign risk, strong contract enforcement, and high purchasing power. Strict quality and food safety standards apply.",
+    "currency": "JPY",
+    "paymentPreference": "L/C preferred for new relationships; open account for established partners",
+    "bestPractices": [
+      "Japanese Agricultural Standard (JAS) certification for food",
+      "Very strict phytosanitary requirements — ensure MRL compliance",
+      "IJEPA (Indonesia-Japan EPA) provides preferential tariffs",
+      "Japanese buyers value long-term relationships and consistency"
+    ],
+    "exportRequirements": ["Phytosanitary Certificate", "Certificate of Origin (EPA Form)", "Commercial Invoice", "Bill of Lading"],
+    "leadTime": "14-21 days sea freight from Indonesia"
+  }
+}
