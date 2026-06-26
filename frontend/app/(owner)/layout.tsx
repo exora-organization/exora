@@ -32,6 +32,9 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
           <Link href="/analytics" className="block px-4 py-2 rounded-md hover:bg-slate-800 transition-colors text-sm font-medium">
             Analytics
           </Link>
+          <Link href="/ai-advisor" className="block px-4 py-2 rounded-md hover:bg-slate-800 transition-colors text-sm font-medium">
+            AI Advisor
+          </Link>
         </nav>
         <div className="p-4 border-t border-slate-800 flex flex-col space-y-4">
           <div className="text-sm text-slate-300">

@@ -19,12 +19,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../../../../components/ui/alert-dialog";
+import { useUserProfile } from "../../../../hooks/useUserProfile";
 
 export default function ExportCaseDetailPage() {
   const params = useParams();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { profile } = useUserProfile();
   const caseId = params.caseId as string;
+  
+  const canDelete = profile?.role === "export_manager" || profile?.role === "admin";
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["export-case", caseId],
@@ -74,31 +78,33 @@ export default function ExportCaseDetailPage() {
           </div>
         </div>
 
-        <AlertDialog>
-          <AlertDialogTrigger className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-destructive text-destructive-foreground hover:bg-destructive/90 h-8 rounded-md px-3 text-xs">
-            Delete Case
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This will permanently delete the export case "{exportCase.name}" and remove all associated data from our servers.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction 
-                onClick={(e) => {
-                  e.preventDefault();
-                  deleteMutation.mutate();
-                }}
-                className="bg-red-600 hover:bg-red-700 focus:ring-red-600 text-white"
-              >
-                {deleteMutation.isPending ? "Deleting..." : "Yes, delete case"}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        {canDelete && (
+          <AlertDialog>
+            <AlertDialogTrigger className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-destructive text-destructive-foreground hover:bg-destructive/90 h-8 rounded-md px-3 text-xs">
+              Delete Case
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently delete the export case "{exportCase.name}" and remove all associated data from our servers.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    deleteMutation.mutate();
+                  }}
+                  className="bg-red-600 hover:bg-red-700 focus:ring-red-600 text-white"
+                >
+                  {deleteMutation.isPending ? "Deleting..." : "Yes, delete case"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
       </div>
 
       <div className="grid md:grid-cols-2 gap-8">
@@ -125,16 +131,100 @@ export default function ExportCaseDetailPage() {
             </CardContent>
           </Card>
 
-          <h3 className="text-xl font-semibold mt-8 mb-4">Next Steps</h3>
-          <div className="grid gap-4">
+          <h3 className="text-xl font-semibold mt-8 mb-4">Export Analysis Pipeline</h3>
+          <div className="grid sm:grid-cols-2 gap-4">
             <Link href={`/export-case/${caseId}/costing`}>
-              <Card className="hover:bg-gray-50 transition-colors border-blue-200">
-                <CardContent className="p-4 flex items-center justify-between">
+              <Card className="hover:bg-gray-50 transition-colors h-full">
+                <CardContent className="p-4 flex flex-col justify-between h-full">
                   <div>
-                    <h4 className="font-semibold text-blue-900">Costing Configuration</h4>
-                    <p className="text-sm text-gray-500 mt-1">Input direct and indirect costs to calculate margins.</p>
+                    <h4 className="font-semibold text-slate-800">1. Costing</h4>
+                    <p className="text-xs text-gray-500 mt-1">Input direct and indirect costs to calculate total expenses.</p>
                   </div>
-                  <div className="text-blue-500">&rarr;</div>
+                  <div className="text-slate-400 self-end mt-2">&rarr;</div>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href={`/export-case/${caseId}/pricing`}>
+              <Card className="hover:bg-gray-50 transition-colors h-full">
+                <CardContent className="p-4 flex flex-col justify-between h-full">
+                  <div>
+                    <h4 className="font-semibold text-slate-800">2. Pricing & Incoterms</h4>
+                    <p className="text-xs text-gray-500 mt-1">Select Incoterms and calculate your export pricing strategy.</p>
+                  </div>
+                  <div className="text-slate-400 self-end mt-2">&rarr;</div>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href={`/export-case/${caseId}/financial`}>
+              <Card className="hover:bg-gray-50 transition-colors h-full">
+                <CardContent className="p-4 flex flex-col justify-between h-full">
+                  <div>
+                    <h4 className="font-semibold text-slate-800">3. Financial Analysis</h4>
+                    <p className="text-xs text-gray-500 mt-1">Review profitability margins and break-even points.</p>
+                  </div>
+                  <div className="text-slate-400 self-end mt-2">&rarr;</div>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href={`/export-case/${caseId}/scenario`}>
+              <Card className="hover:bg-gray-50 transition-colors h-full">
+                <CardContent className="p-4 flex flex-col justify-between h-full">
+                  <div>
+                    <h4 className="font-semibold text-slate-800">4. Scenario Analysis</h4>
+                    <p className="text-xs text-gray-500 mt-1">Simulate what-if financial scenarios for the export.</p>
+                  </div>
+                  <div className="text-slate-400 self-end mt-2">&rarr;</div>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href={`/export-case/${caseId}/risk`}>
+              <Card className="hover:bg-gray-50 transition-colors h-full">
+                <CardContent className="p-4 flex flex-col justify-between h-full">
+                  <div>
+                    <h4 className="font-semibold text-slate-800">5. Risk Assessment</h4>
+                    <p className="text-xs text-gray-500 mt-1">Evaluate market, operational, and financial risks.</p>
+                  </div>
+                  <div className="text-slate-400 self-end mt-2">&rarr;</div>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href={`/export-case/${caseId}/feasibility`}>
+              <Card className="hover:bg-gray-50 transition-colors h-full">
+                <CardContent className="p-4 flex flex-col justify-between h-full">
+                  <div>
+                    <h4 className="font-semibold text-slate-800">6. Feasibility Score</h4>
+                    <p className="text-xs text-gray-500 mt-1">View the overall quantitative feasibility score.</p>
+                  </div>
+                  <div className="text-slate-400 self-end mt-2">&rarr;</div>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href={`/export-case/${caseId}/advisor`}>
+              <Card className="hover:bg-gray-50 transition-colors h-full">
+                <CardContent className="p-4 flex flex-col justify-between h-full">
+                  <div>
+                    <h4 className="font-semibold text-indigo-700">7. AI Recommendation</h4>
+                    <p className="text-xs text-gray-500 mt-1">Get strategic AI advice based on your case data.</p>
+                  </div>
+                  <div className="text-indigo-400 self-end mt-2">&rarr;</div>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href={`/export-case/${caseId}/documents`}>
+              <Card className="hover:bg-gray-50 transition-colors h-full">
+                <CardContent className="p-4 flex flex-col justify-between h-full">
+                  <div>
+                    <h4 className="font-semibold text-slate-800">8. Document Generation</h4>
+                    <p className="text-xs text-gray-500 mt-1">Generate and download essential export documents.</p>
+                  </div>
+                  <div className="text-slate-400 self-end mt-2">&rarr;</div>
                 </CardContent>
               </Card>
             </Link>
@@ -142,7 +232,9 @@ export default function ExportCaseDetailPage() {
         </div>
 
         <div>
-          <h3 className="text-xl font-semibold mb-4">Edit Configuration</h3>
+          <h3 className="text-xl font-semibold mb-4">
+            {profile?.role === "export_manager" || profile?.role === "admin" ? "Edit Configuration" : "Configuration Details"}
+          </h3>
           <ExportCaseForm initialData={exportCase} isEdit={true} />
         </div>
       </div>

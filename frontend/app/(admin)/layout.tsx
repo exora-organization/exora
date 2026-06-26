@@ -25,6 +25,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link href="/company-approvals" className="block px-4 py-2 rounded-md hover:bg-slate-800 transition-colors text-sm font-medium">
             Company Approvals
           </Link>
+          <Link href="/users" className="block px-4 py-2 rounded-md hover:bg-slate-800 transition-colors text-sm font-medium">
+            User Management
+          </Link>
+          <Link href="/system-monitoring" className="block px-4 py-2 rounded-md hover:bg-slate-800 transition-colors text-sm font-medium">
+            System Monitoring
+          </Link>
+          <Link href="/audit-logs" className="block px-4 py-2 rounded-md hover:bg-slate-800 transition-colors text-sm font-medium">
+            Audit Logs
+          </Link>
         </nav>
         <div className="p-4 border-t border-slate-800 flex items-center justify-between">
           <span className="text-sm text-slate-400">{profile?.displayName}</span>

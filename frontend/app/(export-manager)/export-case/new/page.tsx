@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { ExportCaseForm } from "../../../../components/export-case/ExportCaseForm";
 
+import { RoleGuard } from "../../../../components/auth/RoleGuard";
+
 export default function NewExportCasePage() {
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <RoleGuard allowedRoles={["export_manager", "admin"]}>
+      <div className="space-y-6 max-w-4xl mx-auto">
       <div>
         <Link href="/export-case" className="text-sm text-blue-500 hover:underline mb-2 block">
           &larr; Back to Export Cases
@@ -14,5 +17,6 @@ export default function NewExportCasePage() {
 
       <ExportCaseForm />
     </div>
+    </RoleGuard>
   );
 }

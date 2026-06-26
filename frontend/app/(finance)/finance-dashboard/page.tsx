@@ -8,9 +8,9 @@ import { Badge } from "../../../components/ui/badge";
 import { apiAnalytics } from "../../../lib/api/analytics";
 import { apiExportCase } from "../../../lib/api/export-case";
 
-export default function ExportManagerDashboardPage() {
+export default function FinanceDashboardPage() {
   const { data: analyticsData, isLoading: analyticsLoading } = useQuery({
-    queryKey: ["owner-analytics"],
+    queryKey: ["finance-analytics"],
     queryFn: () => apiAnalytics.getDashboard(),
   });
 
@@ -25,28 +25,21 @@ export default function ExportManagerDashboardPage() {
 
   const stats = analyticsData?.data;
   const recentCases = casesData?.data?.items?.slice(0, 5) || [];
+  const allCases = casesData?.data?.items || [];
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Export Manager Dashboard</h2>
-          <p className="text-gray-500 mt-1">Overview of your company's export pipeline and performance.</p>
-        </div>
-        <div className="flex gap-4">
-          <Link href="/export-case">
-            <Button variant="outline">View Export Cases</Button>
-          </Link>
-          <Link href="/export-case/new">
-            <Button>Create Export Case</Button>
-          </Link>
+          <h2 className="text-3xl font-bold tracking-tight">Finance Dashboard</h2>
+          <p className="text-gray-500 mt-1">Manage cost data and financial analysis for export cases.</p>
         </div>
       </div>
       
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">My Cases</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Cases</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats?.totalExportCases || 0}</div>
@@ -70,7 +63,7 @@ export default function ExportManagerDashboardPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Recent Analysis</CardTitle>
+            <CardTitle className="text-sm font-medium">Average Feasibility</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -80,28 +73,28 @@ export default function ExportManagerDashboardPage() {
               } / 10
             </div>
             <p className="text-xs text-gray-500 mt-1 mb-4">
-              Average company-wide feasibility score
+              Company-wide feasibility score
             </p>
           </CardContent>
         </Card>
       </div>
 
       <div className="pt-4">
-        <h3 className="text-xl font-semibold mb-4">Recent Export Cases</h3>
+        <h3 className="text-xl font-semibold mb-4">Export Cases (Costing & Analysis)</h3>
         <Card>
           <CardContent className="p-0">
-            {recentCases.length === 0 ? (
+            {allCases.length === 0 ? (
               <div className="p-8 text-center text-gray-500">
-                No recent cases found. Create one to get started.
+                No cases found.
               </div>
             ) : (
               <div className="divide-y">
-                {recentCases.map((c) => (
-                  <div key={c.caseId} className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                {allCases.map((c) => (
+                  <div key={c.caseId} className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors flex-wrap gap-4">
                     <div>
-                      <Link href={`/export-case/${c.caseId}`} className="font-medium text-blue-600 hover:underline">
+                      <div className="font-medium text-gray-900">
                         {c.name}
-                      </Link>
+                      </div>
                       <div className="text-sm text-gray-500 mt-1 flex items-center gap-3">
                         <span>{c.destinationCountry}</span>
                         <span>•</span>
@@ -109,17 +102,15 @@ export default function ExportManagerDashboardPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
-                      <div className="text-right hidden md:block">
-                        <div className="text-sm font-medium">
-                          {c.feasibilityScore !== undefined && c.feasibilityScore !== null 
-                            ? `${c.feasibilityScore.toFixed(1)}/10` 
-                            : "-"}
-                        </div>
-                        <div className="text-xs text-gray-500">Score</div>
-                      </div>
                       <Badge variant={c.status === "finalized" ? "secondary" : c.status === "in_review" ? "default" : "outline"}>
                         {c.status.replace("_", " ")}
                       </Badge>
+                      <Link href={`/finance-case/${c.caseId}/costing`}>
+                        <Button variant="outline" size="sm">Cost Data</Button>
+                      </Link>
+                      <Link href={`/finance-case/${c.caseId}/financial`}>
+                        <Button variant="default" size="sm">Financial Analysis</Button>
+                      </Link>
                     </div>
                   </div>
                 ))}
