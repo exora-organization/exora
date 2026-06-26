@@ -15,4 +15,10 @@ export const apiCompany = {
       method: "GET",
     });
   },
+
+  getCompany: async (companyId: string): Promise<ApiResponse<CompanyApplicationResponse>> => {
+    return apiClient<ApiResponse<CompanyApplicationResponse>>(`/companies/${companyId}`, {
+      method: "GET",
+    });
+  },
 };

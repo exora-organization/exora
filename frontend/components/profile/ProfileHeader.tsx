@@ -18,19 +18,21 @@ const roleColors: Record<UserRole, string> = {
 };
 
 export function ProfileHeader({ displayName, email, role }: ProfileHeaderProps) {
-  const formatRole = (r: string) => r.split("_").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+  const safeName = displayName || "User";
+  const safeRole = role || "guest";
+  const formatRole = (r: string) => (r || "").split("_").map(w => w ? w.charAt(0).toUpperCase() + w.slice(1) : "").join(" ");
 
   return (
     <div className="bg-slate-50 p-6 flex flex-col items-center text-center space-y-4 rounded-t-xl">
       <div className="h-20 w-20 rounded-full bg-blue-600 flex items-center justify-center text-white text-3xl font-bold shadow-sm">
-        {displayName.charAt(0).toUpperCase()}
+        {safeName.charAt(0).toUpperCase()}
       </div>
       <div className="space-y-1">
-        <h2 className="text-2xl font-semibold text-slate-900">{displayName}</h2>
-        <p className="text-slate-500">{email}</p>
+        <h2 className="text-2xl font-semibold text-slate-900">{safeName}</h2>
+        <p className="text-slate-500">{email || ""}</p>
       </div>
-      <Badge variant="outline" className={`px-3 py-1 text-xs uppercase tracking-wider ${roleColors[role] || ""}`}>
-        {formatRole(role)}
+      <Badge variant="outline" className={`px-3 py-1 text-xs uppercase tracking-wider ${roleColors[safeRole] || ""}`}>
+        {formatRole(safeRole)}
       </Badge>
     </div>
   );

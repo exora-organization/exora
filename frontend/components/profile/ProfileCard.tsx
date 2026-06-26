@@ -1,17 +1,18 @@
 "use client";
 
-import { Card, CardContent } from "../ui/card";
-import { ProfileHeader } from "./ProfileHeader";
-import { ProfileInformation } from "./ProfileInformation";
-import { ProfileActions } from "./ProfileActions";
-import { UserProfile } from "../../lib/types/user";
-import { Separator } from "../ui/separator";
+import { Card, CardContent } from "@/components/ui/card";
+import { ProfileHeader } from "@/components/profile/ProfileHeader";
+import { ProfileInformation } from "@/components/profile/ProfileInformation";
+import { ProfileActions } from "@/components/profile/ProfileActions";
+import { UserProfile } from "@/lib/types/user";
+import { Separator } from "@/components/ui/separator";
 
 interface ProfileCardProps {
   profile: UserProfile;
 }
 
 export function ProfileCard({ profile }: ProfileCardProps) {
+  if (!profile) return null;
   return (
     <Card className="w-full max-w-2xl mx-auto shadow-md">
       <CardContent className="p-0">

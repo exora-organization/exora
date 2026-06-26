@@ -13,6 +13,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Alert, AlertTitle, AlertDescription } from "../ui/alert";
+import { useUserProfile } from "../../hooks/useUserProfile";
 
 const costingSchema = z.object({
   hpp: z.coerce.number().positive("HPP must be greater than 0"),
@@ -39,6 +40,9 @@ export function CostingForm({ caseId, initialData }: CostingFormProps) {
   const queryClient = useQueryClient();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [warnings, setWarnings] = useState<string[]>(initialData?.warnings || []);
+  const { profile } = useUserProfile();
+
+  const isReadOnly = profile?.role !== "finance_staff" && profile?.role !== "admin" && profile?.role !== "export_manager";
 
   const {
     register,
@@ -118,25 +122,25 @@ export function CostingForm({ caseId, initialData }: CostingFormProps) {
               
               <div className="space-y-2">
                 <Label htmlFor="hpp">HPP (Cost of Goods Sold)</Label>
-                <Input id="hpp" type="number" step="any" {...register("hpp")} />
+                <Input id="hpp" type="number" step="any" disabled={isReadOnly} {...register("hpp")} />
                 {errors.hpp && <p className="text-sm text-red-500">{errors.hpp.message}</p>}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="packaging">Packaging Cost</Label>
-                <Input id="packaging" type="number" step="any" {...register("packaging")} />
+                <Input id="packaging" type="number" step="any" disabled={isReadOnly} {...register("packaging")} />
                 {errors.packaging && <p className="text-sm text-red-500">{errors.packaging.message}</p>}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="certification">Certification Cost</Label>
-                <Input id="certification" type="number" step="any" {...register("certification")} />
+                <Input id="certification" type="number" step="any" disabled={isReadOnly} {...register("certification")} />
                 {errors.certification && <p className="text-sm text-red-500">{errors.certification.message}</p>}
               </div>
               
               <div className="space-y-2">
                 <Label htmlFor="quantity">Quantity (Units)</Label>
-                <Input id="quantity" type="number" step="any" {...register("quantity")} />
+                <Input id="quantity" type="number" step="any" disabled={isReadOnly} {...register("quantity")} />
                 {errors.quantity && <p className="text-sm text-red-500">{errors.quantity.message}</p>}
               </div>
             </div>
@@ -146,31 +150,31 @@ export function CostingForm({ caseId, initialData }: CostingFormProps) {
               
               <div className="space-y-2">
                 <Label htmlFor="transportation">Local Transportation (IDR)</Label>
-                <Input id="transportation" type="number" step="any" {...register("transportation")} />
+                <Input id="transportation" type="number" step="any" disabled={isReadOnly} {...register("transportation")} />
                 {errors.transportation && <p className="text-sm text-red-500">{errors.transportation.message}</p>}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="freight">Freight (IDR)</Label>
-                <Input id="freight" type="number" step="any" {...register("freight")} />
+                <Input id="freight" type="number" step="any" disabled={isReadOnly} {...register("freight")} />
                 {errors.freight && <p className="text-sm text-red-500">{errors.freight.message}</p>}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="insurance">Insurance (IDR)</Label>
-                <Input id="insurance" type="number" step="any" {...register("insurance")} />
+                <Input id="insurance" type="number" step="any" disabled={isReadOnly} {...register("insurance")} />
                 {errors.insurance && <p className="text-sm text-red-500">{errors.insurance.message}</p>}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="exchangeRate">Exchange Rate</Label>
-                  <Input id="exchangeRate" type="number" step="any" {...register("exchangeRate")} />
+                  <Input id="exchangeRate" type="number" step="any" disabled={isReadOnly} {...register("exchangeRate")} />
                   {errors.exchangeRate && <p className="text-sm text-red-500">{errors.exchangeRate.message}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="targetMargin">Target Margin (%)</Label>
-                  <Input id="targetMargin" type="number" step="any" {...register("targetMargin")} />
+                  <Input id="targetMargin" type="number" step="any" disabled={isReadOnly} {...register("targetMargin")} />
                   {errors.targetMargin && <p className="text-sm text-red-500">{errors.targetMargin.message}</p>}
                 </div>
               </div>
@@ -179,7 +183,8 @@ export function CostingForm({ caseId, initialData }: CostingFormProps) {
                 <Label htmlFor="paymentTerm">Payment Term</Label>
                 <select
                   id="paymentTerm"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  disabled={isReadOnly}
                   {...register("paymentTerm")}
                 >
                   <option value="T/T">T/T</option>
@@ -202,9 +207,11 @@ export function CostingForm({ caseId, initialData }: CostingFormProps) {
                 Continue to Pricing
               </Button>
             )}
-            <Button type="submit" disabled={mutation.isPending}>
-              {mutation.isPending ? "Saving..." : "Save Cost Data"}
-            </Button>
+            {!isReadOnly && (
+              <Button type="submit" disabled={mutation.isPending}>
+                {mutation.isPending ? "Saving..." : "Save Cost Data"}
+              </Button>
+            )}
           </div>
         </CardFooter>
       </form>

@@ -1,6 +1,6 @@
 import { apiClient } from "./client";
 import { ApiResponse, PaginatedResponse } from "../types/api";
-import { AdminCompanyApplication, RejectRequestPayload, RevisionRequestPayload } from "../types/admin";
+import { AdminCompanyApplication, RejectRequestPayload, RevisionRequestPayload, MonitoringStats } from "../types/admin";
 
 export const apiAdmin = {
   getCompanyApplications: async (): Promise<ApiResponse<PaginatedResponse<AdminCompanyApplication>>> => {
@@ -26,6 +26,12 @@ export const apiAdmin = {
     return apiClient<ApiResponse<void>>(`/admin/company-applications/${companyId}/request-revision`, {
       method: "POST",
       body: JSON.stringify(payload),
+    });
+  },
+  
+  getMonitoring: async (): Promise<ApiResponse<MonitoringStats>> => {
+    return apiClient<ApiResponse<MonitoringStats>>(`/admin/monitoring`, {
+      method: "GET",
     });
   },
 };

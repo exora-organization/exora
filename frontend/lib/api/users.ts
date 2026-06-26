@@ -8,4 +8,30 @@ export const apiUsers = {
       method: "GET",
     });
   },
+  
+  listUsers: async (): Promise<ApiResponse<{ items: UserProfile[] }>> => {
+    return apiClient<ApiResponse<{ items: UserProfile[] }>>("/users", {
+      method: "GET",
+    });
+  },
+
+  updateUser: async (userId: string, data: { status?: "active" | "disabled" }): Promise<ApiResponse<UserProfile>> => {
+    return apiClient<ApiResponse<UserProfile>>(`/users/${userId}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
+  },
+
+  changeRole: async (userId: string, role: string): Promise<ApiResponse<UserProfile>> => {
+    return apiClient<ApiResponse<UserProfile>>(`/users/${userId}/role`, {
+      method: "PATCH",
+      body: JSON.stringify({ role }),
+    });
+  },
+
+  deleteUser: async (userId: string): Promise<ApiResponse<void>> => {
+    return apiClient<ApiResponse<void>>(`/users/${userId}`, {
+      method: "DELETE",
+    });
+  },
 };

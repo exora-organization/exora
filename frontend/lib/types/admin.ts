@@ -20,3 +20,18 @@ export interface RejectRequestPayload {
 export interface RevisionRequestPayload {
   revisionNotes: string;
 }
+
+export interface UserActivityStats {
+  loginsLast7Days: number;
+  casesCreatedLast7Days: number;
+}
+
+export interface MonitoringStats {
+  totalCompanies: number;
+  totalUsers: number;
+  totalExportCases: number;
+  pendingApprovals: number;
+  activeUsersLast30Days: number;
+  aiUsageCount: number;
+  userActivityStats: UserActivityStats;
+}

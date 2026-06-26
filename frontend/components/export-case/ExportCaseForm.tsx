@@ -12,6 +12,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "../ui/card";
 import { ExportCaseResponse } from "../../lib/types/export-case";
+import { useUserProfile } from "../../hooks/useUserProfile";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(200),
@@ -31,6 +32,9 @@ export function ExportCaseForm({ initialData, isEdit = false }: ExportCaseFormPr
   const router = useRouter();
   const queryClient = useQueryClient();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const { profile } = useUserProfile();
+
+  const isReadOnly = profile?.role !== "export_manager" && profile?.role !== "admin";
 
   const {
     register,
@@ -92,6 +96,7 @@ export function ExportCaseForm({ initialData, isEdit = false }: ExportCaseFormPr
             <Input
               id="name"
               placeholder="e.g. Coffee Beans to Japan 2026"
+              disabled={isReadOnly}
               {...register("name")}
             />
             {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
@@ -102,6 +107,7 @@ export function ExportCaseForm({ initialData, isEdit = false }: ExportCaseFormPr
             <Input
               id="product"
               placeholder="e.g. Arabica Coffee Beans"
+              disabled={isReadOnly}
               {...register("product")}
             />
             {errors.product && <p className="text-sm text-red-500">{errors.product.message}</p>}
@@ -112,6 +118,7 @@ export function ExportCaseForm({ initialData, isEdit = false }: ExportCaseFormPr
             <Input
               id="destinationCountry"
               placeholder="e.g. Japan"
+              disabled={isReadOnly}
               {...register("destinationCountry")}
             />
             {errors.destinationCountry && <p className="text-sm text-red-500">{errors.destinationCountry.message}</p>}
@@ -122,7 +129,8 @@ export function ExportCaseForm({ initialData, isEdit = false }: ExportCaseFormPr
               <Label htmlFor="status">Status</Label>
               <select
                 id="status"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={isReadOnly}
                 {...register("status")}
               >
                 <option value="draft">Draft</option>
@@ -141,11 +149,13 @@ export function ExportCaseForm({ initialData, isEdit = false }: ExportCaseFormPr
         </CardContent>
         <CardFooter className="flex justify-between">
           <Button type="button" variant="outline" onClick={() => router.back()}>
-            Cancel
+            {isReadOnly ? "Back" : "Cancel"}
           </Button>
-          <Button type="submit" disabled={mutation.isPending}>
-            {mutation.isPending ? "Saving..." : isEdit ? "Update Case" : "Create Case"}
-          </Button>
+          {!isReadOnly && (
+            <Button type="submit" disabled={mutation.isPending}>
+              {mutation.isPending ? "Saving..." : isEdit ? "Update Case" : "Create Case"}
+            </Button>
+          )}
         </CardFooter>
       </form>
     </Card>
