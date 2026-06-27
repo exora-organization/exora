@@ -31,3 +31,8 @@ backend/serviceAccountKey.json
 
 # Go Dependencies
 vendor/
+
+# Agent Files
+AGENTS.md
+CLAUDE.md
+.agents/
