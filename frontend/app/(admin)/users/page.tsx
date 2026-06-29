@@ -8,14 +8,18 @@ import { Input } from "../../../components/ui/input";
 import { Badge } from "../../../components/ui/badge";
 import { apiUsers } from "../../../lib/api/users";
 import { UserProfile } from "../../../lib/types/user";
+import { useUserProfile } from "../../../hooks/useUserProfile";
 
 export default function UserManagementPage() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
+  const { firebaseUser, loading: authLoading } = useUserProfile();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["admin-users"],
     queryFn: () => apiUsers.listUsers(),
+    enabled: !!firebaseUser && !authLoading,
+    staleTime: 30_000,
   });
 
   const updateStatusMutation = useMutation({

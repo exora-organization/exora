@@ -104,7 +104,7 @@ func main() {
 		exportCaseRepo,
 		cfg.AppBaseURL,
 	)
-	analyticsSvc := analytics.NewService(exportCaseRepo)
+	analyticsSvc := analytics.NewService(exportCaseRepo, userRepo, riskRepo)
 
 	// ── Middleware ────────────────────────────────────────────────────────────
 	firebaseMW := middleware.NewFirebaseMiddleware(fbAuth)

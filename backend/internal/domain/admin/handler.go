@@ -79,3 +79,17 @@ func (h *Handler) Monitoring(w http.ResponseWriter, r *http.Request) {
 	}
 	response.JSON(w, http.StatusOK, data)
 }
+
+func (h *Handler) ListAuditLogs(w http.ResponseWriter, r *http.Request) {
+	limit, _ := strconv.Atoi(r.URL.Query().Get("limit"))
+	if limit <= 0 {
+		limit = 100
+	}
+	logs, err := h.service.ListAuditLogs(r.Context(), limit)
+	if err != nil {
+		response.Error(w, err)
+		return
+	}
+	response.JSON(w, http.StatusOK, map[string]any{"auditLogs": logs})
+}
+

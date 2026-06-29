@@ -109,6 +109,7 @@ func New(deps Dependencies, h Handlers) http.Handler {
 					r.Post("/company-applications/{companyId}/reject", h.Admin.Reject)
 					r.Post("/company-applications/{companyId}/request-revision", h.Admin.RequestRevision)
 					r.Get("/monitoring", h.Admin.Monitoring)
+					r.Get("/audit-logs", h.Admin.ListAuditLogs)
 				})
 
 				// Export cases
@@ -157,6 +158,11 @@ func New(deps Dependencies, h Handlers) http.Handler {
 				})
 
 				r.With(middleware.RequireRoles("export_manager", "company_owner", "admin")).Get("/documents/{documentId}/download", h.Document.Download)
+
+				r.Route("/advisor", func(r chi.Router) {
+					r.With(middleware.RequireRoles("company_owner", "export_manager", "admin")).Post("/recommendations", h.Advisor.CreateGlobalRecommendation)
+					r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/recommendations", h.Advisor.GetGlobalRecommendation)
+				})
 
 				r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/analytics", h.Analytics.Dashboard)
 			})

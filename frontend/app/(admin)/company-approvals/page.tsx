@@ -6,11 +6,15 @@ import { apiAdmin } from "../../../lib/api/admin";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/table";
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
+import { useUserProfile } from "../../../hooks/useUserProfile";
 
 export default function CompanyApprovalsPage() {
+  const { firebaseUser, loading: authLoading } = useUserProfile();
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["admin-applications"],
     queryFn: () => apiAdmin.getCompanyApplications(),
+    enabled: !!firebaseUser && !authLoading,
+    staleTime: 30_000,
   });
 
   if (isLoading) {

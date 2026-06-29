@@ -49,3 +49,23 @@ func countDocs(iter *firestore.DocumentIterator) (int, error) {
 	}
 	return count, nil
 }
+
+func (r *FirestoreRepository) ListAuditLogs(ctx context.Context, limit int) ([]AuditLog, error) {
+	if limit <= 0 {
+		limit = 100
+	}
+	var logs []AuditLog
+	docs, err := r.client.Collection(auditCollection).OrderBy("timestamp", firestore.Desc).Limit(limit).Documents(ctx).GetAll()
+	if err != nil {
+		return nil, err
+	}
+	for _, doc := range docs {
+		var entry AuditLog
+		if err := doc.DataTo(&entry); err == nil {
+			entry.ID = doc.Ref.ID
+			logs = append(logs, entry)
+		}
+	}
+	return logs, nil
+}
+
