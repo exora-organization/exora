@@ -40,4 +40,24 @@ export const apiOwner = {
       body: JSON.stringify(data),
     });
   },
+
+  updateMember: async (userId: string, data: { displayName?: string; status?: string }): Promise<ApiResponse<any>> => {
+    return apiClient<ApiResponse<any>>(`/users/${userId}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
+  },
+
+  changeRole: async (userId: string, role: string): Promise<ApiResponse<any>> => {
+    return apiClient<ApiResponse<any>>(`/users/${userId}/role`, {
+      method: "PATCH",
+      body: JSON.stringify({ role }),
+    });
+  },
+
+  removeMember: async (userId: string): Promise<ApiResponse<any>> => {
+    return apiClient<ApiResponse<any>>(`/users/${userId}`, {
+      method: "DELETE",
+    });
+  },
 };
