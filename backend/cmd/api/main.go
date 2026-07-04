@@ -29,6 +29,7 @@ import (
 	firestoreclient "github.com/exora/backend/internal/platform/firestore"
 	"github.com/exora/backend/internal/platform/gemini"
 	"github.com/exora/backend/internal/router"
+	"golang.org/x/time/rate"
 )
 
 func main() {
@@ -109,6 +110,7 @@ func main() {
 	// ── Middleware ────────────────────────────────────────────────────────────
 	firebaseMW := middleware.NewFirebaseMiddleware(fbAuth)
 	authMW := middleware.NewAuthMiddleware(userRepo)
+	rateLimiter := middleware.NewRateLimiter(rate.Limit(5.0/60.0), 10)
 	auditRepo := &admin.AuditRepository{Repo: adminRepo}
 
 	invitationHandler := invitation.NewHandler(invitationSvc)
@@ -118,6 +120,7 @@ func main() {
 			Config:         cfg,
 			Firebase:       firebaseMW,
 			Auth:           authMW,
+			RateLimiter:    rateLimiter,
 			AuditLogger:    auditRepo,
 			ExportCaseRepo: exportCaseRepo,
 		},

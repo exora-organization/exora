@@ -33,6 +33,7 @@ func WithDetails(code, message string, status int, details []ErrorDetail) *AppEr
 var (
 	ErrUnauthenticated = New("UNAUTHENTICATED", "authentication required", http.StatusUnauthorized)
 	ErrForbidden       = New("FORBIDDEN", "insufficient permissions", http.StatusForbidden)
+	ErrEmailNotVerified = New("EMAIL_NOT_VERIFIED", "email verification required", http.StatusForbidden)
 	ErrNotFound        = New("NOT_FOUND", "resource not found", http.StatusNotFound)
 	ErrValidation      = New("VALIDATION_ERROR", "invalid request", http.StatusBadRequest)
 	ErrConflict        = New("CONFLICT", "resource conflict", http.StatusConflict)

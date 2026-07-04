@@ -3,8 +3,9 @@ package actor
 import "context"
 
 type FirebaseClaims struct {
-	UID   string
-	Email string
+	UID           string
+	Email         string
+	EmailVerified bool
 }
 
 type User struct {

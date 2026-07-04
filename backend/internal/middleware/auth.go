@@ -61,3 +61,18 @@ func (m *AuthMiddleware) RequireProfile(next http.Handler) http.Handler {
 func (m *AuthMiddleware) VerifyTokenAndProfile(next http.Handler) http.Handler {
 	return m.RequireProfile(next)
 }
+
+func (m *AuthMiddleware) RequireEmailVerified(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		claims, ok := actor.ClaimsFromContext(r.Context())
+		if !ok {
+			apperror.Write(w, apperror.ErrUnauthenticated)
+			return
+		}
+		if !claims.EmailVerified {
+			apperror.Write(w, apperror.ErrEmailNotVerified)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
