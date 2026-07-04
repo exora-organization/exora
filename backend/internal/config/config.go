@@ -10,14 +10,15 @@ import (
 )
 
 type Config struct {
-	Port                   string
-	Environment            string
+	Port                    string
+	Environment             string
 	FirebaseCredentialsPath string
-	FirestoreProjectID     string
-	GeminiAPIKey           string
-	InvitationTTL          time.Duration
-	CORSAllowedOrigins     []string
-	AppBaseURL             string
+	FirestoreProjectID      string
+	GeminiAPIKey            string
+	InvitationTTL           time.Duration
+	CORSAllowedOrigins      []string
+	AppBaseURL              string
+	TurnstileSecretKey      string
 }
 
 func Load() (*Config, error) {
@@ -37,6 +38,7 @@ func Load() (*Config, error) {
 		InvitationTTL:           time.Duration(invitationTTLHours) * time.Hour,
 		CORSAllowedOrigins:      splitCSV(getEnv("CORS_ALLOWED_ORIGINS", "http://localhost:3000")),
 		AppBaseURL:              getEnv("APP_BASE_URL", "https://app.exora.app"),
+		TurnstileSecretKey:      getEnv("TURNSTILE_SECRET_KEY", ""),
 	}, nil
 }
 
