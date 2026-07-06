@@ -1,14 +1,18 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import Image from "next/image";
+import Link from "next/link";
+import { Mail, Lock, Eye, EyeOff, ArrowRight, UserPlus, Globe } from "lucide-react";
+import logoImg from "../../../public/logo.jpeg";
+
 import { signIn } from "../../../lib/firebase/auth";
 import { apiAuth } from "../../../lib/api/auth";
 import { apiUsers } from "../../../lib/api/users";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
 import { Button } from "../../../components/ui/button";
@@ -22,11 +26,11 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 function LoginForm() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const redirectPath = searchParams.get("redirect");
+  const redirectPath = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get("redirect") : null;
   
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -41,21 +45,14 @@ function LoginForm() {
     setError(null);
 
     try {
-      // 1. Firebase Auth
       const userCredential = await signIn(data.email, data.password);
-      
-      // Force set the cookie immediately to prevent middleware race condition
       const token = await userCredential.user.getIdToken();
       document.cookie = `firebaseToken=${token}; path=/; max-age=3600; Secure; SameSite=Strict`;
       
-      // 2. Sync session with backend (FR-001)
       await apiAuth.login();
-      
-      // 3. Fetch profile to determine routing
       const profileRes = await apiUsers.getCurrentUser();
       const role = profileRes.data?.role;
       
-      // 4. Redirect
       if (redirectPath) {
         router.push(redirectPath);
       } else {
@@ -87,69 +84,107 @@ function LoginForm() {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Login to EXORA</CardTitle>
-        <CardDescription>Enter your email and password to access your account.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="name@example.com"
-              {...register("email")}
-            />
-            {errors.email && (
-              <p className="text-sm text-red-500">{errors.email.message}</p>
-            )}
+    <div className="w-full">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 sm:p-10 pt-8">
+        <div className="flex items-center space-x-2 mb-8">
+          <div className="relative w-10 h-10 flex items-center justify-center shrink-0">
+            <Image src={logoImg} alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', mixBlendMode: 'multiply' }} />
           </div>
+          <h1 className="font-extrabold text-gray-800 tracking-tight text-lg leading-tight">EXORA - Export Feasibility & Decision Support Platform</h1>
+        </div>
+
+        <div className="mb-8">
+          <div className="text-xs font-bold text-gray-500 tracking-wider uppercase mb-3">Secure Portal Login</div>
+          <h2 className="text-4xl font-bold text-gray-900 mb-3 tracking-tight">Welcome Back</h2>
+          <p className="text-sm text-gray-500 leading-relaxed max-w-sm">
+            Hello exporter, please log in to access your cargo costing dashboards.
+          </p>
+        </div>
+
+
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              {...register("password")}
-            />
-            {errors.password && (
-              <p className="text-sm text-red-500">{errors.password.message}</p>
-            )}
+            <Label htmlFor="email" className="text-xs font-bold text-gray-700 tracking-widest uppercase">Corporate Email Address</Label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                <Mail size={18} />
+              </div>
+              <Input
+                id="email"
+                type="email"
+                placeholder="manager@wacanatech.com"
+                className="pl-10 h-12 bg-[#eef3f7] border-transparent focus:bg-white text-gray-900 placeholder:text-gray-400 text-base rounded-lg"
+                {...register("email")}
+              />
+            </div>
+            {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
           </div>
-          
+
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <Label htmlFor="password" className="text-xs font-bold text-gray-700 tracking-widest uppercase">Secure Password</Label>
+              <Link href="/reset-password" className="text-xs font-bold text-gray-900 hover:underline">
+                Forgot Password?
+              </Link>
+            </div>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                <Lock size={18} />
+              </div>
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="password123"
+                className="pl-10 pr-10 h-12 bg-[#eef3f7] border-transparent focus:bg-white text-gray-900 placeholder:text-gray-400 text-base rounded-lg"
+                {...register("password")}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 focus:outline-none"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+            {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
+          </div>
+
           {error && (
-            <div className="p-3 text-sm bg-red-50 text-red-500 rounded-md">
+            <div className="p-3 text-sm bg-red-50 text-red-600 rounded-md border border-red-100">
               {error}
             </div>
           )}
-          
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Signing in..." : "Sign In"}
+
+          <Button 
+            type="submit" 
+            className="w-full h-12 bg-[#0a9b5c] hover:bg-[#08824d] text-white font-bold rounded-lg shadow-sm flex items-center justify-center space-x-2 transition-colors mt-2" 
+            disabled={isLoading}
+          >
+            <span>{isLoading ? "SIGNING IN..." : "LOG IN TO FEASIBILITY SUITE"}</span>
+            {!isLoading && <ArrowRight size={18} />}
           </Button>
         </form>
-      </CardContent>
-      <CardFooter className="flex flex-col space-y-2 text-sm text-center text-gray-500">
-        <div>
-          Don't have an account?{" "}
-          <a href={`/register${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ""}`} className="text-blue-500 hover:underline">
-            Register here
-          </a>
+
+        <div className="flex items-center justify-between mt-6 w-full">
+          <div className="text-gray-500 text-xs">
+            New to EXORA?
+          </div>
+          <Link href={`/register${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ""}`} className="text-xs font-semibold text-gray-800 hover:text-blue-600 transition-colors">
+            Create an account
+          </Link>
         </div>
-        <div>
-          <a href="/reset-password" className="text-blue-500 hover:underline">
-            Forgot password?
-          </a>
-        </div>
-      </CardFooter>
-    </Card>
+      </div>
+
+      <div className="mt-6 text-center">
+        <Link href="/" className="text-sm text-gray-500 hover:text-gray-800 transition-colors font-medium">
+          Back to Home
+        </Link>
+      </div>
+    </div>
   );
 }
 
 export default function LoginPage() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <LoginForm />
-    </Suspense>
-  );
+  return <LoginForm />;
 }
