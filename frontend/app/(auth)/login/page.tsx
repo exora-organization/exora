@@ -8,7 +8,7 @@ import * as z from "zod";
 import Image from "next/image";
 import Link from "next/link";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, UserPlus, Globe } from "lucide-react";
-import logoImg from "../../../public/logo.jpeg";
+import logoImg from "../../../public/logo.png";
 
 import { signIn } from "../../../lib/firebase/auth";
 import { apiAuth } from "../../../lib/api/auth";
@@ -88,7 +88,7 @@ function LoginForm() {
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 sm:p-10 pt-8">
         <div className="flex items-center space-x-2 mb-8">
           <div className="relative w-10 h-10 flex items-center justify-center shrink-0">
-            <Image src={logoImg} alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', mixBlendMode: 'multiply' }} />
+            <Image src={logoImg} alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <h1 className="font-extrabold text-gray-800 tracking-tight text-lg leading-tight">EXORA - Export Feasibility & Decision Support Platform</h1>
         </div>
