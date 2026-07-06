@@ -46,7 +46,9 @@ func (r *FirestoreRepository) ListByCompany(ctx context.Context, companyID strin
 	if limit <= 0 {
 		limit = 20
 	}
-	q := r.client.Collection(collection).Where("companyId", "==", companyID).OrderBy("createdAt", firestore.Desc)
+	q := r.client.Collection(collection).Where("companyId", "==", companyID)
+	// Temporarily removed .OrderBy("createdAt", firestore.Desc) to avoid composite index requirement
+	// You will need to create a composite index in Firebase Console on (companyId ASC, createdAt DESC) to re-enable sorting.
 	if cursor != "" {
 		if doc, err := r.client.Collection(collection).Doc(cursor).Get(ctx); err == nil {
 			q = q.StartAfter(doc)

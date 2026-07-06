@@ -2,6 +2,7 @@ package apperror
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 )
 
@@ -48,6 +49,8 @@ func Write(w http.ResponseWriter, err error) {
 		appErr = e
 	} else {
 		appErr = ErrInternal
+		// Log the underlying error for debugging
+		log.Printf("Internal Error: %v\n", err)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
