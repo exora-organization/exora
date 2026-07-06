@@ -14,6 +14,8 @@ func NewHandler(service *Service) *Handler {
 	return &Handler{service: service}
 }
 
+// Dashboard is the HTTP controller action that retrieves analytics metrics.
+// It responds with a JSON representation of DashboardMetrics.
 func (h *Handler) Dashboard(w http.ResponseWriter, r *http.Request) {
 	metrics, err := h.service.GetDashboard(r.Context())
 	if err != nil {

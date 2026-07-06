@@ -7,6 +7,7 @@ import { Alert, AlertTitle, AlertDescription } from "../../../components/ui/aler
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 
 export default function AnalyticsDashboardPage() {
+  // Query hook to fetch unified dashboard metrics from the analytics API endpoint.
   const { data: analyticsData, isLoading, error } = useQuery({
     queryKey: ["analytics-dashboard"],
     queryFn: () => apiAnalytics.getDashboard(),
