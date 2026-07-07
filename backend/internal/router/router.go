@@ -136,14 +136,14 @@ func New(deps Dependencies, h Handlers) http.Handler {
 						r.With(middleware.RequireRoles("export_manager", "admin")).Put("/", h.ExportCase.Update)
 						r.With(middleware.RequireRoles("export_manager", "admin")).Delete("/", h.ExportCase.Delete)
 
-						r.With(middleware.RequireRoles("export_manager", "finance_staff", "admin")).Put("/cost-data", h.Costing.PutCostData)
+						r.With(middleware.RequireRoles("finance_staff", "admin")).Put("/cost-data", h.Costing.PutCostData)
 						r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/cost-data", h.Costing.GetCostData)
 
 						r.With(middleware.RequireRoles("export_manager", "admin")).Post("/pricing/calculate", h.Pricing.Calculate)
 						r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/pricing", h.Pricing.Get)
 
 						r.With(middleware.RequireRoles("finance_staff", "company_owner", "admin")).Get("/financial-analysis", h.Financial.GetAnalysis)
-						r.With(middleware.RequireRoles("finance_staff", "export_manager", "admin")).Post("/financial-analysis/recalculate", h.Financial.Recalculate)
+						r.With(middleware.RequireRoles("finance_staff", "company_owner", "admin")).Post("/financial-analysis/recalculate", h.Financial.Recalculate)
 
 						r.With(middleware.RequireRoles("export_manager", "admin")).Post("/scenarios", h.Scenario.Create)
 						r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/scenarios/compare", h.Scenario.Compare)
