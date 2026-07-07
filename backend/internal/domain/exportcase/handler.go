@@ -17,6 +17,7 @@ func NewHandler(service *Service) *Handler {
 	return &Handler{service: service}
 }
 
+// Create parses a CreateRequest JSON payload and calls the domain service to save a new case.
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	var req CreateRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -31,6 +32,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusCreated, data)
 }
 
+// List retrieves paginated lists of export cases, optionally filtered by company ID.
 func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	limit, _ := strconv.Atoi(r.URL.Query().Get("limit"))
 	companyID := r.URL.Query().Get("companyId")
