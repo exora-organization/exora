@@ -46,6 +46,7 @@ type Dependencies struct {
 	Config         *config.Config
 	Firebase       *middleware.FirebaseMiddleware
 	Auth           *middleware.AuthMiddleware
+	RateLimiter    *middleware.RateLimiter
 	AuditLogger    middleware.AuditLogger
 	ExportCaseRepo exportcase.Repository
 }
@@ -82,16 +83,19 @@ func New(deps Dependencies, h Handlers) http.Handler {
 		r.Group(func(r chi.Router) {
 			r.Use(deps.Firebase.VerifyToken)
 
-			r.Post("/auth/register", h.Auth.Register)
+			r.With(deps.RateLimiter.Limit).Post("/auth/register", h.Auth.Register)
 
 			r.Group(func(r chi.Router) {
 				r.Use(deps.Auth.RequireProfile)
 
-				r.Post("/auth/login", h.Auth.Login)
+				r.With(deps.RateLimiter.Limit).Post("/auth/login", h.Auth.Login)
 				r.Post("/auth/logout", h.Auth.Logout)
 				r.Get("/users/me", h.User.Me)
 
-				// Company application
+				r.Group(func(r chi.Router) {
+					r.Use(deps.Auth.RequireEmailVerified)
+
+					// Company application
 				r.With(middleware.RequireRoles("guest")).Post("/companies/apply", h.Company.Apply)
 				r.With(middleware.RequireRoles("guest", "company_owner")).Get("/companies/application-status", h.Company.ApplicationStatus)
 				r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/companies/{companyId}", h.Company.Get)
@@ -175,6 +179,7 @@ func New(deps Dependencies, h Handlers) http.Handler {
 				})
 
 				r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/analytics", h.Analytics.Dashboard)
+				})
 			})
 		})
 	})

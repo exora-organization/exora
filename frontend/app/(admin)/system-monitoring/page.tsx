@@ -4,11 +4,15 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardHeader, CardTitle, CardContent } from "../../../components/ui/card";
 import { Badge } from "../../../components/ui/badge";
 import { apiAdmin } from "../../../lib/api/admin";
+import { useUserProfile } from "../../../hooks/useUserProfile";
 
 export default function SystemMonitoringPage() {
+  const { firebaseUser, loading: authLoading } = useUserProfile();
   const { data, isLoading, error } = useQuery({
     queryKey: ["admin-monitoring"],
     queryFn: () => apiAdmin.getMonitoring(),
+    enabled: !!firebaseUser && !authLoading,
+    staleTime: 30_000,
   });
 
   if (isLoading) return <div className="p-8 text-center">Loading system statistics...</div>;

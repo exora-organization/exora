@@ -2,10 +2,12 @@ package risk
 
 import (
 	"context"
+	"log/slog"
 	"time"
 
 	"cloud.google.com/go/firestore"
 	"github.com/exora/backend/internal/apperror"
+	"google.golang.org/api/iterator"
 )
 
 const collection = "risk_assessments"
@@ -37,3 +39,27 @@ func (r *FirestoreRepository) GetByCaseID(ctx context.Context, caseID string) (*
 	ra.ID = doc.Ref.ID
 	return &ra, nil
 }
+
+func (r *FirestoreRepository) ListByCompany(ctx context.Context, companyID string) ([]*RiskAssessment, error) {
+	q := r.client.Collection(collection).Where("companyId", "==", companyID)
+	iter := q.Documents(ctx)
+	var assessments []*RiskAssessment
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		var ra RiskAssessment
+		if err := doc.DataTo(&ra); err != nil {
+			slog.Error("failed to decode risk assessment, skipping", "id", doc.Ref.ID, "error", err)
+			continue
+		}
+		ra.ID = doc.Ref.ID
+		assessments = append(assessments, &ra)
+	}
+	return assessments, nil
+}
+
