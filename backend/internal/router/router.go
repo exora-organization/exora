@@ -65,6 +65,16 @@ func New(deps Dependencies, h Handlers) http.Handler {
 		w.Write([]byte(`{"status":"ok"}`))
 	})
 
+	r.Get("/", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte(`{
+  "message": "EXORA Backend API is running.",
+  "status": "healthy",
+  "version": "v1.0.0",
+  "frontend_url": "http://localhost:3000"
+}`))
+	})
+
 	r.Route("/v1", func(r chi.Router) {
 		// Public invitation preview
 		r.Get("/invitations/{token}", h.Invitation.Preview)
