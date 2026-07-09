@@ -25,10 +25,15 @@ export async function apiClient<T>(
     headers,
   });
 
-  const data = await response.json();
+  const data = await response.json().catch(() => null);
 
   if (!response.ok) {
-    throw new Error(data.error?.message || "An error occurred");
+    const err = new Error((data && data.error && data.error.message) || "An error occurred");
+    // @ts-ignore attach status and body for caller to inspect
+    err.status = response.status;
+    // @ts-ignore
+    err.body = data;
+    throw err;
   }
 
   return data as T;

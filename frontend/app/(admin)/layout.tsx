@@ -2,49 +2,110 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ProtectedRoute } from "../../components/auth/ProtectedRoute";
 import { RoleGuard } from "../../components/auth/RoleGuard";
 import { useUserProfile } from "../../hooks/useUserProfile";
 import { LogoutButton } from "../../components/ui/logout-button";
+import { 
+  LayoutDashboard, 
+  Building, 
+  Users, 
+  Activity, 
+  FileText, 
+  Wallet, 
+  Settings,
+  LogOut
+} from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { profile } = useUserProfile();
+  const pathname = usePathname();
+
+  const navItems = [
+    { name: "Dashboard", href: "/admin-dashboard", icon: LayoutDashboard },
+    { name: "Company Approvals", href: "/company-approvals", icon: Building },
+    { name: "User Management", href: "/users", icon: Users },
+    { name: "System Monitoring", href: "/system-monitoring", icon: Activity },
+    { name: "Audit Logs", href: "/audit-logs", icon: FileText },
+  ];
 
   return (
     <ProtectedRoute>
       <RoleGuard allowedRoles={["admin"]}>
-    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
-      <aside className="w-full md:w-64 bg-slate-900 text-white flex flex-col">
-        <div className="p-6 border-b border-slate-800">
-          <h1 className="text-2xl font-bold tracking-tight text-white">EXORA Admin</h1>
-        </div>
-        <nav className="flex-1 p-4 space-y-2">
-          <Link href="/admin-dashboard" className="block px-4 py-2 rounded-md hover:bg-slate-800 transition-colors text-sm font-medium">
-            Dashboard
-          </Link>
-          <Link href="/company-approvals" className="block px-4 py-2 rounded-md hover:bg-slate-800 transition-colors text-sm font-medium">
-            Company Approvals
-          </Link>
-          <Link href="/users" className="block px-4 py-2 rounded-md hover:bg-slate-800 transition-colors text-sm font-medium">
-            User Management
-          </Link>
-          <Link href="/system-monitoring" className="block px-4 py-2 rounded-md hover:bg-slate-800 transition-colors text-sm font-medium">
-            System Monitoring
-          </Link>
-          <Link href="/audit-logs" className="block px-4 py-2 rounded-md hover:bg-slate-800 transition-colors text-sm font-medium">
-            Audit Logs
-          </Link>
-        </nav>
-        <div className="p-4 border-t border-slate-800 flex items-center justify-between">
-          <span className="text-sm text-slate-400">{profile?.displayName}</span>
-          <LogoutButton />
-        </div>
-      </aside>
+        <div className="min-h-screen flex flex-col md:flex-row bg-[#eef8f2] md:bg-gradient-to-br from-[#e6f5eb] to-[#e0f0f8]">
+          
+          {/* Sidebar */}
+          <aside className="w-full md:w-64 bg-white md:min-h-screen flex flex-col shadow-sm border-r border-gray-100 z-10">
+            {/* Logo Area */}
+            <div className="p-6">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-teal-700 flex items-center justify-center text-white font-bold text-lg">
+                  E
+                </div>
+                <h1 className="text-xl font-bold tracking-tight text-slate-800">EXORA <span className="font-medium">Admin</span></h1>
+              </div>
+              <p className="text-xs text-slate-500 mt-1 ml-10">Centralized Monitoring</p>
+            </div>
 
-      <main className="flex-1 p-8 overflow-y-auto">
-        {children}
-      </main>
-    </div>
+            {/* Navigation */}
+            <nav className="flex-1 px-4 py-2 space-y-1">
+              {navItems.map((item) => {
+                const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+                const Icon = item.icon;
+                return (
+                  <Link 
+                    key={item.href} 
+                    href={item.href} 
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-sm font-medium ${
+                      isActive 
+                        ? "bg-[#e6f5eb] text-[#0a8c4f]" 
+                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                    }`}
+                  >
+                    <Icon className="w-5 h-5" />
+                    {item.name}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            {/* Bottom Profile Area */}
+            <div className="p-4 mt-auto">
+              {/* User Info */}
+              <div className="flex items-center gap-3 px-4 py-3 mb-2">
+                <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden flex-shrink-0">
+                  <div className="w-full h-full flex items-center justify-center bg-[#0a8c4f] text-white font-medium">
+                    {profile?.displayName?.charAt(0) || "A"}
+                  </div>
+                </div>
+                <div className="flex flex-col overflow-hidden">
+                  <span className="text-sm font-bold text-slate-800 truncate">{profile?.displayName || "Sheryl Admin"}</span>
+                  <span className="text-xs text-slate-500 truncate">System Lead</span>
+                </div>
+              </div>
+
+              {/* Settings & Logout */}
+              <div className="space-y-1">
+                <Link 
+                  href="/admin-dashboard/settings" 
+                  className="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                >
+                  <Settings className="w-5 h-5" />
+                  Settings
+                </Link>
+                <div className="px-4 py-2 flex items-center">
+                  <LogoutButton />
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          {/* Main Content Area */}
+          <main className="flex-1 p-6 md:p-10 overflow-y-auto">
+            {children}
+          </main>
+        </div>
       </RoleGuard>
     </ProtectedRoute>
   );

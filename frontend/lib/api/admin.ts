@@ -1,6 +1,6 @@
 import { apiClient } from "./client";
 import { ApiResponse, PaginatedResponse } from "../types/api";
-import { AdminCompanyApplication, RejectRequestPayload, RevisionRequestPayload, MonitoringStats } from "../types/admin";
+import { AdminCompanyApplication, RejectRequestPayload, RevisionRequestPayload, MonitoringStats, AuditLogResponse } from "../types/admin";
 
 export const apiAdmin = {
   getCompanyApplications: async (): Promise<ApiResponse<PaginatedResponse<AdminCompanyApplication>>> => {
@@ -31,6 +31,12 @@ export const apiAdmin = {
   
   getMonitoring: async (): Promise<ApiResponse<MonitoringStats>> => {
     return apiClient<ApiResponse<MonitoringStats>>(`/admin/monitoring`, {
+      method: "GET",
+    });
+  },
+
+  getAuditLogs: async (limit: number = 100): Promise<ApiResponse<AuditLogResponse>> => {
+    return apiClient<ApiResponse<AuditLogResponse>>(`/admin/audit-logs?limit=${limit}`, {
       method: "GET",
     });
   },

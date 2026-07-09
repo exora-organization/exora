@@ -2,20 +2,24 @@
 
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent } from "../../../components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/table";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Badge } from "../../../components/ui/badge";
 import { apiUsers } from "../../../lib/api/users";
 import { UserProfile } from "../../../lib/types/user";
+import { useUserProfile } from "../../../hooks/useUserProfile";
 
 export default function UserManagementPage() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
+  const { firebaseUser, loading: authLoading } = useUserProfile();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["admin-users"],
     queryFn: () => apiUsers.listUsers(),
+    enabled: !!firebaseUser && !authLoading,
+    staleTime: 30_000,
   });
 
   const updateStatusMutation = useMutation({
@@ -66,81 +70,96 @@ export default function UserManagementPage() {
         />
       </div>
 
-      <div className="grid gap-4">
-        {filteredUsers.length === 0 && (
-          <p className="text-center text-gray-500 py-8">No users found.</p>
-        )}
-        {filteredUsers.map((user) => (
-          <Card key={user.userId}>
-            <CardContent className="p-6 flex items-center justify-between">
-              <div className="flex items-center gap-6">
-                <div>
-                  <h3 className="font-semibold text-lg">{user.displayName || "Unknown User"}</h3>
-                  <p className="text-sm text-gray-500">{user.email}</p>
-                </div>
-                {user.companyId && (
-                  <div>
-                    <p className="text-sm text-gray-500">Company ID</p>
-                    <p className="font-medium text-xs">{user.companyId}</p>
-                  </div>
-                )}
-                <div>
-                  <p className="text-sm text-gray-500">Role</p>
-                  <Badge variant="outline">{user.role?.replace("_", " ")}</Badge>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Status</p>
-                  <Badge variant={user.status === "active" ? "default" : "destructive"}>
-                    {user.status || "active"}
-                  </Badge>
-                </div>
-              </div>
+      <div className="border border-slate-200 rounded-2xl bg-white shadow-sm overflow-hidden">
+        <Table>
+          <TableHeader className="bg-slate-50/80">
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="h-12 px-6 font-extrabold text-slate-700 tracking-wider text-xs uppercase">User</TableHead>
+              <TableHead className="h-12 px-6 font-extrabold text-slate-700 tracking-wider text-xs uppercase">Company ID</TableHead>
+              <TableHead className="h-12 px-6 font-extrabold text-slate-700 tracking-wider text-xs uppercase">Role</TableHead>
+              <TableHead className="h-12 px-6 font-extrabold text-slate-700 tracking-wider text-xs uppercase">Status</TableHead>
+              <TableHead className="h-12 px-6 font-extrabold text-slate-700 tracking-wider text-xs uppercase text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredUsers.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center py-12 text-slate-500 font-medium">
+                  No users found.
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredUsers.map((user) => (
+                <TableRow key={user.userId} className="hover:bg-slate-50/50 transition-colors">
+                  <TableCell className="px-6 py-4">
+                    <div className="font-bold text-slate-800">{user.displayName || "Unknown User"}</div>
+                    <div className="text-xs text-slate-500 mt-0.5">{user.email}</div>
+                  </TableCell>
+                  <TableCell className="px-6 py-4 font-medium text-slate-600">
+                    {user.companyId || "-"}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    <Badge variant="outline" className="font-bold bg-white text-slate-600 border-slate-300 tracking-wide">
+                      {user.role?.replace("_", " ").toUpperCase()}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    <Badge variant={user.status === "active" ? "default" : "destructive"} className="font-bold tracking-wide">
+                      {user.status?.toUpperCase() || "ACTIVE"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="px-6 py-4 text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        className="font-bold text-blue-600 border-blue-200 hover:bg-blue-50 transition-colors"
+                        onClick={() => {
+                          const newRole = user.role === "export_manager" ? "finance_staff" : "export_manager";
+                          if (confirm(`Change role to ${newRole}?`)) {
+                            changeRoleMutation.mutate({ userId: user.userId, role: newRole });
+                          }
+                        }}
+                        disabled={changeRoleMutation.isPending}
+                      >
+                        Change Role
+                      </Button>
+                      
+                      <Button 
+                        variant={user.status === "active" ? "destructive" : "default"} 
+                        size="sm"
+                        className="font-bold transition-colors"
+                        onClick={() => {
+                          const newStatus = user.status === "active" ? "disabled" : "active";
+                          if (confirm(`Change status to ${newStatus}?`)) {
+                            updateStatusMutation.mutate({ userId: user.userId, status: newStatus });
+                          }
+                        }}
+                        disabled={updateStatusMutation.isPending}
+                      >
+                        {user.status === "active" ? "Disable" : "Enable"}
+                      </Button>
 
-              <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => {
-                    const newRole = user.role === "export_manager" ? "finance_staff" : "export_manager";
-                    if (confirm(`Change role to ${newRole}?`)) {
-                      changeRoleMutation.mutate({ userId: user.userId, role: newRole });
-                    }
-                  }}
-                  disabled={changeRoleMutation.isPending}
-                >
-                  Change Role
-                </Button>
-                
-                <Button 
-                  variant={user.status === "active" ? "destructive" : "default"} 
-                  size="sm"
-                  onClick={() => {
-                    const newStatus = user.status === "active" ? "disabled" : "active";
-                    if (confirm(`Change status to ${newStatus}?`)) {
-                      updateStatusMutation.mutate({ userId: user.userId, status: newStatus });
-                    }
-                  }}
-                  disabled={updateStatusMutation.isPending}
-                >
-                  {user.status === "active" ? "Disable" : "Enable"}
-                </Button>
-
-                <Button 
-                  variant="destructive" 
-                  size="sm"
-                  onClick={() => {
-                    if (confirm("Are you sure you want to delete this user? This cannot be undone.")) {
-                      deleteUserMutation.mutate(user.userId);
-                    }
-                  }}
-                  disabled={deleteUserMutation.isPending}
-                >
-                  Delete
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                      <Button 
+                        variant="destructive" 
+                        size="sm"
+                        className="font-bold hover:bg-red-700 transition-colors"
+                        onClick={() => {
+                          if (confirm("Are you sure you want to delete this user? This cannot be undone.")) {
+                            deleteUserMutation.mutate(user.userId);
+                          }
+                        }}
+                        disabled={deleteUserMutation.isPending}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

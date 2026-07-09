@@ -2,6 +2,7 @@ package advisor
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"cloud.google.com/go/firestore"
@@ -21,7 +22,11 @@ func NewFirestoreRepository(client *firestore.Client) *FirestoreRepository {
 
 func (r *FirestoreRepository) Upsert(ctx context.Context, rec *AdvisorRecommendation) error {
 	rec.GeneratedAt = time.Now().UTC()
-	_, err := r.client.Collection(collection).Doc(rec.CaseID).Set(ctx, rec)
+	docID := rec.CaseID
+	if docID == "global" {
+		docID = fmt.Sprintf("global-%s", rec.CompanyID)
+	}
+	_, err := r.client.Collection(collection).Doc(docID).Set(ctx, rec)
 	return err
 }
 
@@ -37,3 +42,18 @@ func (r *FirestoreRepository) GetByCaseID(ctx context.Context, caseID string) (*
 	rec.ID = doc.Ref.ID
 	return &rec, nil
 }
+
+func (r *FirestoreRepository) GetGlobal(ctx context.Context, companyID string) (*AdvisorRecommendation, error) {
+	docID := fmt.Sprintf("global-%s", companyID)
+	doc, err := r.client.Collection(collection).Doc(docID).Get(ctx)
+	if err != nil {
+		return nil, apperror.ErrNotFound
+	}
+	var rec AdvisorRecommendation
+	if err := doc.DataTo(&rec); err != nil {
+		return nil, apperror.ErrInternal
+	}
+	rec.ID = doc.Ref.ID
+	return &rec, nil
+}
+

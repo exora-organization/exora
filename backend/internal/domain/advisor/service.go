@@ -61,9 +61,9 @@ func (s *Service) Generate(ctx context.Context, caseID, companyID string, req Ge
 	// RAG retrieval
 	query := req.Question
 	if query == "" {
-		query = fmt.Sprintf("export feasibility for %s to %s", ec.Product, ec.DestinationCountry)
+		query = fmt.Sprintf("Evaluate the export feasibility of %s to %s with the provided cost, pricing, and payment terms.", ec.Product, ec.DestinationCountry)
 	}
-	snippets, _ := s.kb.Search(query, 3)
+	snippets, _ := s.kb.Search(query, 5)
 	kbContext := s.kb.BuildContext(snippets)
 
 	// Compose prompt
@@ -109,6 +109,106 @@ func (s *Service) GetRecommendation(ctx context.Context, caseID string) (*Adviso
 	return s.repo.GetByCaseID(ctx, caseID)
 }
 
+func (s *Service) GenerateGlobal(ctx context.Context, companyID string, req GenerateRequest) (*AdvisorRecommendation, error) {
+	// 1. Fetch all export cases for the company (up to 1000)
+	cases, _, err := s.caseRepo.ListByCompany(ctx, companyID, 1000, "")
+	if err != nil {
+		return nil, err
+	}
+
+	// 2. Build context summary from cases
+	var parts []string
+	parts = append(parts, fmt.Sprintf("Company Profile Summary: Total Cases = %d", len(cases)))
+
+	for i, ec := range cases {
+		cd, _ := s.costingRepo.GetByCaseID(ctx, ec.ID)
+		pr, _ := s.pricingRepo.GetByCaseID(ctx, ec.ID)
+
+		parts = append(parts, fmt.Sprintf("Case %d: Name=%s, Product=%s, Destination=%s, Status=%s",
+			i+1, ec.Name, ec.Product, ec.DestinationCountry, ec.Status))
+
+		if cd != nil {
+			parts = append(parts, fmt.Sprintf("  Costing: HPP=%.0f, Packaging=%.0f, Transport=%.0f, Freight=%.0f, PaymentTerm=%s",
+				cd.HPP, cd.Packaging, cd.Transportation, cd.Freight, cd.PaymentTerm))
+		}
+		if pr != nil {
+			parts = append(parts, fmt.Sprintf("  Pricing: Incoterm=%s, SellingPriceUSD=%.2f, ActualMargin=%.1f%%",
+				pr.Incoterm, pr.SellingPriceUSD, pr.ActualMarginPct))
+		}
+	}
+	contextSummary := strings.Join(parts, "\n")
+
+	// 3. Knowledge base search
+	query := req.Question
+	if query == "" {
+		query = "global export strategies and trade finance"
+	}
+	snippets, _ := s.kb.Search(query, 5)
+	kbContext := s.kb.BuildContext(snippets)
+
+	// 4. Compose prompt
+	prompt := fmt.Sprintf(`You are EXORA, an expert export trade decision advisor for Indonesian SMEs.
+Analyze the following company-wide export profile and provide actionable company-wide strategic recommendations.
+
+=== COMPANY EXPORT PROFILE CONTEXT ===
+%s
+
+=== KNOWLEDGE BASE ===
+%s
+
+=== QUESTION / FOCUS AREA ===
+%s
+
+When answering, do not reuse a fixed template. Be specific to the company's data and avoid generic recommendations.
+Only use the provided case and knowledge base context.
+
+Provide a focused, structured response covering:
+1. Strategic priorities and feasibility across the company's export cases
+2. Major risks, mitigations, and cashflow / payment recommendations
+3. Next steps to strengthen execution or expand export activity
+4. Pricing, incoterm, and cost optimization advice relevant to the existing cases
+
+Keep the response practical, concrete, and directly tied to the provided data.`, contextSummary, kbContext, query)
+
+	// 5. Call Gemini with 10s SLA
+	timeoutCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
+
+	answer, err := s.gemini.Generate(timeoutCtx, prompt)
+	if err != nil {
+		if timeoutCtx.Err() != nil {
+			return nil, apperror.ErrAITimeout
+		}
+		return nil, apperror.New("ADVISOR_ERROR", "AI generation failed: "+err.Error(), 502)
+	}
+
+	confidence := "low"
+	if len(snippets) > 0 {
+		confidence = "high"
+	} else if answer != "" {
+		confidence = "medium"
+	}
+
+	rec := &AdvisorRecommendation{
+		CaseID:         "global",
+		CompanyID:      companyID,
+		Answer:         answer,
+		Sources:        snippetSources(snippets),
+		Confidence:     confidence,
+		ContextSummary: contextSummary,
+	}
+
+	// Persist
+	if err := s.repo.Upsert(ctx, rec); err != nil {
+		return nil, err
+	}
+	return rec, nil
+}
+
+func (s *Service) GetGlobal(ctx context.Context, companyID string) (*AdvisorRecommendation, error) {
+	return s.repo.GetGlobal(ctx, companyID)
+}
+
 func buildContextSummary(ec *exportcase.ExportCase, cd *costing.CostData, pr *pricing.PricingResult) string {
 	parts := []string{}
 	if ec != nil {
@@ -128,7 +228,9 @@ func buildContextSummary(ec *exportcase.ExportCase, cd *costing.CostData, pr *pr
 
 func buildPrompt(contextSummary, kbContext, question string) string {
 	return fmt.Sprintf(`You are EXORA, an expert export trade decision advisor for Indonesian SMEs.
-Analyze the following export case data and provide actionable recommendations.
+Use the export case details and knowledge base context to answer the question directly.
+Avoid repeating generic boilerplate or returning the same fixed structure each time.
+Only base your recommendation on the data and knowledge provided.
 
 === EXPORT CASE CONTEXT ===
 %s
@@ -139,13 +241,16 @@ Analyze the following export case data and provide actionable recommendations.
 === QUESTION ===
 %s
 
-Provide a concise, structured recommendation covering:
-1. Export feasibility assessment
-2. Key risks and mitigation strategies  
-3. Recommended next steps
-4. Any pricing or cost optimizations
+Answer with concrete advice that is specific to this export case.
+If the question is about risk, discuss the most relevant risks and mitigation actions.
+If it is about pricing, include the most important pricing or incoterm decision.
+If it is about feasibility, make a clear judgment and mention the key factor driving that judgment.
 
-Keep the response practical and specific to the provided data.`, contextSummary, kbContext, question)
+Preferred format:
+- Short summary statement
+- 2-3 concrete action items
+- One specific recommendation tied to the case data
+`, contextSummary, kbContext, question)
 }
 
 func snippetSources(snippets []string) []string {

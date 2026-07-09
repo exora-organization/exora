@@ -138,3 +138,8 @@ func (s *Service) Monitoring(ctx context.Context) (*MonitoringStats, error) {
 		},
 	}, nil
 }
+
+func (s *Service) ListAuditLogs(ctx context.Context, limit int) ([]AuditLog, error) {
+	return s.repo.ListAuditLogs(ctx, limit)
+}
+

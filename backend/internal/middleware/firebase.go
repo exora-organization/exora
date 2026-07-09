@@ -32,9 +32,11 @@ func (m *FirebaseMiddleware) VerifyToken(next http.Handler) http.Handler {
 		}
 
 		email, _ := verified.Claims["email"].(string)
+		emailVerified, _ := verified.Claims["email_verified"].(bool)
 		ctx := actor.WithClaims(r.Context(), &actor.FirebaseClaims{
-			UID:   verified.UID,
-			Email: email,
+			UID:           verified.UID,
+			Email:         email,
+			EmailVerified: emailVerified,
 		})
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

@@ -12,6 +12,7 @@ type Repository interface {
 	CountPendingApplications(ctx context.Context) (int, error)
 	CountExportCases(ctx context.Context) (int, error)
 	CountAIRecommendations(ctx context.Context) (int, error)
+	ListAuditLogs(ctx context.Context, limit int) ([]AuditLog, error)
 }
 
 type AuditRepository struct {

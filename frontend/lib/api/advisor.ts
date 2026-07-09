@@ -15,4 +15,17 @@ export const apiAdvisor = {
       body: JSON.stringify(data),
     });
   },
+
+  getGlobalRecommendation: async (): Promise<ApiResponse<AdvisorRecommendationResponse>> => {
+    return apiClient<ApiResponse<AdvisorRecommendationResponse>>(`/advisor/recommendations`, {
+      method: "GET",
+    });
+  },
+
+  generateGlobalRecommendation: async (data: GenerateAdvisorRequest = {}): Promise<ApiResponse<AdvisorRecommendationResponse>> => {
+    return apiClient<ApiResponse<AdvisorRecommendationResponse>>(`/advisor/recommendations`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  },
 };

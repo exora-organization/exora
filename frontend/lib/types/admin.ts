@@ -35,3 +35,17 @@ export interface MonitoringStats {
   aiUsageCount: number;
   userActivityStats: UserActivityStats;
 }
+
+export interface AuditLog {
+  id?: string;
+  actorId: string;
+  action: string;
+  resource: string;
+  details?: any;
+  timestamp: string;
+}
+
+export interface AuditLogResponse {
+  auditLogs: AuditLog[];
+}
+
