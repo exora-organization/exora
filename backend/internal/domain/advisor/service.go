@@ -58,15 +58,66 @@ func (s *Service) Generate(ctx context.Context, caseID, companyID string, req Ge
 	// Build context summary from case data
 	contextSummary := buildContextSummary(ec, cd, pr)
 
-	// RAG retrieval
 	query := req.Question
 	if query == "" {
-		query = fmt.Sprintf("Evaluate the export feasibility of %s to %s with the provided cost, pricing, and payment terms.", ec.Product, ec.DestinationCountry)
+		if ec != nil {
+			query = fmt.Sprintf("Evaluate the export feasibility of %s to %s with the provided cost, pricing, and payment terms.", ec.Product, ec.DestinationCountry)
+		} else {
+			query = "Evaluate the export feasibility."
+		}
 	}
-	snippets, _ := s.kb.Search(query, 5)
-	kbContext := s.kb.BuildContext(snippets)
 
-	// Compose prompt
+	// 1. Export Domain Check
+	if !isExportDomain(query) && !isGreeting(query) {
+		rec := &AdvisorRecommendation{
+			CaseID:         caseID,
+			CompanyID:      companyID,
+			Answer:         outOfScopeResponse,
+			Confidence:     "low",
+			ContextSummary: contextSummary,
+			GeneratedAt:    time.Now(),
+		}
+		_ = s.repo.Upsert(ctx, rec)
+		return rec, nil
+	}
+
+	// 2. Smart Country Validation
+	countryToCheck := extractCountryFromQuery(query)
+	if countryToCheck == "" && ec != nil {
+		countryToCheck = ec.DestinationCountry
+	}
+	if isUnsupportedCountry(countryToCheck) {
+		rec := &AdvisorRecommendation{
+			CaseID:         caseID,
+			CompanyID:      companyID,
+			Answer:         "I don't have verified knowledge for exports to this country because it is not currently included in the curated knowledge base. Please consult official trade resources or an export specialist.",
+			Confidence:     "low",
+			ContextSummary: contextSummary,
+			GeneratedAt:    time.Now(),
+		}
+		_ = s.repo.Upsert(ctx, rec)
+		return rec, nil
+	}
+
+	// 3. RAG Retrieval
+	snippets, _ := s.kb.Search(query, 5)
+
+	// 4. Coverage Check
+	if len(snippets) == 0 && !isGreeting(query) {
+		rec := &AdvisorRecommendation{
+			CaseID:         caseID,
+			CompanyID:      companyID,
+			Answer:         "This topic is outside the curated knowledge base used for business recommendations. I can provide general information if helpful, but it should not be treated as an official recommendation.",
+			Confidence:     "low",
+			ContextSummary: contextSummary,
+			GeneratedAt:    time.Now(),
+		}
+		_ = s.repo.Upsert(ctx, rec)
+		return rec, nil
+	}
+
+	// 5. Compose prompt
+	kbContext := s.kb.BuildContext(snippets)
 	prompt := buildPrompt(contextSummary, kbContext, query)
 
 	// Call Gemini with 10-second SLA (NFR-003)
@@ -81,20 +132,32 @@ func (s *Service) Generate(ctx context.Context, caseID, companyID string, req Ge
 		return nil, apperror.New("ADVISOR_ERROR", "AI generation failed: "+err.Error(), 502)
 	}
 
+	// 6. Confidence Score
 	confidence := "low"
+	highestScore := 0
 	if len(snippets) > 0 {
+		highestScore = snippets[0].Score
+	}
+	if highestScore >= 30 {
 		confidence = "high"
-	} else if answer != "" {
+	} else if highestScore >= 10 {
 		confidence = "medium"
+	}
+
+	// Build sources citations
+	sources := make([]string, len(snippets))
+	for i, doc := range snippets {
+		sources[i] = doc.Title
 	}
 
 	rec := &AdvisorRecommendation{
 		CaseID:         caseID,
 		CompanyID:      companyID,
 		Answer:         answer,
-		Sources:        snippetSources(snippets),
+		Sources:        sources,
 		Confidence:     confidence,
 		ContextSummary: contextSummary,
+		GeneratedAt:    time.Now(),
 	}
 
 	// Persist (upsert — overwrite on regenerate per SRS §9.1)
@@ -138,22 +201,63 @@ func (s *Service) GenerateGlobal(ctx context.Context, companyID string, req Gene
 	}
 	contextSummary := strings.Join(parts, "\n")
 
-	// 3. Knowledge base search
 	query := req.Question
 	if query == "" {
 		query = "global export strategies and trade finance"
 	}
-	snippets, _ := s.kb.Search(query, 5)
-	kbContext := s.kb.BuildContext(snippets)
 
-	// 4. Compose prompt
+	// 3. Export Domain Check
+	if !isExportDomain(query) && !isGreeting(query) {
+		rec := &AdvisorRecommendation{
+			CaseID:         "global",
+			CompanyID:      companyID,
+			Answer:         outOfScopeResponse,
+			Confidence:     "low",
+			ContextSummary: contextSummary,
+			GeneratedAt:    time.Now(),
+		}
+		return rec, nil
+	}
+
+	// 4. Smart Country Validation
+	countryToCheck := extractCountryFromQuery(query)
+	if isUnsupportedCountry(countryToCheck) {
+		rec := &AdvisorRecommendation{
+			CaseID:         "global",
+			CompanyID:      companyID,
+			Answer:         "I don't have verified knowledge for exports to this country because it is not currently included in the curated knowledge base. Please consult official trade resources or an export specialist.",
+			Confidence:     "low",
+			ContextSummary: contextSummary,
+			GeneratedAt:    time.Now(),
+		}
+		return rec, nil
+	}
+
+	// 5. RAG Retrieval
+	snippets, _ := s.kb.Search(query, 5)
+
+	// 6. Coverage Check
+	if len(snippets) == 0 && !isGreeting(query) {
+		rec := &AdvisorRecommendation{
+			CaseID:         "global",
+			CompanyID:      companyID,
+			Answer:         "This topic is outside the curated knowledge base used for business recommendations. I can provide general information if helpful, but it should not be treated as an official recommendation.",
+			Confidence:     "low",
+			ContextSummary: contextSummary,
+			GeneratedAt:    time.Now(),
+		}
+		return rec, nil
+	}
+
+	// 7. Compose prompt
+	kbContext := s.kb.BuildContext(snippets)
 	prompt := fmt.Sprintf(`You are EXORA, an expert export trade decision advisor for Indonesian SMEs.
 Analyze the following company-wide export profile and provide actionable company-wide strategic recommendations.
 
 === COMPANY EXPORT PROFILE CONTEXT ===
 %s
 
-=== KNOWLEDGE BASE ===
+=== CURATED KNOWLEDGE BASE ===
 %s
 
 === QUESTION / FOCUS AREA ===
@@ -170,7 +274,7 @@ Provide a focused, structured response covering:
 
 Keep the response practical, concrete, and directly tied to the provided data.`, contextSummary, kbContext, query)
 
-	// 5. Call Gemini with 10s SLA
+	// 8. Call Gemini with 10-second SLA (NFR-003)
 	timeoutCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
@@ -182,26 +286,34 @@ Keep the response practical, concrete, and directly tied to the provided data.`,
 		return nil, apperror.New("ADVISOR_ERROR", "AI generation failed: "+err.Error(), 502)
 	}
 
+	// 9. Confidence Score
 	confidence := "low"
+	highestScore := 0
 	if len(snippets) > 0 {
+		highestScore = snippets[0].Score
+	}
+	if highestScore >= 30 {
 		confidence = "high"
-	} else if answer != "" {
+	} else if highestScore >= 10 {
 		confidence = "medium"
+	}
+
+	// Build sources citations
+	sources := make([]string, len(snippets))
+	for i, doc := range snippets {
+		sources[i] = doc.Title
 	}
 
 	rec := &AdvisorRecommendation{
 		CaseID:         "global",
 		CompanyID:      companyID,
 		Answer:         answer,
-		Sources:        snippetSources(snippets),
+		Sources:        sources,
 		Confidence:     confidence,
 		ContextSummary: contextSummary,
+		GeneratedAt:    time.Now(),
 	}
 
-	// Persist
-	if err := s.repo.Upsert(ctx, rec); err != nil {
-		return nil, err
-	}
 	return rec, nil
 }
 
@@ -228,35 +340,151 @@ func buildContextSummary(ec *exportcase.ExportCase, cd *costing.CostData, pr *pr
 
 func buildPrompt(contextSummary, kbContext, question string) string {
 	return fmt.Sprintf(`You are EXORA, an expert export trade decision advisor for Indonesian SMEs.
-Use the export case details and knowledge base context to answer the question directly.
-Avoid repeating generic boilerplate or returning the same fixed structure each time.
-Only base your recommendation on the data and knowledge provided.
+Your knowledge is strictly limited to the curated export knowledge base provided below.
+You must NOT make autonomous business decisions or provide unsupported recommendations.
 
 === EXPORT CASE CONTEXT ===
 %s
 
-=== KNOWLEDGE BASE ===
+=== CURATED KNOWLEDGE BASE ===
 %s
 
-=== QUESTION ===
+=== USER QUESTION ===
 %s
 
-Answer with concrete advice that is specific to this export case.
-If the question is about risk, discuss the most relevant risks and mitigation actions.
-If it is about pricing, include the most important pricing or incoterm decision.
-If it is about feasibility, make a clear judgment and mention the key factor driving that judgment.
+CRITICAL INSTRUCTIONS FOR OUT-OF-SCOPE AND COVERAGE LIMITATIONS:
+1. If the user's question is about a country or topic that is NOT covered by the curated knowledge base above, or is outside the export decision domain, you MUST respond exactly in the following way to guide the user:
+   "This question is outside the scope of the AI Decision Advisor.
 
-Preferred format:
-- Short summary statement
-- 2-3 concrete action items
-- One specific recommendation tied to the case data
+I can assist with:
+• Assess the export risk for Indonesia to Japan.
+• Recommend suitable payment terms for a new buyer.
+• Compare FOB and CIF for this shipment.
+• Explain the required export documents.
+• Recommend an appropriate trade finance method.
+• Identify key considerations when exporting to Vietnam.
+
+Please choose one of these topics or ask another export-related question."
+2. Avoid generating unsupported business recommendations or conclusions.
+3. If providing general informational guidance, clearly indicate that the information is not part of the curated knowledge base and should not be considered an official business recommendation.
+4. When the question is within the scope and covered, answer with concrete advice that is specific to this export case, with the following preferred format:
+   - Short summary statement
+   - 2-3 concrete action items
+   - One specific recommendation tied to the case data
 `, contextSummary, kbContext, question)
 }
 
-func snippetSources(snippets []string) []string {
-	sources := make([]string, len(snippets))
-	for i := range snippets {
-		sources[i] = fmt.Sprintf("knowledge-base snippet %d", i+1)
+const outOfScopeResponse = `This question is outside the scope of the AI Decision Advisor.
+
+I can assist with:
+• Assess the export risk for Indonesia to Japan.
+• Recommend suitable payment terms for a new buyer.
+• Compare FOB and CIF for this shipment.
+• Explain the required export documents.
+• Recommend an appropriate trade finance method.
+• Identify key considerations when exporting to Vietnam.
+
+Please choose one of these topics or ask another export-related question.`
+
+func isExportDomain(query string) bool {
+	queryLower := strings.ToLower(query)
+	// Broad vocabulary of export/trade domain terms
+	domainVocab := map[string]bool{
+		"export": true, "exporter": true, "ekspor": true, "import": true, "impor": true,
+		"buyer": true, "supplier": true, "shipment": true, "incoterm": true, "fob": true,
+		"cif": true, "lc": true, "tt": true, "payment": true, "freight": true, "trade": true,
+		"finance": true, "customs": true, "commodity": true, "feasibility": true, "risk": true,
+		"risiko": true, "logistics": true, "cargo": true, "document": true, "dokumen": true,
+		"compliance": true, "regulasi": true, "regulation": true, "tariff": true, "tax": true,
+		"pabean": true, "advisory": true, "recommendation": true, "korea": true, "singapore": true,
+		"singapura": true, "malaysia": true, "thailand": true, "vietnam": true, "usa": true,
+		"india": true, "japan": true, "jepang": true, "china": true, "cina": true,
+		"uae": true, "indonesia": true,
 	}
-	return sources
+
+	// Tokenize query
+	words := strings.FieldsFunc(queryLower, func(r rune) bool {
+		return !((r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9'))
+	})
+
+	score := 0
+	for _, w := range words {
+		if domainVocab[w] {
+			score++
+		}
+	}
+
+	// Also check common multi-word phrases
+	phrases := []string{
+		"letter of credit", "payment term", "trade finance", "bill of lading",
+		"certificate of origin", "destination country", "marine insurance", "cargo insurance",
+	}
+	for _, p := range phrases {
+		if strings.Contains(queryLower, p) {
+			score += 2
+		}
+	}
+
+	return score > 0
+}
+
+func isGreeting(query string) bool {
+	q := strings.TrimSpace(strings.ToLower(query))
+	return q == "hi" || q == "hello" || q == "halo" || q == "hey"
+}
+
+func extractCountryFromQuery(query string) string {
+	queryLower := strings.ToLower(query)
+	countries := []string{
+		"south korea", "korea", "singapore", "singapura", "malaysia", "thailand",
+		"vietnam", "usa", "america", "india", "japan", "jepang", "china", "cina",
+		"uae", "emirat", "indonesia", "germany", "jerman", "france", "prancis",
+		"brazil", "russia", "rusia", "australia", "uk", "united kingdom", "inggris",
+		"canada", "kanada", "italy", "italia", "spain", "spanyol", "mexico", "meksiko",
+	}
+	for _, c := range countries {
+		if hasWordBoundary(queryLower, c) {
+			return c
+		}
+	}
+	return ""
+}
+
+func isUnsupportedCountry(country string) bool {
+	if country == "" {
+		return false
+	}
+	c := strings.ToLower(country)
+	supported := map[string]bool{
+		"south korea": true, "south_korea": true, "korea": true,
+		"singapore": true, "singapura": true, "malaysia": true, "thailand": true,
+		"vietnam": true, "usa": true, "america": true, "india": true,
+		"japan": true, "jepang": true, "china": true, "cina": true,
+		"uae": true, "emirat": true, "indonesia": true,
+	}
+	return !supported[c]
+}
+
+func hasWordBoundary(text, word string) bool {
+	idx := strings.Index(text, word)
+	if idx == -1 {
+		return false
+	}
+	for idx != -1 {
+		startOK := idx == 0 || !isAlphaNumByte(text[idx-1])
+		endOK := idx+len(word) == len(text) || !isAlphaNumByte(text[idx+len(word)])
+		if startOK && endOK {
+			return true
+		}
+		nextIdx := strings.Index(text[idx+1:], word)
+		if nextIdx == -1 {
+			break
+		}
+		idx = idx + 1 + nextIdx
+	}
+	return false
+}
+
+func isAlphaNumByte(c byte) bool {
+	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')
 }
