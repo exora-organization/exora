@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiOwner } from "../../../lib/api/owner";
 import { Card, CardHeader, CardTitle, CardContent } from "../../../components/ui/card";
@@ -7,9 +8,25 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Badge } from "../../../components/ui/badge";
 import { Button } from "../../../components/ui/button";
 import { InviteMemberDialog } from "../../../components/owner/InviteMemberDialog";
+import { ConfirmWarningDialog } from "../../../components/ui/confirm-warning-dialog";
 
 export default function TeamManagementPage() {
   const queryClient = useQueryClient();
+
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    actionLabel?: string;
+    severity?: "info" | "warning" | "danger";
+    confirmText?: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: "",
+    description: "",
+    onConfirm: () => {},
+  });
 
   const { data: teamData, isLoading: teamLoading } = useQuery({
     queryKey: ["team-members"],
@@ -36,6 +53,7 @@ export default function TeamManagementPage() {
     mutationFn: ({ userId, role }: { userId: string; role: string }) => apiOwner.changeRole(userId, role),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["team-members"] });
+      setConfirmDialog(prev => ({ ...prev, isOpen: false }));
     },
     onError: (err: any) => {
       alert(err.message || "Failed to update role.");
@@ -46,6 +64,7 @@ export default function TeamManagementPage() {
     mutationFn: ({ userId, status }: { userId: string; status: string }) => apiOwner.updateMember(userId, { status }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["team-members"] });
+      setConfirmDialog(prev => ({ ...prev, isOpen: false }));
     },
     onError: (err: any) => {
       alert(err.message || "Failed to update status.");
@@ -56,6 +75,7 @@ export default function TeamManagementPage() {
     mutationFn: (userId: string) => apiOwner.removeMember(userId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["team-members"] });
+      setConfirmDialog(prev => ({ ...prev, isOpen: false }));
       alert("Member removed successfully!");
     },
     onError: (err: any) => {
@@ -63,23 +83,53 @@ export default function TeamManagementPage() {
     }
   });
 
-  const handleRoleChange = (userId: string, role: string) => {
-    roleMutation.mutate({ userId, role });
+  const handleRoleChange = (userId: string, name: string, role: string) => {
+    setConfirmDialog({
+      isOpen: true,
+      title: "Change Team Role",
+      description: `Are you sure you want to change the role of ${name} to ${role.replace("_", " ").toUpperCase()}? This will alter their read/write permissions for costing and financial records immediately.`,
+      actionLabel: "Change Role",
+      severity: "warning",
+      onConfirm: () => {
+        roleMutation.mutate({ userId, role });
+      }
+    });
   };
 
-  const handleStatusToggle = (userId: string, currentStatus: string) => {
+  const handleStatusToggle = (userId: string, name: string, currentStatus: string) => {
     const nextStatus = currentStatus === "active" ? "disabled" : "active";
-    statusMutation.mutate({ userId, status: nextStatus });
+    setConfirmDialog({
+      isOpen: true,
+      title: nextStatus === "disabled" ? "Disable Member Access" : "Enable Member Access",
+      description: nextStatus === "disabled"
+        ? `Are you sure you want to disable access for ${name}? They will immediately lose access to the portal until reactivated.`
+        : `Are you sure you want to restore access for ${name}?`,
+      actionLabel: nextStatus === "disabled" ? "Disable Access" : "Enable Access",
+      severity: nextStatus === "disabled" ? "danger" : "info",
+      onConfirm: () => {
+        statusMutation.mutate({ userId, status: nextStatus });
+      }
+    });
   };
 
-  const handleRemoveMember = (userId: string) => {
-    if (confirm("Are you sure you want to remove this team member? This action cannot be undone.")) {
-      removeMutation.mutate(userId);
-    }
+  const handleRemoveMember = (userId: string, name: string) => {
+    setConfirmDialog({
+      isOpen: true,
+      title: "Remove Team Member",
+      description: `WARNING: Removing ${name} from your team is permanent. They will lose access to all company files, dashboards, and export cases immediately.`,
+      actionLabel: "Remove Member",
+      severity: "danger",
+      confirmText: "REMOVE",
+      onConfirm: () => {
+        removeMutation.mutate(userId);
+      }
+    });
   };
 
   const teamMembers = teamData?.data?.items || [];
   const invitations = invitesData?.data?.items || [];
+
+  const isMutationPending = roleMutation.isPending || statusMutation.isPending || removeMutation.isPending;
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
@@ -129,7 +179,7 @@ export default function TeamManagementPage() {
                             <select
                               value={member.role}
                               disabled={roleMutation.isPending && roleMutation.variables?.userId === member.userId}
-                              onChange={(e) => handleRoleChange(member.userId, e.target.value)}
+                              onChange={(e) => handleRoleChange(member.userId, member.displayName || member.email, e.target.value)}
                               className="bg-transparent border border-[#E8E3D9] rounded px-2.5 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500/50"
                             >
                               <option value="export_manager">Export Manager</option>
@@ -143,7 +193,7 @@ export default function TeamManagementPage() {
                           ) : (
                             <button
                               disabled={statusMutation.isPending && statusMutation.variables?.userId === member.userId}
-                              onClick={() => handleStatusToggle(member.userId, member.status)}
+                              onClick={() => handleStatusToggle(member.userId, member.displayName || member.email, member.status)}
                               className={`px-3 py-0.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
                                 member.status === "active"
                                   ? "bg-green-50 border-green-200 text-green-700 hover:bg-green-100 disabled:opacity-50"
@@ -160,8 +210,8 @@ export default function TeamManagementPage() {
                               variant="ghost"
                               size="sm"
                               disabled={removeMutation.isPending && removeMutation.variables === member.userId}
-                              className="text-red-500 hover:text-red-700 hover:bg-red-50 disabled:opacity-50"
-                              onClick={() => handleRemoveMember(member.userId)}
+                              className="text-red-500 hover:text-red-700 hover:bg-red-50 disabled:opacity-50 cursor-pointer"
+                              onClick={() => handleRemoveMember(member.userId, member.displayName || member.email)}
                             >
                               Remove
                             </Button>
@@ -231,6 +281,18 @@ export default function TeamManagementPage() {
           )}
         </CardContent>
       </Card>
+
+      <ConfirmWarningDialog
+        isOpen={confirmDialog.isOpen}
+        onOpenChange={(open) => setConfirmDialog(prev => ({ ...prev, isOpen: open }))}
+        onConfirm={confirmDialog.onConfirm}
+        title={confirmDialog.title}
+        description={confirmDialog.description}
+        actionLabel={confirmDialog.actionLabel}
+        severity={confirmDialog.severity}
+        confirmText={confirmDialog.confirmText}
+        isLoading={isMutationPending}
+      />
     </div>
   );
 }

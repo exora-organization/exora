@@ -9,11 +9,27 @@ import { Badge } from "../../../components/ui/badge";
 import { apiUsers } from "../../../lib/api/users";
 import { UserProfile } from "../../../lib/types/user";
 import { useUserProfile } from "../../../hooks/useUserProfile";
+import { ConfirmWarningDialog } from "../../../components/ui/confirm-warning-dialog";
 
 export default function UserManagementPage() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const { firebaseUser, loading: authLoading } = useUserProfile();
+
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    actionLabel?: string;
+    severity?: "info" | "warning" | "danger";
+    confirmText?: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: "",
+    description: "",
+    onConfirm: () => {},
+  });
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["admin-users"],
@@ -27,6 +43,7 @@ export default function UserManagementPage() {
       apiUsers.updateUser(userId, { status }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      setConfirmDialog(prev => ({ ...prev, isOpen: false }));
     }
   });
 
@@ -35,6 +52,7 @@ export default function UserManagementPage() {
       apiUsers.changeRole(userId, role),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      setConfirmDialog(prev => ({ ...prev, isOpen: false }));
     }
   });
 
@@ -42,6 +60,7 @@ export default function UserManagementPage() {
     mutationFn: (userId: string) => apiUsers.deleteUser(userId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      setConfirmDialog(prev => ({ ...prev, isOpen: false }));
     }
   });
 
@@ -53,6 +72,8 @@ export default function UserManagementPage() {
     u.displayName?.toLowerCase().includes(search.toLowerCase()) || 
     u.email.toLowerCase().includes(search.toLowerCase())
   );
+
+  const isMutationPending = updateStatusMutation.isPending || changeRoleMutation.isPending || deleteUserMutation.isPending;
 
   return (
     <div className="space-y-6">
@@ -116,9 +137,16 @@ export default function UserManagementPage() {
                         className="font-bold text-blue-600 border-blue-200 hover:bg-blue-50 transition-colors"
                         onClick={() => {
                           const newRole = user.role === "export_manager" ? "finance_staff" : "export_manager";
-                          if (confirm(`Change role to ${newRole}?`)) {
-                            changeRoleMutation.mutate({ userId: user.userId, role: newRole });
-                          }
+                          setConfirmDialog({
+                            isOpen: true,
+                            title: "Change User Role",
+                            description: `Are you sure you want to change the role of ${user.displayName || user.email} to ${newRole.replace("_", " ").toUpperCase()}? This will update their permissions immediately.`,
+                            actionLabel: "Change Role",
+                            severity: "warning",
+                            onConfirm: () => {
+                              changeRoleMutation.mutate({ userId: user.userId, role: newRole });
+                            }
+                          });
                         }}
                         disabled={changeRoleMutation.isPending}
                       >
@@ -131,9 +159,18 @@ export default function UserManagementPage() {
                         className="font-bold transition-colors"
                         onClick={() => {
                           const newStatus = user.status === "active" ? "disabled" : "active";
-                          if (confirm(`Change status to ${newStatus}?`)) {
-                            updateStatusMutation.mutate({ userId: user.userId, status: newStatus });
-                          }
+                          setConfirmDialog({
+                            isOpen: true,
+                            title: newStatus === "disabled" ? "Disable User Account" : "Enable User Account",
+                            description: newStatus === "disabled"
+                              ? `Are you sure you want to disable the account of ${user.displayName || user.email}? This will temporarily restrict their access to the EXORA portal immediately.`
+                              : `Are you sure you want to restore access to the account of ${user.displayName || user.email}?`,
+                            actionLabel: newStatus === "disabled" ? "Disable" : "Enable",
+                            severity: newStatus === "disabled" ? "danger" : "info",
+                            onConfirm: () => {
+                              updateStatusMutation.mutate({ userId: user.userId, status: newStatus });
+                            }
+                          });
                         }}
                         disabled={updateStatusMutation.isPending}
                       >
@@ -145,9 +182,17 @@ export default function UserManagementPage() {
                         size="sm"
                         className="font-bold hover:bg-red-700 transition-colors"
                         onClick={() => {
-                          if (confirm("Are you sure you want to delete this user? This cannot be undone.")) {
-                            deleteUserMutation.mutate(user.userId);
-                          }
+                          setConfirmDialog({
+                            isOpen: true,
+                            title: "Permanently Delete User Profile",
+                            description: `WARNING: You are about to permanently delete the profile of ${user.displayName || user.email} (${user.userId}). All access will be revoked, and this cannot be undone.`,
+                            actionLabel: "Delete User",
+                            severity: "danger",
+                            confirmText: "DELETE",
+                            onConfirm: () => {
+                              deleteUserMutation.mutate(user.userId);
+                            }
+                          });
                         }}
                         disabled={deleteUserMutation.isPending}
                       >
@@ -161,6 +206,18 @@ export default function UserManagementPage() {
           </TableBody>
         </Table>
       </div>
+
+      <ConfirmWarningDialog
+        isOpen={confirmDialog.isOpen}
+        onOpenChange={(open) => setConfirmDialog(prev => ({ ...prev, isOpen: open }))}
+        onConfirm={confirmDialog.onConfirm}
+        title={confirmDialog.title}
+        description={confirmDialog.description}
+        actionLabel={confirmDialog.actionLabel}
+        severity={confirmDialog.severity}
+        confirmText={confirmDialog.confirmText}
+        isLoading={isMutationPending}
+      />
     </div>
   );
 }
