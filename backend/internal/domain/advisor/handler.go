@@ -64,3 +64,49 @@ func (h *Handler) GetRecommendation(w http.ResponseWriter, r *http.Request) {
 	}
 	response.JSON(w, http.StatusOK, map[string]any{"caseId": caseID, "recommendation": rec})
 }
+
+// CreateGlobalRecommendation handles POST /v1/advisor/recommendations.
+func (h *Handler) CreateGlobalRecommendation(w http.ResponseWriter, r *http.Request) {
+	u, ok := actor.FromContext(r.Context())
+	if !ok {
+		response.Error(w, apperror.ErrUnauthenticated)
+		return
+	}
+	companyID := u.CompanyID
+	if companyID == "" {
+		response.Error(w, apperror.ErrForbidden)
+		return
+	}
+
+	var req GenerateRequest
+	_ = json.NewDecoder(r.Body).Decode(&req)
+
+	rec, err := h.service.GenerateGlobal(r.Context(), companyID, req)
+	if err != nil {
+		response.Error(w, err)
+		return
+	}
+	response.JSON(w, http.StatusOK, map[string]any{"caseId": "global", "recommendation": rec})
+}
+
+// GetGlobalRecommendation handles GET /v1/advisor/recommendations.
+func (h *Handler) GetGlobalRecommendation(w http.ResponseWriter, r *http.Request) {
+	u, ok := actor.FromContext(r.Context())
+	if !ok {
+		response.Error(w, apperror.ErrUnauthenticated)
+		return
+	}
+	companyID := u.CompanyID
+	if companyID == "" {
+		response.Error(w, apperror.ErrForbidden)
+		return
+	}
+
+	rec, err := h.service.GetGlobal(r.Context(), companyID)
+	if err != nil {
+		response.Error(w, err)
+		return
+	}
+	response.JSON(w, http.StatusOK, map[string]any{"caseId": "global", "recommendation": rec})
+}
+

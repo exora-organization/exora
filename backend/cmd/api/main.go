@@ -29,6 +29,7 @@ import (
 	firestoreclient "github.com/exora/backend/internal/platform/firestore"
 	"github.com/exora/backend/internal/platform/gemini"
 	"github.com/exora/backend/internal/router"
+	"golang.org/x/time/rate"
 )
 
 func main() {
@@ -74,7 +75,7 @@ func main() {
 	documentRepo := document.NewFirestoreRepository(fsClient.Client)
 
 	// ── Services ──────────────────────────────────────────────────────────────
-	authSvc := auth.NewService(userRepo, companyRepo)
+	authSvc := auth.NewService(userRepo, companyRepo, cfg.TurnstileSecretKey)
 	companySvc := company.NewService(companyRepo)
 	adminSvc := admin.NewService(adminRepo, companyRepo, userRepo)
 	userSvc := user.NewService(userRepo, companyRepo, cfg.AppBaseURL)
@@ -104,11 +105,12 @@ func main() {
 		exportCaseRepo,
 		cfg.AppBaseURL,
 	)
-	analyticsSvc := analytics.NewService(exportCaseRepo)
+	analyticsSvc := analytics.NewService(exportCaseRepo, userRepo, riskRepo)
 
 	// ── Middleware ────────────────────────────────────────────────────────────
 	firebaseMW := middleware.NewFirebaseMiddleware(fbAuth)
 	authMW := middleware.NewAuthMiddleware(userRepo)
+	rateLimiter := middleware.NewRateLimiter(rate.Limit(5.0/60.0), 10)
 	auditRepo := &admin.AuditRepository{Repo: adminRepo}
 
 	invitationHandler := invitation.NewHandler(invitationSvc)
@@ -118,6 +120,7 @@ func main() {
 			Config:         cfg,
 			Firebase:       firebaseMW,
 			Auth:           authMW,
+			RateLimiter:    rateLimiter,
 			AuditLogger:    auditRepo,
 			ExportCaseRepo: exportCaseRepo,
 		},
