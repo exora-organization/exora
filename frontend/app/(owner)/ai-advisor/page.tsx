@@ -43,11 +43,12 @@ export default function AiAdvisorPage() {
       const askedQuestion = question.trim();
       setQuestion("");
 
+      // Immediately add to chat history so the UI updates right away
       if (data?.data?.recommendation) {
         setChatHistory((prev) => [
           {
             question: askedQuestion || "Generate Global Strategy Report",
-            recommendation: data.data!.recommendation,
+            recommendation: data.data.recommendation,
           },
           ...prev,
         ]);
