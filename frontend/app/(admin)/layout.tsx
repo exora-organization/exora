@@ -2,11 +2,13 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ProtectedRoute } from "../../components/auth/ProtectedRoute";
 import { RoleGuard } from "../../components/auth/RoleGuard";
 import { useUserProfile } from "../../hooks/useUserProfile";
 import { LogoutButton } from "../../components/ui/logout-button";
+import logoImg from "../../public/logo.png";
 import { 
   LayoutDashboard, 
   Building, 
@@ -14,7 +16,7 @@ import {
   Activity, 
   FileText, 
   Wallet, 
-  Settings,
+  User,
   LogOut
 } from "lucide-react";
 
@@ -28,24 +30,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: "User Management", href: "/users", icon: Users },
     { name: "System Monitoring", href: "/system-monitoring", icon: Activity },
     { name: "Audit Logs", href: "/audit-logs", icon: FileText },
+    { name: "Account", href: "/profile", icon: User },
   ];
 
   return (
     <ProtectedRoute>
       <RoleGuard allowedRoles={["admin"]}>
-        <div className="min-h-screen flex flex-col md:flex-row bg-[#eef8f2] md:bg-gradient-to-br from-[#e6f5eb] to-[#e0f0f8]">
+        <div className="min-h-screen flex flex-col md:flex-row bg-[#FAF8F3] md:bg-gradient-to-br from-[#FAF8F3] to-[#F5F8F6]">
           
           {/* Sidebar */}
-          <aside className="w-full md:w-64 bg-white md:min-h-screen flex flex-col shadow-sm border-r border-gray-100 z-10">
+          <aside className="w-full md:w-64 bg-white md:min-h-screen flex flex-col shadow-sm border-r border-[#E8E3D9] z-10">
             {/* Logo Area */}
             <div className="p-6">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-teal-700 flex items-center justify-center text-white font-bold text-lg">
-                  E
+                <div className="relative w-8 h-8 flex items-center justify-center shrink-0">
+                  <Image src={logoImg} alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
-                <h1 className="text-xl font-bold tracking-tight text-slate-800">EXORA <span className="font-medium">Admin</span></h1>
+                <h1 className="text-xl font-extrabold tracking-tight text-[#1F2937]">EXORA</h1>
               </div>
-              <p className="text-xs text-slate-500 mt-1 ml-10">Centralized Monitoring</p>
+              <p className="text-xs text-[#9CA3AF] mt-1 ml-10">Centralized Monitoring</p>
             </div>
 
             {/* Navigation */}
@@ -59,8 +62,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     href={item.href} 
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-sm font-medium ${
                       isActive 
-                        ? "bg-[#e6f5eb] text-[#0a8c4f]" 
-                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                        ? "bg-[#F5F8F6] text-[#2F6B4F]" 
+                        : "text-[#4B5563] hover:bg-[#FAF8F3] hover:text-[#1F2937]"
                     }`}
                   >
                     <Icon className="w-5 h-5" />
@@ -73,27 +76,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             {/* Bottom Profile Area */}
             <div className="p-4 mt-auto">
               {/* User Info */}
-              <div className="flex items-center gap-3 px-4 py-3 mb-2">
+              <Link href="/profile" className="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl transition-colors hover:bg-[#FAF8F3] cursor-pointer">
                 <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden flex-shrink-0">
-                  <div className="w-full h-full flex items-center justify-center bg-[#0a8c4f] text-white font-medium">
+                  <div className="w-full h-full flex items-center justify-center bg-[#2F6B4F] text-white font-medium">
                     {profile?.displayName?.charAt(0) || "A"}
                   </div>
                 </div>
                 <div className="flex flex-col overflow-hidden">
-                  <span className="text-sm font-bold text-slate-800 truncate">{profile?.displayName || "Sheryl Admin"}</span>
-                  <span className="text-xs text-slate-500 truncate">System Lead</span>
+                  <span className="text-sm font-bold text-[#1F2937] truncate">{profile?.displayName || "Sheryl Admin"}</span>
+                  <span className="text-xs text-[#9CA3AF] truncate">System Lead</span>
                 </div>
-              </div>
+              </Link>
 
-              {/* Settings & Logout */}
+              {/* Logout */}
               <div className="space-y-1">
-                <Link 
-                  href="/admin-dashboard/settings" 
-                  className="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                >
-                  <Settings className="w-5 h-5" />
-                  Settings
-                </Link>
                 <div className="px-4 py-2 flex items-center">
                   <LogoutButton />
                 </div>

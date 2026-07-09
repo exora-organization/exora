@@ -72,7 +72,7 @@ export default function ExportCaseDetailPage() {
             <Badge variant={exportCase.status === "finalized" ? "secondary" : exportCase.status === "in_review" ? "default" : "outline"}>
               {exportCase.status.replace("_", " ").toUpperCase()}
             </Badge>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-[#9CA3AF]">
               Created {new Date(exportCase.createdAt).toLocaleDateString()}
             </span>
           </div>
@@ -113,15 +113,15 @@ export default function ExportCaseDetailPage() {
           <Card>
             <CardContent className="p-6 space-y-4">
               <div>
-                <p className="text-sm text-gray-500">Product</p>
+                <p className="text-sm text-[#9CA3AF]">Product</p>
                 <p className="font-medium text-lg">{exportCase.product}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Destination Country</p>
+                <p className="text-sm text-[#9CA3AF]">Destination Country</p>
                 <p className="font-medium text-lg">{exportCase.destinationCountry}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Feasibility Score</p>
+                <p className="text-sm text-[#9CA3AF]">Feasibility Score</p>
                 <p className="font-medium text-lg">
                   {exportCase.feasibilityScore !== undefined && exportCase.feasibilityScore !== null 
                     ? `${exportCase.feasibilityScore.toFixed(1)} / 10` 
@@ -134,83 +134,83 @@ export default function ExportCaseDetailPage() {
           <h3 className="text-xl font-semibold mt-8 mb-4">Export Analysis Pipeline</h3>
           <div className="grid sm:grid-cols-2 gap-4">
             <Link href={`/export-case/${caseId}/costing`}>
-              <Card className="hover:bg-gray-50 transition-colors h-full">
+              <Card className="hover:bg-[#FAF8F3] transition-colors h-full">
                 <CardContent className="p-4 flex flex-col justify-between h-full">
                   <div>
-                    <h4 className="font-semibold text-slate-800">1. Costing</h4>
-                    <p className="text-xs text-gray-500 mt-1">Input direct and indirect costs to calculate total expenses.</p>
+                    <h4 className="font-semibold text-[#1F2937]">1. Costing</h4>
+                    <p className="text-xs text-[#9CA3AF] mt-1">Input direct and indirect costs to calculate total expenses.</p>
                   </div>
-                  <div className="text-slate-400 self-end mt-2">&rarr;</div>
+                  <div className="text-[#9CA3AF] self-end mt-2">&rarr;</div>
                 </CardContent>
               </Card>
             </Link>
 
             <Link href={`/export-case/${caseId}/pricing`}>
-              <Card className="hover:bg-gray-50 transition-colors h-full">
+              <Card className="hover:bg-[#FAF8F3] transition-colors h-full">
                 <CardContent className="p-4 flex flex-col justify-between h-full">
                   <div>
-                    <h4 className="font-semibold text-slate-800">2. Pricing & Incoterms</h4>
-                    <p className="text-xs text-gray-500 mt-1">Select Incoterms and calculate your export pricing strategy.</p>
+                    <h4 className="font-semibold text-[#1F2937]">2. Pricing & Incoterms</h4>
+                    <p className="text-xs text-[#9CA3AF] mt-1">Select Incoterms and calculate your export pricing strategy.</p>
                   </div>
-                  <div className="text-slate-400 self-end mt-2">&rarr;</div>
+                  <div className="text-[#9CA3AF] self-end mt-2">&rarr;</div>
                 </CardContent>
               </Card>
             </Link>
 
             <Link href={`/export-case/${caseId}/financial`}>
-              <Card className="hover:bg-gray-50 transition-colors h-full">
+              <Card className="hover:bg-[#FAF8F3] transition-colors h-full">
                 <CardContent className="p-4 flex flex-col justify-between h-full">
                   <div>
-                    <h4 className="font-semibold text-slate-800">3. Financial Analysis</h4>
-                    <p className="text-xs text-gray-500 mt-1">Review profitability margins and break-even points.</p>
+                    <h4 className="font-semibold text-[#1F2937]">3. Financial Analysis</h4>
+                    <p className="text-xs text-[#9CA3AF] mt-1">Review profitability margins and break-even points.</p>
                   </div>
-                  <div className="text-slate-400 self-end mt-2">&rarr;</div>
+                  <div className="text-[#9CA3AF] self-end mt-2">&rarr;</div>
                 </CardContent>
               </Card>
             </Link>
 
             <Link href={`/export-case/${caseId}/scenario`}>
-              <Card className="hover:bg-gray-50 transition-colors h-full">
+              <Card className="hover:bg-[#FAF8F3] transition-colors h-full">
                 <CardContent className="p-4 flex flex-col justify-between h-full">
                   <div>
-                    <h4 className="font-semibold text-slate-800">4. Scenario Analysis</h4>
-                    <p className="text-xs text-gray-500 mt-1">Simulate what-if financial scenarios for the export.</p>
+                    <h4 className="font-semibold text-[#1F2937]">4. Scenario Analysis</h4>
+                    <p className="text-xs text-[#9CA3AF] mt-1">Simulate what-if financial scenarios for the export.</p>
                   </div>
-                  <div className="text-slate-400 self-end mt-2">&rarr;</div>
+                  <div className="text-[#9CA3AF] self-end mt-2">&rarr;</div>
                 </CardContent>
               </Card>
             </Link>
 
             <Link href={`/export-case/${caseId}/risk`}>
-              <Card className="hover:bg-gray-50 transition-colors h-full">
+              <Card className="hover:bg-[#FAF8F3] transition-colors h-full">
                 <CardContent className="p-4 flex flex-col justify-between h-full">
                   <div>
-                    <h4 className="font-semibold text-slate-800">5. Risk Assessment</h4>
-                    <p className="text-xs text-gray-500 mt-1">Evaluate market, operational, and financial risks.</p>
+                    <h4 className="font-semibold text-[#1F2937]">5. Risk Assessment</h4>
+                    <p className="text-xs text-[#9CA3AF] mt-1">Evaluate market, operational, and financial risks.</p>
                   </div>
-                  <div className="text-slate-400 self-end mt-2">&rarr;</div>
+                  <div className="text-[#9CA3AF] self-end mt-2">&rarr;</div>
                 </CardContent>
               </Card>
             </Link>
 
             <Link href={`/export-case/${caseId}/feasibility`}>
-              <Card className="hover:bg-gray-50 transition-colors h-full">
+              <Card className="hover:bg-[#FAF8F3] transition-colors h-full">
                 <CardContent className="p-4 flex flex-col justify-between h-full">
                   <div>
-                    <h4 className="font-semibold text-slate-800">6. Feasibility Score</h4>
-                    <p className="text-xs text-gray-500 mt-1">View the overall quantitative feasibility score.</p>
+                    <h4 className="font-semibold text-[#1F2937]">6. Feasibility Score</h4>
+                    <p className="text-xs text-[#9CA3AF] mt-1">View the overall quantitative feasibility score.</p>
                   </div>
-                  <div className="text-slate-400 self-end mt-2">&rarr;</div>
+                  <div className="text-[#9CA3AF] self-end mt-2">&rarr;</div>
                 </CardContent>
               </Card>
             </Link>
 
             <Link href={`/export-case/${caseId}/advisor`}>
-              <Card className="hover:bg-gray-50 transition-colors h-full">
+              <Card className="hover:bg-[#FAF8F3] transition-colors h-full">
                 <CardContent className="p-4 flex flex-col justify-between h-full">
                   <div>
                     <h4 className="font-semibold text-indigo-700">7. AI Recommendation</h4>
-                    <p className="text-xs text-gray-500 mt-1">Get strategic AI advice based on your case data.</p>
+                    <p className="text-xs text-[#9CA3AF] mt-1">Get strategic AI advice based on your case data.</p>
                   </div>
                   <div className="text-indigo-400 self-end mt-2">&rarr;</div>
                 </CardContent>
@@ -218,13 +218,13 @@ export default function ExportCaseDetailPage() {
             </Link>
 
             <Link href={`/export-case/${caseId}/documents`}>
-              <Card className="hover:bg-gray-50 transition-colors h-full">
+              <Card className="hover:bg-[#FAF8F3] transition-colors h-full">
                 <CardContent className="p-4 flex flex-col justify-between h-full">
                   <div>
-                    <h4 className="font-semibold text-slate-800">8. Document Generation</h4>
-                    <p className="text-xs text-gray-500 mt-1">Generate and download essential export documents.</p>
+                    <h4 className="font-semibold text-[#1F2937]">8. Document Generation</h4>
+                    <p className="text-xs text-[#9CA3AF] mt-1">Generate and download essential export documents.</p>
                   </div>
-                  <div className="text-slate-400 self-end mt-2">&rarr;</div>
+                  <div className="text-[#9CA3AF] self-end mt-2">&rarr;</div>
                 </CardContent>
               </Card>
             </Link>

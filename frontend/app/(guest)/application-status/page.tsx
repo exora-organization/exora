@@ -35,7 +35,7 @@ export default function ApplicationStatusPage() {
   const PrimaryButton = ({ onClick, children }: { onClick: () => void, children: React.ReactNode }) => (
     <Button 
       onClick={onClick}
-      className="w-full h-12 bg-gradient-to-r from-[#0a9b5c] to-[#08824d] hover:from-[#08824d] hover:to-[#06683e] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 mt-4"
+      className="w-full h-12 bg-gradient-to-r from-[#2F6B4F] to-[#25563F] hover:from-[#25563F] hover:to-[#25563F] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 mt-4"
     >
       {children}
     </Button>
@@ -45,7 +45,7 @@ export default function ApplicationStatusPage() {
     <Button 
       variant="outline"
       onClick={onClick}
-      className="w-full h-12 rounded-xl border-gray-200 text-gray-700 font-bold hover:bg-gray-50 transition-colors mt-4"
+      className="w-full h-12 rounded-xl border-[#E8E3D9] text-[#4B5563] font-bold hover:bg-[#FAF8F3] transition-colors mt-4"
     >
       {children}
     </Button>
@@ -58,8 +58,8 @@ export default function ApplicationStatusPage() {
           <div className="flex justify-center items-center h-24 mb-2">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0a9b5c]"></div>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-1 tracking-tight">Checking Status</h2>
-          <p className="text-sm text-gray-500">Please wait a moment...</p>
+          <h2 className="text-2xl font-bold text-[#1F2937] mb-1 tracking-tight">Checking Status</h2>
+          <p className="text-sm text-[#9CA3AF]">Please wait a moment...</p>
         </div>
       </Wrapper>
     );
@@ -70,7 +70,7 @@ export default function ApplicationStatusPage() {
       <Wrapper>
         <div className="text-center pt-6 pb-6">
           <h2 className="text-2xl font-bold text-red-600 mb-1 tracking-tight">Error</h2>
-          <p className="text-sm text-gray-500 mb-6">Failed to load application status.</p>
+          <p className="text-sm text-[#9CA3AF] mb-6">Failed to load application status.</p>
           <SecondaryButton onClick={() => refetch()}>
             RETRY
           </SecondaryButton>
@@ -86,8 +86,8 @@ export default function ApplicationStatusPage() {
     return (
       <Wrapper>
         <div className="text-center pt-6 pb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-1 tracking-tight">No Application</h2>
-          <p className="text-sm text-gray-500 mb-6">You haven't submitted a company application yet.</p>
+          <h2 className="text-2xl font-bold text-[#1F2937] mb-1 tracking-tight">No Application</h2>
+          <p className="text-sm text-[#9CA3AF] mb-6">You haven't submitted a company application yet.</p>
           <PrimaryButton onClick={() => router.push("/company-application")}>
             APPLY NOW
           </PrimaryButton>
@@ -101,10 +101,10 @@ export default function ApplicationStatusPage() {
       return (
         <Wrapper>
           <div className="text-center pt-2 pb-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-1 tracking-tight">Application Pending</h2>
-            <p className="text-sm text-gray-500 mb-8">Your application is currently under review by our admin team.</p>
+            <h2 className="text-2xl font-bold text-[#1F2937] mb-1 tracking-tight">Application Pending</h2>
+            <p className="text-sm text-[#9CA3AF] mb-8">Your application is currently under review by our admin team.</p>
             
-            <div className="p-4 bg-[#eef3f7] text-gray-700 rounded-xl mb-6 text-sm">
+            <div className="p-4 bg-[#F5F8F6] text-[#4B5563] rounded-xl mb-6 text-sm">
               <p>We will notify you once your application has been processed.</p>
             </div>
             
@@ -120,9 +120,9 @@ export default function ApplicationStatusPage() {
         <Wrapper>
           <div className="text-center pt-2 pb-6">
             <h2 className="text-2xl font-bold text-[#0a9b5c] mb-1 tracking-tight">Application Approved!</h2>
-            <p className="text-sm text-gray-500 mb-8">Congratulations, your company has been approved.</p>
+            <p className="text-sm text-[#9CA3AF] mb-8">Congratulations, your company has been approved.</p>
             
-            <p className="text-sm text-gray-600 mb-8 px-4">
+            <p className="text-sm text-[#4B5563] mb-8 px-4">
               You now have full access to EXORA as a Company Owner. 
               Click below to proceed to your new dashboard.
             </p>
@@ -147,9 +147,9 @@ export default function ApplicationStatusPage() {
         <Wrapper>
           <div className="text-center pt-2 pb-6">
             <h2 className="text-2xl font-bold text-red-600 mb-1 tracking-tight">Application Rejected</h2>
-            <p className="text-sm text-gray-500 mb-6">Unfortunately, your application was not approved.</p>
+            <p className="text-sm text-[#9CA3AF] mb-6">Unfortunately, your application was not approved.</p>
             
-            <p className="text-sm text-gray-600 px-4">
+            <p className="text-sm text-[#4B5563] px-4">
               Please contact support if you believe this was a mistake or if you need further clarification.
             </p>
           </div>
@@ -161,7 +161,7 @@ export default function ApplicationStatusPage() {
         <Wrapper>
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold text-amber-600 mb-1 tracking-tight">Revision Requested</h2>
-            <p className="text-sm text-gray-500">Please review the admin's feedback and resubmit your application.</p>
+            <p className="text-sm text-[#9CA3AF]">Please review the admin's feedback and resubmit your application.</p>
           </div>
           
           <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl text-amber-800 text-sm mb-8 text-left">

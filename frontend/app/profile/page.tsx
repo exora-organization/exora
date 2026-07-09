@@ -12,9 +12,9 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[calc(100vh-4rem)] p-4 bg-gray-50">
+      <div className="flex justify-center items-center min-h-[calc(100vh-4rem)] p-4 bg-[#FAF8F3]">
         <Card className="w-full max-w-2xl mx-auto shadow-md">
-          <CardHeader className="bg-slate-50 rounded-t-xl pb-10 flex flex-col items-center space-y-4">
+          <CardHeader className="bg-[#FAF8F3] rounded-t-xl pb-10 flex flex-col items-center space-y-4">
             <Skeleton className="h-20 w-20 rounded-full" />
             <Skeleton className="h-8 w-48" />
             <Skeleton className="h-4 w-32" />
@@ -37,7 +37,7 @@ export default function ProfilePage() {
 
   if (!isAuthenticated || !profile) {
     return (
-      <div className="flex justify-center items-center min-h-[calc(100vh-4rem)] p-4 bg-gray-50">
+      <div className="flex justify-center items-center min-h-[calc(100vh-4rem)] p-4 bg-[#FAF8F3]">
         <Alert variant="destructive" className="max-w-md">
           <AlertTitle>Not Authenticated</AlertTitle>
           <AlertDescription>You must be logged in to view your profile.</AlertDescription>
@@ -48,7 +48,7 @@ export default function ProfilePage() {
 
   return (
     <ProtectedRoute>
-      <div className="flex justify-center items-center min-h-[calc(100vh-4rem)] p-4 bg-gray-50">
+      <div className="flex justify-center items-center min-h-[calc(100vh-4rem)] p-4 bg-[#FAF8F3]">
         <ProfileCard profile={profile} />
       </div>
     </ProtectedRoute>

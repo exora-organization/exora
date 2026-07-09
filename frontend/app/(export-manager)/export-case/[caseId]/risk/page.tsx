@@ -62,30 +62,30 @@ export default function RiskAssessmentPage() {
           &larr; Back to Case Details
         </Link>
         <h2 className="text-3xl font-bold tracking-tight">Risk Assessment</h2>
-        <p className="text-gray-500 mt-1">Review the comprehensive risk analysis generated from your financial models.</p>
+        <p className="text-[#9CA3AF] mt-1">Review the comprehensive risk analysis generated from your financial models.</p>
       </div>
 
       {exportCase && (
-        <Card className="bg-slate-50">
+        <Card className="bg-[#FAF8F3]">
           <CardContent className="p-4 grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
             <div>
-              <p className="text-xs text-slate-500 font-medium">Case Name</p>
-              <p className="font-semibold text-slate-900 truncate">{exportCase.name}</p>
+              <p className="text-xs text-[#9CA3AF] font-medium">Case Name</p>
+              <p className="font-semibold text-[#1F2937] truncate">{exportCase.name}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-500 font-medium">Product</p>
-              <p className="font-semibold text-slate-900 truncate">{exportCase.product}</p>
+              <p className="text-xs text-[#9CA3AF] font-medium">Product</p>
+              <p className="font-semibold text-[#1F2937] truncate">{exportCase.product}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-500 font-medium">Destination</p>
-              <p className="font-semibold text-slate-900 truncate">{exportCase.destinationCountry}</p>
+              <p className="text-xs text-[#9CA3AF] font-medium">Destination</p>
+              <p className="font-semibold text-[#1F2937] truncate">{exportCase.destinationCountry}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-500 font-medium">Active Incoterm</p>
+              <p className="text-xs text-[#9CA3AF] font-medium">Active Incoterm</p>
               {activeIncoterm ? (
                 <Badge variant="default" className="mt-1">{activeIncoterm}</Badge>
               ) : (
-                <span className="text-sm text-gray-400 mt-1 block">Unknown</span>
+                <span className="text-sm text-[#9CA3AF] mt-1 block">Unknown</span>
               )}
             </div>
           </CardContent>
@@ -114,14 +114,14 @@ export default function RiskAssessmentPage() {
         <div className="space-y-6">
           <div className="flex items-center justify-between p-6 bg-slate-900 text-white rounded-lg shadow-sm">
             <div>
-              <p className="text-slate-400 text-sm font-medium uppercase tracking-wider mb-1">Overall Feasibility</p>
+              <p className="text-[#9CA3AF] text-sm font-medium uppercase tracking-wider mb-1">Overall Feasibility</p>
               <div className="flex items-center gap-3">
-                <span className="text-3xl font-bold">{assessment.feasibilityScore.toFixed(1)} <span className="text-slate-500 text-xl">/ 100</span></span>
+                <span className="text-3xl font-bold">{assessment.feasibilityScore.toFixed(1)} <span className="text-[#9CA3AF] text-xl">/ 100</span></span>
                 {renderFeasibilityBadge(assessment.feasibilityClass)}
               </div>
             </div>
             <div className="text-right">
-              <p className="text-slate-400 text-sm font-medium">Calculated At</p>
+              <p className="text-[#9CA3AF] text-sm font-medium">Calculated At</p>
               <p className="text-sm">{new Date(assessment.calculatedAt).toLocaleString()}</p>
             </div>
           </div>
@@ -136,7 +136,7 @@ export default function RiskAssessmentPage() {
                   <span className="text-3xl font-bold">{assessment.countryRiskScore.toFixed(0)}</span>
                   {renderRiskBadge(assessment.countryRiskLevel)}
                 </div>
-                <p className="text-sm text-gray-500 mt-4">
+                <p className="text-sm text-[#9CA3AF] mt-4">
                   Evaluates the economic and political stability of <strong>{assessment.destinationCountry}</strong>.
                 </p>
               </CardContent>
@@ -151,7 +151,7 @@ export default function RiskAssessmentPage() {
                   <span className="text-3xl font-bold">{assessment.paymentTermScore.toFixed(0)}</span>
                 </div>
                 <p className="text-sm font-medium text-blue-600 mt-2">{assessment.paymentTerm}</p>
-                <p className="text-sm text-gray-500 mt-2">
+                <p className="text-sm text-[#9CA3AF] mt-2">
                   Assesses the reliability of the chosen payment method in securing funds.
                 </p>
               </CardContent>
@@ -167,15 +167,15 @@ export default function RiskAssessmentPage() {
                 </div>
                 <div className="mt-2 space-y-1">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Actual Margin</span>
+                    <span className="text-[#9CA3AF]">Actual Margin</span>
                     <span className="font-medium">{assessment.actualMarginPct.toFixed(1)}%</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Target Margin</span>
+                    <span className="text-[#9CA3AF]">Target Margin</span>
                     <span className="font-medium">{assessment.targetMarginPct.toFixed(1)}%</span>
                   </div>
                 </div>
-                <p className="text-sm text-gray-500 mt-4">
+                <p className="text-sm text-[#9CA3AF] mt-4">
                   Measures the gap between the actual projected margin and the company's target margin.
                 </p>
               </CardContent>
@@ -183,7 +183,7 @@ export default function RiskAssessmentPage() {
           </div>
 
           <div className="flex justify-end pt-4">
-            <Button onClick={() => router.push(`/export-case/${caseId}/advisor`)} size="lg" className="bg-indigo-600 hover:bg-indigo-700 text-white">
+            <Button onClick={() => router.push(`/export-case/${caseId}/advisor`)} size="lg" className="bg-[#2F6B4F] hover:bg-[#25563F] text-white">
               Continue to AI Advisor &rarr;
             </Button>
           </div>

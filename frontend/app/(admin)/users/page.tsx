@@ -58,7 +58,7 @@ export default function UserManagementPage() {
     <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">User Management</h2>
-        <p className="text-gray-500 mt-1">Manage platform users, roles, and access.</p>
+        <p className="text-[#9CA3AF] mt-1">Manage platform users, roles, and access.</p>
       </div>
 
       <div className="flex justify-between items-center">
@@ -70,36 +70,36 @@ export default function UserManagementPage() {
         />
       </div>
 
-      <div className="border border-slate-200 rounded-2xl bg-white shadow-sm overflow-hidden">
+      <div className="border border-[#E8E3D9] rounded-2xl bg-white shadow-sm overflow-hidden">
         <Table>
-          <TableHeader className="bg-slate-50/80">
+          <TableHeader className="bg-[#FAF8F3]/80">
             <TableRow className="hover:bg-transparent">
-              <TableHead className="h-12 px-6 font-extrabold text-slate-700 tracking-wider text-xs uppercase">User</TableHead>
-              <TableHead className="h-12 px-6 font-extrabold text-slate-700 tracking-wider text-xs uppercase">Company ID</TableHead>
-              <TableHead className="h-12 px-6 font-extrabold text-slate-700 tracking-wider text-xs uppercase">Role</TableHead>
-              <TableHead className="h-12 px-6 font-extrabold text-slate-700 tracking-wider text-xs uppercase">Status</TableHead>
-              <TableHead className="h-12 px-6 font-extrabold text-slate-700 tracking-wider text-xs uppercase text-right">Actions</TableHead>
+              <TableHead className="h-12 px-6 font-extrabold text-[#4B5563] tracking-wider text-xs uppercase">User</TableHead>
+              <TableHead className="h-12 px-6 font-extrabold text-[#4B5563] tracking-wider text-xs uppercase">Company ID</TableHead>
+              <TableHead className="h-12 px-6 font-extrabold text-[#4B5563] tracking-wider text-xs uppercase">Role</TableHead>
+              <TableHead className="h-12 px-6 font-extrabold text-[#4B5563] tracking-wider text-xs uppercase">Status</TableHead>
+              <TableHead className="h-12 px-6 font-extrabold text-[#4B5563] tracking-wider text-xs uppercase text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredUsers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-12 text-slate-500 font-medium">
+                <TableCell colSpan={5} className="text-center py-12 text-[#9CA3AF] font-medium">
                   No users found.
                 </TableCell>
               </TableRow>
             ) : (
               filteredUsers.map((user) => (
-                <TableRow key={user.userId} className="hover:bg-slate-50/50 transition-colors">
+                <TableRow key={user.userId} className="hover:bg-[#FAF8F3]/50 transition-colors">
                   <TableCell className="px-6 py-4">
-                    <div className="font-bold text-slate-800">{user.displayName || "Unknown User"}</div>
-                    <div className="text-xs text-slate-500 mt-0.5">{user.email}</div>
+                    <div className="font-bold text-[#1F2937]">{user.displayName || "Unknown User"}</div>
+                    <div className="text-xs text-[#9CA3AF] mt-0.5">{user.email}</div>
                   </TableCell>
-                  <TableCell className="px-6 py-4 font-medium text-slate-600">
+                  <TableCell className="px-6 py-4 font-medium text-[#4B5563]">
                     {user.companyId || "-"}
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    <Badge variant="outline" className="font-bold bg-white text-slate-600 border-slate-300 tracking-wide">
+                    <Badge variant="outline" className="font-bold bg-white text-[#4B5563] border-slate-300 tracking-wide">
                       {user.role?.replace("_", " ").toUpperCase()}
                     </Badge>
                   </TableCell>

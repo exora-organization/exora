@@ -32,7 +32,7 @@ export default function AuditLogsPage() {
       case "delete":
         return "bg-rose-100 text-rose-800 border-rose-200";
       default:
-        return "bg-slate-100 text-slate-800 border-slate-200";
+        return "bg-[#F5F8F6] text-[#1F2937] border-[#E8E3D9]";
     }
   };
 
@@ -40,14 +40,14 @@ export default function AuditLogsPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight text-slate-900">Audit Logs</h2>
-          <p className="text-slate-500 mt-1">Review system activities, user operations, and security events.</p>
+          <h2 className="text-3xl font-bold tracking-tight text-[#1F2937]">Audit Logs</h2>
+          <p className="text-[#9CA3AF] mt-1">Review system activities, user operations, and security events.</p>
         </div>
         <div className="flex gap-3">
           <select
             value={limit}
             onChange={(e) => setLimit(Number(e.target.value))}
-            className="rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="rounded-md border border-[#E8E3D9] bg-white px-3 py-2 text-sm text-[#1F2937] focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value={20}>20 entries</option>
             <option value={50}>50 entries</option>
@@ -56,7 +56,7 @@ export default function AuditLogsPage() {
           <Button 
             onClick={() => refetch()} 
             variant="outline" 
-            className="text-slate-700 hover:text-slate-900"
+            className="text-[#4B5563] hover:text-[#1F2937]"
             disabled={isFetching}
           >
             {isFetching ? "Refreshing..." : "Refresh"}
@@ -65,28 +65,28 @@ export default function AuditLogsPage() {
       </div>
 
       {isLoading ? (
-        <div className="p-16 text-center text-slate-500">Loading audit logs...</div>
+        <div className="p-16 text-center text-[#9CA3AF]">Loading audit logs...</div>
       ) : error ? (
         <div className="p-16 text-center text-rose-500">{(error as any)?.message || "Failed to load system audit logs."}</div>
       ) : logs.length === 0 ? (
-        <Card className="border-dashed border-slate-200 bg-slate-50/20">
+        <Card className="border-dashed border-[#E8E3D9] bg-[#FAF8F3]/20">
           <CardContent className="p-16 flex flex-col items-center justify-center text-center">
-            <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="w-12 h-12 bg-[#F5F8F6] rounded-full flex items-center justify-center mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#9CA3AF]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <h3 className="text-sm font-semibold text-slate-700">No logs found</h3>
-            <p className="text-xs text-slate-400 mt-1">
+            <h3 className="text-sm font-semibold text-[#4B5563]">No logs found</h3>
+            <p className="text-xs text-[#9CA3AF] mt-1">
               There are no audit logs recorded in the system yet.
             </p>
           </CardContent>
         </Card>
       ) : (
-        <Card className="border-slate-100 shadow-sm overflow-hidden">
+        <Card className="border-[#E8E3D9] shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-600">
-              <thead className="bg-slate-50 text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-100">
+            <table className="w-full text-left text-sm text-[#4B5563]">
+              <thead className="bg-[#FAF8F3] text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider border-b border-[#E8E3D9]">
                 <tr>
                   <th className="px-6 py-4">Timestamp</th>
                   <th className="px-6 py-4">Actor</th>
@@ -97,11 +97,11 @@ export default function AuditLogsPage() {
               </thead>
               <tbody className="divide-y divide-slate-50 bg-white">
                 {logs.map((log, idx) => (
-                  <tr key={log.id || idx} className="hover:bg-slate-50/50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap text-xs text-slate-400">
+                  <tr key={log.id || idx} className="hover:bg-[#FAF8F3]/50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap text-xs text-[#9CA3AF]">
                       {new Date(log.timestamp).toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 font-medium text-slate-800 text-xs">
+                    <td className="px-6 py-4 font-medium text-[#1F2937] text-xs">
                       {log.actorId || "System"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -109,10 +109,10 @@ export default function AuditLogsPage() {
                         {log.action}
                       </Badge>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap font-mono text-xs text-indigo-600">
+                    <td className="px-6 py-4 whitespace-nowrap font-mono text-xs text-[#2F6B4F]">
                       {log.resource}
                     </td>
-                    <td className="px-6 py-4 text-xs text-slate-500 max-w-xs truncate">
+                    <td className="px-6 py-4 text-xs text-[#9CA3AF] max-w-xs truncate">
                       {log.details ? JSON.stringify(log.details) : "-"}
                     </td>
                   </tr>

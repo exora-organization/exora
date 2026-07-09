@@ -54,30 +54,36 @@ export default function AnalyticsDashboardPage() {
     <div className="space-y-6 max-w-6xl mx-auto pb-12">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">Analytics Dashboard</h2>
-        <p className="text-gray-500 mt-1">Company-wide export performance and insights.</p>
+        <p className="text-[#9CA3AF] mt-1">Company-wide export performance and insights.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
-          <CardContent className="p-6">
-            <p className="text-sm font-medium text-gray-500">Total Export Cases</p>
-            <p className="text-3xl font-bold mt-2 text-slate-900">{metrics.totalExportCases}</p>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Export Cases</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{metrics.totalExportCases}</div>
           </CardContent>
         </Card>
         
         <Card>
-          <CardContent className="p-6">
-            <p className="text-sm font-medium text-gray-500">Active Cases</p>
-            <p className="text-3xl font-bold mt-2 text-blue-600">{metrics.activeCases}</p>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Cases</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{metrics.activeCases}</div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-6">
-            <p className="text-sm font-medium text-gray-500">Avg Feasibility Score</p>
-            <p className="text-3xl font-bold mt-2 text-green-600">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Avg Feasibility Score</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
               {metrics.averageFeasibilityScore ? metrics.averageFeasibilityScore.toFixed(1) : "N/A"}
-            </p>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -110,7 +116,7 @@ export default function AnalyticsDashboardPage() {
                 </PieChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-full flex items-center justify-center text-gray-400 text-sm">
+              <div className="h-full flex items-center justify-center text-[#9CA3AF] text-sm">
                 No status data available
               </div>
             )}
@@ -130,7 +136,7 @@ export default function AnalyticsDashboardPage() {
                 ))}
               </ul>
             ) : (
-              <div className="text-sm text-gray-400 py-4 text-center">
+              <div className="text-sm text-[#9CA3AF] py-4 text-center">
                 No recent cases listed.
               </div>
             )}

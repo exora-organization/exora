@@ -36,18 +36,17 @@ export function PublicNavbar() {
     { href: "/", label: "HOME" },
     { href: "/about", label: "ABOUT US" },
     { href: "/services", label: "SERVICES" },
-    { href: "/projects", label: "PROJECTS" },
     { href: "/blog", label: "BLOG" },
     { href: "/contact", label: "CONTACT US" },
   ];
 
   return (
-    <header className="relative z-10 w-full px-6 lg:px-12 py-4 flex items-center justify-between bg-white/40 backdrop-blur-md border-b border-white/20 shadow-sm">
+    <header className="sticky top-0 z-50 w-full px-6 lg:px-12 py-4 flex items-center justify-between bg-white/70 backdrop-blur-xl border-b border-[#E8E3D9] shadow-sm">
       <div className="flex items-center space-x-2">
         <div className="relative w-8 h-8 flex items-center justify-center shrink-0">
           <Image src={logoImg} alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
         </div>
-        <Link href="/" className="font-extrabold text-gray-900 tracking-tight text-xl">EXORA</Link>
+        <Link href="/" className="font-extrabold text-[#1F2937] tracking-tight text-xl">EXORA</Link>
       </div>
 
       <nav className="hidden md:flex items-center space-x-8 text-sm font-bold tracking-wider">
@@ -57,7 +56,7 @@ export function PublicNavbar() {
             <Link 
               key={link.href} 
               href={link.href} 
-              className={`${isActive ? 'text-[#0a9b5c]' : 'text-gray-600 hover:text-gray-900'} transition-colors`}
+              className={`${isActive ? 'text-[#2F6B4F]' : 'text-[#4B5563] hover:text-[#1F2937]'} transition-colors`}
             >
               {link.label}
             </Link>
@@ -69,7 +68,7 @@ export function PublicNavbar() {
         <button 
           onClick={handlePortalClick}
           disabled={isNavigating || loading}
-          className="bg-[#0a9b5c] hover:bg-[#08824d] text-white px-6 py-2.5 rounded text-sm font-bold tracking-widest uppercase transition-colors shadow-md disabled:opacity-70 flex items-center space-x-2"
+          className="bg-[#2F6B4F] hover:bg-[#25563F] text-white px-6 py-2.5 rounded text-sm font-bold tracking-widest uppercase transition-colors shadow-md disabled:opacity-70 flex items-center space-x-2"
         >
           <span>{isNavigating || loading ? "LOADING..." : "CLIENT PORTAL"}</span>
         </button>
