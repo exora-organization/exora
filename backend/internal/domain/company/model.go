@@ -3,9 +3,10 @@ package company
 import "time"
 
 const (
-	StatusPending  = "pending"
-	StatusApproved = "approved"
-	StatusRejected = "rejected"
+	StatusPending           = "pending"
+	StatusApproved          = "approved"
+	StatusRejected          = "rejected"
+	StatusRevisionRequested = "revision_requested"
 )
 
 type Company struct {

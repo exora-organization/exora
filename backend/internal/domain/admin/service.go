@@ -107,7 +107,7 @@ func (s *Service) RequestRevision(ctx context.Context, companyID string, req com
 	if err != nil {
 		return nil, err
 	}
-	c.Status = company.StatusPending
+	c.Status = company.StatusRevisionRequested
 	c.RevisionNotes = req.RevisionNotes
 	if err := s.companies.Update(ctx, c); err != nil {
 		return nil, err
