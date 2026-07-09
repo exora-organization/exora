@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,7 +26,11 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 function LoginForm() {
   const router = useRouter();
-  const redirectPath = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get("redirect") : null;
+  const [redirectPath, setRedirectPath] = useState<string | null>(null);
+  
+  useEffect(() => {
+    setRedirectPath(new URLSearchParams(window.location.search).get("redirect"));
+  }, []);
   
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -85,23 +89,19 @@ function LoginForm() {
 
   return (
     <div className="w-full">
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 sm:p-10 pt-8">
-        <div className="flex items-center space-x-2 mb-8">
+      <div className="group bg-white/80 backdrop-blur-xl border border-white/60 p-8 sm:p-10 pt-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#eef5f3] to-transparent rounded-bl-full opacity-50 -z-10 group-hover:scale-150 transition-transform duration-700"></div>
+        <div className="flex items-center justify-center space-x-3 mb-6 text-center">
           <div className="relative w-10 h-10 flex items-center justify-center shrink-0">
             <Image src={logoImg} alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
-          <h1 className="font-extrabold text-gray-800 tracking-tight text-lg leading-tight">EXORA - Export Feasibility & Decision Support Platform</h1>
+          <h1 className="font-extrabold text-gray-800 tracking-tight text-2xl leading-tight">EXORA</h1>
         </div>
 
-        <div className="mb-8">
-          <div className="text-xs font-bold text-gray-500 tracking-wider uppercase mb-3">Secure Portal Login</div>
-          <h2 className="text-4xl font-bold text-gray-900 mb-3 tracking-tight">Welcome Back</h2>
-          <p className="text-sm text-gray-500 leading-relaxed max-w-sm">
-            Hello exporter, please log in to access your cargo costing dashboards.
-          </p>
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-1 tracking-tight">Welcome Back</h2>
+          <p className="text-sm text-gray-500">Please log in to your account.</p>
         </div>
-
-
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-2">
@@ -158,26 +158,26 @@ function LoginForm() {
 
           <Button 
             type="submit" 
-            className="w-full h-12 bg-[#0a9b5c] hover:bg-[#08824d] text-white font-bold rounded-lg shadow-sm flex items-center justify-center space-x-2 transition-colors mt-2" 
+            className="w-full h-14 bg-gradient-to-r from-[#0a9b5c] to-[#08824d] hover:from-[#08824d] hover:to-[#06683e] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center space-x-2 transition-all duration-300 mt-4" 
             disabled={isLoading}
           >
             <span>{isLoading ? "SIGNING IN..." : "LOG IN TO FEASIBILITY SUITE"}</span>
-            {!isLoading && <ArrowRight size={18} />}
+            {!isLoading && <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />}
           </Button>
         </form>
 
-        <div className="flex items-center justify-between mt-6 w-full">
-          <div className="text-gray-500 text-xs">
+        <div className="flex items-center justify-between mt-6 w-full pt-4 border-t border-gray-100">
+          <div className="text-gray-500 text-xs font-medium">
             New to EXORA?
           </div>
-          <Link href={`/register${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ""}`} className="text-xs font-semibold text-gray-800 hover:text-blue-600 transition-colors">
+          <Link href={`/register${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ""}`} className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-900 text-xs font-bold transition-colors">
             Create an account
           </Link>
         </div>
       </div>
 
       <div className="mt-6 text-center">
-        <Link href="/" className="text-sm text-gray-500 hover:text-gray-800 transition-colors font-medium">
+        <Link href="/" className="inline-flex items-center justify-center px-6 py-2.5 rounded-xl bg-white/60 hover:bg-white border border-white/50 shadow-sm text-sm text-gray-700 font-bold transition-all">
           Back to Home
         </Link>
       </div>
