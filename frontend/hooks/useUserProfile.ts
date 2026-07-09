@@ -42,12 +42,15 @@ export function useUserProfile() {
   const loading = firebaseLoading || (!!firebaseUser && queryLoading);
   const isAuthenticated = !!firebaseUser && !!profile;
 
-  // Handle Session Expiration (401 -> sign out)
+  // Handle Session Expiration (401, 403, 404 -> sign out)
   useEffect(() => {
-    if (isError && (error as any)?.status === 401) {
-      import("../lib/firebase/auth").then(({ signOut }) => {
-        signOut();
-      });
+    if (isError) {
+      const status = (error as any)?.status;
+      if (status === 401 || status === 403 || status === 404) {
+        import("../lib/firebase/auth").then(({ signOut }) => {
+          signOut();
+        });
+      }
     }
   }, [isError, error]);
 

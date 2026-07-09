@@ -75,7 +75,7 @@ func main() {
 	documentRepo := document.NewFirestoreRepository(fsClient.Client)
 
 	// ── Services ──────────────────────────────────────────────────────────────
-	authSvc := auth.NewService(userRepo, companyRepo)
+	authSvc := auth.NewService(userRepo, companyRepo, cfg.TurnstileSecretKey)
 	companySvc := company.NewService(companyRepo)
 	adminSvc := admin.NewService(adminRepo, companyRepo, userRepo)
 	userSvc := user.NewService(userRepo, companyRepo, cfg.AppBaseURL)

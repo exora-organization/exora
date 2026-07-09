@@ -26,7 +26,8 @@ type User struct {
 }
 
 type RegisterRequest struct {
-	DisplayName string `json:"displayName" validate:"required,min=1,max=100"`
+	DisplayName    string `json:"displayName" validate:"required,min=1,max=100"`
+	TurnstileToken string `json:"turnstileToken"`
 }
 
 type UpdateUserRequest struct {
