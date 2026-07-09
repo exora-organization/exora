@@ -55,6 +55,10 @@ type DashboardMetrics struct {
 	TeamSummary             *TeamSummary   `json:"teamSummary"`
 }
 
+// GetDashboard gathers analytical and operational statistics for the dashboard views.
+// It enforces role-based filtering:
+// - Admin role views aggregated global statistics across all tenants.
+// - Other authorized roles view statistics scoped strictly to their company/tenant ID.
 func (s *Service) GetDashboard(ctx context.Context) (*DashboardMetrics, error) {
 	u, ok := actor.FromContext(ctx)
 	if !ok {
