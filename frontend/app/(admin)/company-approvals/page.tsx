@@ -38,40 +38,42 @@ export default function CompanyApprovalsPage() {
         <h2 className="text-3xl font-bold tracking-tight">Company Approvals</h2>
       </div>
 
-      <div className="border rounded-md bg-white">
+      <div className="border border-slate-200 rounded-2xl bg-white shadow-sm overflow-hidden">
         <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Company Name</TableHead>
-              <TableHead>Sector</TableHead>
-              <TableHead>Country</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+          <TableHeader className="bg-slate-50/80">
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="h-12 px-6 font-extrabold text-slate-700 tracking-wider text-xs uppercase">Company Name</TableHead>
+              <TableHead className="h-12 px-6 font-extrabold text-slate-700 tracking-wider text-xs uppercase">Sector</TableHead>
+              <TableHead className="h-12 px-6 font-extrabold text-slate-700 tracking-wider text-xs uppercase">Country</TableHead>
+              <TableHead className="h-12 px-6 font-extrabold text-slate-700 tracking-wider text-xs uppercase">Status</TableHead>
+              <TableHead className="h-12 px-6 font-extrabold text-slate-700 tracking-wider text-xs uppercase">Date</TableHead>
+              <TableHead className="h-12 px-6 font-extrabold text-slate-700 tracking-wider text-xs uppercase text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {applications.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                <TableCell colSpan={6} className="text-center py-12 text-slate-500 font-medium">
                   No applications found.
                 </TableCell>
               </TableRow>
             ) : (
               applications.map((app) => (
-                <TableRow key={app.companyId}>
-                  <TableCell className="font-medium">{app.companyName}</TableCell>
-                  <TableCell>{app.businessSector}</TableCell>
-                  <TableCell>{app.country}</TableCell>
-                  <TableCell>
-                    <Badge variant={app.status === "pending" ? "default" : app.status === "approved" ? "secondary" : "destructive"}>
-                      {app.status.replace("_", " ")}
+                <TableRow key={app.companyId} className="hover:bg-slate-50/50 transition-colors">
+                  <TableCell className="px-6 py-4 font-bold text-slate-800">{app.companyName}</TableCell>
+                  <TableCell className="px-6 py-4 text-slate-600">{app.businessSector}</TableCell>
+                  <TableCell className="px-6 py-4 text-slate-600">{app.country}</TableCell>
+                  <TableCell className="px-6 py-4">
+                    <Badge variant={app.status === "pending" ? "default" : app.status === "approved" ? "secondary" : "destructive"} className="font-bold tracking-wide">
+                      {app.status.replace("_", " ").toUpperCase()}
                     </Badge>
                   </TableCell>
-                  <TableCell>{new Date(app.submittedAt).toLocaleDateString()}</TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="px-6 py-4 text-slate-500 text-sm font-medium">{new Date(app.submittedAt).toLocaleDateString()}</TableCell>
+                  <TableCell className="px-6 py-4 text-right">
                     <Link href={`/company-approvals/${app.companyId}`}>
-                      <Button variant="outline" size="sm">Review</Button>
+                      <Button variant="outline" size="sm" className="font-bold text-[#0a9b5c] border-[#0a9b5c]/30 hover:bg-[#0a9b5c] hover:text-white transition-colors">
+                        Review
+                      </Button>
                     </Link>
                   </TableCell>
                 </TableRow>

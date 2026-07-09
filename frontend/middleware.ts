@@ -4,6 +4,8 @@ import type { NextRequest } from 'next/server';
 const PUBLIC_ROUTES = [
   "/",
   "/about",
+  "/services",
+  "/blog",
   "/features",
   "/contact",
   "/login",
@@ -14,7 +16,7 @@ const PUBLIC_ROUTES = [
   "/invite",
 ];
 
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const token = request.cookies.get('firebaseToken')?.value;
   const { pathname } = request.nextUrl;
   
@@ -22,18 +24,10 @@ export function proxy(request: NextRequest) {
     pathname === route || (route !== "/" && pathname.startsWith(`${route}/`))
   );
 
-  const isAuthPage = pathname.startsWith('/login') || 
-                     pathname.startsWith('/register') || 
-                     pathname.startsWith('/reset-password');
-
   if (!token && !isPublicRoute) {
     const url = new URL('/login', request.url);
     url.searchParams.set("redirect", pathname);
     return NextResponse.redirect(url);
-  }
-  
-  if (token && isAuthPage) {
-    return NextResponse.redirect(new URL('/', request.url));
   }
 
   return NextResponse.next();

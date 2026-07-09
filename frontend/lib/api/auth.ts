@@ -8,10 +8,10 @@ export const apiAuth = {
       method: "POST",
     });
   },
-  register: async (displayName: string): Promise<ApiResponse<UserProfile>> => {
+  register: async (displayName: string, turnstileToken?: string): Promise<ApiResponse<UserProfile>> => {
     return apiClient<ApiResponse<UserProfile>>("/auth/register", {
       method: "POST",
-      body: JSON.stringify({ displayName }),
+      body: JSON.stringify({ displayName, turnstileToken }),
     });
   },
   logout: async (): Promise<ApiResponse<{ loggedOut: boolean }>> => {
