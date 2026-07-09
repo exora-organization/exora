@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import ReactMarkdown from "react-markdown";
 import { apiAdvisor } from "../../../../../lib/api/advisor";
 import { apiExportCase } from "../../../../../lib/api/export-case";
 import { apiPricing } from "../../../../../lib/api/pricing";
@@ -76,30 +77,30 @@ export default function AIAdvisorPage() {
           &larr; Back to Case Details
         </Link>
         <h2 className="text-3xl font-bold tracking-tight">AI Advisor</h2>
-        <p className="text-gray-500 mt-1">Get intelligent export recommendations and feasibility summaries powered by the EXORA engine.</p>
+        <p className="text-[#9CA3AF] mt-1">Get intelligent export recommendations and feasibility summaries powered by the EXORA engine.</p>
       </div>
 
       {exportCase && (
-        <Card className="bg-slate-50">
+        <Card className="bg-[#FAF8F3]">
           <CardContent className="p-4 grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
             <div>
-              <p className="text-xs text-slate-500 font-medium">Case Name</p>
-              <p className="font-semibold text-slate-900 truncate">{exportCase.name}</p>
+              <p className="text-xs text-[#9CA3AF] font-medium">Case Name</p>
+              <p className="font-semibold text-[#1F2937] truncate">{exportCase.name}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-500 font-medium">Product</p>
-              <p className="font-semibold text-slate-900 truncate">{exportCase.product}</p>
+              <p className="text-xs text-[#9CA3AF] font-medium">Product</p>
+              <p className="font-semibold text-[#1F2937] truncate">{exportCase.product}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-500 font-medium">Destination</p>
-              <p className="font-semibold text-slate-900 truncate">{exportCase.destinationCountry}</p>
+              <p className="text-xs text-[#9CA3AF] font-medium">Destination</p>
+              <p className="font-semibold text-[#1F2937] truncate">{exportCase.destinationCountry}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-500 font-medium">Active Incoterm</p>
+              <p className="text-xs text-[#9CA3AF] font-medium">Active Incoterm</p>
               {activeIncoterm ? (
                 <Badge variant="default" className="mt-1">{activeIncoterm}</Badge>
               ) : (
-                <span className="text-sm text-gray-400 mt-1 block">Unknown</span>
+                <span className="text-sm text-[#9CA3AF] mt-1 block">Unknown</span>
               )}
             </div>
           </CardContent>
@@ -153,12 +154,12 @@ export default function AIAdvisorPage() {
 
       {recommendation && (
         <div className="space-y-6">
-          <div className="flex items-center justify-between p-4 bg-indigo-50 rounded-lg border border-indigo-100">
+          <div className="flex items-center justify-between p-4 bg-[#F5F8F6] rounded-lg border border-[#E8E3D9]">
             <div className="flex items-center gap-2">
-              <span className="text-indigo-600 font-medium">AI Status:</span>
-              <Badge className="bg-indigo-600">Generated</Badge>
+              <span className="text-[#2F6B4F] font-medium">AI Status:</span>
+              <Badge className="bg-[#2F6B4F]">Generated</Badge>
             </div>
-            <div className="text-sm text-indigo-400">
+            <div className="text-sm text-[#9CA3AF]">
               Generated At: {new Date(recommendation.generatedAt).toLocaleString()}
             </div>
           </div>
@@ -168,29 +169,53 @@ export default function AIAdvisorPage() {
               <CardTitle>Advisor Report</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="prose prose-sm md:prose-base max-w-none prose-slate whitespace-pre-wrap">
-                {recommendation.answer}
+              <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-[#1F2937] prose-a:text-[#2F6B4F] prose-strong:text-[#1F2937] text-[#4B5563] leading-relaxed">
+                <ReactMarkdown>{recommendation.answer}</ReactMarkdown>
               </div>
             </CardContent>
           </Card>
 
-          {(recommendation.sources?.length ?? 0) > 0 && (
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg">Sources Consulted</CardTitle>
+          {pricingData?.data?.pricing && (
+            <Card className="border-[#E8E3D9]">
+              <CardHeader className="pb-3 border-b border-[#E8E3D9]">
+                <CardTitle className="text-xl text-[#1F2937]">Cost Breakdown Analysis</CardTitle>
               </CardHeader>
-              <CardContent>
-                <ul className="list-disc pl-5 text-sm text-slate-600 space-y-1">
-                  {recommendation.sources!.map((source, idx) => (
-                    <li key={idx}>{source}</li>
-                  ))}
-                </ul>
+              <CardContent className="pt-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                  <div>
+                    <p className="text-xs text-[#9CA3AF] uppercase tracking-wider mb-1">Total Freight</p>
+                    <p className="text-lg font-bold text-[#1F2937]">
+                      Rp {pricingData.data.pricing.breakdown.freight.toLocaleString("id-ID")}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-[#9CA3AF] uppercase tracking-wider mb-1">Insurance</p>
+                    <p className="text-lg font-bold text-[#1F2937]">
+                      Rp {pricingData.data.pricing.breakdown.insurance.toLocaleString("id-ID")}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-[#9CA3AF] uppercase tracking-wider mb-1">Total Cost</p>
+                    <p className="text-lg font-bold text-[#1F2937]">
+                      Rp {pricingData.data.pricing.totalCostIDR.toLocaleString("id-ID")}
+                    </p>
+                  </div>
+                  <div className="bg-[#FAF8F3] p-3 rounded-lg border border-[#E8E3D9]">
+                    <p className="text-xs text-[#2F6B4F] font-bold uppercase tracking-wider mb-1">Final Selling Price</p>
+                    <p className="text-xl font-extrabold text-[#2F6B4F]">
+                      $ {pricingData.data.pricing.sellingPriceUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           )}
 
-          <div className="flex justify-end pt-4">
-            <Button onClick={() => router.push(`/export-case/${caseId}/documents`)} size="lg" className="bg-blue-600 hover:bg-blue-700 text-white">
+          <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4">
+            <Button onClick={() => router.push(`/export-case/${caseId}/documents`)} variant="outline" size="lg" className="border-[#2F6B4F] text-[#2F6B4F] hover:bg-[#FAF8F3]">
+              View / Generate PDF Reports
+            </Button>
+            <Button onClick={() => router.push(`/export-case/${caseId}/documents`)} size="lg" className="bg-[#2F6B4F] hover:bg-[#25563F] text-white">
               Continue to Document Generation &rarr;
             </Button>
           </div>

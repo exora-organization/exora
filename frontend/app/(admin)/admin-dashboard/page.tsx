@@ -34,13 +34,13 @@ export default function AdminDashboardPage() {
   const recentLogs = auditData?.data?.auditLogs || [];
 
   return (
-    <div className="space-y-10 text-slate-800 relative pb-10">
+    <div className="space-y-10 text-[#1F2937] relative pb-10">
       
       {/* Header Area */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Admin Dashboard</h2>
-          <p className="text-sm text-slate-500 font-medium mt-1">Platform Overview</p>
+          <p className="text-sm text-[#9CA3AF] font-medium mt-1">Platform Overview</p>
         </div>
         
         {/* Search Bar */}
@@ -50,7 +50,7 @@ export default function AdminDashboardPage() {
             placeholder="Search data..." 
             className="w-full pl-4 pr-10 py-2.5 rounded-full border-none shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0a8c4f] bg-white text-sm"
           />
-          <Search className="absolute right-3 top-2.5 h-4 w-4 text-slate-400" />
+          <Search className="absolute right-3 top-2.5 h-4 w-4 text-[#9CA3AF]" />
         </div>
       </div>
 
@@ -58,13 +58,13 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="border-white/50 shadow-sm hover:shadow-md transition-shadow">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold text-slate-500 flex items-center gap-2">
+            <CardTitle className="text-sm font-semibold text-[#9CA3AF] flex items-center gap-2">
               <Clock className="w-4 h-4 text-amber-500" />
               Pending Approvals
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-slate-800">
+            <div className="text-3xl font-bold text-[#1F2937]">
               {isMonitoringLoading ? "--" : (stats?.pendingApprovals ?? 0)}
             </div>
           </CardContent>
@@ -72,13 +72,13 @@ export default function AdminDashboardPage() {
         
         <Card className="border-white/50 shadow-sm hover:shadow-md transition-shadow">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold text-slate-500 flex items-center gap-2">
+            <CardTitle className="text-sm font-semibold text-[#9CA3AF] flex items-center gap-2">
               <Building className="w-4 h-4 text-blue-500" />
               Total Companies
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-slate-800">
+            <div className="text-3xl font-bold text-[#1F2937]">
               {isMonitoringLoading ? "--" : (stats?.totalCompanies ?? 0)}
             </div>
           </CardContent>
@@ -86,13 +86,13 @@ export default function AdminDashboardPage() {
 
         <Card className="border-white/50 shadow-sm hover:shadow-md transition-shadow">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold text-slate-500 flex items-center gap-2">
+            <CardTitle className="text-sm font-semibold text-[#9CA3AF] flex items-center gap-2">
               <Users className="w-4 h-4 text-emerald-500" />
               Total Users
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-slate-800">
+            <div className="text-3xl font-bold text-[#1F2937]">
               {isMonitoringLoading ? "--" : (stats?.totalUsers ?? 0)}
             </div>
           </CardContent>
@@ -100,13 +100,13 @@ export default function AdminDashboardPage() {
 
         <Card className="border-white/50 shadow-sm hover:shadow-md transition-shadow">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold text-slate-500 flex items-center gap-2">
+            <CardTitle className="text-sm font-semibold text-[#9CA3AF] flex items-center gap-2">
               <FileText className="w-4 h-4 text-purple-500" />
               Total Export Cases
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-slate-800">
+            <div className="text-3xl font-bold text-[#1F2937]">
               {isMonitoringLoading ? "--" : (stats?.totalExportCases ?? 0)}
             </div>
           </CardContent>
@@ -121,25 +121,25 @@ export default function AdminDashboardPage() {
             <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
               <Building className="w-5 h-5" />
             </div>
-            <span className="font-semibold text-sm text-slate-700">Company Approvals</span>
+            <span className="font-semibold text-sm text-[#4B5563]">Company Approvals</span>
           </Link>
           <Link href="/users" className="flex items-center gap-3 p-4 bg-white rounded-2xl shadow-sm border border-white hover:border-[#0a8c4f]/30 hover:shadow-md transition-all group">
-            <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
+            <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-[#2F6B4F] group-hover:scale-110 transition-transform">
               <Users className="w-5 h-5" />
             </div>
-            <span className="font-semibold text-sm text-slate-700">User Management</span>
+            <span className="font-semibold text-sm text-[#4B5563]">User Management</span>
           </Link>
           <Link href="/system-monitoring" className="flex items-center gap-3 p-4 bg-white rounded-2xl shadow-sm border border-white hover:border-[#0a8c4f]/30 hover:shadow-md transition-all group">
             <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-600 group-hover:scale-110 transition-transform">
               <Activity className="w-5 h-5" />
             </div>
-            <span className="font-semibold text-sm text-slate-700">System Monitoring</span>
+            <span className="font-semibold text-sm text-[#4B5563]">System Monitoring</span>
           </Link>
           <Link href="/audit-logs" className="flex items-center gap-3 p-4 bg-white rounded-2xl shadow-sm border border-white hover:border-[#0a8c4f]/30 hover:shadow-md transition-all group">
             <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 group-hover:scale-110 transition-transform">
               <FileText className="w-5 h-5" />
             </div>
-            <span className="font-semibold text-sm text-slate-700">Audit Logs</span>
+            <span className="font-semibold text-sm text-[#4B5563]">Audit Logs</span>
           </Link>
         </div>
       </div>
@@ -148,22 +148,22 @@ export default function AdminDashboardPage() {
         {/* Recent Pending Applications */}
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-white/50 flex flex-col">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold text-slate-800">Recent Pending Applications</h3>
-            <Link href="/company-approvals" className="text-sm font-bold text-[#0a8c4f] hover:text-[#086b3c] flex items-center gap-1">
+            <h3 className="text-lg font-bold text-[#1F2937]">Recent Pending Applications</h3>
+            <Link href="/company-approvals" className="text-sm font-bold text-[#2F6B4F] hover:text-[#086b3c] flex items-center gap-1">
               View All <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
           
           <div className="flex-1">
             {isApplicationsLoading ? (
-              <div className="flex justify-center items-center h-32 text-sm text-slate-400">Loading applications...</div>
+              <div className="flex justify-center items-center h-32 text-sm text-[#9CA3AF]">Loading applications...</div>
             ) : pendingApplications.length > 0 ? (
               <div className="space-y-4">
                 {pendingApplications.map((app, idx) => (
-                  <div key={app.companyId || `app-${idx}`} className="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-slate-50 transition-colors">
+                  <div key={app.companyId || `app-${idx}`} className="flex items-center justify-between p-4 rounded-xl border border-[#E8E3D9] bg-[#FAF8F3]/50 hover:bg-[#FAF8F3] transition-colors">
                     <div>
-                      <h4 className="font-bold text-slate-800 text-sm">{app.companyName}</h4>
-                      <p className="text-xs text-slate-500 mt-1">Applicant: {app.applicant?.email} • {new Date(app.submittedAt).toLocaleDateString()}</p>
+                      <h4 className="font-bold text-[#1F2937] text-sm">{app.companyName}</h4>
+                      <p className="text-xs text-[#9CA3AF] mt-1">Applicant: {app.applicant?.email} • {new Date(app.submittedAt).toLocaleDateString()}</p>
                     </div>
                     <Link href={`/company-approvals/${app.companyId}`}>
                       <Button size="sm" className="bg-amber-100 text-amber-700 hover:bg-amber-200 border-none font-bold text-xs h-8">
@@ -175,8 +175,8 @@ export default function AdminDashboardPage() {
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center h-32 text-center">
-                <p className="text-sm font-medium text-slate-500">No pending applications.</p>
-                <p className="text-xs text-slate-400 mt-1">You are all caught up!</p>
+                <p className="text-sm font-medium text-[#9CA3AF]">No pending applications.</p>
+                <p className="text-xs text-[#9CA3AF] mt-1">You are all caught up!</p>
               </div>
             )}
           </div>
@@ -185,30 +185,30 @@ export default function AdminDashboardPage() {
         {/* Recent Activity (Audit Logs) */}
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-white/50 flex flex-col">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold text-slate-800">Recent Activity</h3>
-            <Link href="/audit-logs" className="text-sm font-bold text-[#0a8c4f] hover:text-[#086b3c] flex items-center gap-1">
+            <h3 className="text-lg font-bold text-[#1F2937]">Recent Activity</h3>
+            <Link href="/audit-logs" className="text-sm font-bold text-[#2F6B4F] hover:text-[#086b3c] flex items-center gap-1">
               View All <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
           
           <div className="flex-1">
             {isAuditLoading ? (
-              <div className="flex justify-center items-center h-32 text-sm text-slate-400">Loading activity...</div>
+              <div className="flex justify-center items-center h-32 text-sm text-[#9CA3AF]">Loading activity...</div>
             ) : recentLogs.length > 0 ? (
               <div className="space-y-4">
                 {recentLogs.map((log, idx) => (
-                  <div key={log.id || `log-${idx}`} className="flex gap-4 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                    <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 shrink-0 mt-0.5">
+                  <div key={log.id || `log-${idx}`} className="flex gap-4 p-3 rounded-xl hover:bg-[#FAF8F3] transition-colors">
+                    <div className="w-8 h-8 rounded-full bg-[#F5F8F6] flex items-center justify-center text-[#9CA3AF] shrink-0 mt-0.5">
                       <Activity className="w-4 h-4" />
                     </div>
                     <div>
-                      <p className="text-sm text-slate-800">
-                        <span className="font-bold capitalize">{log.action.replace(/_/g, ' ')}</span> on <span className="font-medium text-slate-600">{log.resource}</span>
+                      <p className="text-sm text-[#1F2937]">
+                        <span className="font-bold capitalize">{log.action.replace(/_/g, ' ')}</span> on <span className="font-medium text-[#4B5563]">{log.resource}</span>
                       </p>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-[#0a8c4f] font-medium">{log.actorId}</span>
-                        <span className="text-xs text-slate-400">•</span>
-                        <span className="text-xs text-slate-400">{new Date(log.timestamp).toLocaleString()}</span>
+                        <span className="text-xs text-[#2F6B4F] font-medium">{log.actorId}</span>
+                        <span className="text-xs text-[#9CA3AF]">•</span>
+                        <span className="text-xs text-[#9CA3AF]">{new Date(log.timestamp).toLocaleString()}</span>
                       </div>
                     </div>
                   </div>
@@ -216,7 +216,7 @@ export default function AdminDashboardPage() {
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center h-32 text-center">
-                <p className="text-sm font-medium text-slate-500">No recent activity available.</p>
+                <p className="text-sm font-medium text-[#9CA3AF]">No recent activity available.</p>
               </div>
             )}
           </div>

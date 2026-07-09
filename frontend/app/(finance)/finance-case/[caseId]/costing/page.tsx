@@ -38,26 +38,26 @@ export default function FinanceCostingPage() {
           &larr; Back to Dashboard
         </Link>
         <h2 className="text-3xl font-bold tracking-tight">Costing Configuration</h2>
-        <p className="text-gray-500 mt-1">Input and manage direct and indirect costs.</p>
+        <p className="text-[#9CA3AF] mt-1">Input and manage direct and indirect costs.</p>
       </div>
 
       {exportCase && (
-        <Card className="bg-slate-50">
+        <Card className="bg-[#FAF8F3]">
           <CardContent className="p-4 grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
-              <p className="text-xs text-slate-500 font-medium">Case Name</p>
-              <p className="font-semibold text-slate-900 truncate">{exportCase.name}</p>
+              <p className="text-xs text-[#9CA3AF] font-medium">Case Name</p>
+              <p className="font-semibold text-[#1F2937] truncate">{exportCase.name}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-500 font-medium">Product</p>
-              <p className="font-semibold text-slate-900 truncate">{exportCase.product}</p>
+              <p className="text-xs text-[#9CA3AF] font-medium">Product</p>
+              <p className="font-semibold text-[#1F2937] truncate">{exportCase.product}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-500 font-medium">Destination</p>
-              <p className="font-semibold text-slate-900 truncate">{exportCase.destinationCountry}</p>
+              <p className="text-xs text-[#9CA3AF] font-medium">Destination</p>
+              <p className="font-semibold text-[#1F2937] truncate">{exportCase.destinationCountry}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-500 font-medium">Status</p>
+              <p className="text-xs text-[#9CA3AF] font-medium">Status</p>
               <Badge variant="outline" className="mt-1">{exportCase.status.replace("_", " ").toUpperCase()}</Badge>
             </div>
           </CardContent>

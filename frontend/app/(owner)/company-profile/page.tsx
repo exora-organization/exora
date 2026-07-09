@@ -39,7 +39,7 @@ export default function CompanyProfilePage() {
     return (
       <div className="p-8 flex flex-col items-center space-y-4">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-        <div className="text-xs text-gray-400">Loading... (companyId: {companyId || "empty"})</div>
+        <div className="text-xs text-[#9CA3AF]">Loading... (companyId: {companyId || "empty"})</div>
       </div>
     );
   }
@@ -48,7 +48,7 @@ export default function CompanyProfilePage() {
     return (
       <div className="p-8 text-center space-y-4">
         <p className="text-red-500">Failed to load company profile.</p>
-        <div className="bg-gray-100 p-4 text-left text-xs overflow-auto">
+        <div className="bg-[#F5F8F6] p-4 text-left text-xs overflow-auto">
           DEBUG INFO:
           <br/>companyId: {String(companyId)}
           <br/>profile: {JSON.stringify(profile)}
@@ -76,7 +76,7 @@ export default function CompanyProfilePage() {
           <Badge variant="secondary" className="px-3 py-1">
             {company?.status?.toUpperCase() || "ACTIVE"}
           </Badge>
-          <span className="text-xs text-gray-400">ID: {companyId || "null"}</span>
+          <span className="text-xs text-[#9CA3AF]">ID: {companyId || "null"}</span>
         </div>
       </div>
 
@@ -92,12 +92,12 @@ export default function CompanyProfilePage() {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <Label className="text-gray-500">Company ID</Label>
+              <Label className="text-[#9CA3AF]">Company ID</Label>
               <p className="font-medium text-sm font-mono mt-1">{company?.companyId}</p>
             </div>
             
             <div>
-              <Label className="text-gray-500">Company Name</Label>
+              <Label className="text-[#9CA3AF]">Company Name</Label>
               {isEditing ? (
                 <Input 
                   value={formData.companyName}
@@ -110,7 +110,7 @@ export default function CompanyProfilePage() {
             </div>
             
             <div>
-              <Label className="text-gray-500">Business Sector</Label>
+              <Label className="text-[#9CA3AF]">Business Sector</Label>
               {isEditing ? (
                 <Input 
                   value={formData.businessSector}
@@ -123,7 +123,7 @@ export default function CompanyProfilePage() {
             </div>
             
             <div>
-              <Label className="text-gray-500">Country</Label>
+              <Label className="text-[#9CA3AF]">Country</Label>
               {isEditing ? (
                 <Input 
                   value={formData.country}

@@ -56,22 +56,22 @@ function VerifyEmailForm() {
   return (
     <div className="w-full">
       <div className="group bg-white/80 backdrop-blur-xl border border-white/60 p-6 sm:p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden text-center">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#eef5f3] to-transparent rounded-bl-full opacity-50 -z-10 group-hover:scale-150 transition-transform duration-700"></div>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#F5F8F6] to-transparent rounded-bl-full opacity-50 -z-10 group-hover:scale-150 transition-transform duration-700"></div>
         
         <div className="flex items-center justify-center space-x-3 mb-6 text-center relative z-10">
           <div className="relative w-10 h-10 flex items-center justify-center shrink-0">
             <Image src={logoImg} alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
-          <h1 className="font-extrabold text-gray-800 tracking-tight text-2xl leading-tight">EXORA</h1>
+          <h1 className="font-extrabold text-[#1F2937] tracking-tight text-2xl leading-tight">EXORA</h1>
         </div>
 
         <div className="mb-6 relative z-10">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 mb-2">Verify your Email</h2>
-          <p className="text-sm text-gray-500">We've sent a verification link to your email.</p>
+          <h2 className="text-3xl font-bold tracking-tight text-[#1F2937] mb-2">Verify your Email</h2>
+          <p className="text-sm text-[#9CA3AF]">We've sent a verification link to your email.</p>
         </div>
         
         <div className="space-y-4 relative z-10 mb-8">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-[#4B5563]">
             Please check your email and click the verification link to activate your account.
             Once verified, you will be redirected automatically.
           </p>
@@ -85,7 +85,7 @@ function VerifyEmailForm() {
         
         <div className="flex flex-col space-y-3 relative z-10">
           <Button 
-            className="w-full h-12 bg-gradient-to-r from-[#0a9b5c] to-[#08824d] hover:from-[#08824d] hover:to-[#06683e] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+            className="w-full h-12 bg-gradient-to-r from-[#2F6B4F] to-[#25563F] hover:from-[#25563F] hover:to-[#25563F] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
             onClick={handleResend}
             disabled={isResending}
           >
@@ -93,7 +93,7 @@ function VerifyEmailForm() {
           </Button>
           <Button 
             variant="outline" 
-            className="w-full h-12 rounded-xl border-gray-200 text-gray-700 font-bold hover:bg-gray-50 transition-colors"
+            className="w-full h-12 rounded-xl border-[#E8E3D9] text-[#4B5563] font-bold hover:bg-[#FAF8F3] transition-colors"
             onClick={() => window.location.href = '/login'}
           >
             GO TO LOGIN

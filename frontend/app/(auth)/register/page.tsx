@@ -66,7 +66,7 @@ function RegisterForm() {
 
     if (score < 3) return { label: "Weak", color: "bg-red-500", width: "w-1/3" };
     if (score < 5) return { label: "Medium", color: "bg-yellow-500", width: "w-2/3" };
-    return { label: "Strong", color: "bg-[#0a9b5c]", width: "w-full" };
+    return { label: "Strong", color: "bg-[#2F6B4F]", width: "w-full" };
   };
 
   const strength = getPasswordStrength(passwordValue);
@@ -97,30 +97,30 @@ function RegisterForm() {
   return (
     <div className="w-full">
       <div className="group bg-white/80 backdrop-blur-xl border border-white/60 p-6 sm:p-8 pt-6 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#eef5f3] to-transparent rounded-bl-full opacity-50 -z-10 group-hover:scale-150 transition-transform duration-700"></div>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#F5F8F6] to-transparent rounded-bl-full opacity-50 -z-10 group-hover:scale-150 transition-transform duration-700"></div>
         <div className="flex items-center justify-center space-x-3 mb-4 text-center">
           <div className="relative w-10 h-10 flex items-center justify-center shrink-0">
             <Image src={logoImg} alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
-          <h1 className="font-extrabold text-gray-800 tracking-tight text-2xl leading-tight">EXORA</h1>
+          <h1 className="font-extrabold text-[#1F2937] tracking-tight text-2xl leading-tight">EXORA</h1>
         </div>
 
         <div className="mb-4">
-          <h2 className="text-2xl font-bold text-gray-900 mb-1 tracking-tight">Get Started</h2>
-          <p className="text-sm text-gray-500">Create your account to access the dashboard.</p>
+          <h2 className="text-2xl font-bold text-[#1F2937] mb-1 tracking-tight">Get Started</h2>
+          <p className="text-sm text-[#9CA3AF]">Create your account to access the dashboard.</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="displayName" className="text-xs font-bold text-gray-700 tracking-widest uppercase">Full Name</Label>
+            <Label htmlFor="displayName" className="text-xs font-bold text-[#4B5563] tracking-widest uppercase">Full Name</Label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#9CA3AF]">
                 <User size={18} />
               </div>
               <Input
                 id="displayName"
                 placeholder="John Doe"
-                className="pl-10 h-10 bg-[#eef3f7] border-transparent focus:bg-white text-gray-900 placeholder:text-gray-400 text-sm rounded-lg"
+                className="pl-10 h-10 bg-[#F5F8F6] border-transparent focus:bg-white text-[#1F2937] placeholder:text-[#9CA3AF] text-sm rounded-lg"
                 {...register("displayName")}
               />
             </div>
@@ -130,16 +130,16 @@ function RegisterForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-xs font-bold text-gray-700 tracking-widest uppercase">Corporate Email Address</Label>
+            <Label htmlFor="email" className="text-xs font-bold text-[#4B5563] tracking-widest uppercase">Corporate Email Address</Label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#9CA3AF]">
                 <Mail size={18} />
               </div>
               <Input
                 id="email"
                 type="email"
                 placeholder="manager@company.com"
-                className="pl-10 h-10 bg-[#eef3f7] border-transparent focus:bg-white text-gray-900 placeholder:text-gray-400 text-sm rounded-lg"
+                className="pl-10 h-10 bg-[#F5F8F6] border-transparent focus:bg-white text-[#1F2937] placeholder:text-[#9CA3AF] text-sm rounded-lg"
                 {...register("email")}
               />
             </div>
@@ -149,36 +149,61 @@ function RegisterForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-xs font-bold text-gray-700 tracking-widest uppercase">Secure Password</Label>
+            <Label htmlFor="password" className="text-xs font-bold text-[#4B5563] tracking-widest uppercase">Secure Password</Label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#9CA3AF]">
                 <Lock size={18} />
               </div>
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••••••"
-                className="pl-10 pr-10 h-10 bg-[#eef3f7] border-transparent focus:bg-white text-gray-900 placeholder:text-gray-400 text-sm rounded-lg"
+                className="pl-10 pr-10 h-10 bg-[#F5F8F6] border-transparent focus:bg-white text-[#1F2937] placeholder:text-[#9CA3AF] text-sm rounded-lg"
                 {...register("password")}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 focus:outline-none"
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#9CA3AF] hover:text-[#4B5563] focus:outline-none"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
             {passwordValue && (
-              <div className="mt-2 space-y-1">
-                <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
+              <div className="mt-2 bg-[#F5F8F6] rounded-xl p-3 border border-[#E8E3D9]">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-[10px] font-bold text-[#9CA3AF] tracking-widest uppercase">Strength:</span>
+                  <span className={`text-[10px] font-bold tracking-widest uppercase ${strength.label === "Weak" ? "text-[#F43F5E]" : strength.label === "Medium" ? "text-yellow-500" : "text-[#2F6B4F]"}`}>
+                    {strength.label}
+                  </span>
+                </div>
+                <div className="h-1.5 w-full bg-[#E5E7EB] rounded-full overflow-hidden mb-2">
                   <div 
-                    className={`h-full transition-all duration-300 ${strength.color} ${strength.width}`}
+                    className={`h-full transition-all duration-300 ${strength.label === "Weak" ? "bg-[#F43F5E]" : strength.color} ${strength.width}`}
                   />
                 </div>
-                <p className={`text-xs text-right font-medium ${strength.label === "Weak" ? "text-red-500" : strength.label === "Medium" ? "text-yellow-600" : "text-[#0a9b5c]"}`}>
-                  {strength.label}
-                </p>
+                {(() => {
+                  const missing = [];
+                  if (passwordValue.length < 8) missing.push("At least 8 characters");
+                  if (!/[A-Z]/.test(passwordValue)) missing.push("One uppercase letter");
+                  if (!/[a-z]/.test(passwordValue)) missing.push("One lowercase letter");
+                  if (!/[0-9]/.test(passwordValue)) missing.push("One number");
+                  if (!/[^A-Za-z0-9]/.test(passwordValue)) missing.push("One special character");
+                  
+                  if (missing.length > 0) {
+                    return (
+                      <p className="text-[10px] text-[#9CA3AF] leading-tight font-medium">
+                        Missing: {missing.join(", ")}
+                      </p>
+                    );
+                  } else {
+                    return (
+                      <p className="text-[10px] text-[#2F6B4F] font-bold leading-tight">
+                        ✓ All requirements met
+                      </p>
+                    );
+                  }
+                })()}
               </div>
             )}
             {errors.password && (
@@ -193,7 +218,7 @@ function RegisterForm() {
               className="w-4 h-4 rounded border-gray-300 text-[#0a9b5c] focus:ring-[#0a9b5c]"
               {...register("terms")}
             />
-            <Label htmlFor="terms" className="text-sm text-gray-600 font-medium cursor-pointer">
+            <Label htmlFor="terms" className="text-sm text-[#4B5563] font-medium cursor-pointer">
               I agree to the <span className="text-blue-600 hover:underline">Terms of Service</span> and <span className="text-blue-600 hover:underline">Privacy Policy</span>.
             </Label>
           </div>
@@ -216,7 +241,7 @@ function RegisterForm() {
 
           <Button 
             type="submit" 
-            className="w-full h-10 bg-gradient-to-r from-[#0a9b5c] to-[#08824d] hover:from-[#08824d] hover:to-[#06683e] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center space-x-2 transition-all duration-300 group" 
+            className="w-full h-10 bg-gradient-to-r from-[#2F6B4F] to-[#25563F] hover:from-[#25563F] hover:to-[#25563F] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center space-x-2 transition-all duration-300 group" 
             disabled={isLoading || !turnstileToken}
           >
             <span>{isLoading ? "CREATING..." : "CREATE ACCOUNT"}</span>
@@ -224,18 +249,18 @@ function RegisterForm() {
           </Button>
         </form>
 
-        <div className="flex items-center justify-between mt-5 w-full pt-4 border-t border-gray-100">
-          <div className="text-gray-500 text-xs font-medium">
+        <div className="flex items-center justify-between mt-5 w-full pt-4 border-t border-[#E8E3D9]">
+          <div className="text-[#9CA3AF] text-xs font-medium">
             Already have an account?
           </div>
-          <Link href={`/login${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ""}`} className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-900 text-xs font-bold transition-colors">
+          <Link href={`/login${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ""}`} className="px-4 py-2 rounded-lg bg-[#F5F8F6] hover:bg-gray-200 text-[#1F2937] text-xs font-bold transition-colors">
             Log in to portal
           </Link>
         </div>
       </div>
 
       <div className="mt-6 text-center">
-        <Link href="/" className="inline-flex items-center justify-center px-6 py-2.5 rounded-xl bg-white/60 hover:bg-white border border-white/50 shadow-sm text-sm text-gray-700 font-bold transition-all">
+        <Link href="/" className="inline-flex items-center justify-center px-6 py-2.5 rounded-xl bg-white/60 hover:bg-white border border-white/50 shadow-sm text-sm text-[#4B5563] font-bold transition-all">
           Back to Home
         </Link>
       </div>

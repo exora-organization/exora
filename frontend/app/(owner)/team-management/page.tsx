@@ -86,7 +86,7 @@ export default function TeamManagementPage() {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Team Management</h2>
-          <p className="text-gray-500 mt-1">Manage your team members and invitations</p>
+          <p className="text-[#9CA3AF] mt-1">Manage your team members and invitations</p>
         </div>
         <InviteMemberDialog />
       </div>
@@ -97,7 +97,7 @@ export default function TeamManagementPage() {
         </CardHeader>
         <CardContent>
           {teamLoading ? (
-            <div className="py-8 text-center text-gray-500">Loading team members...</div>
+            <div className="py-8 text-center text-[#9CA3AF]">Loading team members...</div>
           ) : (
             <div className="border rounded-md">
               <Table>
@@ -113,7 +113,7 @@ export default function TeamManagementPage() {
                 <TableBody>
                   {teamMembers.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center py-6 text-gray-500">
+                      <TableCell colSpan={5} className="text-center py-6 text-[#9CA3AF]">
                         No team members found.
                       </TableCell>
                     </TableRow>
@@ -124,13 +124,13 @@ export default function TeamManagementPage() {
                         <TableCell>{member.email}</TableCell>
                         <TableCell>
                           {member.role === "company_owner" ? (
-                            <span className="text-sm font-semibold text-gray-700 capitalize">Company Owner</span>
+                            <span className="text-sm font-semibold text-[#4B5563] capitalize">Company Owner</span>
                           ) : (
                             <select
                               value={member.role}
                               disabled={roleMutation.isPending && roleMutation.variables?.userId === member.userId}
                               onChange={(e) => handleRoleChange(member.userId, e.target.value)}
-                              className="bg-transparent border border-gray-200 rounded px-2.5 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500/50"
+                              className="bg-transparent border border-[#E8E3D9] rounded px-2.5 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500/50"
                             >
                               <option value="export_manager">Export Manager</option>
                               <option value="finance_staff">Finance Staff</option>
@@ -183,7 +183,7 @@ export default function TeamManagementPage() {
         </CardHeader>
         <CardContent>
           {invitesLoading ? (
-            <div className="py-8 text-center text-gray-500">Loading invitations...</div>
+            <div className="py-8 text-center text-[#9CA3AF]">Loading invitations...</div>
           ) : (
             <div className="border rounded-md">
               <Table>
@@ -199,7 +199,7 @@ export default function TeamManagementPage() {
                 <TableBody>
                   {invitations.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center py-6 text-gray-500">
+                      <TableCell colSpan={5} className="text-center py-6 text-[#9CA3AF]">
                         No pending invitations.
                       </TableCell>
                     </TableRow>

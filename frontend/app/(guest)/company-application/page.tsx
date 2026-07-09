@@ -24,8 +24,8 @@ export default function CompanyApplicationPage() {
         </div>
 
         <div className="mb-8 relative z-10">
-          <h2 className="text-2xl font-bold text-gray-900 mb-1 tracking-tight">Register Company</h2>
-          <p className="text-sm text-gray-500">Provide your details to get started with EXORA.</p>
+          <h2 className="text-2xl font-bold text-[#1F2937] mb-1 tracking-tight">Register Company</h2>
+          <p className="text-sm text-[#9CA3AF]">Provide your details to get started with EXORA.</p>
         </div>
         
         <div className="relative z-10">

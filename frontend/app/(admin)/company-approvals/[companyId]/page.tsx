@@ -57,19 +57,19 @@ export default function ApplicationDetailPage() {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <p className="text-sm text-gray-500">Company Name</p>
+              <p className="text-sm text-[#9CA3AF]">Company Name</p>
               <p className="font-medium text-lg">{application.companyName}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Business Sector</p>
+              <p className="text-sm text-[#9CA3AF]">Business Sector</p>
               <p className="font-medium text-lg">{application.businessSector}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Country</p>
+              <p className="text-sm text-[#9CA3AF]">Country</p>
               <p className="font-medium text-lg">{application.country}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Submitted At</p>
+              <p className="text-sm text-[#9CA3AF]">Submitted At</p>
               <p className="font-medium text-lg">{new Date(application.submittedAt).toLocaleString()}</p>
             </div>
           </div>
@@ -83,11 +83,11 @@ export default function ApplicationDetailPage() {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <p className="text-sm text-gray-500">User ID</p>
+              <p className="text-sm text-[#9CA3AF]">User ID</p>
               <p className="font-medium">{application.applicant.userId}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Email</p>
+              <p className="text-sm text-[#9CA3AF]">Email</p>
               <p className="font-medium">{application.applicant.email}</p>
             </div>
           </div>

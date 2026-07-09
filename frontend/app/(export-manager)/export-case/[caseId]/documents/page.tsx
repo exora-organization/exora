@@ -108,30 +108,30 @@ export default function DocumentGenerationPage() {
           &larr; Back to Case Details
         </Link>
         <h2 className="text-3xl font-bold tracking-tight">Document Generation</h2>
-        <p className="text-gray-500 mt-1">Generate and download official PDF reports securely built by the Exora backend.</p>
+        <p className="text-[#9CA3AF] mt-1">Generate and download official PDF reports securely built by the Exora backend.</p>
       </div>
 
       {exportCase && (
-        <Card className="bg-slate-50">
+        <Card className="bg-[#FAF8F3]">
           <CardContent className="p-4 grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
             <div>
-              <p className="text-xs text-slate-500 font-medium">Case Name</p>
-              <p className="font-semibold text-slate-900 truncate">{exportCase.name}</p>
+              <p className="text-xs text-[#9CA3AF] font-medium">Case Name</p>
+              <p className="font-semibold text-[#1F2937] truncate">{exportCase.name}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-500 font-medium">Product</p>
-              <p className="font-semibold text-slate-900 truncate">{exportCase.product}</p>
+              <p className="text-xs text-[#9CA3AF] font-medium">Product</p>
+              <p className="font-semibold text-[#1F2937] truncate">{exportCase.product}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-500 font-medium">Destination</p>
-              <p className="font-semibold text-slate-900 truncate">{exportCase.destinationCountry}</p>
+              <p className="text-xs text-[#9CA3AF] font-medium">Destination</p>
+              <p className="font-semibold text-[#1F2937] truncate">{exportCase.destinationCountry}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-500 font-medium">Active Incoterm</p>
+              <p className="text-xs text-[#9CA3AF] font-medium">Active Incoterm</p>
               {activeIncoterm ? (
                 <Badge variant="default" className="mt-1">{activeIncoterm}</Badge>
               ) : (
-                <span className="text-sm text-gray-400 mt-1 block">Unknown</span>
+                <span className="text-sm text-[#9CA3AF] mt-1 block">Unknown</span>
               )}
             </div>
           </CardContent>
@@ -201,7 +201,7 @@ export default function DocumentGenerationPage() {
         </CardHeader>
         <CardContent>
           {documents.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-[#9CA3AF]">
               <FileText className="h-12 w-12 mx-auto text-gray-300 mb-3" />
               <p>No documents have been generated yet.</p>
               <p className="text-sm">Select a document type to begin.</p>

@@ -79,7 +79,7 @@ export default function ScenarioAnalysisPage() {
           &larr; Back to Case Details
         </Link>
         <h2 className="text-3xl font-bold tracking-tight">Scenario Analysis</h2>
-        <p className="text-gray-500 mt-1">Simulate financial outcomes based on varying market conditions and Incoterms.</p>
+        <p className="text-[#9CA3AF] mt-1">Simulate financial outcomes based on varying market conditions and Incoterms.</p>
       </div>
 
       {errorMsg && (
@@ -92,7 +92,7 @@ export default function ScenarioAnalysisPage() {
       <div className="grid gap-6 md:grid-cols-3">
         {/* Left Column: Create Form */}
         <div>
-          <Card className="border-slate-100 shadow-sm">
+          <Card className="border-[#E8E3D9] shadow-sm">
             <CardHeader>
               <CardTitle className="text-lg">Create Simulation</CardTitle>
               <CardDescription>Create a named pricing scenario to compare side-by-side.</CardDescription>
@@ -100,23 +100,23 @@ export default function ScenarioAnalysisPage() {
             <CardContent>
               <form onSubmit={handleCreate} className="space-y-4">
                 <div>
-                  <label className="text-xs font-semibold text-slate-500 block mb-1">Scenario Name</label>
+                  <label className="text-xs font-semibold text-[#9CA3AF] block mb-1">Scenario Name</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Bulk FOB High Margin"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="flex h-9 w-full rounded-md border border-slate-200 bg-white px-3 py-1 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="flex h-9 w-full rounded-md border border-[#E8E3D9] bg-white px-3 py-1 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-slate-500 block mb-1">Incoterm</label>
+                  <label className="text-xs font-semibold text-[#9CA3AF] block mb-1">Incoterm</label>
                   <select
                     value={incoterm}
                     onChange={(e) => setIncoterm(e.target.value as any)}
-                    className="flex h-9 w-full rounded-md border border-slate-200 bg-white px-3 py-1 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="flex h-9 w-full rounded-md border border-[#E8E3D9] bg-white px-3 py-1 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   >
                     <option value="EXW">EXW (Ex Works)</option>
                     <option value="FOB">FOB (Free On Board)</option>
@@ -126,28 +126,28 @@ export default function ScenarioAnalysisPage() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-slate-500 block mb-1">Target Margin Override (%)</label>
+                  <label className="text-xs font-semibold text-[#9CA3AF] block mb-1">Target Margin Override (%)</label>
                   <input
                     type="number"
                     step="0.1"
                     placeholder="Optional: Fallback to case default"
                     value={marginOverride}
                     onChange={(e) => setMarginOverride(e.target.value)}
-                    className="flex h-9 w-full rounded-md border border-slate-200 bg-white px-3 py-1 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="flex h-9 w-full rounded-md border border-[#E8E3D9] bg-white px-3 py-1 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-slate-500 block mb-1">Notes</label>
+                  <label className="text-xs font-semibold text-[#9CA3AF] block mb-1">Notes</label>
                   <textarea
                     placeholder="Provide additional details..."
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    className="flex min-h-[60px] w-full rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="flex min-h-[60px] w-full rounded-md border border-[#E8E3D9] bg-white px-3 py-1.5 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
 
-                <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white" disabled={createMutation.isPending}>
+                <Button type="submit" className="w-full bg-[#2F6B4F] hover:bg-[#25563F] text-white" disabled={createMutation.isPending}>
                   {createMutation.isPending ? "Creating simulation..." : "Run Simulation"}
                 </Button>
               </form>
@@ -157,16 +157,16 @@ export default function ScenarioAnalysisPage() {
 
         {/* Right Column: Scenario List and Comparison Matrix */}
         <div className="md:col-span-2 space-y-6">
-          <Card className="border-slate-100 shadow-sm">
+          <Card className="border-[#E8E3D9] shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg">Scenarios List</CardTitle>
               <CardDescription>Select scenarios below to perform side-by-side comparison matrix analyses.</CardDescription>
             </CardHeader>
             <CardContent>
               {isLoading ? (
-                <div className="p-8 text-center text-slate-400">Loading simulations...</div>
+                <div className="p-8 text-center text-[#9CA3AF]">Loading simulations...</div>
               ) : scenarios.length === 0 ? (
-                <div className="p-8 text-center text-slate-400 border border-dashed border-slate-200 rounded-md">
+                <div className="p-8 text-center text-[#9CA3AF] border border-dashed border-[#E8E3D9] rounded-md">
                   No simulation scenarios created yet. Run a simulation using the form.
                 </div>
               ) : (
@@ -176,8 +176,8 @@ export default function ScenarioAnalysisPage() {
                       key={sc.scenarioId}
                       className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
                         selectedIds.includes(sc.scenarioId)
-                          ? "bg-indigo-50/40 border-indigo-200"
-                          : "bg-white border-slate-100 hover:border-slate-200"
+                          ? "bg-[#F5F8F6]/40 border-[#E8E3D9]"
+                          : "bg-white border-[#E8E3D9] hover:border-[#E8E3D9]"
                       }`}
                     >
                       <div className="flex items-center gap-3">
@@ -185,16 +185,16 @@ export default function ScenarioAnalysisPage() {
                           type="checkbox"
                           checked={selectedIds.includes(sc.scenarioId)}
                           onChange={() => handleToggleSelect(sc.scenarioId)}
-                          className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                          className="h-4 w-4 rounded border-slate-300 text-[#2F6B4F] focus:ring-indigo-500"
                         />
                         <div>
-                          <p className="font-semibold text-slate-800 text-sm">{sc.name}</p>
-                          <p className="text-xs text-slate-400">Created: {new Date(sc.createdAt).toLocaleString()}</p>
+                          <p className="font-semibold text-[#1F2937] text-sm">{sc.name}</p>
+                          <p className="text-xs text-[#9CA3AF]">Created: {new Date(sc.createdAt).toLocaleString()}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
                         <Badge className="bg-slate-600 uppercase">{sc.incoterm}</Badge>
-                        <span className="font-bold text-slate-800 text-sm">
+                        <span className="font-bold text-[#1F2937] text-sm">
                           ${sc.sellingPriceUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
                       </div>
@@ -207,18 +207,18 @@ export default function ScenarioAnalysisPage() {
 
           {/* Comparison Matrix Table */}
           {comparisonScenarios.length > 0 && (
-            <Card className="border-slate-100 shadow-sm overflow-hidden">
-              <CardHeader className="bg-slate-50/50 pb-3 border-b border-slate-100">
+            <Card className="border-[#E8E3D9] shadow-sm overflow-hidden">
+              <CardHeader className="bg-[#FAF8F3]/50 pb-3 border-b border-[#E8E3D9]">
                 <CardTitle className="text-lg">Comparison Matrix</CardTitle>
                 <CardDescription>Side-by-side comparison of selected scenarios.</CardDescription>
               </CardHeader>
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-slate-600 border-collapse">
+                <table className="w-full text-left text-sm text-[#4B5563] border-collapse">
                   <thead>
-                    <tr className="border-b border-slate-100 bg-slate-50/30 text-xs font-semibold uppercase text-slate-500">
+                    <tr className="border-b border-[#E8E3D9] bg-[#FAF8F3]/30 text-xs font-semibold uppercase text-[#9CA3AF]">
                       <th className="px-6 py-3">Metric</th>
                       {comparisonScenarios.map((sc) => (
-                        <th key={sc.scenarioId} className="px-6 py-3 min-w-[150px] font-bold text-slate-800">
+                        <th key={sc.scenarioId} className="px-6 py-3 min-w-[150px] font-bold text-[#1F2937]">
                           {sc.name}
                         </th>
                       ))}
@@ -226,7 +226,7 @@ export default function ScenarioAnalysisPage() {
                   </thead>
                   <tbody className="divide-y divide-slate-100 bg-white">
                     <tr>
-                      <td className="px-6 py-3.5 font-medium text-slate-500">Incoterm</td>
+                      <td className="px-6 py-3.5 font-medium text-[#9CA3AF]">Incoterm</td>
                       {comparisonScenarios.map((sc) => (
                         <td key={sc.scenarioId} className="px-6 py-3.5 whitespace-nowrap">
                           <Badge className="bg-slate-600 uppercase">{sc.incoterm}</Badge>
@@ -234,33 +234,33 @@ export default function ScenarioAnalysisPage() {
                       ))}
                     </tr>
                     <tr>
-                      <td className="px-6 py-3.5 font-medium text-slate-500">Total Cost (IDR)</td>
+                      <td className="px-6 py-3.5 font-medium text-[#9CA3AF]">Total Cost (IDR)</td>
                       {comparisonScenarios.map((sc) => (
-                        <td key={sc.scenarioId} className="px-6 py-3.5 whitespace-nowrap text-slate-800">
+                        <td key={sc.scenarioId} className="px-6 py-3.5 whitespace-nowrap text-[#1F2937]">
                           {sc.totalCostIDR.toLocaleString()} IDR
                         </td>
                       ))}
                     </tr>
                     <tr>
-                      <td className="px-6 py-3.5 font-medium text-slate-500">Selling Price (IDR)</td>
+                      <td className="px-6 py-3.5 font-medium text-[#9CA3AF]">Selling Price (IDR)</td>
                       {comparisonScenarios.map((sc) => (
-                        <td key={sc.scenarioId} className="px-6 py-3.5 whitespace-nowrap text-slate-800 font-semibold">
+                        <td key={sc.scenarioId} className="px-6 py-3.5 whitespace-nowrap text-[#1F2937] font-semibold">
                           {sc.sellingPriceIDR.toLocaleString()} IDR
                         </td>
                       ))}
                     </tr>
                     <tr>
-                      <td className="px-6 py-3.5 font-medium text-slate-500">Selling Price (USD)</td>
+                      <td className="px-6 py-3.5 font-medium text-[#9CA3AF]">Selling Price (USD)</td>
                       {comparisonScenarios.map((sc) => (
-                        <td key={sc.scenarioId} className="px-6 py-3.5 whitespace-nowrap text-indigo-600 font-bold">
+                        <td key={sc.scenarioId} className="px-6 py-3.5 whitespace-nowrap text-[#2F6B4F] font-bold">
                           ${sc.sellingPriceUSD.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                         </td>
                       ))}
                     </tr>
                     <tr>
-                      <td className="px-6 py-3.5 font-medium text-slate-500">Margin (%)</td>
+                      <td className="px-6 py-3.5 font-medium text-[#9CA3AF]">Margin (%)</td>
                       {comparisonScenarios.map((sc) => (
-                        <td key={sc.scenarioId} className="px-6 py-3.5 whitespace-nowrap text-emerald-600 font-semibold">
+                        <td key={sc.scenarioId} className="px-6 py-3.5 whitespace-nowrap text-[#2F6B4F] font-semibold">
                           {sc.actualMarginPct}%
                         </td>
                       ))}

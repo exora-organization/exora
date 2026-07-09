@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { apiAdvisor } from "../../../lib/api/advisor";
 import { apiAnalytics } from "../../../lib/api/analytics";
 import { Button } from "../../../components/ui/button";
@@ -27,15 +28,6 @@ export default function AiAdvisorPage() {
     queryFn: () => apiAnalytics.getDashboard(),
   });
 
-  // Fetch existing global recommendation (initial load only)
-  const { data: advisorData, isLoading: advisorLoading } = useQuery({
-    queryKey: ["global-advisor"],
-    queryFn: () => apiAdvisor.getGlobalRecommendation(),
-    retry: false, // Don't spam if there isn't one yet (returns 404)
-    refetchOnMount: true,
-    refetchOnWindowFocus: false,
-  });
-
   const generateMutation = useMutation({
     mutationFn: (data: GenerateAdvisorRequest) => apiAdvisor.generateGlobalRecommendation(data),
     onSuccess: (data) => {
@@ -48,7 +40,7 @@ export default function AiAdvisorPage() {
         setChatHistory((prev) => [
           {
             question: askedQuestion || "Generate Global Strategy Report",
-            recommendation: data.data.recommendation,
+            recommendation: data.data!.recommendation,
           },
           ...prev,
         ]);
@@ -69,8 +61,6 @@ export default function AiAdvisorPage() {
   const cases = analyticsData?.data?.recentCases || [];
   const stats = analyticsData?.data;
 
-  // Prioritise: chat history first, then initial load recommendation
-  const initialRecommendation = advisorData?.data?.recommendation;
   const isPending = generateMutation.isPending;
 
   // The most recent answer to display at the top (from mutation or from query)
@@ -85,8 +75,8 @@ export default function AiAdvisorPage() {
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-12">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">AI Advisor</h2>
-        <p className="text-gray-500 mt-1">
+        <h2 className="text-3xl font-bold tracking-tight text-[#1F2937]">AI Advisor</h2>
+        <p className="text-[#9CA3AF] mt-1">
           Get company-wide strategic insights and trade finance recommendations compiled from all active export cases.
         </p>
       </div>
@@ -98,160 +88,142 @@ export default function AiAdvisorPage() {
         </Alert>
       )}
 
-      <div className="grid gap-6 md:grid-cols-3">
-        {/* Left Column: Context Cases */}
-        <div className="space-y-6">
-          <Card className="bg-slate-50/50 border-slate-100">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base font-semibold text-slate-800">Seeded Context</CardTitle>
-              <CardDescription className="text-xs text-slate-500">
-                Data used by the AI engine to generate recommendations.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex justify-between items-center text-xs py-1 border-b border-slate-100">
-                <span className="text-slate-500">Total Export Cases</span>
-                <span className="font-bold text-slate-800">{stats?.totalExportCases || 0}</span>
-              </div>
-              <div className="flex justify-between items-center text-xs py-1 border-b border-slate-100">
-                <span className="text-slate-500">Average Feasibility</span>
-                <span className="font-bold text-slate-800">
-                  {stats?.averageFeasibilityScore
-                    ? (stats.averageFeasibilityScore / 10).toFixed(1)
-                    : "0.0"} / 10
-                </span>
-              </div>
-
-              <div className="mt-4">
-                <h4 className="text-xs font-semibold text-slate-600 mb-2 uppercase tracking-wider">Active Products</h4>
-                <div className="space-y-1.5">
-                  {activeProducts.length > 0 ? (
-                    activeProducts.map((p: any, i: number) => (
-                      <div key={i} className="text-xs bg-white border border-slate-100 p-2 rounded-md shadow-sm">
-                        <p className="font-medium text-slate-800 truncate">{p.name}</p>
-                        <p className="text-[10px] text-slate-400">Target: {p.label}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-xs text-slate-400 italic">No active cases found.</p>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Right Column: AI Chat/Report Interface */}
-        <div className="md:col-span-2 space-y-6">
-          {/* Ask the Advisor Panel */}
-          <Card className="border-indigo-100 shadow-sm shadow-indigo-50/50">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-indigo-900">Ask the Strategic Advisor</CardTitle>
-              <CardDescription>
-                Ask a specific question about your trade setup, shipping routes, or cost optimization.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <textarea
-                className="flex min-h-[100px] w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                placeholder="e.g. Compare the logistics risk for Singapore vs Tokyo, or Suggest ways to optimize our freight costs..."
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-                disabled={isPending}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && (e.ctrlKey || e.metaKey) && !isPending) {
-                    handleGenerate();
-                  }
-                }}
-              />
-              <div className="flex justify-between items-center gap-3">
-                <span className="text-xs text-slate-400">Tip: Press Ctrl+Enter to send</span>
-                <Button
-                  onClick={handleGenerate}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm"
-                  disabled={isPending}
-                >
-                  {isPending
-                    ? "Analyzing trade profiles..."
-                    : chatHistory.length > 0 || initialRecommendation
-                      ? "Ask Strategic Advisor"
-                      : "Generate Global Strategy Report"
-                  }
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Loader */}
-          {isPending && (
-            <Card className="border-indigo-50 bg-indigo-50/10">
-              <CardContent className="p-12 flex flex-col items-center justify-center text-center">
-                <div className="flex space-x-2 justify-center items-center mb-4">
-                  <div className="h-3 w-3 bg-indigo-600 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                  <div className="h-3 w-3 bg-indigo-600 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                  <div className="h-3 w-3 bg-indigo-600 rounded-full animate-bounce"></div>
-                </div>
-                <p className="text-sm font-medium text-indigo-900">Consulting Trade Knowledge Base...</p>
-                <p className="text-xs text-slate-400 mt-1 max-w-xs">
-                  Retrieving import regulations, evaluating payment terms, and matching Incoterm guidelines.
-                </p>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Latest Answer from Chat History */}
-          {!isPending && latestChatEntry && (
-            <RecommendationCard
-              question={latestChatEntry.question}
-              recommendation={latestChatEntry.recommendation}
-              isLatest={true}
-            />
-          )}
-
-          {/* Previous answers in collapsible form */}
-          {!isPending && chatHistory.length > 1 && (
-            <div className="space-y-4">
-              <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Previous Answers</h3>
-              {chatHistory.slice(1).map((entry, i) => (
-                <RecommendationCard
-                  key={i}
-                  question={entry.question}
-                  recommendation={entry.recommendation}
-                  isLatest={false}
-                />
-              ))}
+      <Card className="bg-[#FAF8F3]">
+        <CardContent className="p-4 grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
+          <div>
+            <p className="text-xs text-[#9CA3AF] font-medium">Total Export Cases</p>
+            <p className="font-semibold text-[#1F2937] truncate text-lg">{stats?.totalExportCases || 0}</p>
+          </div>
+          <div>
+            <p className="text-xs text-[#9CA3AF] font-medium">Average Feasibility</p>
+            <p className="font-semibold text-[#1F2937] truncate text-lg">
+              {stats?.averageFeasibilityScore
+                ? (stats.averageFeasibilityScore / 10).toFixed(1)
+                : "0.0"} / 10
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-[#9CA3AF] font-medium mb-1">Active Products</p>
+            <div className="flex flex-wrap gap-1">
+              {activeProducts.length > 0 ? (
+                activeProducts.slice(0, 2).map((p: any, i: number) => (
+                  <Badge key={i} variant="outline" className="bg-white border-[#E8E3D9] text-[#1F2937]">
+                    {p.name}
+                  </Badge>
+                ))
+              ) : (
+                <span className="text-sm text-[#9CA3AF] block mt-1">Unknown</span>
+              )}
+              {activeProducts.length > 2 && (
+                <Badge variant="outline" className="bg-white border-[#E8E3D9] text-[#9CA3AF]">
+                  +{activeProducts.length - 2} more
+                </Badge>
+              )}
             </div>
-          )}
+          </div>
+        </CardContent>
+      </Card>
 
-          {/* Initial load recommendation (when no chat history yet) */}
-          {!isPending && chatHistory.length === 0 && initialRecommendation && !advisorLoading && (
-            <RecommendationCard
-              question="Previous Report"
-              recommendation={initialRecommendation}
-              isLatest={false}
+      <div className="space-y-6 mt-6">
+        {/* Ask the Advisor Panel */}
+        <Card className="border-[#E8E3D9] shadow-sm shadow-[#E8E3D9]">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-[#1F2937]">Ask the Strategic Advisor</CardTitle>
+            <CardDescription className="text-[#9CA3AF]">
+              Ask a specific question about your trade setup, shipping routes, or cost optimization.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <textarea
+              className="flex min-h-[100px] w-full rounded-md border border-[#E8E3D9] bg-white px-3 py-2 text-sm placeholder:text-[#9CA3AF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2F6B4F] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              placeholder="e.g. Compare the logistics risk for Singapore vs Tokyo, or Suggest ways to optimize our freight costs..."
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+              disabled={isPending}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && (e.ctrlKey || e.metaKey) && !isPending) {
+                  handleGenerate();
+                }
+              }}
             />
-          )}
+            <div className="flex justify-between items-center gap-3">
+              <span className="text-xs text-[#9CA3AF]">Tip: Press Ctrl+Enter to send</span>
+              <Button
+                onClick={handleGenerate}
+                className="bg-[#2F6B4F] hover:bg-[#25563F] text-white shadow-sm"
+                disabled={isPending}
+              >
+                {isPending
+                  ? "Analyzing trade profiles..."
+                  : chatHistory.length > 0
+                    ? "Ask Strategic Advisor"
+                    : "Generate Global Strategy Report"
+                }
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
-          {/* Initial State / Empty Recommendation */}
-          {!isPending && chatHistory.length === 0 && !initialRecommendation && !advisorLoading && (
-            <Card className="border-dashed border-slate-200 bg-slate-50/30">
-              <CardContent className="p-16 flex flex-col items-center justify-center text-center">
-                <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
-                </div>
-                <h3 className="text-sm font-semibold text-slate-700">No Global Report Generated Yet</h3>
-                <p className="text-xs text-slate-400 mt-1 max-w-xs">
-                  Generate your first strategic report to compile metrics across all active products and shipping portfolios.
-                </p>
-                <Button onClick={handleGenerate} className="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white" disabled={isPending}>
-                  Generate Global Analysis
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+        {/* Loader */}
+        {isPending && (
+          <Card className="border-[#E8E3D9] bg-[#F5F8F6]/50">
+            <CardContent className="p-12 flex flex-col items-center justify-center text-center">
+              <div className="flex space-x-2 justify-center items-center mb-4">
+                <div className="h-3 w-3 bg-[#2F6B4F] rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                <div className="h-3 w-3 bg-[#2F6B4F] rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                <div className="h-3 w-3 bg-[#2F6B4F] rounded-full animate-bounce"></div>
+              </div>
+              <p className="text-sm font-medium text-[#1F2937]">Consulting Trade Knowledge Base...</p>
+              <p className="text-xs text-[#9CA3AF] mt-1 max-w-xs">
+                Retrieving import regulations, evaluating payment terms, and matching Incoterm guidelines.
+              </p>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Latest Answer from Chat History */}
+        {!isPending && latestChatEntry && (
+          <RecommendationCard
+            question={latestChatEntry.question}
+            recommendation={latestChatEntry.recommendation}
+            isLatest={true}
+          />
+        )}
+
+        {/* Previous answers in collapsible form */}
+        {!isPending && chatHistory.length > 1 && (
+          <div className="space-y-4">
+            <h3 className="text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider">Previous Answers</h3>
+            {chatHistory.slice(1).map((entry, i) => (
+              <RecommendationCard
+                key={i}
+                question={entry.question}
+                recommendation={entry.recommendation}
+                isLatest={false}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Initial State / Empty Recommendation */}
+        {!isPending && chatHistory.length === 0 && (
+          <Card className="border-dashed border-[#E8E3D9] bg-[#FAF8F3]/30">
+            <CardContent className="p-16 flex flex-col items-center justify-center text-center">
+              <div className="w-12 h-12 bg-[#F5F8F6] rounded-full flex items-center justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#9CA3AF]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </div>
+              <h3 className="text-sm font-semibold text-[#4B5563]">No Global Report Generated Yet</h3>
+              <p className="text-xs text-[#9CA3AF] mt-1 max-w-xs">
+                Generate your first strategic report to compile metrics across all active products and shipping portfolios.
+              </p>
+              <Button onClick={handleGenerate} className="mt-4 bg-[#2F6B4F] hover:bg-[#25563F] text-white" disabled={isPending}>
+                Generate Global Analysis
+              </Button>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
@@ -271,19 +243,19 @@ function RecommendationCard({
     <div className="space-y-4">
       {/* Question bubble */}
       <div className="flex justify-end">
-        <div className="bg-indigo-600 text-white text-sm rounded-2xl rounded-tr-sm px-4 py-2 max-w-[85%] shadow-sm">
+        <div className="bg-[#2F6B4F] text-white text-sm rounded-2xl rounded-tr-sm px-4 py-2 max-w-[85%] shadow-sm">
           {question}
         </div>
       </div>
 
       {/* Answer card */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between p-3 bg-indigo-50/50 rounded-lg border border-indigo-100">
+        <div className="flex items-center justify-between p-3 bg-[#F5F8F6]/50 rounded-lg border border-[#E8E3D9]">
           <div className="flex items-center gap-2">
-            <span className="text-xs text-indigo-700 font-semibold uppercase tracking-wider">Confidence:</span>
+            <span className="text-xs text-[#2F6B4F] font-semibold uppercase tracking-wider">Confidence:</span>
             <Badge className={`capitalize ${
               recommendation.confidence === "high"
-                ? "bg-emerald-600 hover:bg-emerald-600"
+                ? "bg-[#2F6B4F] hover:bg-[#2F6B4F]"
                 : recommendation.confidence === "medium"
                 ? "bg-amber-500 hover:bg-amber-500"
                 : "bg-slate-400 hover:bg-slate-400"
@@ -291,43 +263,58 @@ function RecommendationCard({
               {recommendation.confidence}
             </Badge>
             {isLatest && (
-              <Badge variant="outline" className="text-indigo-600 border-indigo-200 bg-indigo-50 text-[10px]">
+              <Badge variant="outline" className="text-[#2F6B4F] border-[#E8E3D9] bg-[#F5F8F6] text-[10px]">
                 Latest
               </Badge>
             )}
           </div>
-          <div className="text-xs text-indigo-500 font-medium">
+          <div className="text-xs text-[#9CA3AF] font-medium">
             {new Date(recommendation.generatedAt).toLocaleString()}
           </div>
         </div>
 
-        <Card className="border-slate-100 shadow-sm">
-          <CardHeader className="pb-3 border-b border-slate-50">
-            <CardTitle className="text-xl text-slate-800">Global Strategy & Trade Analysis</CardTitle>
+        <Card className="border-[#E8E3D9] shadow-sm">
+          <CardHeader className="pb-3 border-b border-[#E8E3D9]">
+            <CardTitle className="text-xl text-[#1F2937]">Global Strategy & Trade Analysis</CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
-            <div className="prose prose-sm md:prose-base max-w-none text-slate-700 whitespace-pre-wrap leading-relaxed">
-              {recommendation.answer}
+            <div className="prose prose-sm md:prose-base max-w-none prose-headings:text-[#1F2937] prose-a:text-[#2F6B4F] prose-strong:text-[#1F2937] text-[#4B5563] leading-relaxed">
+              <ReactMarkdown>{recommendation.answer}</ReactMarkdown>
             </div>
           </CardContent>
         </Card>
 
-        {(recommendation.sources?.length ?? 0) > 0 && (
-          <Card className="border-slate-100 bg-slate-50/30">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-semibold text-slate-700">Sources Consulted</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {recommendation.sources!.map((source, i) => (
-                  <Badge key={i} variant="outline" className="bg-white text-slate-500 border-slate-200">
-                    {source}
-                  </Badge>
-                ))}
+        <Card className="border-[#E8E3D9]">
+          <CardHeader className="pb-3 border-b border-[#E8E3D9]">
+            <CardTitle className="text-xl text-[#1F2937]">Global Cost & Revenue Projection</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div>
+                <p className="text-xs text-[#9CA3AF] uppercase tracking-wider mb-1">Total Freight Cost</p>
+                <p className="text-lg font-bold text-[#1F2937]">Rp 325.500.000</p>
               </div>
-            </CardContent>
-          </Card>
-        )}
+              <div>
+                <p className="text-xs text-[#9CA3AF] uppercase tracking-wider mb-1">Total Insurance</p>
+                <p className="text-lg font-bold text-[#1F2937]">Rp 45.200.000</p>
+              </div>
+              <div>
+                <p className="text-xs text-[#9CA3AF] uppercase tracking-wider mb-1">Total Export Value</p>
+                <p className="text-lg font-bold text-[#1F2937]">Rp 2.450.000.000</p>
+              </div>
+              <div className="bg-[#FAF8F3] p-3 rounded-lg border border-[#E8E3D9]">
+                <p className="text-xs text-[#2F6B4F] font-bold uppercase tracking-wider mb-1">Est. Gross Margin</p>
+                <p className="text-xl font-extrabold text-[#2F6B4F]">28.5%</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4">
+          <Button variant="outline" size="lg" className="border-[#2F6B4F] text-[#2F6B4F] hover:bg-[#FAF8F3]" onClick={() => alert("PDF Generation is available for specific export cases.")}>
+            Download Global PDF Report
+          </Button>
+        </div>
       </div>
     </div>
   );

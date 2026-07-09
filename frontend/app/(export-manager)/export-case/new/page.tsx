@@ -12,7 +12,7 @@ export default function NewExportCasePage() {
           &larr; Back to Export Cases
         </Link>
         <h2 className="text-3xl font-bold tracking-tight">New Export Case</h2>
-        <p className="text-gray-500 mt-1">Fill in the initial details to start analyzing feasibility.</p>
+        <p className="text-[#9CA3AF] mt-1">Fill in the initial details to start analyzing feasibility.</p>
       </div>
 
       <ExportCaseForm />
