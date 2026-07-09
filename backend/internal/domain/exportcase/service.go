@@ -17,6 +17,7 @@ func NewService(repo Repository) *Service {
 	return &Service{repo: repo}
 }
 
+// Create performs validation and creates a new export case in draft status, linked to the user's company tenant.
 func (s *Service) Create(ctx context.Context, req CreateRequest) (*CaseResponse, error) {
 	if err := validator.Validate(req); err != nil {
 		return nil, apperror.ErrValidation
@@ -46,6 +47,7 @@ func (s *Service) Create(ctx context.Context, req CreateRequest) (*CaseResponse,
 	return &resp, nil
 }
 
+// List returns a paginated slice of cases belonging to the user's company (or filtered by companyId if requester is admin).
 func (s *Service) List(ctx context.Context, companyIDFilter string, limit int, cursor string) ([]ListItem, *string, error) {
 	u, ok := actor.FromContext(ctx)
 	if !ok {
