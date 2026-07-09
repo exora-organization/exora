@@ -32,6 +32,52 @@ export default function TeamManagementPage() {
     }
   });
 
+  const roleMutation = useMutation({
+    mutationFn: ({ userId, role }: { userId: string; role: string }) => apiOwner.changeRole(userId, role),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["team-members"] });
+    },
+    onError: (err: any) => {
+      alert(err.message || "Failed to update role.");
+    }
+  });
+
+  const statusMutation = useMutation({
+    mutationFn: ({ userId, status }: { userId: string; status: string }) => apiOwner.updateMember(userId, { status }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["team-members"] });
+    },
+    onError: (err: any) => {
+      alert(err.message || "Failed to update status.");
+    }
+  });
+
+  const removeMutation = useMutation({
+    mutationFn: (userId: string) => apiOwner.removeMember(userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["team-members"] });
+      alert("Member removed successfully!");
+    },
+    onError: (err: any) => {
+      alert(err.message || "Failed to remove member.");
+    }
+  });
+
+  const handleRoleChange = (userId: string, role: string) => {
+    roleMutation.mutate({ userId, role });
+  };
+
+  const handleStatusToggle = (userId: string, currentStatus: string) => {
+    const nextStatus = currentStatus === "active" ? "disabled" : "active";
+    statusMutation.mutate({ userId, status: nextStatus });
+  };
+
+  const handleRemoveMember = (userId: string) => {
+    if (confirm("Are you sure you want to remove this team member? This action cannot be undone.")) {
+      removeMutation.mutate(userId);
+    }
+  };
+
   const teamMembers = teamData?.data?.items || [];
   const invitations = invitesData?.data?.items || [];
 
@@ -61,12 +107,13 @@ export default function TeamManagementPage() {
                     <TableHead>Email</TableHead>
                     <TableHead>Role</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {teamMembers.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={4} className="text-center py-6 text-gray-500">
+                      <TableCell colSpan={5} className="text-center py-6 text-gray-500">
                         No team members found.
                       </TableCell>
                     </TableRow>
@@ -75,11 +122,50 @@ export default function TeamManagementPage() {
                       <TableRow key={member.userId}>
                         <TableCell className="font-medium">{member.displayName || "N/A"}</TableCell>
                         <TableCell>{member.email}</TableCell>
-                        <TableCell className="capitalize">{member.role.replace("_", " ")}</TableCell>
                         <TableCell>
-                          <Badge variant={member.status === "active" ? "secondary" : "default"}>
-                            {member.status}
-                          </Badge>
+                          {member.role === "company_owner" ? (
+                            <span className="text-sm font-semibold text-gray-700 capitalize">Company Owner</span>
+                          ) : (
+                            <select
+                              value={member.role}
+                              disabled={roleMutation.isPending && roleMutation.variables?.userId === member.userId}
+                              onChange={(e) => handleRoleChange(member.userId, e.target.value)}
+                              className="bg-transparent border border-gray-200 rounded px-2.5 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500/50"
+                            >
+                              <option value="export_manager">Export Manager</option>
+                              <option value="finance_staff">Finance Staff</option>
+                            </select>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {member.role === "company_owner" ? (
+                            <Badge variant="secondary">{member.status}</Badge>
+                          ) : (
+                            <button
+                              disabled={statusMutation.isPending && statusMutation.variables?.userId === member.userId}
+                              onClick={() => handleStatusToggle(member.userId, member.status)}
+                              className={`px-3 py-0.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
+                                member.status === "active"
+                                  ? "bg-green-50 border-green-200 text-green-700 hover:bg-green-100 disabled:opacity-50"
+                                  : "bg-red-50 border-red-200 text-red-700 hover:bg-red-100 disabled:opacity-50"
+                              }`}
+                            >
+                              {member.status}
+                            </button>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {member.role !== "company_owner" && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              disabled={removeMutation.isPending && removeMutation.variables === member.userId}
+                              className="text-red-500 hover:text-red-700 hover:bg-red-50 disabled:opacity-50"
+                              onClick={() => handleRemoveMember(member.userId)}
+                            >
+                              Remove
+                            </Button>
+                          )}
                         </TableCell>
                       </TableRow>
                     ))
