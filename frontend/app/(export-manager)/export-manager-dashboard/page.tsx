@@ -21,7 +21,7 @@ export default function ExportManagerDashboardPage() {
   });
 
   if (analyticsLoading || casesLoading) {
-    return <div className="p-8 flex justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0a8c4f]"></div></div>;
+    return <div className="p-8 flex justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00A651]"></div></div>;
   }
 
   const stats = analyticsData?.data;
@@ -41,7 +41,7 @@ export default function ExportManagerDashboardPage() {
             </Button>
           </Link>
           <Link href="/export-case/new">
-            <Button className="bg-[#2F6B4F] hover:bg-[#087a44] text-white font-medium shadow-sm flex items-center gap-2">
+            <Button className="bg-[#00A651] hover:bg-[#008F44] text-white font-medium shadow-sm flex items-center gap-2">
               <Plus className="w-4 h-4" /> Create Case
             </Button>
           </Link>
@@ -52,7 +52,7 @@ export default function ExportManagerDashboardPage() {
         <Card className="border-white/50 shadow-sm hover:shadow-md transition-shadow rounded-2xl">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-semibold text-[#9CA3AF] flex items-center gap-2">
-              <Briefcase className="w-4 h-4 text-[#2F6B4F]" />
+              <Briefcase className="w-4 h-4 text-[#00A651]" />
               My Cases
             </CardTitle>
           </CardHeader>
@@ -67,7 +67,7 @@ export default function ExportManagerDashboardPage() {
         <Card className="border-white/50 shadow-sm hover:shadow-md transition-shadow rounded-2xl">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-semibold text-[#9CA3AF] flex items-center gap-2">
-              <Activity className="w-4 h-4 text-[#2F6B4F]" />
+              <Activity className="w-4 h-4 text-[#00A651]" />
               Active Cases
             </CardTitle>
           </CardHeader>
@@ -82,7 +82,7 @@ export default function ExportManagerDashboardPage() {
         <Card className="border-white/50 shadow-sm hover:shadow-md transition-shadow rounded-2xl">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-semibold text-[#9CA3AF] flex items-center gap-2">
-              <BarChart className="w-4 h-4 text-[#2F6B4F]" />
+              <BarChart className="w-4 h-4 text-[#00A651]" />
               Recent Analysis
             </CardTitle>
           </CardHeader>
@@ -103,7 +103,7 @@ export default function ExportManagerDashboardPage() {
       <div className="bg-white rounded-3xl p-6 shadow-sm border border-white/50 flex flex-col mt-8">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-lg font-bold text-[#1F2937]">Recent Export Cases</h3>
-          <Link href="/export-case" className="text-sm font-bold text-[#2F6B4F] hover:text-[#087a44] flex items-center gap-1">
+          <Link href="/export-case" className="text-sm font-bold text-[#00A651] hover:text-[#008F44] flex items-center gap-1">
             View All <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -117,9 +117,9 @@ export default function ExportManagerDashboardPage() {
           ) : (
             <div className="space-y-4">
               {recentCases.map((c) => (
-                <div key={c.caseId} className="flex flex-col md:flex-row md:items-center justify-between p-4 rounded-xl border border-[#E8E3D9] bg-[#FAF8F3]/50 hover:bg-[#FAF8F3] transition-colors gap-4">
+                <div key={c.caseId} className="flex flex-col md:flex-row md:items-center justify-between p-4 rounded-xl border border-[#D1EDE4] bg-[#EBF8F2]/50 hover:bg-[#EBF8F2] transition-colors gap-4">
                   <div>
-                    <Link href={`/export-case/${c.caseId}`} className="font-bold text-[#1F2937] text-sm hover:text-[#2F6B4F] transition-colors">
+                    <Link href={`/export-case/${c.caseId}`} className="font-bold text-[#1F2937] text-sm hover:text-[#00A651] transition-colors">
                       {c.name}
                     </Link>
                     <div className="text-xs text-[#9CA3AF] mt-1 flex items-center gap-2">

@@ -10,7 +10,7 @@ export default function ProjectsPage() {
     <div className="flex flex-col font-sans bg-[#FAF8F3] min-h-screen selection:bg-[#2F6B4F]/20">
       <div className="min-h-[60vh] flex flex-col relative overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <Image src={dashboardBg} alt="Dashboard Background" fill priority className="object-cover object-center scale-105" />
+          <Image src={dashboardBg} alt="Dashboard Background" fill sizes="100vw" priority className="object-cover object-center scale-105" />
         </div>
         <div className="absolute inset-0 z-0 bg-gradient-to-br from-[#FAF8F3]/90 via-white/80 to-[#F5F8F6]/90 backdrop-blur-[4px]"></div>
 

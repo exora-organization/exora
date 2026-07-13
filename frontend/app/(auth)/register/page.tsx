@@ -66,7 +66,7 @@ function RegisterForm() {
 
     if (score < 3) return { label: "Weak", color: "bg-red-500", width: "w-1/3" };
     if (score < 5) return { label: "Medium", color: "bg-yellow-500", width: "w-2/3" };
-    return { label: "Strong", color: "bg-[#2F6B4F]", width: "w-full" };
+    return { label: "Strong", color: "bg-[#00A651]", width: "w-full" };
   };
 
   const strength = getPasswordStrength(passwordValue);
@@ -97,7 +97,7 @@ function RegisterForm() {
   return (
     <div className="w-full">
       <div className="group bg-white/80 backdrop-blur-xl border border-white/60 p-6 sm:p-8 pt-6 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#F5F8F6] to-transparent rounded-bl-full opacity-50 -z-10 group-hover:scale-150 transition-transform duration-700"></div>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#EBF8F2] to-transparent rounded-bl-full opacity-50 -z-10 group-hover:scale-150 transition-transform duration-700"></div>
         <div className="flex items-center justify-center space-x-3 mb-4 text-center">
           <div className="relative w-10 h-10 flex items-center justify-center shrink-0">
             <Image src={logoImg} alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
@@ -120,7 +120,7 @@ function RegisterForm() {
               <Input
                 id="displayName"
                 placeholder="John Doe"
-                className="pl-10 h-10 bg-[#F5F8F6] border-transparent focus:bg-white text-[#1F2937] placeholder:text-[#9CA3AF] text-sm rounded-lg"
+                className="pl-10 h-10 bg-[#EBF8F2] border-transparent focus:bg-white text-[#1F2937] placeholder:text-[#9CA3AF] text-sm rounded-lg"
                 {...register("displayName")}
               />
             </div>
@@ -139,7 +139,7 @@ function RegisterForm() {
                 id="email"
                 type="email"
                 placeholder="manager@company.com"
-                className="pl-10 h-10 bg-[#F5F8F6] border-transparent focus:bg-white text-[#1F2937] placeholder:text-[#9CA3AF] text-sm rounded-lg"
+                className="pl-10 h-10 bg-[#EBF8F2] border-transparent focus:bg-white text-[#1F2937] placeholder:text-[#9CA3AF] text-sm rounded-lg"
                 {...register("email")}
               />
             </div>
@@ -158,7 +158,7 @@ function RegisterForm() {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••••••"
-                className="pl-10 pr-10 h-10 bg-[#F5F8F6] border-transparent focus:bg-white text-[#1F2937] placeholder:text-[#9CA3AF] text-sm rounded-lg"
+                className="pl-10 pr-10 h-10 bg-[#EBF8F2] border-transparent focus:bg-white text-[#1F2937] placeholder:text-[#9CA3AF] text-sm rounded-lg"
                 {...register("password")}
               />
               <button
@@ -170,10 +170,10 @@ function RegisterForm() {
               </button>
             </div>
             {passwordValue && (
-              <div className="mt-2 bg-[#F5F8F6] rounded-xl p-3 border border-[#E8E3D9]">
+              <div className="mt-2 bg-[#EBF8F2] rounded-xl p-3 border border-[#E8E3D9]">
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-[10px] font-bold text-[#9CA3AF] tracking-widest uppercase">Strength:</span>
-                  <span className={`text-[10px] font-bold tracking-widest uppercase ${strength.label === "Weak" ? "text-[#F43F5E]" : strength.label === "Medium" ? "text-yellow-500" : "text-[#2F6B4F]"}`}>
+                  <span className={`text-[10px] font-bold tracking-widest uppercase ${strength.label === "Weak" ? "text-[#F43F5E]" : strength.label === "Medium" ? "text-yellow-500" : "text-[#00A651]"}`}>
                     {strength.label}
                   </span>
                 </div>
@@ -198,7 +198,7 @@ function RegisterForm() {
                     );
                   } else {
                     return (
-                      <p className="text-[10px] text-[#2F6B4F] font-bold leading-tight">
+                      <p className="text-[10px] text-[#00A651] font-bold leading-tight">
                         ✓ All requirements met
                       </p>
                     );
@@ -241,7 +241,7 @@ function RegisterForm() {
 
           <Button 
             type="submit" 
-            className="w-full h-10 bg-gradient-to-r from-[#2F6B4F] to-[#25563F] hover:from-[#25563F] hover:to-[#25563F] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center space-x-2 transition-all duration-300 group" 
+            className="w-full h-10 bg-[#00A651] hover:bg-[#008F44] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center space-x-2 transition-all duration-300 group" 
             disabled={isLoading || !turnstileToken}
           >
             <span>{isLoading ? "CREATING..." : "CREATE ACCOUNT"}</span>
@@ -253,14 +253,14 @@ function RegisterForm() {
           <div className="text-[#9CA3AF] text-xs font-medium">
             Already have an account?
           </div>
-          <Link href={`/login${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ""}`} className="px-4 py-2 rounded-lg bg-[#F5F8F6] hover:bg-gray-200 text-[#1F2937] text-xs font-bold transition-colors">
+          <Link href={`/login${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ""}`} className="px-5 py-2.5 rounded-xl bg-white border border-[#00A651] text-[#00A651] hover:bg-[#00A651] hover:text-white text-xs font-extrabold uppercase tracking-wide shadow-sm hover:shadow-md transition-all">
             Log in to portal
           </Link>
         </div>
       </div>
 
       <div className="mt-6 text-center">
-        <Link href="/" className="inline-flex items-center justify-center px-6 py-2.5 rounded-xl bg-white/60 hover:bg-white border border-white/50 shadow-sm text-sm text-[#4B5563] font-bold transition-all">
+        <Link href="/" className="inline-flex items-center justify-center px-8 py-3 rounded-2xl bg-white hover:bg-[#F3F4F6] border border-[#E8E3D9] shadow-md hover:shadow-lg text-sm text-[#1F2937] font-extrabold transition-all">
           Back to Home
         </Link>
       </div>

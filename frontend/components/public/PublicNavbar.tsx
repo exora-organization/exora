@@ -56,7 +56,7 @@ export function PublicNavbar() {
             <Link 
               key={link.href} 
               href={link.href} 
-              className={`${isActive ? 'text-[#2F6B4F]' : 'text-[#4B5563] hover:text-[#1F2937]'} transition-colors`}
+              className={`${isActive ? 'text-[#00A651]' : 'text-[#4B5563] hover:text-[#1F2937]'} transition-colors`}
             >
               {link.label}
             </Link>
@@ -68,7 +68,7 @@ export function PublicNavbar() {
         <button 
           onClick={handlePortalClick}
           disabled={isNavigating || loading}
-          className="bg-[#2F6B4F] hover:bg-[#25563F] text-white px-6 py-2.5 rounded text-sm font-bold tracking-widest uppercase transition-colors shadow-md disabled:opacity-70 flex items-center space-x-2"
+          className="bg-[#00A651] hover:bg-[#008F44] text-white px-6 py-2.5 rounded text-sm font-bold tracking-widest uppercase transition-colors shadow-md disabled:opacity-70 flex items-center space-x-2"
         >
           <span>{isNavigating || loading ? "LOADING..." : "CLIENT PORTAL"}</span>
         </button>

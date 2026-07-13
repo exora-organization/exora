@@ -2,157 +2,155 @@
 
 import { PublicNavbar } from "../../components/public/PublicNavbar";
 import { PublicFooter } from "../../components/public/PublicFooter";
-import { 
-  Calculator, 
-  Tag, 
-  LineChart, 
-  GitCompare, 
-  ShieldAlert, 
-  Bot, 
-  LayoutDashboard, 
-  FileText 
+import {
+  ArrowRight, CheckCircle2
 } from "lucide-react";
 import Image from "next/image";
-import heroBg from "../../public/export_map_hero.png";
+import { motion } from "framer-motion";
+import heroBg from "../../public/dashboard-bg.png";
 
 export default function ServicesPage() {
-  const services = [
+  const showcases = [
     {
-      title: "Export Costing",
-      icon: Calculator,
-      desc: "Estimate complete export costs including production, packaging, transportation, freight, insurance, and certification.",
-      items: ["Production Costs", "Logistics & Freight", "Insurance & Certification"]
+      title: "Export Cost Analysis",
+      desc: "Understand the true cost of every export transaction before making business decisions. EXORA helps you organize and calculate all export-related expenses in one place for better cost control.",
+      items: ["Production, packaging, and certification costs", "Freight, insurance, and transportation costs", "Complete export cost breakdown"],
+      image: "/service_cost.png",
+      imageLeft: true,
     },
     {
       title: "Pricing Engine",
-      icon: Tag,
-      desc: "Calculate selling prices automatically based on different international commercial terms (Incoterms).",
-      items: ["EXW (Ex Works)", "FOB (Free on Board)", "CFR (Cost and Freight)", "CIF (Cost, Insurance & Freight)"]
+      desc: "Generate accurate export prices based on international Incoterms while maintaining your desired profit margin. Compare pricing scenarios to stay competitive in global markets.",
+      items: ["EXW, FOB, CFR, and CIF pricing", "Target profit margin calculation", "Flexible pricing simulation"],
+      image: "/service_pricing.png",
+      imageLeft: false,
     },
     {
       title: "Financial Analysis",
-      icon: LineChart,
-      desc: "Generate comprehensive financial projections to evaluate if the export operation is commercially viable.",
-      items: ["Revenue & Profit", "Profit Margin", "Return on Investment (ROI)", "Break Even Point"]
-    },
-    {
-      title: "Scenario Analysis",
-      icon: GitCompare,
-      desc: "Compare different scenarios to determine the most profitable and secure export strategy.",
-      items: ["Incoterm Variants", "Exchange Rate Fluctuations", "Target Margin Adjustments", "Payment Terms"]
+      desc: "Evaluate the financial viability of your export opportunities with clear performance indicators. Make informed decisions using reliable financial projections.",
+      items: ["Revenue and profit analysis", "ROI and profit margin calculation", "Break-even point estimation"],
+      image: "/service_financial.png",
+      imageLeft: true,
     },
     {
       title: "Risk Assessment",
-      icon: ShieldAlert,
-      desc: "Evaluate critical risk factors that could impact your export operations and profitability.",
-      items: ["Country Risk Profile", "Payment Default Risk", "Profitability Risk"]
+      desc: "Identify potential risks before entering international markets. EXORA evaluates multiple risk factors to help you reduce uncertainty and improve decision-making.",
+      items: ["Destination country risk analysis", "Payment method evaluation", "Export feasibility assessment"],
+      image: "/service_risk.png",
+      imageLeft: false,
     },
     {
       title: "AI Export Advisor",
-      icon: Bot,
-      desc: "Generate AI-based recommendations tailored to your specific export case financial and market data.",
-      items: ["Executive Summary", "Key Strengths & Weaknesses", "Critical Risk Factors", "Final Recommendation"]
+      desc: "Turn complex export data into practical business insights. Receive AI-generated recommendations based on your financial analysis, pricing, and risk evaluation.",
+      items: ["Executive summary and insights", "Strategic recommendations", "Go or reconsider decision support"],
+      image: "/service_ai.png",
+      imageLeft: true,
     },
     {
-      title: "Analytics Dashboard",
-      icon: LayoutDashboard,
-      desc: "Track and visualize your entire export portfolio performance in real-time.",
-      items: ["Active Export Cases", "Feasibility Scores", "Risk Distribution Map", "Top Destination Countries"]
-    },
-    {
-      title: "PDF Reports",
-      icon: FileText,
-      desc: "Generate professional export documents required for international trade and internal reviews.",
-      items: ["Commercial Quotation", "Proforma Invoice", "Cost Breakdown Report", "Export Feasibility Report"]
+      title: "Export Reports",
+      desc: "Create professional export reports with a single click. Share clear and structured analyses with management, clients, or business partners.",
+      items: ["Export feasibility report", "Financial and cost summary", "Downloadable PDF documents"],
+      image: "/about-image.jpg",
+      imageLeft: false,
     }
   ];
 
   return (
-    <div className="flex flex-col font-sans bg-[#FAF8F3] min-h-screen selection:bg-[#2F6B4F]/20">
-      
-      {/* Navbar (now sticky globally) */}
+    <div className="flex flex-col font-sans bg-white min-h-screen selection:bg-[#00A651]/20">
+
       <PublicNavbar />
 
       {/* ================= HERO SECTION ================= */}
-      <div className="relative flex flex-col overflow-hidden bg-[#F5F8F6] pt-20 pb-16 lg:pt-28 lg:pb-24">
-        {/* Background Image Overlay */}
-        <div className="absolute inset-0 z-0 opacity-20">
-          <Image 
-            src={heroBg} 
-            alt="Background Map" 
-            fill
-            className="object-cover object-center"
-            priority
-          />
-        </div>
-        
+      <div className="relative flex flex-col overflow-hidden h-[50vh] min-h-[400px] justify-center">
+        <Image
+          src={heroBg}
+          alt="Services Background"
+          fill
+          sizes="100vw"
+          className="object-cover object-center"
+          priority
+        />
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm z-0" />
+
         <main className="relative z-10 flex flex-col items-center justify-center px-6 lg:px-20 max-w-4xl mx-auto w-full text-center">
-          <div className="inline-block bg-[#2F6B4F] text-white px-3 py-1 rounded text-xs font-bold uppercase tracking-widest mb-6">
-            Our Features
-          </div>
-          
-          <h1 className="text-5xl lg:text-7xl font-extrabold text-[#1F2937] leading-[1.1] tracking-tight mb-8">
+
+          <h1 className="text-5xl lg:text-7xl font-extrabold text-white leading-[1.1] tracking-tight drop-shadow-lg">
             What EXORA Provides
           </h1>
-          
-          <p className="text-[#4B5563] text-lg lg:text-xl leading-relaxed font-medium max-w-2xl mx-auto">
-            A complete suite of tools to calculate costs, mitigate risks, and execute profitable international trade operations.
-          </p>
         </main>
       </div>
 
-      {/* ================= SERVICES GRID ================= */}
-      <section className="py-20 px-6 lg:px-20 max-w-none mx-auto w-full bg-[#FAF8F3] mb-20">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-x-8 gap-y-16 mt-8">
-          {services.map((service, idx) => {
-            const Icon = service.icon;
-            return (
-              <div key={idx} className="relative bg-white pt-12 px-8 lg:px-10 pb-10 rounded-2xl border border-[#E8E3D9] shadow-sm hover:shadow-lg transition-all duration-300 group flex flex-col items-center text-center h-full">
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-16 h-16 rounded-2xl bg-[#1F2937] text-white flex items-center justify-center transition-all duration-300 shadow-md border-2 border-white">
-                  <Icon className="w-8 h-8" />
-                </div>
-                <h3 className="text-2xl font-bold text-[#1F2937] group-hover:text-[#2F6B4F] transition-colors mt-2 mb-4">{service.title}</h3>
-                
-                <p className="text-[#4B5563] leading-relaxed mb-8 flex-1">
-                  {service.desc}
-                </p>
-                
-                <div className="bg-[#FAF8F3] p-6 rounded-2xl border border-[#2F6B4F]/10 w-full text-left mt-auto">
-                  <ul className="space-y-3">
-                    {service.items.map((item, i) => (
-                      <li key={i} className="flex items-start text-sm font-bold text-[#1F2937]">
-                        <span className="text-[#2F6B4F] mr-3 mt-0.5">✓</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+      {/* ================= SHOWCASE SECTIONS ================= */}
+      <section className="py-24 px-6 lg:px-20 max-w-7xl mx-auto w-full space-y-32">
+        {showcases.map((showcase, idx) => (
+          <motion.div
+            key={idx}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+            className={`flex flex-col gap-12 lg:gap-20 items-stretch lg:h-[560px] ${
+              showcase.imageLeft ? "lg:flex-row" : "lg:flex-row-reverse"
+            }`}
+          >
+            {/* Image Block */}
+            <div className="w-full lg:w-1/2 relative rounded-3xl overflow-hidden shadow-2xl border-[8px] border-[#EBF8F2] h-[350px] sm:h-[450px] lg:h-full bg-[#EBF8F2]/50 shrink-0 flex items-center justify-center p-4 lg:p-8">
+              <img src={`${showcase.image}?v=2`} alt={showcase.title} className="w-full h-full object-contain" />
+            </div>
+
+            {/* Text Block */}
+            <div className="w-full lg:w-1/2 flex flex-col justify-center space-y-5 lg:h-full">
+              <div className="inline-flex items-center gap-2 text-[#00A651] text-sm font-bold uppercase tracking-widest">
+                <span className="w-2 h-2 rounded-full bg-[#00A651] inline-block" />
+                Feature {idx + 1}
               </div>
-            );
-          })}
-        </div>
+              <h2 className="text-3xl lg:text-4xl font-extrabold text-[#111827] leading-tight">
+                {showcase.title}
+              </h2>
+              <p className="text-[#4B5563] text-lg leading-relaxed">
+                {showcase.desc}
+              </p>
+              
+              <ul className="space-y-4 py-2 mt-2">
+                {showcase.items.map((item, i) => (
+                  <li key={i} className="flex items-start text-[#1F2937] font-semibold text-lg">
+                    <CheckCircle2 className="w-6 h-6 text-[#00A651] shrink-0 mr-3 mt-0.5" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </motion.div>
+        ))}
       </section>
 
       {/* ================= BOTTOM CTA ================= */}
-      <section className="py-12 px-6 lg:px-20 max-w-5xl mx-auto w-full mb-20">
-        <div className="bg-[#1F2937] rounded-3xl p-12 md:p-16 text-center shadow-xl">
-          <div className="space-y-6 max-w-2xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-white leading-tight">
+      <section className="py-8 px-6 lg:px-20 w-full bg-[#EBF8F2] border-t border-[#D1EDE4]">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="max-w-7xl mx-auto bg-white border border-[#D1EDE4] rounded-2xl px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm"
+        >
+          <div className="flex-1">
+            <h2 className="text-xl md:text-2xl font-extrabold text-[#1F2937] leading-tight mb-1">
               Ready to leverage these tools?
             </h2>
-            <p className="text-[#a4e2cc] text-lg font-medium">
+            <p className="text-[#4B5563] text-sm md:text-base">
               Start evaluating your export cases with precision today.
             </p>
-            <div className="pt-6">
-              <a 
-                href="/company-application"
-                className="bg-[#2F6B4F] hover:bg-[#25563F] text-white px-8 py-4 rounded-xl text-lg font-bold transition-colors shadow-lg inline-flex items-center"
-              >
-                Register Your Company
-              </a>
-            </div>
           </div>
-        </div>
+          <div className="shrink-0">
+            <a
+              href="/company-application"
+              className="bg-[#00A651] hover:bg-[#008F44] text-white px-8 py-4 rounded-xl font-bold text-sm uppercase tracking-widest transition-colors shadow-sm whitespace-nowrap inline-flex items-center gap-2"
+            >
+              Register Your Company
+              <ArrowRight size={16} />
+            </a>
+          </div>
+        </motion.div>
       </section>
 
       <PublicFooter />

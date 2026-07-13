@@ -48,7 +48,7 @@ export default function AdminDashboardPage() {
           <input 
             type="text" 
             placeholder="Search data..." 
-            className="w-full pl-4 pr-10 py-2.5 rounded-full border-none shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0a8c4f] bg-white text-sm"
+            className="w-full pl-4 pr-10 py-2.5 rounded-full border-none shadow-sm focus:outline-none focus:ring-2 focus:ring-[#00A651] bg-white text-sm"
           />
           <Search className="absolute right-3 top-2.5 h-4 w-4 text-[#9CA3AF]" />
         </div>
@@ -117,25 +117,25 @@ export default function AdminDashboardPage() {
       <div>
         <h3 className="text-lg font-bold mb-4">Quick Actions</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Link href="/company-approvals" className="flex items-center gap-3 p-4 bg-white rounded-2xl shadow-sm border border-white hover:border-[#0a8c4f]/30 hover:shadow-md transition-all group">
+          <Link href="/company-approvals" className="flex items-center gap-3 p-4 bg-white rounded-2xl shadow-sm border border-white hover:border-[#00A651]/30 hover:shadow-md transition-all group">
             <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
               <Building className="w-5 h-5" />
             </div>
             <span className="font-semibold text-sm text-[#4B5563]">Company Approvals</span>
           </Link>
-          <Link href="/users" className="flex items-center gap-3 p-4 bg-white rounded-2xl shadow-sm border border-white hover:border-[#0a8c4f]/30 hover:shadow-md transition-all group">
-            <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-[#2F6B4F] group-hover:scale-110 transition-transform">
+          <Link href="/users" className="flex items-center gap-3 p-4 bg-white rounded-2xl shadow-sm border border-white hover:border-[#00A651]/30 hover:shadow-md transition-all group">
+            <div className="w-10 h-10 rounded-full bg-[#EBF8F2] flex items-center justify-center text-[#00A651] group-hover:scale-110 transition-transform">
               <Users className="w-5 h-5" />
             </div>
             <span className="font-semibold text-sm text-[#4B5563]">User Management</span>
           </Link>
-          <Link href="/system-monitoring" className="flex items-center gap-3 p-4 bg-white rounded-2xl shadow-sm border border-white hover:border-[#0a8c4f]/30 hover:shadow-md transition-all group">
+          <Link href="/system-monitoring" className="flex items-center gap-3 p-4 bg-white rounded-2xl shadow-sm border border-white hover:border-[#00A651]/30 hover:shadow-md transition-all group">
             <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-600 group-hover:scale-110 transition-transform">
               <Activity className="w-5 h-5" />
             </div>
             <span className="font-semibold text-sm text-[#4B5563]">System Monitoring</span>
           </Link>
-          <Link href="/audit-logs" className="flex items-center gap-3 p-4 bg-white rounded-2xl shadow-sm border border-white hover:border-[#0a8c4f]/30 hover:shadow-md transition-all group">
+          <Link href="/audit-logs" className="flex items-center gap-3 p-4 bg-white rounded-2xl shadow-sm border border-white hover:border-[#00A651]/30 hover:shadow-md transition-all group">
             <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 group-hover:scale-110 transition-transform">
               <FileText className="w-5 h-5" />
             </div>
@@ -149,7 +149,7 @@ export default function AdminDashboardPage() {
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-white/50 flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-bold text-[#1F2937]">Recent Pending Applications</h3>
-            <Link href="/company-approvals" className="text-sm font-bold text-[#2F6B4F] hover:text-[#086b3c] flex items-center gap-1">
+            <Link href="/company-approvals" className="text-sm font-bold text-[#00A651] hover:text-[#008F44] flex items-center gap-1">
               View All <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -160,7 +160,7 @@ export default function AdminDashboardPage() {
             ) : pendingApplications.length > 0 ? (
               <div className="space-y-4">
                 {pendingApplications.map((app, idx) => (
-                  <div key={app.companyId || `app-${idx}`} className="flex items-center justify-between p-4 rounded-xl border border-[#E8E3D9] bg-[#FAF8F3]/50 hover:bg-[#FAF8F3] transition-colors">
+                  <div key={app.companyId || `app-${idx}`} className="flex items-center justify-between p-4 rounded-xl border border-[#D1EDE4] bg-[#EBF8F2]/50 hover:bg-[#EBF8F2] transition-colors">
                     <div>
                       <h4 className="font-bold text-[#1F2937] text-sm">{app.companyName}</h4>
                       <p className="text-xs text-[#9CA3AF] mt-1">Applicant: {app.applicant?.email} • {new Date(app.submittedAt).toLocaleDateString()}</p>
@@ -186,7 +186,7 @@ export default function AdminDashboardPage() {
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-white/50 flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-bold text-[#1F2937]">Recent Activity</h3>
-            <Link href="/audit-logs" className="text-sm font-bold text-[#2F6B4F] hover:text-[#086b3c] flex items-center gap-1">
+            <Link href="/audit-logs" className="text-sm font-bold text-[#00A651] hover:text-[#008F44] flex items-center gap-1">
               View All <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -197,8 +197,8 @@ export default function AdminDashboardPage() {
             ) : recentLogs.length > 0 ? (
               <div className="space-y-4">
                 {recentLogs.map((log, idx) => (
-                  <div key={log.id || `log-${idx}`} className="flex gap-4 p-3 rounded-xl hover:bg-[#FAF8F3] transition-colors">
-                    <div className="w-8 h-8 rounded-full bg-[#F5F8F6] flex items-center justify-center text-[#9CA3AF] shrink-0 mt-0.5">
+                  <div key={log.id || `log-${idx}`} className="flex gap-4 p-3 rounded-xl hover:bg-[#EBF8F2] transition-colors">
+                    <div className="w-8 h-8 rounded-full bg-[#EBF8F2] flex items-center justify-center text-[#9CA3AF] shrink-0 mt-0.5">
                       <Activity className="w-4 h-4" />
                     </div>
                     <div>
@@ -206,7 +206,7 @@ export default function AdminDashboardPage() {
                         <span className="font-bold capitalize">{log.action.replace(/_/g, ' ')}</span> on <span className="font-medium text-[#4B5563]">{log.resource}</span>
                       </p>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-[#2F6B4F] font-medium">{log.actorId}</span>
+                        <span className="text-xs text-[#00A651] font-medium">{log.actorId}</span>
                         <span className="text-xs text-[#9CA3AF]">•</span>
                         <span className="text-xs text-[#9CA3AF]">{new Date(log.timestamp).toLocaleString()}</span>
                       </div>

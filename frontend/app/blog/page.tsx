@@ -3,9 +3,9 @@
 import { PublicNavbar } from "../../components/public/PublicNavbar";
 import { PublicFooter } from "../../components/public/PublicFooter";
 import { ArrowRight, BookOpen, Clock, Tag } from "lucide-react";
-import Link from "next/link";
 import Image from "next/image";
-import heroBg from "../../public/export_map_hero.png";
+import { motion } from "framer-motion";
+import heroBg from "../../public/dashboard-bg.png";
 
 export default function BlogPage() {
   const articles = [
@@ -42,51 +42,51 @@ export default function BlogPage() {
   ];
 
   return (
-    <div className="flex flex-col font-sans bg-[#FAF8F3] min-h-screen selection:bg-[#2F6B4F]/20">
+    <div className="flex flex-col font-sans bg-[#EBF8F2] min-h-screen selection:bg-[#00A651]/20">
       
       <PublicNavbar />
 
       {/* ================= HERO SECTION ================= */}
-      <div className="relative flex flex-col overflow-hidden bg-[#F5F8F6] pt-20 pb-16 lg:pt-28 lg:pb-24">
-        
-        {/* Background Image Overlay */}
-        <div className="absolute inset-0 z-0 opacity-20">
-          <Image 
-            src={heroBg} 
-            alt="Background Map" 
-            fill
-            className="object-cover object-center"
-            priority
-          />
-        </div>
+      <div className="relative flex flex-col overflow-hidden h-[50vh] min-h-[400px] justify-center">
+        <Image
+          src={heroBg}
+          alt="Blog Background"
+          fill
+          sizes="100vw"
+          className="object-cover object-center"
+          priority
+        />
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm z-0" />
 
         <main className="relative z-10 flex flex-col items-center justify-center px-6 lg:px-20 max-w-4xl mx-auto w-full text-center">
-          <div className="inline-block bg-[#2F6B4F] text-white px-3 py-1 rounded text-xs font-bold uppercase tracking-widest mb-6">
-            EXORA Blog
-          </div>
           
-          <h1 className="text-5xl lg:text-7xl font-extrabold text-[#1F2937] leading-[1.1] tracking-tight mb-8">
-            Export Insights & Resources
+          <h1 className="text-5xl lg:text-7xl font-extrabold text-white leading-[1.1] tracking-tight drop-shadow">
+            Export Insights &amp; Resources
           </h1>
-          
-          <p className="text-[#4B5563] text-lg lg:text-xl leading-relaxed font-medium max-w-2xl mx-auto">
-            Stay informed with practical knowledge about export planning, international trade, pricing strategies, and market risks.
-          </p>
         </main>
       </div>
 
       {/* ================= ARTICLES GRID ================= */}
-      <section className="py-20 px-6 lg:px-20 max-w-none mx-auto w-full bg-[#FAF8F3] mb-20">
+      <section className="py-20 px-6 lg:px-20 max-w-none mx-auto w-full bg-[#EBF8F2]">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {articles.map((article, idx) => (
-            <div key={idx} className="bg-white rounded-[2rem] border border-[#E8E3D9] shadow-sm hover:shadow-lg hover:border-[#2F6B4F] transition-all duration-300 group flex flex-col overflow-hidden h-full">
-              <div className="w-full h-48 bg-[#F5F8F6] relative flex items-center justify-center overflow-hidden">
-                <BookOpen className="w-12 h-12 text-[#2F6B4F] group-hover:scale-110 group-hover:text-white transition-all duration-500" />
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: idx * 0.08 }}
+              className="bg-white rounded-2xl border border-[#D1EDE4] shadow-sm hover:shadow-lg hover:border-[#00A651] transition-all duration-300 group flex flex-col overflow-hidden h-full"
+            >
+              <div className="w-full h-44 bg-[#EBF8F2] relative flex items-center justify-center overflow-hidden">
+                <div className="w-12 h-12 rounded-xl bg-[#00A651] text-white flex items-center justify-center shadow-sm">
+                  <BookOpen className="w-6 h-6 group-hover:scale-110 transition-all duration-500" />
+                </div>
               </div>
               
-              <div className="p-8 flex flex-col flex-1 border-t-4 border-[#2F6B4F]">
-                <div className="flex items-center space-x-4 mb-4 text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider">
-                  <div className="flex items-center text-[#2F6B4F] bg-[#FAF8F3] px-2 py-1 rounded-md">
+              <div className="p-7 flex flex-col flex-1 border-t-4 border-[#00A651]">
+                <div className="flex items-center space-x-4 mb-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider">
+                  <div className="flex items-center text-[#00A651] bg-[#EBF8F2] px-2 py-1 rounded-md">
                     <Tag className="w-3 h-3 mr-1" />
                     {article.category}
                   </div>
@@ -96,20 +96,20 @@ export default function BlogPage() {
                   </div>
                 </div>
                 
-                <h3 className="text-xl font-bold text-[#1F2937] mb-3 group-hover:text-[#2F6B4F] transition-colors leading-snug">
+                <h3 className="text-xl font-bold text-[#1F2937] mb-3 group-hover:text-[#00A651] transition-colors leading-snug">
                   {article.title}
                 </h3>
                 
-                <p className="text-[#9CA3AF] text-sm leading-relaxed mb-6 flex-1">
+                <p className="text-[#6B7280] text-sm leading-relaxed mb-6 flex-1">
                   {article.desc}
                 </p>
                 
-                <div className="pt-4 mt-auto border-t border-[#E8E3D9] flex items-center text-[#2F6B4F] font-bold text-sm cursor-pointer hover:text-[#25563F] transition-colors">
+                <div className="pt-4 mt-auto border-t border-[#D1EDE4] flex items-center text-[#00A651] font-bold text-sm cursor-pointer hover:text-[#008F44] transition-colors">
                   Read Article
                   <ArrowRight className="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </section>

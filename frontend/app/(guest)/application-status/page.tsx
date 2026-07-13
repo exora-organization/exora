@@ -35,7 +35,7 @@ export default function ApplicationStatusPage() {
   const PrimaryButton = ({ onClick, children }: { onClick: () => void, children: React.ReactNode }) => (
     <Button 
       onClick={onClick}
-      className="w-full h-12 bg-gradient-to-r from-[#2F6B4F] to-[#25563F] hover:from-[#25563F] hover:to-[#25563F] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 mt-4"
+      className="w-full h-12 bg-[#00A651] hover:bg-[#008F44] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 mt-4"
     >
       {children}
     </Button>

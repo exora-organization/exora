@@ -18,11 +18,15 @@ export function InvitationCard({ invite, token, isAuthenticated, acceptError }: 
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
-      <Card className="w-full max-w-md shadow-lg">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl text-blue-600">Join {invite.companyName}</CardTitle>
-          <CardDescription>You have been invited to join the team.</CardDescription>
+    <div className="flex min-h-screen items-center justify-center bg-[#EBF8F2] p-4 relative overflow-hidden">
+      {/* Background Graphic elements */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-[#00A651]/5 rounded-full blur-3xl -z-0 translate-x-1/3 -translate-y-1/3"></div>
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#00A651]/5 rounded-full blur-3xl -z-0 -translate-x-1/3 translate-y-1/3"></div>
+
+      <Card className="w-full max-w-md shadow-xl rounded-3xl border border-white/60 bg-white/95 backdrop-blur-xl relative z-10">
+        <CardHeader className="text-center pb-2">
+          <CardTitle className="text-2xl font-extrabold text-[#1F2937]">Join {invite.companyName}</CardTitle>
+          <CardDescription className="text-base">You have been invited to join the team.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="rounded-lg bg-slate-50 p-4 border space-y-3">

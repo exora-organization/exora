@@ -34,10 +34,10 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
   return (
     <ProtectedRoute>
       <RoleGuard allowedRoles={["company_owner"]}>
-        <div className="min-h-screen flex flex-col md:flex-row bg-[#FAF8F3] md:bg-gradient-to-br from-[#FAF8F3] to-[#F5F8F6]">
+        <div className="min-h-screen flex flex-col md:flex-row bg-[#EBF8F2] md:bg-gradient-to-br from-[#EBF8F2] to-[#EBF8F2]">
           
           {/* Sidebar */}
-          <aside className="w-full md:w-64 bg-white md:min-h-screen flex flex-col shadow-sm border-r border-[#E8E3D9] z-10">
+          <aside className="w-full md:w-64 bg-white md:min-h-screen flex flex-col shadow-sm border-r border-[#D1EDE4] z-10">
             {/* Logo Area */}
             <div className="p-6">
               <div className="flex items-center gap-2">
@@ -60,8 +60,8 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
                     href={item.href} 
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-sm font-medium ${
                       isActive 
-                        ? "bg-[#F5F8F6] text-[#2F6B4F]" 
-                        : "text-[#4B5563] hover:bg-[#FAF8F3] hover:text-[#1F2937]"
+                        ? "bg-[#EBF8F2] text-[#00A651]" 
+                        : "text-[#4B5563] hover:bg-[#EBF8F2] hover:text-[#1F2937]"
                     }`}
                   >
                     <Icon className="w-5 h-5" />
@@ -74,9 +74,9 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
             {/* Bottom Profile Area */}
             <div className="p-4 mt-auto">
               {/* User Info */}
-              <Link href="/profile" className="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl transition-colors hover:bg-[#FAF8F3] cursor-pointer">
+              <Link href="/profile" className="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl transition-colors hover:bg-[#EBF8F2] cursor-pointer">
                 <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden flex-shrink-0">
-                  <div className="w-full h-full flex items-center justify-center bg-[#2F6B4F] text-white font-medium">
+                  <div className="w-full h-full flex items-center justify-center bg-[#00A651] text-white font-medium">
                     {profile?.displayName?.charAt(0) || "O"}
                   </div>
                 </div>

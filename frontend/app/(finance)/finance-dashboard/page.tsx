@@ -21,7 +21,7 @@ export default function FinanceDashboardPage() {
   });
 
   if (analyticsLoading || casesLoading) {
-    return <div className="p-8 flex justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0a8c4f]"></div></div>;
+    return <div className="p-8 flex justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00A651]"></div></div>;
   }
 
   const stats = analyticsData?.data;
@@ -40,7 +40,7 @@ export default function FinanceDashboardPage() {
         <Card className="border-white/50 shadow-sm hover:shadow-md transition-shadow rounded-2xl">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-semibold text-[#9CA3AF] flex items-center gap-2">
-              <Briefcase className="w-4 h-4 text-[#2F6B4F]" />
+              <Briefcase className="w-4 h-4 text-[#00A651]" />
               Total Cases
             </CardTitle>
           </CardHeader>
@@ -55,7 +55,7 @@ export default function FinanceDashboardPage() {
         <Card className="border-white/50 shadow-sm hover:shadow-md transition-shadow rounded-2xl">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-semibold text-[#9CA3AF] flex items-center gap-2">
-              <Activity className="w-4 h-4 text-[#2F6B4F]" />
+              <Activity className="w-4 h-4 text-[#00A651]" />
               Active Cases
             </CardTitle>
           </CardHeader>
@@ -70,7 +70,7 @@ export default function FinanceDashboardPage() {
         <Card className="border-white/50 shadow-sm hover:shadow-md transition-shadow rounded-2xl">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-semibold text-[#9CA3AF] flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-[#2F6B4F]" />
+              <TrendingUp className="w-4 h-4 text-[#00A651]" />
               Average Feasibility
             </CardTitle>
           </CardHeader>
@@ -91,7 +91,7 @@ export default function FinanceDashboardPage() {
       <div className="bg-white rounded-3xl p-6 shadow-sm border border-white/50 flex flex-col mt-8">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-lg font-bold text-[#1F2937]">Export Cases (Costing & Analysis)</h3>
-          <Link href="/pricing" className="text-sm font-bold text-[#2F6B4F] hover:text-[#087a44] flex items-center gap-1">
+          <Link href="/pricing" className="text-sm font-bold text-[#00A651] hover:text-[#008F44] flex items-center gap-1">
             Pricing Setup <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -104,7 +104,7 @@ export default function FinanceDashboardPage() {
           ) : (
             <div className="space-y-4">
               {allCases.map((c) => (
-                <div key={c.caseId} className="flex flex-col md:flex-row md:items-center justify-between p-4 rounded-xl border border-[#E8E3D9] bg-[#FAF8F3]/50 hover:bg-[#FAF8F3] transition-colors gap-4">
+                <div key={c.caseId} className="flex flex-col md:flex-row md:items-center justify-between p-4 rounded-xl border border-[#D1EDE4] bg-[#EBF8F2]/50 hover:bg-[#EBF8F2] transition-colors gap-4">
                   <div>
                     <div className="font-bold text-[#1F2937] text-sm">
                       {c.name}
@@ -120,12 +120,12 @@ export default function FinanceDashboardPage() {
                       {c.status.replace("_", " ")}
                     </Badge>
                     <Link href={`/finance-case/${c.caseId}/costing`}>
-                      <Button variant="outline" size="sm" className="border-emerald-200 text-[#2F6B4F] hover:bg-[#F5F8F6]">
+                      <Button variant="outline" size="sm" className="border-[#D1EDE4] text-[#00A651] hover:bg-[#EBF8F2]">
                         Cost Data
                       </Button>
                     </Link>
                     <Link href={`/finance-case/${c.caseId}/financial`}>
-                      <Button size="sm" className="bg-[#2F6B4F] hover:bg-[#087a44] text-white shadow-sm">
+                      <Button size="sm" className="bg-[#00A651] hover:bg-[#008F44] text-white shadow-sm">
                         Financial Analysis
                       </Button>
                     </Link>

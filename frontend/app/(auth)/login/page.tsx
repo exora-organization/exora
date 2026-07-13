@@ -92,7 +92,7 @@ function LoginForm() {
   return (
     <div className="w-full">
       <div className="group bg-white/80 backdrop-blur-xl border border-white/60 p-8 sm:p-10 pt-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#F5F8F6] to-transparent rounded-bl-full opacity-50 -z-10 group-hover:scale-150 transition-transform duration-700"></div>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#EBF8F2] to-transparent rounded-bl-full opacity-50 -z-10 group-hover:scale-150 transition-transform duration-700"></div>
         <div className="flex items-center justify-center space-x-3 mb-6 text-center">
           <div className="relative w-10 h-10 flex items-center justify-center shrink-0">
             <Image src={logoImg} alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
@@ -116,7 +116,7 @@ function LoginForm() {
                 id="email"
                 type="email"
                 placeholder="manager@wacanatech.com"
-                className="pl-10 h-12 bg-[#F5F8F6] border-transparent focus:bg-white text-[#1F2937] placeholder:text-[#9CA3AF] text-base rounded-lg"
+                className="pl-10 h-12 bg-[#EBF8F2] border-transparent focus:bg-white text-[#1F2937] placeholder:text-[#9CA3AF] text-base rounded-lg"
                 {...register("email")}
               />
             </div>
@@ -138,7 +138,7 @@ function LoginForm() {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="password123"
-                className="pl-10 pr-10 h-12 bg-[#F5F8F6] border-transparent focus:bg-white text-[#1F2937] placeholder:text-[#9CA3AF] text-base rounded-lg"
+                className="pl-10 pr-10 h-12 bg-[#EBF8F2] border-transparent focus:bg-white text-[#1F2937] placeholder:text-[#9CA3AF] text-base rounded-lg"
                 {...register("password")}
               />
               <button
@@ -167,7 +167,7 @@ function LoginForm() {
 
           <Button 
             type="submit" 
-            className="w-full h-14 bg-gradient-to-r from-[#2F6B4F] to-[#25563F] hover:from-[#25563F] hover:to-[#25563F] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center space-x-2 transition-all duration-300 mt-4" 
+            className="w-full h-14 bg-[#00A651] hover:bg-[#008F44] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center space-x-2 transition-all duration-300 mt-4" 
             disabled={isLoading || !turnstileToken}
           >
             <span>{isLoading ? "SIGNING IN..." : "LOG IN TO FEASIBILITY SUITE"}</span>
@@ -179,14 +179,14 @@ function LoginForm() {
           <div className="text-[#9CA3AF] text-xs font-medium">
             New to EXORA?
           </div>
-          <Link href={`/register${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ""}`} className="px-4 py-2 rounded-lg bg-[#F5F8F6] hover:bg-gray-200 text-[#1F2937] text-xs font-bold transition-colors">
+          <Link href={`/register${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ""}`} className="px-5 py-2.5 rounded-xl bg-white border border-[#00A651] text-[#00A651] hover:bg-[#00A651] hover:text-white text-xs font-extrabold uppercase tracking-wide shadow-sm hover:shadow-md transition-all">
             Create an account
           </Link>
         </div>
       </div>
 
       <div className="mt-6 text-center">
-        <Link href="/" className="inline-flex items-center justify-center px-6 py-2.5 rounded-xl bg-white/60 hover:bg-white border border-white/50 shadow-sm text-sm text-[#4B5563] font-bold transition-all">
+        <Link href="/" className="inline-flex items-center justify-center px-8 py-3 rounded-2xl bg-white hover:bg-[#F3F4F6] border border-[#E8E3D9] shadow-md hover:shadow-lg text-sm text-[#1F2937] font-extrabold transition-all">
           Back to Home
         </Link>
       </div>

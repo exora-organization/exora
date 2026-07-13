@@ -50,7 +50,7 @@ export default function ResetPasswordPage() {
   return (
     <div className="w-full">
       <div className="group bg-white/80 backdrop-blur-xl border border-white/60 p-8 sm:p-10 pt-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#F5F8F6] to-transparent rounded-bl-full opacity-50 -z-10 group-hover:scale-150 transition-transform duration-700"></div>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#EBF8F2] to-transparent rounded-bl-full opacity-50 -z-10 group-hover:scale-150 transition-transform duration-700"></div>
         
         <div className="flex items-center justify-center space-x-3 mb-6 text-center">
           <div className="relative w-10 h-10 flex items-center justify-center shrink-0">
@@ -83,7 +83,7 @@ export default function ResetPasswordPage() {
                   id="email"
                   type="email"
                   placeholder="manager@company.com"
-                  className="pl-10 h-12 bg-[#F5F8F6] border-transparent focus:bg-white text-[#1F2937] placeholder:text-[#9CA3AF] text-base rounded-lg"
+                  className="pl-10 h-12 bg-[#EBF8F2] border-transparent focus:bg-white text-[#1F2937] placeholder:text-[#9CA3AF] text-base rounded-lg"
                   {...register("email")}
                 />
               </div>
@@ -100,7 +100,7 @@ export default function ResetPasswordPage() {
             
             <Button 
               type="submit" 
-              className="w-full h-14 bg-gradient-to-r from-[#2F6B4F] to-[#25563F] hover:from-[#25563F] hover:to-[#25563F] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center space-x-2 transition-all duration-300 mt-4 group" 
+              className="w-full h-14 bg-[#00A651] hover:bg-[#008F44] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center space-x-2 transition-all duration-300 mt-4 group" 
               disabled={isLoading}
             >
               <span>{isLoading ? "SENDING LINK..." : "SEND RESET LINK"}</span>
@@ -110,7 +110,7 @@ export default function ResetPasswordPage() {
         )}
 
         <div className="flex flex-col items-center justify-center mt-6 w-full pt-4 border-t border-[#E8E3D9]">
-          <Link href="/login" className="px-4 py-2 rounded-lg bg-[#F5F8F6] hover:bg-gray-200 text-[#1F2937] text-xs font-bold transition-colors w-full text-center">
+          <Link href="/login" className="px-4 py-2 rounded-lg bg-[#EBF8F2] hover:bg-[#D1EDE4] text-[#1F2937] text-xs font-bold transition-colors w-full text-center">
             Remember your password? Log in here
           </Link>
         </div>
