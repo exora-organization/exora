@@ -17,6 +17,9 @@ export function useUserProfile() {
       setFirebaseUser(user);
       setFirebaseLoading(false);
       if (user) {
+        // Purge old cached profile data synchronously to avoid role leaks
+        queryClient.removeQueries({ queryKey: ["user-profile"] });
+        
         // Set the token cookie for middleware.ts
         user.getIdToken().then((token) => {
           document.cookie = `firebaseToken=${token}; path=/; max-age=3600; Secure; SameSite=Strict`;

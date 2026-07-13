@@ -6,7 +6,16 @@ export async function apiClient<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const token = auth.currentUser ? await auth.currentUser.getIdToken() : null;
+  let token = auth.currentUser ? await auth.currentUser.getIdToken() : null;
+
+  // Fallback: If auth.currentUser is null (e.g. state sync delay right after login),
+  // read the firebaseToken cookie synchronously if we are in the browser
+  if (!token && typeof window !== "undefined") {
+    const match = document.cookie.match(/(^|;)\s*firebaseToken\s*=\s*([^;]+)/);
+    if (match) {
+      token = match[2];
+    }
+  }
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
