@@ -1,3 +1,5 @@
+//go:build ignore
+
 package main
 
 import (
@@ -93,3 +95,4 @@ Keep the response practical, concrete, and directly tied to the provided data.`
 	respBody, _ := io.ReadAll(resp.Body)
 	fmt.Println(string(respBody))
 }
+

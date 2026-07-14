@@ -1,3 +1,5 @@
+//go:build ignore
+
 package main
 
 import (
@@ -68,3 +70,4 @@ func main() {
 	fmt.Printf("Status: %d\n", resp.StatusCode)
 	fmt.Printf("Raw Response:\n%s\n", string(respBody))
 }
+

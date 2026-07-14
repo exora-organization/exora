@@ -66,9 +66,7 @@ func (s *Service) List(ctx context.Context, companyIDFilter string, limit int, c
 
 	items := make([]ListItem, 0, len(cases))
 	for _, c := range cases {
-		if u.Role == "export_manager" && c.CreatedBy != u.ID && c.AssignedTo != u.ID {
-			continue
-		}
+		// All authorized roles can see all cases in the company
 		items = append(items, ListItem{
 			CaseID:             c.ID,
 			CompanyID:          c.CompanyID,

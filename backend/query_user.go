@@ -1,3 +1,5 @@
+//go:build ignore
+
 package main
 
 import (
@@ -37,3 +39,4 @@ func main() {
 		fmt.Printf("Document %d (ID: %s):\n%s\n", i+1, doc.Ref.ID, string(bytes))
 	}
 }
+

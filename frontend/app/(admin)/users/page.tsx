@@ -2,14 +2,13 @@
 
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/table";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
-import { Badge } from "../../../components/ui/badge";
 import { apiUsers } from "../../../lib/api/users";
 import { UserProfile } from "../../../lib/types/user";
 import { useUserProfile } from "../../../hooks/useUserProfile";
 import { ConfirmWarningDialog } from "../../../components/ui/confirm-warning-dialog";
+import { Search } from "lucide-react";
 
 export default function UserManagementPage() {
   const queryClient = useQueryClient();
@@ -76,135 +75,136 @@ export default function UserManagementPage() {
   const isMutationPending = updateStatusMutation.isPending || changeRoleMutation.isPending || deleteUserMutation.isPending;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10 max-w-7xl mx-auto pb-10">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">User Management</h2>
-        <p className="text-[#9CA3AF] mt-1">Manage platform users, roles, and access.</p>
+        <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">User Management</h2>
+        <p className="text-[#4B5563] mt-2 font-medium">Manage platform users, roles, and access permissions.</p>
       </div>
 
-      <div className="flex justify-between items-center">
-        <Input 
-          placeholder="Search users by name or email..." 
-          className="max-w-md" 
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div className="relative w-full max-w-lg">
+          <input 
+            type="text" 
+            placeholder="Search users by name or email..." 
+            className="w-full pl-4 pr-10 py-3 rounded-2xl border border-white/60 shadow-md focus:outline-none focus:ring-2 focus:ring-[#00A651] bg-white/90 backdrop-blur-md text-sm font-medium"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <Search className="absolute right-4 top-3.5 h-5 w-5 text-[#9CA3AF]" />
+        </div>
       </div>
 
-      <div className="border border-[#E8E3D9] rounded-2xl bg-white shadow-sm overflow-hidden">
-        <Table>
-          <TableHeader className="bg-[#FAF8F3]/80">
-            <TableRow className="hover:bg-transparent">
-              <TableHead className="h-12 px-6 font-extrabold text-[#4B5563] tracking-wider text-xs uppercase">User</TableHead>
-              <TableHead className="h-12 px-6 font-extrabold text-[#4B5563] tracking-wider text-xs uppercase">Company ID</TableHead>
-              <TableHead className="h-12 px-6 font-extrabold text-[#4B5563] tracking-wider text-xs uppercase">Role</TableHead>
-              <TableHead className="h-12 px-6 font-extrabold text-[#4B5563] tracking-wider text-xs uppercase">Status</TableHead>
-              <TableHead className="h-12 px-6 font-extrabold text-[#4B5563] tracking-wider text-xs uppercase text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredUsers.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center py-12 text-[#9CA3AF] font-medium">
-                  No users found.
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredUsers.map((user) => (
-                <TableRow key={user.userId} className="hover:bg-[#FAF8F3]/50 transition-colors">
-                  <TableCell className="px-6 py-4">
-                    <div className="font-bold text-[#1F2937]">{user.displayName || "Unknown User"}</div>
-                    <div className="text-xs text-[#9CA3AF] mt-0.5">{user.email}</div>
-                  </TableCell>
-                  <TableCell className="px-6 py-4 font-medium text-[#4B5563]">
-                    {user.companyId || "-"}
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    <Badge variant="outline" className="font-bold bg-white text-[#4B5563] border-slate-300 tracking-wide">
-                      {user.role?.replace("_", " ").toUpperCase()}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    <Badge variant={user.status === "active" ? "default" : "destructive"} className="font-bold tracking-wide">
-                      {user.status?.toUpperCase() || "ACTIVE"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="px-6 py-4 text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        className="font-bold text-blue-600 border-blue-200 hover:bg-blue-50 transition-colors"
-                        onClick={() => {
-                          const newRole = user.role === "export_manager" ? "finance_staff" : "export_manager";
-                          setConfirmDialog({
-                            isOpen: true,
-                            title: "Change User Role",
-                            description: `Are you sure you want to change the role of ${user.displayName || user.email} to ${newRole.replace("_", " ").toUpperCase()}? This will update their permissions immediately.`,
-                            actionLabel: "Change Role",
-                            severity: "warning",
-                            onConfirm: () => {
-                              changeRoleMutation.mutate({ userId: user.userId, role: newRole });
-                            }
-                          });
-                        }}
-                        disabled={changeRoleMutation.isPending}
-                      >
-                        Change Role
-                      </Button>
-                      
-                      <Button 
-                        variant={user.status === "active" ? "destructive" : "default"} 
-                        size="sm"
-                        className="font-bold transition-colors"
-                        onClick={() => {
-                          const newStatus = user.status === "active" ? "disabled" : "active";
-                          setConfirmDialog({
-                            isOpen: true,
-                            title: newStatus === "disabled" ? "Disable User Account" : "Enable User Account",
-                            description: newStatus === "disabled"
-                              ? `Are you sure you want to disable the account of ${user.displayName || user.email}? This will temporarily restrict their access to the EXORA portal immediately.`
-                              : `Are you sure you want to restore access to the account of ${user.displayName || user.email}?`,
-                            actionLabel: newStatus === "disabled" ? "Disable" : "Enable",
-                            severity: newStatus === "disabled" ? "danger" : "info",
-                            onConfirm: () => {
-                              updateStatusMutation.mutate({ userId: user.userId, status: newStatus });
-                            }
-                          });
-                        }}
-                        disabled={updateStatusMutation.isPending}
-                      >
-                        {user.status === "active" ? "Disable" : "Enable"}
-                      </Button>
+      <div className="space-y-4">
+        {filteredUsers.length === 0 ? (
+          <div className="flex justify-center py-12 text-[#9CA3AF] font-bold">
+            No users found.
+          </div>
+        ) : (
+          filteredUsers.map((user) => (
+            <div key={user.userId} className="flex flex-col md:flex-row items-center justify-between p-6 rounded-3xl bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl hover:-translate-y-1 hover:shadow-2xl transition-all gap-6">
+              
+              {/* Profile Info */}
+              <div className="flex-[2] min-w-[200px]">
+                <h4 className="text-xl font-extrabold text-[#1F2937]">{user.displayName || "Unknown User"}</h4>
+                <p className="text-sm font-semibold text-[#4B5563] mt-1">{user.email}</p>
+              </div>
 
-                      <Button 
-                        variant="destructive" 
-                        size="sm"
-                        className="font-bold hover:bg-red-700 transition-colors"
-                        onClick={() => {
-                          setConfirmDialog({
-                            isOpen: true,
-                            title: "Permanently Delete User Profile",
-                            description: `WARNING: You are about to permanently delete the profile of ${user.displayName || user.email} (${user.userId}). All access will be revoked, and this cannot be undone.`,
-                            actionLabel: "Delete User",
-                            severity: "danger",
-                            confirmText: "DELETE",
-                            onConfirm: () => {
-                              deleteUserMutation.mutate(user.userId);
-                            }
-                          });
-                        }}
-                        disabled={deleteUserMutation.isPending}
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              {/* Company ID */}
+              <div className="flex-1 hidden md:block">
+                {user.companyId && (
+                  <>
+                    <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Company ID</p>
+                    <p className="text-xs font-bold text-[#4B5563] font-mono bg-gray-50 px-2 py-1 rounded inline-block">{user.companyId}</p>
+                  </>
+                )}
+              </div>
+
+              {/* Role */}
+              <div className="flex-1">
+                <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Role</p>
+                <span className="inline-flex items-center bg-[#EBF8F2] text-[#00A651] px-4 py-1.5 rounded-full text-xs font-bold tracking-wide capitalize">
+                  {user.role?.replace("_", " ")}
+                </span>
+              </div>
+
+              {/* Status */}
+              <div className="flex-1">
+                <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Status</p>
+                <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-wide capitalize ${
+                  user.status === "active" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                }`}>
+                  <span className={`w-2 h-2 rounded-full ${user.status === "active" ? "bg-green-500" : "bg-red-500"}`}></span>
+                  {user.status === "active" ? "success" : "error"}
+                </span>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-6 md:ml-4">
+                <button 
+                  onClick={() => {
+                    const newRole = user.role === "export_manager" ? "finance_staff" : "export_manager";
+                    setConfirmDialog({
+                      isOpen: true,
+                      title: "Change User Role",
+                      description: `Are you sure you want to change the role of ${user.displayName || user.email} to ${newRole.replace("_", " ").toUpperCase()}?`,
+                      actionLabel: "Change Role",
+                      severity: "warning",
+                      onConfirm: () => {
+                        changeRoleMutation.mutate({ userId: user.userId, role: newRole });
+                      }
+                    });
+                  }}
+                  disabled={changeRoleMutation.isPending}
+                  className="border-2 border-[#00A651] text-[#00A651] hover:bg-[#EBF8F2] px-4 py-2 rounded-2xl text-xs font-bold transition-all disabled:opacity-50"
+                >
+                  Change<br/>Role
+                </button>
+                
+                <button 
+                  onClick={() => {
+                    const newStatus = user.status === "active" ? "disabled" : "active";
+                    setConfirmDialog({
+                      isOpen: true,
+                      title: newStatus === "disabled" ? "Disable User Account" : "Enable User Account",
+                      description: newStatus === "disabled"
+                        ? `Are you sure you want to disable the account of ${user.displayName || user.email}?`
+                        : `Are you sure you want to restore access to the account of ${user.displayName || user.email}?`,
+                      actionLabel: newStatus === "disabled" ? "Disable" : "Enable",
+                      severity: newStatus === "disabled" ? "danger" : "info",
+                      onConfirm: () => {
+                        updateStatusMutation.mutate({ userId: user.userId, status: newStatus });
+                      }
+                    });
+                  }}
+                  disabled={updateStatusMutation.isPending}
+                  className="text-[#4B5563] hover:text-[#1F2937] text-sm font-bold transition-colors disabled:opacity-50"
+                >
+                  {user.status === "active" ? "Disable" : "Enable"}
+                </button>
+                
+                <button 
+                  onClick={() => {
+                    setConfirmDialog({
+                      isOpen: true,
+                      title: "Permanently Delete User Profile",
+                      description: `WARNING: You are about to permanently delete the profile of ${user.displayName || user.email} (${user.userId}).`,
+                      actionLabel: "Delete User",
+                      severity: "danger",
+                      confirmText: "DELETE",
+                      onConfirm: () => {
+                        deleteUserMutation.mutate(user.userId);
+                      }
+                    });
+                  }}
+                  disabled={deleteUserMutation.isPending}
+                  className="text-red-500 hover:text-red-700 text-sm font-bold transition-colors disabled:opacity-50"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       <ConfirmWarningDialog

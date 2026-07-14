@@ -126,6 +126,11 @@ func New(deps Dependencies, h Handlers) http.Handler {
 					r.Get("/audit-logs", h.Admin.ListAuditLogs)
 				})
 
+				// Analytics (dashboard statistics)
+				r.Route("/analytics", func(r chi.Router) {
+					r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/dashboard", h.Analytics.Dashboard)
+				})
+
 				// Export cases
 				r.Route("/export-cases", func(r chi.Router) {
 					r.With(middleware.RequireRoles("export_manager", "admin")).Post("/", h.ExportCase.Create)

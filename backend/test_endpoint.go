@@ -1,3 +1,5 @@
+//go:build ignore
+
 package main
 
 import (
@@ -57,3 +59,4 @@ func main() {
 
 	fmt.Printf("Successfully marshaled! Output size: %d bytes\n", len(bytes))
 }
+

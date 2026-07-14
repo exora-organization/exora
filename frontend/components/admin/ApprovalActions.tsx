@@ -52,25 +52,25 @@ export function ApprovalActions({ companyId }: ApprovalActionsProps) {
   });
 
   return (
-    <div className="flex gap-4">
+    <div className="flex flex-wrap gap-4 mt-4">
       <Button 
         onClick={() => setApproveOpen(true)} 
         disabled={approveMutation.isPending}
-        className="bg-green-600 hover:bg-green-700 text-white font-bold transition-colors cursor-pointer"
+        className="bg-[#00A651] hover:bg-[#008F44] text-white px-8 py-6 rounded-xl shadow-md hover:shadow-lg hover:-translate-y-0.5 font-extrabold uppercase tracking-widest transition-all cursor-pointer"
       >
         Approve
       </Button>
       <Button 
         variant="outline" 
         onClick={() => setRevisionOpen(true)}
-        className="font-bold cursor-pointer"
+        className="border-2 border-amber-500 text-amber-600 hover:bg-amber-50 px-6 py-6 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 font-bold uppercase tracking-widest transition-all cursor-pointer"
       >
         Request Revision
       </Button>
       <Button 
-        variant="destructive" 
+        variant="outline" 
         onClick={() => setRejectOpen(true)}
-        className="font-bold cursor-pointer"
+        className="border-2 border-red-500 text-red-600 hover:bg-red-50 px-6 py-6 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 font-bold uppercase tracking-widest transition-all cursor-pointer"
       >
         Reject
       </Button>

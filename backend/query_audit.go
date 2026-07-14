@@ -1,3 +1,5 @@
+//go:build ignore
+
 package main
 
 import (
@@ -34,3 +36,4 @@ func main() {
 		fmt.Printf("%d: Data: %v\n", i, doc.Data())
 	}
 }
+
