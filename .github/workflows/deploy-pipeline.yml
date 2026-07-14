@@ -13,10 +13,10 @@ jobs:
         id: config
         run: |
           if [ "${{ github.ref_name }}" = "main" ]; then 
-            echo "path=/var/www/exora-tech.my.id/app" >> "$GITHUB_OUTPUT"
+            echo "path=/var/www/exoratech-production/app" >> "$GITHUB_OUTPUT"
             echo "env=production" >> "$GITHUB_OUTPUT"
           else
-            echo "path=/var/www/sandbox.exora-tech.my.id/app" >> "$GITHUB_OUTPUT"
+            echo "path=/var/www/exoratech-sandbox/app" >> "$GITHUB_OUTPUT"
             echo "env=sandbox" >> "$GITHUB_OUTPUT"
           fi
 
