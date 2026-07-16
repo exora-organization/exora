@@ -41,15 +41,15 @@ export default function ExportManagerLayout({ children }: { children: React.Reac
   return (
     <ProtectedRoute>
       <RoleGuard allowedRoles={["company_owner", "export_manager", "finance_staff", "admin"]}>
-        <div className="min-h-screen flex flex-col md:flex-row bg-[#EBF8F2] md:bg-gradient-to-br from-[#EBF8F2] to-[#EBF8F2]">
+        <div className="h-screen overflow-hidden flex flex-col md:flex-row bg-[#EBF8F2] md:bg-gradient-to-br from-[#EBF8F2] to-[#EBF8F2]">
           
           {/* Mobile Header */}
           <header className="md:hidden flex items-center justify-between bg-white border-b border-[#E8E3D9] px-6 py-4 sticky top-0 z-20 w-full">
             <div className="flex items-center gap-2">
-              <div className="relative w-8 h-8 flex items-center justify-center shrink-0">
+              <div className="relative w-10 h-10 flex items-center justify-center shrink-0">
                 <Image src={logoImg} alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               </div>
-              <h1 className="text-xl font-extrabold tracking-tight text-[#1F2937]">EXORA</h1>
+              <h1 className="text-2xl font-extrabold tracking-tight text-[#1F2937]">EXORA</h1>
             </div>
             <button 
               onClick={() => setIsOpen(!isOpen)}
@@ -75,11 +75,11 @@ export default function ExportManagerLayout({ children }: { children: React.Reac
           `}>
             {/* Logo Area */}
             <div className="p-6 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="relative w-8 h-8 flex items-center justify-center shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="relative w-14 h-14 flex items-center justify-center shrink-0">
                   <Image src={logoImg} alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
-                <h1 className="text-xl font-extrabold tracking-tight text-[#1F2937]">EXORA</h1>
+                <h1 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">EXORA</h1>
               </div>
               <button 
                 onClick={() => setIsOpen(false)} 
@@ -88,7 +88,7 @@ export default function ExportManagerLayout({ children }: { children: React.Reac
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <p className="text-xs text-[#9CA3AF] -mt-4 mb-4 ml-16 hidden md:block">Export Manager</p>
+            <p className="text-xs font-bold text-[#9CA3AF] -mt-5 mb-4 ml-[72px] hidden md:block">Export Manager</p>
 
             {/* Navigation */}
             <nav className="flex-1 px-4 py-2 space-y-1">
@@ -96,42 +96,39 @@ export default function ExportManagerLayout({ children }: { children: React.Reac
                 const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
                 const Icon = item.icon;
                 return (
-                  <Link 
-                    key={item.href} 
-                    href={item.href} 
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-sm font-medium ${
-                      isActive 
-                        ? "bg-[#EBF8F2] text-[#00A651]" 
-                        : "text-[#4B5563] hover:bg-[#EBF8F2] hover:text-[#1F2937]"
-                    }`}
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-extrabold text-sm ${isActive
+                        ? "bg-[#00A651] text-white shadow-lg shadow-[#00A651]/30 -translate-y-0.5"
+                        : "text-[#4B5563] hover:bg-white hover:shadow-md hover:text-[#00A651] hover:-translate-y-0.5"
+                      }`}
                   >
                     <Icon className="w-5 h-5" />
-                    {item.name}
+                    <span className="tracking-wide uppercase text-[11px]">{item.name}</span>
                   </Link>
                 );
               })}
             </nav>
 
             {/* Bottom Profile Area */}
-            <div className="p-4 mt-auto border-t border-[#E8E3D9]/50">
+            <div className="p-6 mt-auto border-t border-white/40 bg-white/30 backdrop-blur-sm">
               {/* User Info */}
-              <Link href="/profile" className="flex items-center gap-3 px-4 py-3 mb-2 rounded-xl transition-colors hover:bg-[#EBF8F2] cursor-pointer">
-                <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden flex-shrink-0">
-                  <div className="w-full h-full flex items-center justify-center bg-[#00A651] text-white font-medium">
+              <Link href="/profile" className="flex items-center gap-4 px-4 py-3 mb-4 rounded-2xl transition-all hover:bg-white hover:shadow-md group cursor-pointer">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#00A651] to-[#008F44] overflow-hidden flex-shrink-0 shadow-md group-hover:scale-105 transition-transform">
+                  <div className="w-full h-full flex items-center justify-center text-white font-extrabold text-lg">
                     {profile?.displayName?.charAt(0) || "E"}
                   </div>
                 </div>
                 <div className="flex flex-col overflow-hidden">
-                  <span className="text-sm font-bold text-[#1F2937] truncate">{profile?.displayName || "Export Manager"}</span>
-                  <span className="text-xs text-[#9CA3AF] truncate">{profile?.email || "export@company.com"}</span>
+                  <span className="text-sm font-extrabold text-[#1F2937] truncate group-hover:text-[#00A651] transition-colors">{profile?.displayName || "Export Manager"}</span>
+                  <span className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest truncate mt-0.5">Export Division</span>
                 </div>
               </Link>
 
               {/* Logout */}
-              <div className="space-y-1">
-                <div className="px-4 py-2 flex items-center">
-                  <LogoutButton />
-                </div>
+              <div className="w-full">
+                <LogoutButton />
               </div>
             </div>
           </aside>

@@ -28,81 +28,97 @@ export default function ExportManagerDashboardPage() {
   const recentCases = casesData?.data?.items?.slice(0, 5) || [];
 
   return (
-    <div className="space-y-8 text-[#1F2937] relative pb-10">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div className="space-y-10 text-[#1F2937] relative pb-10 max-w-7xl mx-auto">
+      
+      {/* Header Area */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Export Manager Dashboard</h2>
-          <p className="text-sm text-[#9CA3AF] font-medium mt-1">Overview of your company's export pipeline and performance.</p>
+          <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">Export Manager Dashboard</h2>
+          <p className="text-[#4B5563] mt-2 font-medium">Overview of your company's export pipeline and performance.</p>
         </div>
+        
         <div className="flex gap-3">
           <Link href="/export-case">
-            <Button variant="outline" className="border-[#E8E3D9] text-[#4B5563] bg-white hover:bg-[#FAF8F3] font-medium">
+            <Button variant="outline" className="border-white/60 bg-white/90 backdrop-blur-md text-[#4B5563] hover:bg-white font-bold shadow-md rounded-2xl px-6">
               View Cases
             </Button>
           </Link>
           <Link href="/export-case/new">
-            <Button className="bg-[#00A651] hover:bg-[#008F44] text-white font-medium shadow-sm flex items-center gap-2">
-              <Plus className="w-4 h-4" /> Create Case
+            <Button className="bg-[#00A651] hover:bg-[#008F44] text-white font-bold shadow-md flex items-center gap-2 rounded-2xl px-6">
+              <Plus className="w-5 h-5" /> Create Case
             </Button>
           </Link>
         </div>
       </div>
       
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="border-white/50 shadow-sm hover:shadow-md transition-shadow rounded-2xl">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold text-[#9CA3AF] flex items-center gap-2">
-              <Briefcase className="w-4 h-4 text-[#00A651]" />
-              My Cases
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-[#1F2937]">{stats?.totalExportCases || 0}</div>
-            <p className="text-xs text-[#9CA3AF] mt-1 mb-2 font-medium">
-              Total export cases
-            </p>
-          </CardContent>
-        </Card>
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 relative group transition-all hover:-translate-y-1 hover:shadow-2xl">
+          <div className="flex justify-between items-start mb-6">
+            <h3 className="text-xs font-bold text-[#4B5563] uppercase tracking-widest mt-2">My Cases</h3>
+            <div className="w-10 h-10 rounded-xl bg-[#EBF8F2] flex items-center justify-center">
+              <Briefcase className="w-5 h-5 text-[#00A651]" />
+            </div>
+          </div>
+          <div className="flex items-baseline gap-2 mb-4">
+            <div className="text-5xl font-extrabold text-[#1F2937]">
+              {stats?.totalExportCases || 0}
+            </div>
+          </div>
+          <div className="flex items-center text-sm font-semibold text-[#4B5563]">
+            <span className="w-2 h-2 rounded-full bg-[#00A651] mr-2 shrink-0"></span>
+            Total export cases
+          </div>
+        </div>
 
-        <Card className="border-white/50 shadow-sm hover:shadow-md transition-shadow rounded-2xl">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold text-[#9CA3AF] flex items-center gap-2">
-              <Activity className="w-4 h-4 text-[#00A651]" />
-              Active Cases
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-[#1F2937]">{stats?.activeCases || 0}</div>
-            <p className="text-xs text-[#9CA3AF] mt-1 mb-2 font-medium">
-              Currently in review
-            </p>
-          </CardContent>
-        </Card>
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 relative group transition-all hover:-translate-y-1 hover:shadow-2xl">
+          <div className="flex justify-between items-start mb-6">
+            <h3 className="text-xs font-bold text-[#4B5563] uppercase tracking-widest mt-2">Active Cases</h3>
+            <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
+              <Activity className="w-5 h-5 text-amber-500" />
+            </div>
+          </div>
+          <div className="flex items-baseline gap-2 mb-4">
+            <div className="text-5xl font-extrabold text-[#1F2937]">
+              {stats?.activeCases || 0}
+            </div>
+          </div>
+          <div className="flex items-center text-sm font-semibold text-[#4B5563]">
+            <span className="w-2 h-2 rounded-full bg-amber-500 mr-2 shrink-0"></span>
+            Currently in review
+          </div>
+        </div>
 
-        <Card className="border-white/50 shadow-sm hover:shadow-md transition-shadow rounded-2xl">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold text-[#9CA3AF] flex items-center gap-2">
-              <BarChart className="w-4 h-4 text-[#00A651]" />
-              Recent Analysis
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-[#1F2937]">
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 relative group transition-all hover:-translate-y-1 hover:shadow-2xl">
+          <div className="flex justify-between items-start mb-6">
+            <h3 className="text-xs font-bold text-[#4B5563] uppercase tracking-widest mt-2">Recent Analysis</h3>
+            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
+              <BarChart className="w-5 h-5 text-blue-500" />
+            </div>
+          </div>
+          <div className="flex items-baseline gap-2 mb-4">
+            <div className="text-5xl font-extrabold text-[#1F2937]">
               {stats?.averageFeasibilityScore !== null && stats?.averageFeasibilityScore !== undefined 
                 ? stats.averageFeasibilityScore.toFixed(1) 
                 : "0.0"
-              } <span className="text-xl text-[#9CA3AF] font-medium">/ 10</span>
+              }
             </div>
-            <p className="text-xs text-[#9CA3AF] mt-1 mb-2 font-medium">
-              Avg feasibility score
-            </p>
-          </CardContent>
-        </Card>
+          </div>
+          <div className="flex items-center text-sm font-semibold text-[#4B5563]">
+            <span className="w-2 h-2 rounded-full bg-blue-500 mr-2 shrink-0"></span>
+            Avg feasibility score
+          </div>
+        </div>
       </div>
 
-      <div className="bg-white rounded-3xl p-6 shadow-sm border border-white/50 flex flex-col mt-8">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-lg font-bold text-[#1F2937]">Recent Export Cases</h3>
+      {/* Recent Cases List */}
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-8 relative flex flex-col mt-10">
+        <div className="flex justify-between items-center mb-8">
+          <h3 className="text-xl font-bold text-[#1F2937] flex items-center gap-2">
+            <span className="w-2 h-6 bg-[#00A651] rounded-full inline-block"></span>
+            Recent Export Cases
+          </h3>
           <Link href="/export-case" className="text-sm font-bold text-[#00A651] hover:text-[#008F44] flex items-center gap-1">
             View All <ArrowRight className="w-4 h-4" />
           </Link>
@@ -111,33 +127,33 @@ export default function ExportManagerDashboardPage() {
         <div className="flex-1">
           {recentCases.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-32 text-center">
-              <p className="text-sm font-medium text-[#9CA3AF]">No recent cases found.</p>
-              <p className="text-xs text-[#9CA3AF] mt-1">Create one to get started.</p>
+              <p className="text-sm font-bold text-[#4B5563]">No recent cases found.</p>
+              <p className="text-xs text-[#9CA3AF] mt-1 font-medium">Create one to get started.</p>
             </div>
           ) : (
             <div className="space-y-4">
               {recentCases.map((c) => (
-                <div key={c.caseId} className="flex flex-col md:flex-row md:items-center justify-between p-4 rounded-xl border border-[#D1EDE4] bg-[#EBF8F2]/50 hover:bg-[#EBF8F2] transition-colors gap-4">
+                <div key={c.caseId} className="flex flex-col md:flex-row md:items-center justify-between p-5 rounded-2xl border border-white bg-white/50 shadow-sm hover:shadow-md hover:bg-white transition-all gap-4">
                   <div>
-                    <Link href={`/export-case/${c.caseId}`} className="font-bold text-[#1F2937] text-sm hover:text-[#00A651] transition-colors">
+                    <Link href={`/export-case/${c.caseId}`} className="font-extrabold text-[#1F2937] text-base hover:text-[#00A651] transition-colors">
                       {c.name}
                     </Link>
-                    <div className="text-xs text-[#9CA3AF] mt-1 flex items-center gap-2">
-                      <span className="font-medium text-[#4B5563]">{c.destinationCountry}</span>
-                      <span>•</span>
-                      <span>{new Date(c.createdAt).toLocaleDateString()}</span>
+                    <div className="text-sm font-semibold text-[#4B5563] mt-1 flex items-center gap-2">
+                      <span>{c.destinationCountry}</span>
+                      <span className="text-[#9CA3AF]">•</span>
+                      <span className="text-xs">{new Date(c.createdAt).toLocaleDateString()}</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 self-end md:self-auto">
+                  <div className="flex items-center gap-6 self-end md:self-auto">
                     <div className="text-right hidden md:block">
-                      <div className="text-sm font-bold text-[#1F2937]">
+                      <div className="text-base font-bold text-[#1F2937]">
                         {c.feasibilityScore !== undefined && c.feasibilityScore !== null 
                           ? `${c.feasibilityScore.toFixed(1)}/10` 
                           : "-"}
                       </div>
-                      <div className="text-[10px] uppercase font-bold text-[#9CA3AF] tracking-wider">Score</div>
+                      <div className="text-[10px] uppercase font-bold text-[#9CA3AF] tracking-widest mt-1">Score</div>
                     </div>
-                    <Badge variant={c.status === "finalized" ? "secondary" : c.status === "in_review" ? "default" : "outline"} className="shadow-sm">
+                    <Badge variant={c.status === "finalized" ? "secondary" : c.status === "in_review" ? "default" : "outline"} className="shadow-sm font-bold uppercase tracking-wider text-[10px] py-1 px-3">
                       {c.status.replace("_", " ")}
                     </Badge>
                   </div>
