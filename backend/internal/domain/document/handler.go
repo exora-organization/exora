@@ -1,13 +1,16 @@
 package document
 
 import (
+	"bytes"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/exora/backend/internal/actor"
 	"github.com/exora/backend/internal/apperror"
 	"github.com/exora/backend/internal/domain/exportcase"
 	"github.com/exora/backend/pkg/response"
+	"github.com/jung-kurt/gofpdf/v2"
 )
 
 type Handler struct {
@@ -114,13 +117,19 @@ func (h *Handler) Download(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// If content is available, stream it as a file download
+	// If content is available, compile it to a valid PDF binary and serve it
 	if len(doc.Content) > 0 {
+		pdfBytes, err := textToPDF(doc.Filename, doc.Content)
+		if err != nil {
+			response.Error(w, apperror.New("INTERNAL", "failed to render PDF binary", 500))
+			return
+		}
+
 		w.Header().Set("Content-Type", "application/pdf")
 		w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, doc.Filename))
 		w.Header().Set("Cache-Control", "no-store")
 		w.WriteHeader(http.StatusOK)
-		w.Write(doc.Content)
+		w.Write(pdfBytes)
 		return
 	}
 
@@ -130,6 +139,27 @@ func (h *Handler) Download(w http.ResponseWriter, r *http.Request) {
 		"filename":    doc.Filename,
 		"downloadUrl": doc.DownloadURL,
 	})
+}
+
+// textToPDF converts monospaced plain text content into a valid PDF binary using Courier font.
+func textToPDF(filename string, content []byte) ([]byte, error) {
+	pdf := gofpdf.New("P", "mm", "A4", "")
+	pdf.SetMargins(15, 15, 15)
+	pdf.AddPage()
+	pdf.SetFont("Courier", "", 10)
+	
+	lines := strings.Split(string(content), "\n")
+	for _, line := range lines {
+		// Replace tab characters with spaces for formatting alignment
+		line = strings.ReplaceAll(line, "\t", "    ")
+		pdf.CellFormat(0, 5, line, "", 1, "L", false, 0, "")
+	}
+	
+	var buf bytes.Buffer
+	if err := pdf.Output(&buf); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
 }
 
 // Preview handles GET /v1/documents/{documentId}/preview.
