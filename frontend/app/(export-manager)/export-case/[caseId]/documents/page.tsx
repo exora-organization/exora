@@ -19,8 +19,11 @@ import {
   TableHeader,
   TableRow,
 } from "../../../../../components/ui/table";
-import { FileText, Download } from "lucide-react";
+import { FileText, Download, Eye } from "lucide-react";
 import { useUserProfile } from "../../../../../hooks/useUserProfile";
+import { PdfPreviewModal } from "../../../../../components/ui/pdf-preview-modal";
+import { toast } from "sonner";
+import { auth } from "../../../../../lib/firebase/client";
 
 export default function DocumentGenerationPage() {
   const { profile } = useUserProfile();
@@ -31,6 +34,17 @@ export default function DocumentGenerationPage() {
   const caseId = params.caseId as string;
 
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // PDF Preview modal state
+  const [previewModal, setPreviewModal] = useState<{
+    open: boolean;
+    documentId: string;
+    filename: string;
+  }>({ open: false, documentId: "", filename: "" });
+
+  const openPreview = (documentId: string, filename: string) => {
+    setPreviewModal({ open: true, documentId, filename });
+  };
 
   const getMissingPrerequisite = (msg: string | null) => {
     if (!msg) return null;
@@ -92,9 +106,14 @@ export default function DocumentGenerationPage() {
     queryFn: () => apiDocuments.listDocuments(caseId),
   });
 
-  const handleGenerateSuccess = () => {
+  const handleGenerateSuccess = (data: any) => {
     queryClient.invalidateQueries({ queryKey: ["documents", caseId] });
     setErrorMsg(null);
+    // Auto-open preview for the freshly generated document
+    const doc = data?.data;
+    if (doc?.documentId && doc?.filename) {
+      setTimeout(() => openPreview(doc.documentId, doc.filename), 300);
+    }
   };
 
   const handleGenerateError = (error: any) => {
@@ -125,15 +144,28 @@ export default function DocumentGenerationPage() {
     onError: handleGenerateError,
   });
 
-  const handleDownload = async (documentId: string) => {
+  const handleDownload = async (documentId: string, filename: string) => {
     try {
       setErrorMsg(null);
-      const res = await apiDocuments.getDownloadUrl(documentId);
-      if (res.data?.downloadUrl) {
-        window.open(res.data.downloadUrl, "_blank");
-      }
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/v1";
+      const token = auth.currentUser ? await auth.currentUser.getIdToken() : null;
+      const res = await fetch(`${API_BASE_URL}/documents/${documentId}/download`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (!res.ok) throw new Error("Download failed");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      toast.success(`"${filename}" downloaded!`);
     } catch (error: any) {
-      setErrorMsg("Unable to retrieve download URL.");
+      setErrorMsg("Unable to download document.");
+      toast.error("Download failed.");
     }
   };
 
@@ -150,170 +182,194 @@ export default function DocumentGenerationPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto pb-12">
-      <div>
-        <Link href={`/export-case/${caseId}`} className="text-sm text-blue-500 hover:underline mb-2 block">
-          &larr; Back to Case Details
-        </Link>
-        <h2 className="text-3xl font-bold tracking-tight">Document Generation</h2>
-        <p className="text-[#9CA3AF] mt-1">Generate and download official PDF reports securely built by the Exora backend.</p>
-      </div>
+    <>
+      <PdfPreviewModal
+        open={previewModal.open}
+        onClose={() => setPreviewModal((s) => ({ ...s, open: false }))}
+        documentId={previewModal.documentId}
+        filename={previewModal.filename}
+      />
 
-      {exportCase && (
-        <Card className="bg-[#FAF8F3]">
-          <CardContent className="p-4 grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
-            <div>
-              <p className="text-xs text-[#9CA3AF] font-medium">Case Name</p>
-              <p className="font-semibold text-[#1F2937] truncate">{exportCase.name}</p>
+      <div className="space-y-6 max-w-5xl mx-auto pb-12">
+        <div>
+          <Link href={`/export-case/${caseId}`} className="text-sm text-blue-500 hover:underline mb-2 block">
+            &larr; Back to Case Details
+          </Link>
+          <h2 className="text-3xl font-bold tracking-tight">Document Generation</h2>
+          <p className="text-[#9CA3AF] mt-1">Generate and download official PDF reports securely built by the Exora backend.</p>
+        </div>
+
+        {exportCase && (
+          <Card className="bg-[#FAF8F3]">
+            <CardContent className="p-4 grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
+              <div>
+                <p className="text-xs text-[#9CA3AF] font-medium">Case Name</p>
+                <p className="font-semibold text-[#1F2937] truncate">{exportCase.name}</p>
+              </div>
+              <div>
+                <p className="text-xs text-[#9CA3AF] font-medium">Product</p>
+                <p className="font-semibold text-[#1F2937] truncate">{exportCase.product}</p>
+              </div>
+              <div>
+                <p className="text-xs text-[#9CA3AF] font-medium">Destination</p>
+                <p className="font-semibold text-[#1F2937] truncate">{exportCase.destinationCountry}</p>
+              </div>
+              <div>
+                <p className="text-xs text-[#9CA3AF] font-medium">Active Incoterm</p>
+                {activeIncoterm ? (
+                  <Badge variant="default" className="mt-1">{activeIncoterm}</Badge>
+                ) : (
+                  <span className="text-sm text-[#9CA3AF] mt-1 block">Unknown</span>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {errorMsg && missingInfo && (
+          <Alert variant="destructive" className="border-red-200 bg-red-50/50 backdrop-blur-md rounded-3xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <AlertTitle className="text-lg font-black text-red-800 flex items-center gap-2">
+                <span className="w-2.5 h-2.5 bg-red-600 rounded-full animate-pulse"></span>
+                {missingInfo.title}
+              </AlertTitle>
+              <AlertDescription className="text-sm font-semibold text-red-700/90 leading-relaxed">
+                {missingInfo.description}
+              </AlertDescription>
             </div>
-            <div>
-              <p className="text-xs text-[#9CA3AF] font-medium">Product</p>
-              <p className="font-semibold text-[#1F2937] truncate">{exportCase.product}</p>
-            </div>
-            <div>
-              <p className="text-xs text-[#9CA3AF] font-medium">Destination</p>
-              <p className="font-semibold text-[#1F2937] truncate">{exportCase.destinationCountry}</p>
-            </div>
-            <div>
-              <p className="text-xs text-[#9CA3AF] font-medium">Active Incoterm</p>
-              {activeIncoterm ? (
-                <Badge variant="default" className="mt-1">{activeIncoterm}</Badge>
-              ) : (
-                <span className="text-sm text-[#9CA3AF] mt-1 block">Unknown</span>
-              )}
-            </div>
+            <Link href={missingInfo.link} className="shrink-0">
+              <Button className="bg-red-600 hover:bg-red-700 text-white font-extrabold px-6 py-3 rounded-2xl h-auto shadow-md">
+                {missingInfo.linkLabel}
+              </Button>
+            </Link>
+          </Alert>
+        )}
+
+        {errorMsg && !missingInfo && (
+          <Alert variant="destructive" className="border-red-200 bg-red-50/50 backdrop-blur-md rounded-3xl p-6">
+            <AlertTitle className="text-lg font-black text-red-800">Error</AlertTitle>
+            <AlertDescription className="text-sm font-semibold text-red-700/90 mt-1 leading-relaxed">
+              {errorMsg}
+            </AlertDescription>
+          </Alert>
+        )}
+
+        <div className="grid md:grid-cols-2 gap-4">
+          {role === "export_manager" && (
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-blue-500" /> Quotation</CardTitle>
+                <CardDescription>Generates a formal price quotation.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button onClick={() => generateQuotationMut.mutate()} disabled={generateQuotationMut.isPending} className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                  {generateQuotationMut.isPending ? "Generating..." : "Generate & Preview Quotation"}
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
+          {role === "export_manager" && (
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-indigo-500" /> Proforma Invoice</CardTitle>
+                <CardDescription>Generates a proforma invoice for buyers.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button onClick={() => generateProformaMut.mutate()} disabled={generateProformaMut.isPending} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">
+                  {generateProformaMut.isPending ? "Generating..." : "Generate & Preview Proforma Invoice"}
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
+          {role === "finance_staff" && (
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-green-500" /> Cost Breakdown Report</CardTitle>
+                <CardDescription>Detailed export cost breakdown analysis.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button onClick={() => generateCostBreakdownMut.mutate()} disabled={generateCostBreakdownMut.isPending} className="w-full bg-emerald-600 hover:bg-emerald-700 text-white">
+                  {generateCostBreakdownMut.isPending ? "Generating..." : "Generate & Preview Cost Breakdown"}
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
+          {role === "company_owner" && (
+            <Card className="hover:shadow-md transition-shadow">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-purple-500" /> Export Feasibility Report</CardTitle>
+                <CardDescription>Comprehensive risk and feasibility report.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button onClick={() => generateFeasibilityMut.mutate()} disabled={generateFeasibilityMut.isPending} className="w-full bg-purple-600 hover:bg-purple-700 text-white">
+                  {generateFeasibilityMut.isPending ? "Generating..." : "Generate & Preview Feasibility Report"}
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Generated Documents</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {documents.length === 0 ? (
+              <div className="text-center py-8 text-[#9CA3AF]">
+                <FileText className="h-12 w-12 mx-auto text-gray-300 mb-3" />
+                <p>No documents have been generated yet.</p>
+                <p className="text-sm">Select a document type to begin.</p>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Document Name</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Generated At</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {documents.map((doc) => (
+                    <TableRow key={doc.documentId}>
+                      <TableCell className="font-medium">{doc.filename}</TableCell>
+                      <TableCell>{formatDocType(doc.documentType)}</TableCell>
+                      <TableCell>{new Date(doc.generatedAt).toLocaleString()}</TableCell>
+                      <TableCell><Badge variant="outline" className="bg-green-50 text-green-700">Generated</Badge></TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => openPreview(doc.documentId, doc.filename)}
+                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                          >
+                            <Eye className="h-4 w-4 mr-1" />
+                            Preview
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDownload(doc.documentId, doc.filename)}
+                          >
+                            <Download className="h-4 w-4 mr-1" />
+                            Download
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
           </CardContent>
         </Card>
-      )}
-
-      {errorMsg && missingInfo && (
-        <Alert variant="destructive" className="border-red-200 bg-red-50/50 backdrop-blur-md rounded-3xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <AlertTitle className="text-lg font-black text-red-800 flex items-center gap-2">
-              <span className="w-2.5 h-2.5 bg-red-600 rounded-full animate-pulse"></span>
-              {missingInfo.title}
-            </AlertTitle>
-            <AlertDescription className="text-sm font-semibold text-red-700/90 leading-relaxed">
-              {missingInfo.description}
-            </AlertDescription>
-          </div>
-          <Link href={missingInfo.link} className="shrink-0">
-            <Button className="bg-red-600 hover:bg-red-700 text-white font-extrabold px-6 py-3 rounded-2xl h-auto shadow-md">
-              {missingInfo.linkLabel}
-            </Button>
-          </Link>
-        </Alert>
-      )}
-
-      {errorMsg && !missingInfo && (
-        <Alert variant="destructive" className="border-red-200 bg-red-50/50 backdrop-blur-md rounded-3xl p-6">
-          <AlertTitle className="text-lg font-black text-red-800">Error</AlertTitle>
-          <AlertDescription className="text-sm font-semibold text-red-700/90 mt-1 leading-relaxed">
-            {errorMsg}
-          </AlertDescription>
-        </Alert>
-      )}
-
-      <div className="grid md:grid-cols-2 gap-4">
-        {role === "export_manager" && (
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-blue-500" /> Quotation</CardTitle>
-              <CardDescription>Generates a formal price quotation.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button onClick={() => generateQuotationMut.mutate()} disabled={generateQuotationMut.isPending} className="w-full">
-                {generateQuotationMut.isPending ? "Generating..." : "Generate Quotation"}
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-
-        {role === "export_manager" && (
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-indigo-500" /> Proforma Invoice</CardTitle>
-              <CardDescription>Generates a proforma invoice for buyers.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button onClick={() => generateProformaMut.mutate()} disabled={generateProformaMut.isPending} className="w-full">
-                {generateProformaMut.isPending ? "Generating..." : "Generate Proforma Invoice"}
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-
-        {role === "finance_staff" && (
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-green-500" /> Cost Breakdown Report</CardTitle>
-              <CardDescription>Detailed export cost breakdown analysis.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button onClick={() => generateCostBreakdownMut.mutate()} disabled={generateCostBreakdownMut.isPending} className="w-full" variant="secondary">
-                {generateCostBreakdownMut.isPending ? "Generating..." : "Generate Cost Breakdown"}
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-
-        {role === "company_owner" && (
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-purple-500" /> Export Feasibility Report</CardTitle>
-              <CardDescription>Comprehensive risk and feasibility report.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button onClick={() => generateFeasibilityMut.mutate()} disabled={generateFeasibilityMut.isPending} className="w-full" variant="secondary">
-                {generateFeasibilityMut.isPending ? "Generating..." : "Generate Feasibility Report"}
-              </Button>
-            </CardContent>
-          </Card>
-        )}
       </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Generated Documents</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {documents.length === 0 ? (
-            <div className="text-center py-8 text-[#9CA3AF]">
-              <FileText className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-              <p>No documents have been generated yet.</p>
-              <p className="text-sm">Select a document type to begin.</p>
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Document Name</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Generated At</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {documents.map((doc) => (
-                  <TableRow key={doc.documentId}>
-                    <TableCell className="font-medium">{doc.filename}</TableCell>
-                    <TableCell>{formatDocType(doc.documentType)}</TableCell>
-                    <TableCell>{new Date(doc.generatedAt).toLocaleString()}</TableCell>
-                    <TableCell><Badge variant="outline" className="bg-green-50 text-green-700">Generated</Badge></TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="sm" onClick={() => handleDownload(doc.documentId)}>
-                        <Download className="h-4 w-4 mr-2" />
-                        Download
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+    </>
   );
 }

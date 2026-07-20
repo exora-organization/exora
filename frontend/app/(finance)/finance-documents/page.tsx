@@ -6,16 +6,42 @@ import { apiClient } from "../../../lib/api/client";
 import { useState } from "react";
 import { 
   FileText, Download, ChevronDown, Loader2, 
-  AlertTriangle, CheckCircle, ShieldCheck 
+  AlertTriangle, CheckCircle, ShieldCheck, Eye
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "../../../components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "../../../components/ui/card";
+import { PdfPreviewModal } from "../../../components/ui/pdf-preview-modal";
+import { auth } from "../../../lib/firebase/client";
 
 export default function FinanceDocumentsPage() {
   const [selectedCaseId, setSelectedCaseId] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [reportResult, setReportResult] = useState<{ url?: string; generatedAt?: string } | null>(null);
+  const [reportResult, setReportResult] = useState<{ documentId?: string; filename?: string; generatedAt?: string } | null>(null);
+  const [previewModal, setPreviewModal] = useState<{ open: boolean; documentId: string; filename: string }>({ open: false, documentId: "", filename: "" });
+
+  const handleBlobDownload = async (documentId: string, filename: string) => {
+    try {
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/v1";
+      const token = auth.currentUser ? await auth.currentUser.getIdToken() : null;
+      const res = await fetch(`${API_BASE_URL}/documents/${documentId}/download`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (!res.ok) throw new Error("Download failed");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      toast.success(`"${filename}" downloaded!`);
+    } catch (err: any) {
+      toast.error(err.message || "Download failed.");
+    }
+  };
 
   const { data: casesData, isLoading: casesLoading } = useQuery({
     queryKey: ["export-cases"],
@@ -37,10 +63,11 @@ export default function FinanceDocumentsPage() {
         method: "POST",
       });
       if (res?.success) {
-        setReportResult({ url: res.data?.documentUrl, generatedAt: new Date().toISOString() });
+        const doc = res.data;
+        setReportResult({ documentId: doc?.documentId, filename: doc?.filename, generatedAt: new Date().toISOString() });
         toast.success("Cost Breakdown Report generated!");
-        if (res.data?.documentUrl) {
-          window.open(res.data.documentUrl, "_blank");
+        if (doc?.documentId && doc?.filename) {
+          setTimeout(() => setPreviewModal({ open: true, documentId: doc.documentId, filename: doc.filename }), 300);
         }
       } else {
         toast.error("Failed to generate report.");
@@ -53,6 +80,13 @@ export default function FinanceDocumentsPage() {
   };
 
   return (
+    <>
+      <PdfPreviewModal
+        open={previewModal.open}
+        onClose={() => setPreviewModal((s) => ({ ...s, open: false }))}
+        documentId={previewModal.documentId}
+        filename={previewModal.filename}
+      />
     <div className="space-y-8 max-w-3xl mx-auto pb-12">
       {/* Header */}
       <div>
@@ -131,18 +165,25 @@ export default function FinanceDocumentsPage() {
               </p>
             )}
           </div>
-          {reportResult.url && (
-            <a 
-              href={reportResult.url} 
-              target="_blank" 
-              rel="noreferrer"
-              className="px-4 py-2 rounded-xl bg-[#00A651] text-white text-xs font-bold hover:bg-[#008F44] transition-colors"
-            >
-              Open File
-            </a>
+          {reportResult.documentId && reportResult.filename && (
+            <div className="flex gap-2">
+              <button
+                onClick={() => setPreviewModal({ open: true, documentId: reportResult.documentId!, filename: reportResult.filename! })}
+                className="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold hover:bg-blue-700 transition-colors flex items-center gap-1.5"
+              >
+                <Eye className="w-3.5 h-3.5" /> Preview
+              </button>
+              <button
+                onClick={() => handleBlobDownload(reportResult.documentId!, reportResult.filename!)}
+                className="px-4 py-2 rounded-xl bg-[#00A651] text-white text-xs font-bold hover:bg-[#008F44] transition-colors flex items-center gap-1.5"
+              >
+                <Download className="w-3.5 h-3.5" /> Download
+              </button>
+            </div>
           )}
         </div>
       )}
     </div>
+    </>
   );
 }

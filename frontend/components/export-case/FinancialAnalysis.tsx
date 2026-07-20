@@ -12,6 +12,7 @@ import { Label } from "../ui/label";
 import { Download, AlertTriangle, CheckCircle, ShieldAlert } from "lucide-react";
 import { apiClient } from "../../lib/api/client";
 import { toast } from "sonner";
+import { PdfPreviewModal } from "../ui/pdf-preview-modal";
 
 interface FinancialAnalysisProps {
   caseId: string;
@@ -25,6 +26,7 @@ export function FinancialAnalysis({ caseId, backUrl }: FinancialAnalysisProps) {
   const [selectedIncoterm, setSelectedIncoterm] = useState<"EXW" | "FOB" | "CFR" | "CIF">("FOB");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [previewModal, setPreviewModal] = useState<{ open: boolean; documentId: string; filename: string }>({ open: false, documentId: "", filename: "" });
 
   const handleDownloadCostBreakdown = async () => {
     setIsGeneratingPdf(true);
@@ -34,8 +36,9 @@ export function FinancialAnalysis({ caseId, backUrl }: FinancialAnalysisProps) {
       });
       if (res.success) {
         toast.success("Cost Breakdown Report PDF generated successfully!");
-        if (res.data?.documentUrl) {
-          window.open(res.data.documentUrl, "_blank");
+        const doc = res.data;
+        if (doc?.documentId && doc?.filename) {
+          setTimeout(() => setPreviewModal({ open: true, documentId: doc.documentId, filename: doc.filename }), 300);
         }
       } else {
         toast.error("Failed to generate report PDF.");
@@ -92,6 +95,13 @@ export function FinancialAnalysis({ caseId, backUrl }: FinancialAnalysisProps) {
   }
 
   return (
+    <>
+      <PdfPreviewModal
+        open={previewModal.open}
+        onClose={() => setPreviewModal((s) => ({ ...s, open: false }))}
+        documentId={previewModal.documentId}
+        filename={previewModal.filename}
+      />
     <div className="space-y-6 max-w-5xl mx-auto">
       <div>
         <Link href={backUrl} className="text-sm text-blue-500 hover:underline mb-2 block">
@@ -209,7 +219,7 @@ export function FinancialAnalysis({ caseId, backUrl }: FinancialAnalysisProps) {
                     className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs h-10 px-4 font-bold"
                   >
                     <Download className="w-4 h-4 mr-2" />
-                    Download Cost Breakdown (PDF)
+                    {isGeneratingPdf ? "Generating..." : "Generate & Preview Cost Breakdown"}
                   </Button>
                 </div>
               </CardContent>
@@ -261,5 +271,7 @@ export function FinancialAnalysis({ caseId, backUrl }: FinancialAnalysisProps) {
         </div>
       </div>
     </div>
+    </>
   );
 }
+

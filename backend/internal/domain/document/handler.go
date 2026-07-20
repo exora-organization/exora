@@ -1,6 +1,7 @@
 package document
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/exora/backend/internal/actor"
@@ -104,6 +105,7 @@ func (h *Handler) ListByCase(w http.ResponseWriter, r *http.Request) {
 }
 
 // Download handles GET /v1/documents/{documentId}/download.
+// Serves the document content as a downloadable attachment.
 func (h *Handler) Download(w http.ResponseWriter, r *http.Request) {
 	documentID := r.PathValue("documentId")
 	doc, err := h.service.GetByID(r.Context(), documentID)
@@ -111,10 +113,44 @@ func (h *Handler) Download(w http.ResponseWriter, r *http.Request) {
 		response.Error(w, apperror.ErrNotFound)
 		return
 	}
-	// Return document metadata for MVP (in production, redirect to signed GCS URL)
+
+	// If content is available, stream it as a file download
+	if len(doc.Content) > 0 {
+		w.Header().Set("Content-Type", "application/pdf")
+		w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, doc.Filename))
+		w.Header().Set("Cache-Control", "no-store")
+		w.WriteHeader(http.StatusOK)
+		w.Write(doc.Content)
+		return
+	}
+
+	// Fallback: return metadata (legacy docs without stored content)
 	response.JSON(w, http.StatusOK, map[string]any{
 		"documentId":  doc.ID,
 		"filename":    doc.Filename,
 		"downloadUrl": doc.DownloadURL,
 	})
 }
+
+// Preview handles GET /v1/documents/{documentId}/preview.
+// Serves the document content inline for browser preview.
+func (h *Handler) Preview(w http.ResponseWriter, r *http.Request) {
+	documentID := r.PathValue("documentId")
+	doc, err := h.service.GetByID(r.Context(), documentID)
+	if err != nil {
+		response.Error(w, apperror.ErrNotFound)
+		return
+	}
+
+	if len(doc.Content) == 0 {
+		response.Error(w, apperror.ErrNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.Header().Set("Content-Disposition", fmt.Sprintf(`inline; filename="%s"`, doc.Filename))
+	w.Header().Set("Cache-Control", "no-store")
+	w.WriteHeader(http.StatusOK)
+	w.Write(doc.Content)
+}
+

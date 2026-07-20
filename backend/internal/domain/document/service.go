@@ -134,6 +134,7 @@ func (s *Service) saveDocument(ctx context.Context, caseID, companyID, docType s
 		CompanyID:    companyID,
 		DocumentType: docType,
 		Filename:     filename,
+		Content:      content,
 		DownloadURL:  fmt.Sprintf("%s/v1/documents/%%s/download", s.appBaseURL), // filled after create
 	}
 	if err := s.repo.Create(ctx, doc); err != nil {
@@ -141,6 +142,7 @@ func (s *Service) saveDocument(ctx context.Context, caseID, companyID, docType s
 	}
 	// Update downloadUrl with actual document ID
 	doc.DownloadURL = fmt.Sprintf("%s/v1/documents/%s/download", s.appBaseURL, doc.ID)
+	// Propagate content to result (content is already in doc)
 	return &GenerateResult{Document: doc, Content: content}, nil
 }
 

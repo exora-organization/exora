@@ -14,9 +14,11 @@ import { Alert, AlertTitle, AlertDescription } from "../../../../../components/u
 import { GenerateAdvisorRequest } from "../../../../../lib/types/advisor";
 import { useState } from "react";
 import { useUserProfile } from "../../../../../hooks/useUserProfile";
-import { Lightbulb, DollarSign, Scale, ArrowRight, Download } from "lucide-react";
+import { Lightbulb, DollarSign, Scale, ArrowRight, Download, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { apiClient } from "../../../../../lib/api/client";
+import { PdfPreviewModal } from "../../../../../components/ui/pdf-preview-modal";
+import { auth } from "../../../../../lib/firebase/client";
 
 export default function AIAdvisorPage() {
   const params = useParams();
@@ -28,6 +30,34 @@ export default function AIAdvisorPage() {
   const [question, setQuestion] = useState("");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [previewModal, setPreviewModal] = useState<{ open: boolean; documentId: string; filename: string }>({ open: false, documentId: "", filename: "" });
+
+  const openPreview = (documentId: string, filename: string) => {
+    setPreviewModal({ open: true, documentId, filename });
+  };
+
+  const handleBlobDownload = async (documentId: string, filename: string) => {
+    try {
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/v1";
+      const token = auth.currentUser ? await auth.currentUser.getIdToken() : null;
+      const res = await fetch(`${API_BASE_URL}/documents/${documentId}/download`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (!res.ok) throw new Error("Download failed");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      toast.success(`"${filename}" downloaded!`);
+    } catch (err: any) {
+      toast.error(err.message || "Download failed.");
+    }
+  };
 
   const { data: caseData, isLoading: caseLoading } = useQuery({
     queryKey: ["export-case", caseId],
@@ -78,14 +108,15 @@ export default function AIAdvisorPage() {
       const res = await apiClient<any>(endpoint, { method: "POST" });
       if (res.success) {
         toast.success(`${reportType.toUpperCase()} generated successfully!`);
-        if (res.data?.documentUrl) {
-          window.open(res.data.documentUrl, "_blank");
+        const doc = res.data;
+        if (doc?.documentId && doc?.filename) {
+          setTimeout(() => openPreview(doc.documentId, doc.filename), 300);
         }
       } else {
         toast.error(`Failed to generate ${reportType}.`);
       }
     } catch (err: any) {
-      toast.error(err.message || "Failed to download document.");
+      toast.error(err.message || "Failed to generate document.");
     } finally {
       setIsGeneratingPdf(false);
     }
@@ -108,6 +139,13 @@ export default function AIAdvisorPage() {
     (advisorError as any)?.code === "EMAIL_NOT_VERIFIED";
 
   return (
+    <>
+      <PdfPreviewModal
+        open={previewModal.open}
+        onClose={() => setPreviewModal((s) => ({ ...s, open: false }))}
+        documentId={previewModal.documentId}
+        filename={previewModal.filename}
+      />
     <div className="space-y-8 max-w-5xl mx-auto pb-12">
       <div>
         <Link href={`/export-case/${caseId}`} className="text-sm text-blue-500 hover:underline mb-2 block">
@@ -299,8 +337,8 @@ export default function AIAdvisorPage() {
           {role === "export_manager" && (
             <div className="bg-white border border-[#E8E3D9] rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-4">
               <div>
-                <p className="font-extrabold text-[#1F2937]">Export Documents Export</p>
-                <p className="text-xs text-gray-500">Download the case Quotation and Proforma Invoice PDFs directly.</p>
+                <p className="font-extrabold text-[#1F2937]">Export Documents</p>
+                <p className="text-xs text-gray-500">Generate and preview the case Quotation and Proforma Invoice PDFs.</p>
               </div>
               <div className="flex gap-2">
                 <Button 
@@ -309,14 +347,14 @@ export default function AIAdvisorPage() {
                   variant="outline" 
                   className="border-gray-300 text-gray-700 bg-white"
                 >
-                  <Download className="w-4 h-4 mr-2" /> Quotation (PDF)
+                  <Eye className="w-4 h-4 mr-2" /> Quotation (PDF)
                 </Button>
                 <Button 
                   onClick={() => handleDownloadPDF("proforma")} 
                   disabled={isGeneratingPdf} 
                   className="bg-emerald-600 hover:bg-emerald-700 text-white"
                 >
-                  <Download className="w-4 h-4 mr-2" /> Proforma (PDF)
+                  <Eye className="w-4 h-4 mr-2" /> Proforma (PDF)
                 </Button>
               </div>
             </div>
@@ -324,5 +362,6 @@ export default function AIAdvisorPage() {
         </div>
       )}
     </div>
+    </>
   );
 }

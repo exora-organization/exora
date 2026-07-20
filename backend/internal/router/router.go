@@ -186,6 +186,7 @@ func New(deps Dependencies, h Handlers) http.Handler {
 					})
 
 					r.With(middleware.RequireRoles("export_manager", "company_owner", "finance_staff")).Get("/documents/{documentId}/download", h.Document.Download)
+					r.With(middleware.RequireRoles("export_manager", "company_owner", "finance_staff")).Get("/documents/{documentId}/preview", h.Document.Preview)
 
 					r.Route("/advisor", func(r chi.Router) {
 						r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Post("/recommendations", h.Advisor.CreateGlobalRecommendation)

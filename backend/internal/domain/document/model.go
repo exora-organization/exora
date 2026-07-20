@@ -20,6 +20,9 @@ type Document struct {
 	CompanyID    string    `json:"companyId" firestore:"companyId"`
 	DocumentType string    `json:"documentType" firestore:"documentType"`
 	Filename     string    `json:"filename" firestore:"filename"`
+	// Content holds the raw document bytes (plain-text PDF template for MVP).
+	// In production this would be stored in GCS and served via signed URL.
+	Content      []byte    `json:"content,omitempty" firestore:"content,omitempty"`
 	// In a real system, downloadUrl would be a signed GCS URL.
 	// For MVP, we return a stable backend URL.
 	DownloadURL  string    `json:"downloadUrl" firestore:"downloadUrl"`

@@ -14,10 +14,12 @@ import { GenerateAdvisorRequest, AdvisorRecommendation } from "../../../lib/type
 import { 
   Lightbulb, Send, Activity, BrainCircuit, Box, FileText, Download, 
   Terminal, ShieldAlert, Cpu, CheckCircle2, Clock, Globe, Shield, 
-  RefreshCw, AlertTriangle, UserCheck, ChevronDown, ListFilter, Play
+  RefreshCw, AlertTriangle, UserCheck, ChevronDown, ListFilter, Play, Eye
 } from "lucide-react";
 import { toast } from "sonner";
 import { apiClient } from "../../../lib/api/client";
+import { PdfPreviewModal } from "../../../components/ui/pdf-preview-modal";
+import { auth } from "../../../lib/firebase/client";
 
 interface ChatEntry {
   question: string;
@@ -36,6 +38,34 @@ export default function AiAdvisorPage() {
   const [selectedCaseId, setSelectedCaseId] = useState<string>("");
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [selectedManager, setSelectedManager] = useState<string>("all");
+  const [previewModal, setPreviewModal] = useState<{ open: boolean; documentId: string; filename: string }>({ open: false, documentId: "", filename: "" });
+
+  const openPreview = (documentId: string, filename: string) => {
+    setPreviewModal({ open: true, documentId, filename });
+  };
+
+  const handleBlobDownload = async (documentId: string, filename: string) => {
+    try {
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/v1";
+      const token = auth.currentUser ? await auth.currentUser.getIdToken() : null;
+      const res = await fetch(`${API_BASE_URL}/documents/${documentId}/download`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (!res.ok) throw new Error("Download failed");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      toast.success(`"${filename}" downloaded!`);
+    } catch (err: any) {
+      toast.error(err.message || "Download failed.");
+    }
+  };
 
   // Admin Drill-down debug state
   const [debugCaseId, setDebugCaseId] = useState<string>("");
@@ -126,9 +156,9 @@ export default function AiAdvisorPage() {
       const res = await apiClient<any>(endpoint, { method: "POST" });
       if (res.success) {
         toast.success(`${reportType.toUpperCase()} report PDF generated successfully!`);
-        // Mock download transition
-        if (res.data?.documentUrl) {
-          window.open(res.data.documentUrl, "_blank");
+        const doc = res.data;
+        if (doc?.documentId && doc?.filename) {
+          setTimeout(() => openPreview(doc.documentId, doc.filename), 300);
         } else {
           toast.info("Document queued for background generation.");
         }
@@ -415,6 +445,13 @@ export default function AiAdvisorPage() {
   // ==========================================
   if (role === "company_owner") {
     return (
+      <>
+        <PdfPreviewModal
+          open={previewModal.open}
+          onClose={() => setPreviewModal((s) => ({ ...s, open: false }))}
+          documentId={previewModal.documentId}
+          filename={previewModal.filename}
+        />
       <div className="space-y-10 max-w-6xl mx-auto pb-12 text-[#1F2937]">
         <div>
           <h2 className="text-4xl font-extrabold tracking-tight">Portfolio Feasibility & Risk Rollup</h2>
@@ -565,12 +602,13 @@ export default function AiAdvisorPage() {
               disabled={isGeneratingPdf || !selectedCaseId}
               className="bg-[#00A651] hover:bg-[#008F44] text-white rounded-xl h-12 px-6 font-bold"
             >
-              <Download className="w-4 h-4 mr-2" />
-              {isGeneratingPdf ? "Generating..." : "Download Feasibility Report (PDF)"}
+              <Eye className="w-4 h-4 mr-2" />
+              {isGeneratingPdf ? "Generating..." : "Generate & Preview Feasibility Report"}
             </Button>
           </div>
         </div>
       </div>
+      </>
     );
   }
 
@@ -586,6 +624,13 @@ export default function AiAdvisorPage() {
   }));
 
   return (
+    <>
+      <PdfPreviewModal
+        open={previewModal.open}
+        onClose={() => setPreviewModal((s) => ({ ...s, open: false }))}
+        documentId={previewModal.documentId}
+        filename={previewModal.filename}
+      />
     <div className="space-y-10 max-w-6xl mx-auto pb-12 text-[#1F2937]">
       <div>
         <h2 className="text-4xl font-extrabold tracking-tight">AI Advisor</h2>
@@ -725,14 +770,14 @@ export default function AiAdvisorPage() {
                   disabled={isGeneratingPdf || !selectedCaseId}
                   className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl h-12 px-6 font-bold"
                 >
-                  Download Quotation (PDF)
+                  <Eye className="w-4 h-4 mr-2" /> Generate & Preview Quotation
                 </Button>
                 <Button
                   onClick={() => handleGeneratePDF("proforma")}
                   disabled={isGeneratingPdf || !selectedCaseId}
                   className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl h-12 px-6 font-bold"
                 >
-                  Download Proforma (PDF)
+                  <Eye className="w-4 h-4 mr-2" /> Generate & Preview Proforma
                 </Button>
               </>
             )}
@@ -743,12 +788,13 @@ export default function AiAdvisorPage() {
                 disabled={isGeneratingPdf || !selectedCaseId}
                 className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl h-12 px-6 font-bold"
               >
-                Download Cost Breakdown (PDF)
+                <Eye className="w-4 h-4 mr-2" /> Generate & Preview Cost Breakdown
               </Button>
             )}
           </div>
         </div>
       </div>
     </div>
+    </>
   );
 }
