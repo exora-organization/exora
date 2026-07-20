@@ -31,17 +31,18 @@ func WithDetails(code, message string, status int, details []ErrorDetail) *AppEr
 }
 
 var (
-	ErrUnauthenticated = New("UNAUTHENTICATED", "authentication required", http.StatusUnauthorized)
-	ErrForbidden       = New("FORBIDDEN", "insufficient permissions", http.StatusForbidden)
-	ErrEmailNotVerified = New("EMAIL_NOT_VERIFIED", "email verification required", http.StatusForbidden)
-	ErrNotFound        = New("NOT_FOUND", "resource not found", http.StatusNotFound)
-	ErrValidation      = New("VALIDATION_ERROR", "invalid request", http.StatusBadRequest)
-	ErrConflict        = New("CONFLICT", "resource conflict", http.StatusConflict)
-	ErrUnprocessable   = New("UNPROCESSABLE", "business rule violation", http.StatusUnprocessableEntity)
-	ErrRateLimited     = New("RATE_LIMITED", "rate limit exceeded", http.StatusTooManyRequests)
-	ErrInternal        = New("INTERNAL_ERROR", "internal server error", http.StatusInternalServerError)
-	ErrAITimeout       = New("AI_TIMEOUT", "AI service timeout", http.StatusGatewayTimeout)
-	ErrExpired         = New("EXPIRED", "resource expired", http.StatusGone)
+	ErrAccountDisabled  = New("ACCOUNT_DISABLED", "your account has been deleted or is no longer active. Please contact support.", http.StatusForbidden)
+	ErrUnauthenticated  = New("UNAUTHENTICATED", "authentication required", http.StatusUnauthorized)
+	ErrForbidden        = New("FORBIDDEN", "insufficient permissions", http.StatusForbidden)
+	ErrEmailNotVerified = New("EMAIL_NOT_VERIFIED", "email verification is required. Please verify your email address to access this feature.", http.StatusForbidden)
+	ErrNotFound         = New("NOT_FOUND", "resource not found", http.StatusNotFound)
+	ErrValidation       = New("VALIDATION_ERROR", "invalid request", http.StatusBadRequest)
+	ErrConflict         = New("CONFLICT", "resource conflict", http.StatusConflict)
+	ErrUnprocessable    = New("UNPROCESSABLE", "business rule violation", http.StatusUnprocessableEntity)
+	ErrRateLimited      = New("RATE_LIMITED", "rate limit exceeded", http.StatusTooManyRequests)
+	ErrInternal         = New("INTERNAL_ERROR", "internal server error", http.StatusInternalServerError)
+	ErrAITimeout        = New("AI_TIMEOUT", "AI service timeout", http.StatusGatewayTimeout)
+	ErrExpired          = New("EXPIRED", "resource expired", http.StatusGone)
 )
 
 func Write(w http.ResponseWriter, err error) {

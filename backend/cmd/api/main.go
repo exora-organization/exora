@@ -15,6 +15,7 @@ import (
 	"github.com/exora/backend/internal/domain/analytics"
 	"github.com/exora/backend/internal/domain/auth"
 	"github.com/exora/backend/internal/domain/company"
+	"github.com/exora/backend/internal/domain/contact"
 	"github.com/exora/backend/internal/domain/costing"
 	"github.com/exora/backend/internal/domain/document"
 	"github.com/exora/backend/internal/domain/exportcase"
@@ -73,12 +74,14 @@ func main() {
 	scenarioRepo := scenario.NewFirestoreRepository(fsClient.Client)
 	advisorRepo := advisor.NewFirestoreRepository(fsClient.Client)
 	documentRepo := document.NewFirestoreRepository(fsClient.Client)
+	contactRepo := contact.NewFirestoreRepository(fsClient.Client)
 
 	// ── Services ──────────────────────────────────────────────────────────────
-	authSvc := auth.NewService(userRepo, companyRepo, cfg.TurnstileSecretKey)
+	authSvc := auth.NewService(userRepo, companyRepo, invitationRepo, cfg.TurnstileSecretKey)
+	contactSvc := contact.NewService(contactRepo, cfg.TurnstileSecretKey)
 	companySvc := company.NewService(companyRepo)
 	adminSvc := admin.NewService(adminRepo, companyRepo, userRepo)
-	userSvc := user.NewService(userRepo, companyRepo, cfg.AppBaseURL)
+	userSvc := user.NewService(userRepo, companyRepo, fbAuth, cfg.AppBaseURL)
 	invitationSvc := invitation.NewService(invitationRepo, userRepo, companyRepo, cfg.InvitationTTL, cfg.AppBaseURL)
 	exportCaseSvc := exportcase.NewService(exportCaseRepo)
 
@@ -105,7 +108,7 @@ func main() {
 		exportCaseRepo,
 		cfg.AppBaseURL,
 	)
-	analyticsSvc := analytics.NewService(exportCaseRepo, userRepo, riskRepo)
+	analyticsSvc := analytics.NewService(exportCaseRepo, userRepo, riskRepo, costingRepo, pricingRepo)
 
 	// ── Middleware ────────────────────────────────────────────────────────────
 	firebaseMW := middleware.NewFirebaseMiddleware(fbAuth)
@@ -139,6 +142,7 @@ func main() {
 			Advisor:    advisor.NewHandler(advisorSvc, exportCaseSvc),
 			Document:   document.NewHandler(documentSvc, exportCaseSvc),
 			Analytics:  analytics.NewHandler(analyticsSvc),
+			Contact:    contact.NewHandler(contactSvc),
 		},
 	)
 

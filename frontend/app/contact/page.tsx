@@ -3,22 +3,113 @@
 import { PublicNavbar } from "../../components/public/PublicNavbar";
 import { PublicFooter } from "../../components/public/PublicFooter";
 import { Mail, Clock, MapPin, Send, MessageCircleQuestion } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
+import Script from "next/script";
 import { motion } from "framer-motion";
+import { apiClient } from "../../lib/api/client";
 import heroBg from "../../public/dashboard-bg.png";
+
+// Standard Google reCAPTCHA v2 testing Site Key (always works on localhost/127.0.0.1)
+const RECAPTCHA_SITE_KEY = "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI";
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  
+  // Controlled form inputs
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+  
+  // reCAPTCHA state
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  
+  // Error/validation states
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    // Expose callback globally so reCAPTCHA can invoke it
+    (window as any).onRecaptchaVerify = (token: string) => {
+      setRecaptchaToken(token);
+    };
+    (window as any).onRecaptchaExpired = () => {
+      setRecaptchaToken(null);
+    };
+
+    return () => {
+      delete (window as any).onRecaptchaVerify;
+      delete (window as any).onRecaptchaExpired;
+    };
+  }, []);
+
+  const resetRecaptcha = () => {
+    setRecaptchaToken(null);
+    if (typeof window !== "undefined" && (window as any).grecaptcha) {
+      try {
+        (window as any).grecaptcha.reset();
+      } catch (e) {
+        console.error("Failed to reset grecaptcha", e);
+      }
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError(null);
+    setEmailError(null);
+
+    // Validate inputs locally to prevent generic "invalid request" backend errors
+    if (fullName.trim().length < 2) {
+      setSubmitError("Full Name must be at least 2 characters.");
+      return;
+    }
+    
+    // Explicit regex check to enforce top-level domain (e.g. .com)
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      setEmailError("Please enter a valid email address with a top-level domain (e.g. .com)");
+      return;
+    }
+
+    if (subject.trim().length < 3) {
+      setSubmitError("Subject must be at least 3 characters.");
+      return;
+    }
+
+    if (message.trim().length < 10) {
+      setSubmitError("Message must be at least 10 characters.");
+      return;
+    }
+
+    if (!recaptchaToken) {
+      setSubmitError("Please complete the Google reCAPTCHA verification.");
+      return;
+    }
+
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      await apiClient("/contact", {
+        method: "POST",
+        body: JSON.stringify({
+          name: fullName,
+          email,
+          companyName,
+          subject,
+          message,
+          recaptchaToken,
+        }),
+      });
       setSubmitted(true);
-    }, 1500);
+    } catch (err: any) {
+      setSubmitError(err.message || "Failed to send message. Please try again.");
+      resetRecaptcha(); // Reset captcha challenge on submission error
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const faqs = [
@@ -39,6 +130,12 @@ export default function ContactPage() {
   return (
     <div className="flex flex-col font-sans bg-[#EBF8F2] min-h-screen selection:bg-[#00A651]/20">
       <PublicNavbar />
+      
+      {/* Load Google reCAPTCHA v2 Script */}
+      <Script 
+        src="https://www.google.com/recaptcha/api.js" 
+        strategy="afterInteractive"
+      />
 
       {/* ================= HERO SECTION ================= */}
       <div className="relative flex flex-col overflow-hidden h-[50vh] min-h-[400px] justify-center">
@@ -53,7 +150,6 @@ export default function ContactPage() {
         <div className="absolute inset-0 bg-black/40 backdrop-blur-sm z-0" />
 
         <main className="relative z-10 flex flex-col items-center justify-center px-6 lg:px-20 max-w-4xl mx-auto w-full text-center">
-          
           <h1 className="text-5xl lg:text-7xl font-extrabold text-white leading-[1.1] tracking-tight drop-shadow">
             Contact Our Team
           </h1>
@@ -125,10 +221,20 @@ export default function ContactPage() {
                   </div>
                   <h3 className="text-3xl font-extrabold text-[#1F2937] mb-2">Message Sent!</h3>
                   <p className="text-[#4B5563] text-lg max-w-sm">
-                    Thank you for reaching out. Our team will get back to you shortly.
+                    Thank you for reaching out. Our team has received your message and will get back to you shortly.
                   </p>
                   <button 
-                    onClick={() => setSubmitted(false)}
+                    onClick={() => {
+                      setSubmitted(false);
+                      setFullName("");
+                      setEmail("");
+                      setCompanyName("");
+                      setSubject("");
+                      setMessage("");
+                      setEmailError(null);
+                      setSubmitError(null);
+                      resetRecaptcha();
+                    }}
                     className="mt-8 text-[#00A651] font-bold hover:underline"
                   >
                     Send another message
@@ -145,6 +251,9 @@ export default function ContactPage() {
                     <input 
                       type="text" 
                       required
+                      minLength={2}
+                      value={fullName || ""}
+                      onChange={(e) => setFullName(e.target.value)}
                       placeholder="John Doe"
                       className="w-full px-4 py-3 rounded-xl border border-[#D1EDE4] focus:outline-none focus:ring-2 focus:ring-[#00A651]/20 focus:border-[#00A651] transition-all bg-[#EBF8F2]/30"
                     />
@@ -154,9 +263,17 @@ export default function ContactPage() {
                     <input 
                       type="email" 
                       required
+                      value={email || ""}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        if (emailError) setEmailError(null);
+                      }}
                       placeholder="john@example.com"
                       className="w-full px-4 py-3 rounded-xl border border-[#D1EDE4] focus:outline-none focus:ring-2 focus:ring-[#00A651]/20 focus:border-[#00A651] transition-all bg-[#EBF8F2]/30"
                     />
+                    {emailError && (
+                      <p className="text-xs font-bold text-red-500 mt-1">{emailError}</p>
+                    )}
                   </div>
                 </div>
 
@@ -165,6 +282,8 @@ export default function ContactPage() {
                     <label className="text-sm font-bold text-[#4B5563]">Company Name</label>
                     <input 
                       type="text" 
+                      value={companyName || ""}
+                      onChange={(e) => setCompanyName(e.target.value)}
                       placeholder="Your Company Ltd"
                       className="w-full px-4 py-3 rounded-xl border border-[#D1EDE4] focus:outline-none focus:ring-2 focus:ring-[#00A651]/20 focus:border-[#00A651] transition-all bg-[#EBF8F2]/30"
                     />
@@ -174,6 +293,9 @@ export default function ContactPage() {
                     <input 
                       type="text" 
                       required
+                      minLength={3}
+                      value={subject || ""}
+                      onChange={(e) => setSubject(e.target.value)}
                       placeholder="How can we help?"
                       className="w-full px-4 py-3 rounded-xl border border-[#D1EDE4] focus:outline-none focus:ring-2 focus:ring-[#00A651]/20 focus:border-[#00A651] transition-all bg-[#EBF8F2]/30"
                     />
@@ -185,15 +307,34 @@ export default function ContactPage() {
                   <textarea 
                     required
                     rows={5}
+                    minLength={10}
+                    value={message || ""}
+                    onChange={(e) => setMessage(e.target.value)}
                     placeholder="Tell us more about your inquiry..."
                     className="w-full px-4 py-3 rounded-xl border border-[#D1EDE4] focus:outline-none focus:ring-2 focus:ring-[#00A651]/20 focus:border-[#00A651] transition-all bg-[#EBF8F2]/30 resize-none"
                   ></textarea>
                 </div>
 
+                {/* Google reCAPTCHA v2 Widget Container */}
+                <div className="flex justify-center my-4">
+                  <div 
+                    className="g-recaptcha" 
+                    data-sitekey={RECAPTCHA_SITE_KEY}
+                    data-callback="onRecaptchaVerify"
+                    data-expired-callback="onRecaptchaExpired"
+                  ></div>
+                </div>
+
+                {submitError && (
+                  <div className="p-3 text-sm bg-red-50 text-red-600 rounded-xl border border-red-100 font-bold">
+                    {submitError}
+                  </div>
+                )}
+
                 <button 
                   type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-[#00A651] hover:bg-[#008F44] text-white px-8 py-4 rounded-xl font-bold transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-70 flex items-center justify-center space-x-2"
+                  disabled={isSubmitting || !recaptchaToken}
+                  className="w-full bg-[#00A651] hover:bg-[#008F44] text-white px-8 py-4 rounded-xl font-bold transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                 >
                   <span>{isSubmitting ? "Sending..." : "Send Message"}</span>
                   {!isSubmitting && <Send className="w-5 h-5 ml-2" />}

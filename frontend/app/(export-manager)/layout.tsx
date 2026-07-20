@@ -17,11 +17,18 @@ import {
   Lightbulb,
   User,
   Menu,
-  X
+  X,
+  Building,
+  Users,
+  FileText,
+  Calculator,
+  BarChart2,
+  ShieldCheck,
+  FileBarChart2
 } from "lucide-react";
 
 export default function ExportManagerLayout({ children }: { children: React.ReactNode }) {
-  const { profile } = useUserProfile();
+  const { role, profile } = useUserProfile();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -30,13 +37,32 @@ export default function ExportManagerLayout({ children }: { children: React.Reac
     setIsOpen(false);
   }, [pathname]);
 
-  const navItems = [
+  // Default: Export Manager nav
+  let navItems = [
     { name: "Dashboard", href: "/export-manager-dashboard", icon: LayoutDashboard },
     { name: "Export Cases", href: "/export-case", icon: Briefcase },
-    { name: "Analytics", href: "/em-analytics", icon: Activity },
-    { name: "AI Recommendations", href: "/em-advisor", icon: Lightbulb },
-    { name: "Account", href: "/profile", icon: User },
+    { name: "Pricing & Incoterms", href: "/em-pricing", icon: Calculator },
+    { name: "Cost Breakdown", href: "/em-cost-breakdown", icon: BarChart2 },
+    { name: "Scenario Analysis", href: "/em-scenario", icon: Activity },
+    { name: "Risk & Feasibility", href: "/em-risk", icon: ShieldCheck },
+    { name: "AI Advisor", href: "/ai-advisor", icon: Lightbulb },
+    { name: "Documents", href: "/em-documents", icon: FileBarChart2 },
   ];
+  let portalTitle = "Export Manager";
+  let divisionName = "Export Division";
+
+  if (role === "admin") {
+    navItems = [
+      { name: "Dashboard", href: "/admin-dashboard", icon: LayoutDashboard },
+      { name: "Company Approvals", href: "/company-approvals", icon: Building },
+      { name: "User Management", href: "/users", icon: Users },
+      { name: "System Monitoring", href: "/system-monitoring", icon: Activity },
+      { name: "Audit Logs", href: "/audit-logs", icon: FileText },
+      { name: "AI Advisor", href: "/admin-ai-advisor", icon: Lightbulb },
+    ];
+    portalTitle = "Admin Portal";
+    divisionName = "System Admin";
+  }
 
   return (
     <ProtectedRoute>
@@ -88,7 +114,7 @@ export default function ExportManagerLayout({ children }: { children: React.Reac
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <p className="text-xs font-bold text-[#9CA3AF] -mt-5 mb-4 ml-[72px] hidden md:block">Export Manager</p>
+            <p className="text-xs font-bold text-[#9CA3AF] -mt-5 mb-4 ml-[72px] hidden md:block">{portalTitle}</p>
 
             {/* Navigation */}
             <nav className="flex-1 px-4 py-2 space-y-1">
@@ -122,7 +148,7 @@ export default function ExportManagerLayout({ children }: { children: React.Reac
                 </div>
                 <div className="flex flex-col overflow-hidden">
                   <span className="text-sm font-extrabold text-[#1F2937] truncate group-hover:text-[#00A651] transition-colors">{profile?.displayName || "Export Manager"}</span>
-                  <span className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest truncate mt-0.5">Export Division</span>
+                  <span className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest truncate mt-0.5">{divisionName}</span>
                 </div>
               </Link>
 

@@ -1,6 +1,6 @@
 import { apiClient } from "./client";
 import { ApiResponse } from "../types/api";
-import { AdvisorRecommendationResponse, GenerateAdvisorRequest } from "../types/advisor";
+import { AdvisorRecommendationResponse, GenerateAdvisorRequest, AdvisorHealthStats } from "../types/advisor";
 
 export const apiAdvisor = {
   getRecommendation: async (caseId: string): Promise<ApiResponse<AdvisorRecommendationResponse>> => {
@@ -28,4 +28,11 @@ export const apiAdvisor = {
       body: JSON.stringify(data),
     });
   },
+
+  getSystemHealth: async (): Promise<ApiResponse<AdvisorHealthStats>> => {
+    return apiClient<ApiResponse<AdvisorHealthStats>>(`/admin/advisor/health`, {
+      method: "GET",
+    });
+  },
 };
+

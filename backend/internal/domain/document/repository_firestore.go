@@ -2,6 +2,7 @@ package document
 
 import (
 	"context"
+	"sort"
 	"time"
 
 	"cloud.google.com/go/firestore"
@@ -33,7 +34,6 @@ func (r *FirestoreRepository) Create(ctx context.Context, doc *Document) error {
 func (r *FirestoreRepository) ListByCaseID(ctx context.Context, caseID string) ([]*Document, error) {
 	iter := r.client.Collection(collection).
 		Where("caseId", "==", caseID).
-		OrderBy("generatedAt", firestore.Desc).
 		Documents(ctx)
 
 	var docs []*Document
@@ -52,6 +52,12 @@ func (r *FirestoreRepository) ListByCaseID(ctx context.Context, caseID string) (
 		d.ID = snap.Ref.ID
 		docs = append(docs, &d)
 	}
+
+	// Sort in memory by GeneratedAt in descending order to avoid composite index requirements
+	sort.Slice(docs, func(i, j int) bool {
+		return docs[i].GeneratedAt.After(docs[j].GeneratedAt)
+	})
+
 	return docs, nil
 }
 

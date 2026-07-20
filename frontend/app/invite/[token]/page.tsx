@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -24,6 +26,7 @@ export default function InvitePage() {
     queryKey: ["invitation-preview", token],
     queryFn: () => apiInvitations.previewInvitation(token),
     retry: false,
+    enabled: !!token && token !== "undefined",
   });
 
   // 2. Accept Mutation
@@ -58,9 +61,7 @@ export default function InvitePage() {
     }
   }, [authLoading, isAuthenticated, previewData, acceptMut]);
 
-  if (previewLoading || authLoading || acceptMut.isPending) {
-    return <LoadingScreen />;
-  }
+  const invite = previewData?.data;
 
   if (previewError) {
     const errStatus = (previewError as any)?.status;
@@ -70,20 +71,22 @@ export default function InvitePage() {
     return <InvitationStatus status="network_error" error={(previewError as any).message} />;
   }
 
-  const invite = previewData?.data;
+  if (previewLoading || authLoading || acceptMut.isPending || !invite) {
+    return <LoadingScreen />;
+  }
 
-  if (invite?.status === "accepted") {
+  if (invite.status === "accepted") {
     return <InvitationStatus status="accepted" />;
   }
 
-  const isExpired = new Date(invite?.expiresAt || "") < new Date();
+  const isExpired = new Date(invite.expiresAt || "") < new Date();
   if (isExpired) {
     return <ExpiredInvitation />;
   }
 
   return (
     <InvitationCard 
-      invite={invite!} 
+      invite={invite} 
       token={token} 
       isAuthenticated={isAuthenticated} 
       acceptError={acceptError}

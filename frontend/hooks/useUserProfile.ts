@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { User } from "firebase/auth";
 import { auth } from "../lib/firebase/client";
 import { apiUsers } from "../lib/api/users";
@@ -11,21 +11,30 @@ export function useUserProfile() {
   const queryClient = useQueryClient();
   const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
   const [firebaseLoading, setFirebaseLoading] = useState(true);
+  // Track the previous UID so we only purge cache on a genuine user switch
+  const previousUidRef = useRef<string | null | undefined>(undefined);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setFirebaseUser(user);
       setFirebaseLoading(false);
       if (user) {
-        // Purge old cached profile data synchronously to avoid role leaks
-        queryClient.removeQueries({ queryKey: ["user-profile"] });
-        
-        // Set the token cookie for middleware.ts
+        const uidChanged = previousUidRef.current !== user.uid;
+        previousUidRef.current = user.uid;
+
+        // Only purge stale profile data when a *different* user logs in to avoid
+        // clearing the cache mid-token-refresh for the same user (BUG-028)
+        if (uidChanged) {
+          queryClient.removeQueries({ queryKey: ["user-profile"] });
+        }
+
+        // Set the token cookie for proxy.ts, then re-fetch profile
         user.getIdToken().then((token) => {
           document.cookie = `firebaseToken=${token}; path=/; max-age=3600; Secure; SameSite=Strict`;
+          queryClient.invalidateQueries({ queryKey: ["user-profile"] });
         });
-        queryClient.invalidateQueries({ queryKey: ["user-profile"] });
       } else {
+        previousUidRef.current = null;
         document.cookie = "firebaseToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
         queryClient.removeQueries({ queryKey: ["user-profile"] });
       }
@@ -34,11 +43,13 @@ export function useUserProfile() {
     return () => unsubscribe();
   }, [queryClient]);
 
+
   const { data, isLoading: queryLoading, error, isError } = useQuery({
-    queryKey: ["user-profile"],
+    queryKey: ["user-profile", firebaseUser?.uid],
     queryFn: () => apiUsers.getCurrentUser(),
     enabled: !!firebaseUser,
     retry: false,
+    staleTime: 0,
   });
 
   const profile = data?.data || null;

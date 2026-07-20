@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, Suspense, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Image from "next/image";
 import Link from "next/link";
-import Turnstile from "react-turnstile";
+import Script from "next/script";
 import { LogIn, Eye, EyeOff, ArrowRight, User, Mail, Lock } from "lucide-react";
 import logoImg from "../../../public/logo.png";
 
@@ -31,18 +31,60 @@ const registerSchema = z.object({
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
+const RECAPTCHA_SITE_KEY = "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI";
+
 function RegisterForm() {
   const router = useRouter();
-  const [redirectPath, setRedirectPath] = useState<string | null>(null);
-  
-  useEffect(() => {
-    setRedirectPath(new URLSearchParams(window.location.search).get("redirect"));
-  }, []);
+  const searchParams = useSearchParams();
+  const redirectPath = searchParams.get("redirect") || null;
   
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+
+  const renderRecaptcha = () => {
+    if (typeof window !== "undefined" && (window as any).grecaptcha && (window as any).grecaptcha.render) {
+      const container = document.getElementById("recaptcha-container");
+      if (container && container.childElementCount === 0) {
+        try {
+          (window as any).grecaptcha.render("recaptcha-container", {
+            sitekey: RECAPTCHA_SITE_KEY,
+            callback: "onRecaptchaVerify",
+            "expired-callback": "onRecaptchaExpired",
+          });
+        } catch (e) {
+          console.error("grecaptcha render error:", e);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    (window as any).onRecaptchaVerify = (token: string) => {
+      setRecaptchaToken(token);
+    };
+    (window as any).onRecaptchaExpired = () => {
+      setRecaptchaToken(null);
+    };
+
+    let interval: NodeJS.Timeout;
+    const checkAndRender = () => {
+      if (typeof window !== "undefined" && (window as any).grecaptcha && (window as any).grecaptcha.render) {
+        renderRecaptcha();
+        clearInterval(interval);
+      }
+    };
+
+    interval = setInterval(checkAndRender, 100);
+    checkAndRender();
+
+    return () => {
+      clearInterval(interval);
+      delete (window as any).onRecaptchaVerify;
+      delete (window as any).onRecaptchaExpired;
+    };
+  }, []);
 
   const {
     register,
@@ -81,7 +123,7 @@ function RegisterForm() {
       const token = await userCredential.user.getIdToken();
       document.cookie = `firebaseToken=${token}; path=/; max-age=3600; Secure; SameSite=Strict`;
       
-      await apiAuth.register(data.displayName, turnstileToken || undefined);
+      await apiAuth.register(data.displayName, recaptchaToken || undefined);
       
       const verifyUrl = redirectPath 
         ? `/verify-email?redirect=${encodeURIComponent(redirectPath)}`
@@ -232,17 +274,21 @@ function RegisterForm() {
             </div>
           )}
 
-          <div className="flex justify-center my-2">
-            <Turnstile
-              sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
-              onVerify={(token) => setTurnstileToken(token)}
-            />
+          {/* Load Google reCAPTCHA v2 Script */}
+          <Script 
+            src="https://www.google.com/recaptcha/api.js?render=explicit" 
+            strategy="afterInteractive"
+            onLoad={renderRecaptcha}
+          />
+
+          <div className="flex justify-center my-4">
+            <div id="recaptcha-container"></div>
           </div>
 
           <Button 
             type="submit" 
             className="w-full h-10 bg-[#00A651] hover:bg-[#008F44] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center space-x-2 transition-all duration-300 group" 
-            disabled={isLoading || !turnstileToken}
+            disabled={isLoading || !recaptchaToken}
           >
             <span>{isLoading ? "CREATING..." : "CREATE ACCOUNT"}</span>
             {!isLoading && <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />}
@@ -269,5 +315,9 @@ function RegisterForm() {
 }
 
 export default function RegisterPage() {
-  return <RegisterForm />;
+  return (
+    <Suspense fallback={<div className="p-8 flex justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00A651]"></div></div>}>
+      <RegisterForm />
+    </Suspense>
+  );
 }

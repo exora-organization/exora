@@ -33,6 +33,11 @@ func (s *Service) SaveCostData(ctx context.Context, caseID, companyID string, re
 		return nil, apperror.ErrValidation
 	}
 
+	// BUG-032: Quantity must be a positive whole number (units cannot be fractional)
+	if req.Quantity != float64(int64(req.Quantity)) || req.Quantity <= 0 {
+		return nil, apperror.New("UNPROCESSABLE", "invalid_quantity: quantity must be a positive whole number", 422)
+	}
+
 	// Load existing to preserve createdAt on upsert
 	existing, _ := s.repo.GetByCaseID(ctx, caseID)
 

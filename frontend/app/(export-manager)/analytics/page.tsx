@@ -2,16 +2,21 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { apiAnalytics } from "../../../lib/api/analytics";
+import { useUserProfile } from "../../../hooks/useUserProfile";
+import { Button } from "../../../components/ui/button";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 import { BarChart3, Activity, Target, PieChart as PieChartIcon, Clock } from "lucide-react";
 
 export default function AnalyticsDashboardPage() {
-  const { data: analyticsData, isLoading, error } = useQuery({
+  const { loading: profileLoading, companyId } = useUserProfile();
+
+  const { data: analyticsData, isLoading, error, refetch } = useQuery({
     queryKey: ["analytics-dashboard"],
     queryFn: () => apiAnalytics.getDashboard(),
+    enabled: !profileLoading && !!companyId,
   });
 
-  if (isLoading) {
+  if (profileLoading || (isLoading && !!companyId)) {
     return (
       <div className="p-8 flex justify-center items-center min-h-[50vh]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-blue-500"></div>
@@ -23,7 +28,8 @@ export default function AnalyticsDashboardPage() {
     return (
       <div className="p-8 text-center bg-red-50 text-red-600 rounded-3xl font-bold max-w-lg mx-auto mt-10 shadow-lg border border-red-100 flex flex-col items-center gap-4">
         <p className="text-xl">Unable to load analytics.</p>
-        <p className="text-sm opacity-80">Please retry later.</p>
+        <p className="text-sm opacity-80">Please try again.</p>
+        <Button onClick={() => refetch()} variant="destructive" className="rounded-xl font-bold">Retry</Button>
       </div>
     );
   }

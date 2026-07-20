@@ -8,4 +8,6 @@ type Repository interface {
 	Upsert(ctx context.Context, rec *AdvisorRecommendation) error
 	GetByCaseID(ctx context.Context, caseID string) (*AdvisorRecommendation, error)
 	GetGlobal(ctx context.Context, companyID string) (*AdvisorRecommendation, error)
+	Count(ctx context.Context) (int, error)
+	ListAll(ctx context.Context, limit int) ([]*AdvisorRecommendation, error)
 }

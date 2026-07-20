@@ -1,15 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiOwner } from "../../../lib/api/owner";
 import { InviteMemberDialog } from "../../../components/owner/InviteMemberDialog";
 import { ConfirmWarningDialog } from "../../../components/ui/confirm-warning-dialog";
-import { ShieldAlert, Mail, UserX, Clock, RefreshCw, Send, Users, Activity } from "lucide-react";
+import { Mail, UserX, Clock, Send, Users, Trash2, Copy, CheckCircle2, Search, Filter } from "lucide-react";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "../../../components/ui/dialog";
+import { Button } from "../../../components/ui/button";
 
 export default function TeamManagementPage() {
   const queryClient = useQueryClient();
+  const [resentLink, setResentLink] = useState<string | null>(null);
+  const [copiedResent, setCopiedResent] = useState(false);
+  const [memberSearch, setMemberSearch] = useState("");
+  const [memberRoleFilter, setMemberRoleFilter] = useState("all");
+  const [inviteSearch, setInviteSearch] = useState("");
+  const [inviteRoleFilter, setInviteRoleFilter] = useState("all");
 
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean;
@@ -38,12 +46,28 @@ export default function TeamManagementPage() {
 
   const resendMutation = useMutation({
     mutationFn: (invitationId: string) => apiOwner.resendInvitation({ invitationId }),
-    onSuccess: () => {
+    onSuccess: (res: any) => {
       queryClient.invalidateQueries({ queryKey: ["invitations"] });
-      toast.success("Invitation resent successfully!");
+      if (res?.data?.inviteUrl) {
+        setResentLink(res.data.inviteUrl);
+      } else {
+        toast.success("Invitation resent successfully!");
+      }
     },
     onError: (err: any) => {
       toast.error(err.message || "Failed to resend invitation.");
+    }
+  });
+
+  const deleteInvitationMutation = useMutation({
+    mutationFn: (invitationId: string) => apiOwner.deleteInvitation(invitationId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["invitations"] });
+      setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+      toast.success("Invitation cancelled successfully!");
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Failed to cancel invitation.");
     }
   });
 
@@ -124,10 +148,51 @@ export default function TeamManagementPage() {
     });
   };
 
+  const handleCancelInvitation = (invitationId: string, email: string) => {
+    setConfirmDialog({
+      isOpen: true,
+      title: "Cancel Invitation",
+      description: `Are you sure you want to cancel the invitation sent to ${email}? This will render their invitation link invalid immediately.`,
+      actionLabel: "Cancel Invite",
+      severity: "danger",
+      onConfirm: () => {
+        deleteInvitationMutation.mutate(invitationId);
+      }
+    });
+  };
+
   const teamMembers = teamData?.data?.items || [];
   const invitations = invitesData?.data?.items || [];
 
-  const isMutationPending = roleMutation.isPending || statusMutation.isPending || removeMutation.isPending;
+  const filteredMembers = useMemo(() => {
+    let arr = [...teamMembers];
+    if (memberSearch.trim()) {
+      const q = memberSearch.toLowerCase();
+      arr = arr.filter(
+        (m) =>
+          (m.displayName || "").toLowerCase().includes(q) ||
+          m.email.toLowerCase().includes(q)
+      );
+    }
+    if (memberRoleFilter !== "all") {
+      arr = arr.filter((m) => m.role === memberRoleFilter);
+    }
+    return arr;
+  }, [teamMembers, memberSearch, memberRoleFilter]);
+
+  const filteredInvitations = useMemo(() => {
+    let arr = [...invitations];
+    if (inviteSearch.trim()) {
+      const q = inviteSearch.toLowerCase();
+      arr = arr.filter((inv) => inv.email.toLowerCase().includes(q));
+    }
+    if (inviteRoleFilter !== "all") {
+      arr = arr.filter((inv) => inv.role === inviteRoleFilter);
+    }
+    return arr;
+  }, [invitations, inviteSearch, inviteRoleFilter]);
+
+  const isMutationPending = roleMutation.isPending || statusMutation.isPending || removeMutation.isPending || deleteInvitationMutation.isPending;
 
   return (
     <div className="space-y-10 max-w-7xl mx-auto pb-10">
@@ -144,13 +209,38 @@ export default function TeamManagementPage() {
       <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-8 md:p-10 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-purple-50 to-transparent rounded-bl-full opacity-50 -z-10 group-hover:scale-110 transition-transform duration-700"></div>
         
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <h3 className="text-2xl font-extrabold text-[#1F2937] flex items-center gap-3">
             <span className="w-3 h-8 bg-purple-500 rounded-full inline-block"></span>
             Active Team Members
           </h3>
-          <div className="text-[11px] font-black uppercase tracking-widest px-4 py-2 bg-purple-50 text-purple-600 rounded-xl border border-purple-100">
-            {teamMembers.length} Members
+          <div className="text-[11px] font-black uppercase tracking-widest px-4 py-2 bg-purple-50 text-purple-600 rounded-xl border border-purple-100 shrink-0">
+            {filteredMembers.length} of {teamMembers.length} Members
+          </div>
+        </div>
+        {/* Member Search & Filter */}
+        <div className="flex flex-wrap gap-3 mb-6">
+          <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2">
+            <Search className="w-4 h-4 text-gray-400 shrink-0" />
+            <input
+              className="bg-transparent text-sm w-full outline-none font-medium placeholder:text-gray-400"
+              placeholder="Search by name or email..."
+              value={memberSearch}
+              onChange={(e) => setMemberSearch(e.target.value)}
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <Filter className="w-4 h-4 text-gray-400 shrink-0" />
+            <select
+              className="text-sm bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2 font-semibold outline-none"
+              value={memberRoleFilter}
+              onChange={(e) => setMemberRoleFilter(e.target.value)}
+            >
+              <option value="all">All Roles</option>
+              <option value="company_owner">Company Owner</option>
+              <option value="export_manager">Export Manager</option>
+              <option value="finance_staff">Finance Staff</option>
+            </select>
           </div>
         </div>
 
@@ -158,14 +248,14 @@ export default function TeamManagementPage() {
           <div className="py-12 flex justify-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-purple-500"></div>
           </div>
-        ) : teamMembers.length === 0 ? (
+        ) : filteredMembers.length === 0 ? (
           <div className="text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-300 flex flex-col items-center">
             <Users className="w-12 h-12 text-gray-300 mb-3" />
-            <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">No team members found</p>
+            <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">No members match your filters</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {teamMembers.map((member) => (
+            {filteredMembers.map((member) => (
               <div key={member.userId} className="flex flex-col bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group/card relative overflow-hidden">
                 {/* Header */}
                 <div className="flex justify-between items-start mb-4 relative z-10">
@@ -241,13 +331,37 @@ export default function TeamManagementPage() {
       <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-8 md:p-10 relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-amber-50 to-transparent rounded-bl-full opacity-50 -z-10 group-hover:scale-110 transition-transform duration-700"></div>
         
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <h3 className="text-2xl font-extrabold text-[#1F2937] flex items-center gap-3">
             <span className="w-3 h-8 bg-amber-500 rounded-full inline-block"></span>
             Pending Invitations
           </h3>
-          <div className="text-[11px] font-black uppercase tracking-widest px-4 py-2 bg-amber-50 text-amber-600 rounded-xl border border-amber-100">
-            {invitations.length} Pending
+          <div className="text-[11px] font-black uppercase tracking-widest px-4 py-2 bg-amber-50 text-amber-600 rounded-xl border border-amber-100 shrink-0">
+            {filteredInvitations.length} of {invitations.length} Pending
+          </div>
+        </div>
+        {/* Invitation Search & Filter */}
+        <div className="flex flex-wrap gap-3 mb-6">
+          <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2">
+            <Search className="w-4 h-4 text-gray-400 shrink-0" />
+            <input
+              className="bg-transparent text-sm w-full outline-none font-medium placeholder:text-gray-400"
+              placeholder="Search by email..."
+              value={inviteSearch}
+              onChange={(e) => setInviteSearch(e.target.value)}
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <Filter className="w-4 h-4 text-gray-400 shrink-0" />
+            <select
+              className="text-sm bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2 font-semibold outline-none"
+              value={inviteRoleFilter}
+              onChange={(e) => setInviteRoleFilter(e.target.value)}
+            >
+              <option value="all">All Roles</option>
+              <option value="export_manager">Export Manager</option>
+              <option value="finance_staff">Finance Staff</option>
+            </select>
           </div>
         </div>
 
@@ -255,14 +369,14 @@ export default function TeamManagementPage() {
           <div className="py-12 flex justify-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-amber-500"></div>
           </div>
-        ) : invitations.length === 0 ? (
+        ) : filteredInvitations.length === 0 ? (
           <div className="text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-300 flex flex-col items-center">
             <Mail className="w-12 h-12 text-gray-300 mb-3" />
-            <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">No pending invitations</p>
+            <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">No invitations match your filters</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {invitations.map((inv) => (
+            {filteredInvitations.map((inv) => (
               <div key={inv.invitationId} className="flex flex-col bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group/card relative overflow-hidden">
                 <div className="flex-1">
                   <div className="flex items-start justify-between mb-2">
@@ -288,14 +402,22 @@ export default function TeamManagementPage() {
                   </div>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-gray-100">
+                <div className="mt-6 pt-4 border-t border-gray-100 flex items-center gap-3">
                   <button
                     disabled={resendMutation.isPending && resendMutation.variables === inv.invitationId}
                     onClick={() => resendMutation.mutate(inv.invitationId)}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white font-black text-xs uppercase tracking-widest transition-colors disabled:opacity-50 cursor-pointer"
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white font-black text-xs uppercase tracking-widest transition-colors disabled:opacity-50 cursor-pointer"
                   >
                     <Send className="w-4 h-4" />
-                    Resend Invite
+                    Resend
+                  </button>
+                  <button
+                    disabled={deleteInvitationMutation.isPending && deleteInvitationMutation.variables === inv.invitationId}
+                    onClick={() => handleCancelInvitation(inv.invitationId, inv.email)}
+                    className="flex items-center justify-center w-10 h-10 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-colors disabled:opacity-50 cursor-pointer shrink-0"
+                    title="Cancel Invitation"
+                  >
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               </div>
@@ -315,6 +437,51 @@ export default function TeamManagementPage() {
         confirmText={confirmDialog.confirmText}
         isLoading={isMutationPending}
       />
+
+      {/* Resent Link Dialog */}
+      <Dialog open={!!resentLink} onOpenChange={(isOpen) => {
+        if (!isOpen) {
+          setResentLink(null);
+          setCopiedResent(false);
+        }
+      }}>
+        <DialogContent className="sm:max-w-md max-w-[95%] border border-[#E8E3D9] shadow-2xl rounded-3xl p-0 bg-white/95 backdrop-blur-xl overflow-hidden">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-amber-50 to-transparent rounded-bl-full opacity-60 -z-10 pointer-events-none"></div>
+          <div className="p-8">
+            <div className="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center mb-4">
+              <CheckCircle2 className="w-6 h-6 text-amber-500" />
+            </div>
+            <DialogTitle className="text-2xl font-black text-[#1F2937]">Invitation Renewed</DialogTitle>
+            <DialogDescription className="text-sm font-bold text-[#9CA3AF] uppercase tracking-widest mt-1">
+              Copy the link below to send to the member manually
+            </DialogDescription>
+            
+            <div className="mt-6 flex gap-2">
+              <input
+                type="text"
+                readOnly
+                value={resentLink || ""}
+                className="flex-1 px-4 py-3 bg-[#FAF8F3]/50 border-2 border-[#E8E3D9] rounded-2xl text-sm font-semibold focus:outline-none focus:border-amber-500 text-gray-700"
+                onClick={(e) => (e.target as HTMLInputElement).select()}
+              />
+              <Button
+                onClick={() => {
+                  if (resentLink) {
+                    navigator.clipboard.writeText(resentLink);
+                    setCopiedResent(true);
+                    toast.success("Copied to clipboard!");
+                    setTimeout(() => setCopiedResent(false), 2000);
+                  }
+                }}
+                className="bg-amber-500 hover:bg-amber-600 text-white font-extrabold px-6 rounded-2xl h-12 shrink-0 flex items-center gap-2"
+              >
+                {copiedResent ? <CheckCircle2 className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                {copiedResent ? "Copied" : "Copy"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

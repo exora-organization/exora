@@ -13,6 +13,7 @@ import (
 	"github.com/exora/backend/internal/domain/analytics"
 	"github.com/exora/backend/internal/domain/auth"
 	"github.com/exora/backend/internal/domain/company"
+	"github.com/exora/backend/internal/domain/contact"
 	"github.com/exora/backend/internal/domain/costing"
 	"github.com/exora/backend/internal/domain/document"
 	"github.com/exora/backend/internal/domain/exportcase"
@@ -40,6 +41,7 @@ type Handlers struct {
 	Advisor    *advisor.Handler
 	Document   *document.Handler
 	Analytics  *analytics.Handler
+	Contact    *contact.Handler
 }
 
 type Dependencies struct {
@@ -57,6 +59,7 @@ func New(deps Dependencies, h Handlers) http.Handler {
 	r.Use(middleware.Recover)
 	r.Use(middleware.Logger)
 	r.Use(middleware.CORS(deps.Config.CORSAllowedOrigins))
+	r.Use(chimiddleware.NoCache)
 	r.Use(chimiddleware.RequestID)
 	r.Use(chimiddleware.RealIP)
 
@@ -79,6 +82,9 @@ func New(deps Dependencies, h Handlers) http.Handler {
 		// Public invitation preview
 		r.Get("/invitations/{token}", h.Invitation.Preview)
 
+		// Public contact (rate limited)
+		r.With(deps.RateLimiter.Limit).Post("/contact", h.Contact.Submit)
+
 		// Auth: Firebase token required; register only needs token, login/me need profile
 		r.Group(func(r chi.Router) {
 			r.Use(deps.Firebase.VerifyToken)
@@ -88,7 +94,7 @@ func New(deps Dependencies, h Handlers) http.Handler {
 			r.Group(func(r chi.Router) {
 				r.Use(deps.Auth.RequireProfile)
 
-				r.With(deps.RateLimiter.Limit).Post("/auth/login", h.Auth.Login)
+				r.With(deps.RateLimiter.Limit, middleware.Audit("user_login", deps.AuditLogger)).Post("/auth/login", h.Auth.Login)
 				r.Post("/auth/logout", h.Auth.Logout)
 				r.Get("/users/me", h.User.Me)
 
@@ -96,94 +102,97 @@ func New(deps Dependencies, h Handlers) http.Handler {
 					r.Use(deps.Auth.RequireEmailVerified)
 
 					// Company application
-				r.With(middleware.RequireRoles("guest")).Post("/companies/apply", h.Company.Apply)
-				r.With(middleware.RequireRoles("guest", "company_owner")).Get("/companies/application-status", h.Company.ApplicationStatus)
-				r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/companies/{companyId}", h.Company.Get)
+					r.With(middleware.RequireRoles("guest")).Post("/companies/apply", h.Company.Apply)
+					r.With(middleware.RequireRoles("guest")).Get("/companies/application-status", h.Company.ApplicationStatus)
+					r.With(middleware.RequireRoles("company_owner", "admin")).Get("/companies/{companyId}", h.Company.Get)
+					r.With(middleware.RequireRoles("company_owner", "admin")).Post("/companies/{companyId}/change-request", h.Company.ChangeRequest)
 
-				// User management
-				r.With(middleware.RequireRoles("company_owner")).Post("/users/invite", h.User.Invite)
-				r.With(middleware.RequireRoles("company_owner", "admin")).Get("/users", h.User.List)
-				r.With(middleware.RequireRoles("company_owner", "admin")).Get("/users/{userId}", h.User.Get)
-				r.With(middleware.RequireRoles("company_owner", "admin")).Patch("/users/{userId}", h.User.Update)
-				r.With(middleware.RequireRoles("company_owner", "admin")).Delete("/users/{userId}", h.User.Delete)
-				r.With(middleware.RequireRoles("company_owner", "admin")).Patch("/users/{userId}/role", h.User.ChangeRole)
+					// User management
+					r.With(middleware.RequireRoles("company_owner")).Post("/users/invite", h.User.Invite)
+					r.With(middleware.RequireRoles("admin")).Get("/users", h.User.List)
+					r.With(middleware.RequireRoles("admin")).Get("/users/{userId}", h.User.Get)
+					r.With(middleware.RequireRoles("admin")).Patch("/users/{userId}", h.User.Update)
+					r.With(middleware.RequireRoles("admin")).Delete("/users/{userId}", h.User.Delete)
+					r.With(middleware.RequireRoles("admin")).Patch("/users/{userId}/role", h.User.ChangeRole)
 
-				// Invitations
-				r.With(middleware.RequireRoles("company_owner")).Get("/invitations", h.Invitation.List)
-				r.With(middleware.RequireRoles("company_owner")).Post("/invitations/resend", h.Invitation.Resend)
-				r.Post("/invitations/{token}/accept", h.Invitation.Accept)
+					// Invitations
+					r.With(middleware.RequireRoles("company_owner")).Get("/invitations", h.Invitation.List)
+					r.With(middleware.RequireRoles("company_owner")).Post("/invitations/resend", h.Invitation.Resend)
+					r.With(middleware.RequireRoles("company_owner")).Delete("/invitations/{invitationId}", h.Invitation.Delete)
+					r.Post("/invitations/{token}/accept", h.Invitation.Accept)
 
-				// Admin
-				r.With(
-					middleware.RequireRoles("admin"),
-					middleware.Audit("admin_action", deps.AuditLogger),
-				).Route("/admin", func(r chi.Router) {
-					r.Get("/company-applications", h.Admin.ListApplications)
-					r.Post("/company-applications/{companyId}/approve", h.Admin.Approve)
-					r.Post("/company-applications/{companyId}/reject", h.Admin.Reject)
-					r.Post("/company-applications/{companyId}/request-revision", h.Admin.RequestRevision)
-					r.Get("/monitoring", h.Admin.Monitoring)
-					r.Get("/audit-logs", h.Admin.ListAuditLogs)
-				})
-
-				// Analytics (dashboard statistics)
-				r.Route("/analytics", func(r chi.Router) {
-					r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/dashboard", h.Analytics.Dashboard)
-				})
-
-				// Export cases
-				r.Route("/export-cases", func(r chi.Router) {
-					r.With(middleware.RequireRoles("export_manager", "admin")).Post("/", h.ExportCase.Create)
-					r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/", h.ExportCase.List)
-
-					r.Route("/{caseId}", func(r chi.Router) {
-						r.Use(middleware.RequireTenantAccess("caseId", func(r *http.Request, resourceID string) (middleware.TenantResource, error) {
-							if deps.ExportCaseRepo == nil {
-								return nil, apperror.ErrNotFound
-							}
-							caseResource, err := deps.ExportCaseRepo.GetByID(r.Context(), resourceID)
-							if err != nil {
-								return nil, err
-							}
-							return caseResource, nil
-						}))
-						r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/", h.ExportCase.Get)
-						r.With(middleware.RequireRoles("export_manager", "admin")).Put("/", h.ExportCase.Update)
-						r.With(middleware.RequireRoles("export_manager", "admin")).Delete("/", h.ExportCase.Delete)
-
-						r.With(middleware.RequireRoles("finance_staff", "admin")).Put("/cost-data", h.Costing.PutCostData)
-						r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/cost-data", h.Costing.GetCostData)
-
-						r.With(middleware.RequireRoles("export_manager", "admin")).Post("/pricing/calculate", h.Pricing.Calculate)
-						r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/pricing", h.Pricing.Get)
-
-						r.With(middleware.RequireRoles("finance_staff", "company_owner", "admin")).Get("/financial-analysis", h.Financial.GetAnalysis)
-						r.With(middleware.RequireRoles("finance_staff", "company_owner", "admin")).Post("/financial-analysis/recalculate", h.Financial.Recalculate)
-
-						r.With(middleware.RequireRoles("export_manager", "admin")).Post("/scenarios", h.Scenario.Create)
-						r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/scenarios/compare", h.Scenario.Compare)
-
-						r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/risk-assessment", h.Risk.GetAssessment)
-
-						r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Post("/advisor/recommendations", h.Advisor.CreateRecommendation)
-						r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/advisor/recommendations", h.Advisor.GetRecommendation)
-
-						r.With(middleware.RequireRoles("export_manager", "company_owner", "admin")).Post("/documents/quotation", h.Document.GenerateQuotation)
-						r.With(middleware.RequireRoles("export_manager", "company_owner", "admin")).Post("/documents/proforma-invoice", h.Document.GenerateProforma)
-						r.With(middleware.RequireRoles("export_manager", "company_owner", "admin")).Post("/documents/cost-breakdown-report", h.Document.GenerateCostBreakdown)
-						r.With(middleware.RequireRoles("export_manager", "company_owner", "admin")).Post("/documents/feasibility-report", h.Document.GenerateFeasibility)
-						r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/documents", h.Document.ListByCase)
+					// Admin
+					r.With(
+						middleware.RequireRoles("admin"),
+						middleware.Audit("admin_action", deps.AuditLogger),
+					).Route("/admin", func(r chi.Router) {
+						r.Get("/company-applications", h.Admin.ListApplications)
+						r.Post("/company-applications/{companyId}/approve", h.Admin.Approve)
+						r.Post("/company-applications/{companyId}/reject", h.Admin.Reject)
+						r.Post("/company-applications/{companyId}/request-revision", h.Admin.RequestRevision)
+						r.Get("/monitoring", h.Admin.Monitoring)
+						r.Get("/audit-logs", h.Admin.ListAuditLogs)
+						r.Get("/advisor/health", h.Advisor.GetSystemHealth)
 					})
-				})
 
-				r.With(middleware.RequireRoles("export_manager", "company_owner", "admin")).Get("/documents/{documentId}/download", h.Document.Download)
+					// Analytics (dashboard statistics)
+					r.Route("/analytics", func(r chi.Router) {
+						r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/dashboard", h.Analytics.Dashboard)
+					})
 
-				r.Route("/advisor", func(r chi.Router) {
-					r.With(middleware.RequireRoles("company_owner", "export_manager", "admin")).Post("/recommendations", h.Advisor.CreateGlobalRecommendation)
-					r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/recommendations", h.Advisor.GetGlobalRecommendation)
-				})
+					// Export cases
+					r.Route("/export-cases", func(r chi.Router) {
+						r.With(middleware.RequireRoles("export_manager"), middleware.Audit("create_export_case", deps.AuditLogger)).Post("/", h.ExportCase.Create)
+						r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/", h.ExportCase.List)
 
-				r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/analytics", h.Analytics.Dashboard)
+						r.Route("/{caseId}", func(r chi.Router) {
+							r.Use(middleware.RequireTenantAccess("caseId", func(r *http.Request, resourceID string) (middleware.TenantResource, error) {
+								if deps.ExportCaseRepo == nil {
+									return nil, apperror.ErrNotFound
+								}
+								caseResource, err := deps.ExportCaseRepo.GetByID(r.Context(), resourceID)
+								if err != nil {
+									return nil, err
+								}
+								return caseResource, nil
+							}))
+							r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/", h.ExportCase.Get)
+							r.With(middleware.RequireRoles("export_manager")).Put("/", h.ExportCase.Update)
+							r.With(middleware.RequireRoles("export_manager")).Delete("/", h.ExportCase.Delete)
+
+							r.With(middleware.RequireRoles("finance_staff")).Put("/cost-data", h.Costing.PutCostData)
+							r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff")).Get("/cost-data", h.Costing.GetCostData)
+
+							r.With(middleware.RequireRoles("export_manager")).Post("/pricing/calculate", h.Pricing.Calculate)
+							r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff")).Get("/pricing", h.Pricing.Get)
+
+							r.With(middleware.RequireRoles("finance_staff", "company_owner", "admin")).Get("/financial-analysis", h.Financial.GetAnalysis)
+							r.With(middleware.RequireRoles("finance_staff")).Post("/financial-analysis/recalculate", h.Financial.Recalculate)
+
+							r.With(middleware.RequireRoles("export_manager")).Post("/scenarios", h.Scenario.Create)
+							r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff")).Get("/scenarios/compare", h.Scenario.Compare)
+
+							r.With(middleware.RequireRoles("company_owner", "export_manager")).Get("/risk-assessment", h.Risk.GetAssessment)
+
+							r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Post("/advisor/recommendations", h.Advisor.CreateRecommendation)
+							r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/advisor/recommendations", h.Advisor.GetRecommendation)
+
+							r.With(middleware.RequireRoles("export_manager")).Post("/documents/quotation", h.Document.GenerateQuotation)
+							r.With(middleware.RequireRoles("export_manager")).Post("/documents/proforma-invoice", h.Document.GenerateProforma)
+							r.With(middleware.RequireRoles("finance_staff")).Post("/documents/cost-breakdown-report", h.Document.GenerateCostBreakdown)
+							r.With(middleware.RequireRoles("company_owner")).Post("/documents/feasibility-report", h.Document.GenerateFeasibility)
+							r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/documents", h.Document.ListByCase)
+						})
+					})
+
+					r.With(middleware.RequireRoles("export_manager", "company_owner", "finance_staff")).Get("/documents/{documentId}/download", h.Document.Download)
+
+					r.Route("/advisor", func(r chi.Router) {
+						r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Post("/recommendations", h.Advisor.CreateGlobalRecommendation)
+						r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/recommendations", h.Advisor.GetGlobalRecommendation)
+					})
+
+					r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/analytics", h.Analytics.Dashboard)
 				})
 			})
 		})

@@ -26,5 +26,9 @@ export interface DashboardMetrics {
   recentCases: any[];
   riskSummary?: RiskSummary | null;
   teamSummary?: TeamSummary | null;
+  totalFreightCost?: number;
+  totalInsurance?: number;
+  totalExportValue?: number;
+  estGrossMargin?: number;
 }
 

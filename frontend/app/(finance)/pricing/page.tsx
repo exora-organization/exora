@@ -88,7 +88,7 @@ export default function ExportCaseListPage() {
                   </TableCell>
                   <TableCell>{new Date(c.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell className="text-right">
-                    <Link href={`/pricing/${c.caseId}`}>
+                    <Link href={`/export-case/${c.caseId}/pricing`}>
                       <Button variant="outline" size="sm">Configure Pricing</Button>
                     </Link>
                   </TableCell>

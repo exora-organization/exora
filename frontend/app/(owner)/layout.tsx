@@ -16,9 +16,10 @@ import {
   Users, 
   Activity, 
   Lightbulb, 
-  User,
   Menu,
-  X
+  X,
+  Briefcase,
+  FileBarChart2
 } from "lucide-react";
 
 export default function OwnerLayout({ children }: { children: React.ReactNode }) {
@@ -35,9 +36,10 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
     { name: "Dashboard", href: "/owner-dashboard", icon: LayoutDashboard },
     { name: "Company Profile", href: "/company-profile", icon: Building },
     { name: "Team Management", href: "/team-management", icon: Users },
-    { name: "Analytics", href: "/analytics", icon: Activity },
-    { name: "AI Advisor", href: "/ai-advisor", icon: Lightbulb },
-    { name: "Account", href: "/profile", icon: User },
+    { name: "Export Cases", href: "/export-cases", icon: Briefcase },
+    { name: "Analytics", href: "/owner-analytics", icon: Activity },
+    { name: "AI Advisor", href: "/owner-ai-advisor", icon: Lightbulb },
+    { name: "Export Feasibility Report", href: "/export-feasibility-report", icon: FileBarChart2 },
   ];
 
   return (

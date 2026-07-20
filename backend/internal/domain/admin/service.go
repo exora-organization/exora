@@ -2,6 +2,7 @@ package admin
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/exora/backend/internal/apperror"
@@ -84,6 +85,8 @@ func (s *Service) Approve(ctx context.Context, companyID string) (*company.Appro
 }
 
 func (s *Service) Reject(ctx context.Context, companyID string, req company.RejectRequest) (map[string]string, error) {
+	// BUG-030: Trim whitespace before validation to reject whitespace-only input
+	req.Reason = strings.TrimSpace(req.Reason)
 	if err := validator.Validate(req); err != nil {
 		return nil, apperror.ErrValidation
 	}
@@ -100,6 +103,8 @@ func (s *Service) Reject(ctx context.Context, companyID string, req company.Reje
 }
 
 func (s *Service) RequestRevision(ctx context.Context, companyID string, req company.RevisionRequest) (map[string]string, error) {
+	// BUG-030: Trim whitespace before validation to reject whitespace-only input
+	req.RevisionNotes = strings.TrimSpace(req.RevisionNotes)
 	if err := validator.Validate(req); err != nil {
 		return nil, apperror.ErrValidation
 	}
@@ -125,6 +130,11 @@ func (s *Service) Monitoring(ctx context.Context) (*MonitoringStats, error) {
 	totalCases, _ := s.repo.CountExportCases(ctx)
 	pending, _ := s.companies.CountByStatus(ctx, company.StatusPending)
 	aiUsage, _ := s.repo.CountAIRecommendations(ctx)
+
+	since := time.Now().UTC().Add(-7 * 24 * time.Hour)
+	logins, _ := s.repo.CountAuditLogsByAction(ctx, "user_login", since)
+	cases, _ := s.repo.CountExportCasesSince(ctx, since)
+
 	return &MonitoringStats{
 		TotalCompanies:        totalCompanies,
 		TotalUsers:            totalUsers,
@@ -133,8 +143,8 @@ func (s *Service) Monitoring(ctx context.Context) (*MonitoringStats, error) {
 		ActiveUsersLast30Days: totalUsers,
 		AIUsageCount:          aiUsage,
 		UserActivityStats: UserActivityStats{
-			LoginsLast7Days:       0,
-			CasesCreatedLast7Days: 0,
+			LoginsLast7Days:       logins,
+			CasesCreatedLast7Days: cases,
 		},
 	}, nil
 }

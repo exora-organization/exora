@@ -112,8 +112,8 @@ export function ApprovalActions({ companyId }: ApprovalActionsProps) {
             <Button variant="outline" className="font-bold border-[#E8E3D9]" onClick={() => setRejectOpen(false)}>Cancel</Button>
             <Button 
               variant="destructive" 
-              onClick={() => rejectMutation.mutate(reason)}
-              disabled={rejectMutation.isPending || reason.length < 5}
+              onClick={() => rejectMutation.mutate(reason.trim())}
+              disabled={rejectMutation.isPending || reason.trim().length < 5}
               className="font-bold text-white bg-red-600 hover:bg-red-700"
             >
               {rejectMutation.isPending ? "Rejecting..." : "Confirm Reject"}
@@ -146,8 +146,8 @@ export function ApprovalActions({ companyId }: ApprovalActionsProps) {
           <DialogFooter className="mt-4 flex flex-col-reverse sm:flex-row justify-end gap-2.5">
             <Button variant="outline" className="font-bold border-[#E8E3D9]" onClick={() => setRevisionOpen(false)}>Cancel</Button>
             <Button 
-              onClick={() => revisionMutation.mutate(notes)}
-              disabled={revisionMutation.isPending || notes.length < 5}
+              onClick={() => revisionMutation.mutate(notes.trim())}
+              disabled={revisionMutation.isPending || notes.trim().length < 5}
               className="font-bold text-white bg-amber-600 hover:bg-amber-700 hover:text-white"
             >
               {revisionMutation.isPending ? "Sending..." : "Send Request"}

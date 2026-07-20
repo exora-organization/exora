@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -32,6 +32,7 @@ export function CompanyApplicationForm({ initialData, onSuccess, isRevision = fa
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<ApplicationFormValues>({
     resolver: zodResolver(applicationSchema),
@@ -41,6 +42,16 @@ export function CompanyApplicationForm({ initialData, onSuccess, isRevision = fa
       country: initialData?.country || "",
     },
   });
+
+  useEffect(() => {
+    if (initialData) {
+      reset({
+        companyName: initialData.companyName || "",
+        businessSector: initialData.businessSector || "",
+        country: initialData.country || "",
+      });
+    }
+  }, [initialData, reset]);
 
   const onSubmit = async (data: ApplicationFormValues) => {
     setIsSubmitting(true);

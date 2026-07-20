@@ -15,9 +15,9 @@ import { ExportCaseResponse } from "../../lib/types/export-case";
 import { useUserProfile } from "../../hooks/useUserProfile";
 
 const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters").max(200),
-  product: z.string().min(2, "Product must be at least 2 characters").max(200),
-  destinationCountry: z.string().min(2, "Destination country must be at least 2 characters").max(100),
+  name: z.string().transform(val => val.trim()).pipe(z.string().min(2, "Name must be at least 2 characters").max(200)),
+  product: z.string().transform(val => val.trim()).pipe(z.string().min(2, "Product must be at least 2 characters").max(200)),
+  destinationCountry: z.string().transform(val => val.trim()).pipe(z.string().min(2, "Destination country must be at least 2 characters").max(100)),
   status: z.enum(["draft", "in_review", "finalized"]).optional(),
 });
 

@@ -1,19 +1,20 @@
 "use client";
 
 import { useState, Suspense, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Image from "next/image";
 import Link from "next/link";
-import Turnstile from "react-turnstile";
+import Script from "next/script";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, UserPlus, Globe } from "lucide-react";
 import logoImg from "../../../public/logo.png";
 
 import { signIn } from "../../../lib/firebase/auth";
 import { apiAuth } from "../../../lib/api/auth";
 import { apiUsers } from "../../../lib/api/users";
+import { useQueryClient } from "@tanstack/react-query";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
 import { Button } from "../../../components/ui/button";
@@ -25,18 +26,61 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
+const RECAPTCHA_SITE_KEY = "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI";
+
 function LoginForm() {
   const router = useRouter();
-  const [redirectPath, setRedirectPath] = useState<string | null>(null);
-  
-  useEffect(() => {
-    setRedirectPath(new URLSearchParams(window.location.search).get("redirect"));
-  }, []);
-  
+  const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
+  const redirectPath = searchParams.get("redirect") || null;
+
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+
+  const renderRecaptcha = () => {
+    if (typeof window !== "undefined" && (window as any).grecaptcha && (window as any).grecaptcha.render) {
+      const container = document.getElementById("recaptcha-container");
+      if (container && container.childElementCount === 0) {
+        try {
+          (window as any).grecaptcha.render("recaptcha-container", {
+            sitekey: RECAPTCHA_SITE_KEY,
+            callback: "onRecaptchaVerify",
+            "expired-callback": "onRecaptchaExpired",
+          });
+        } catch (e) {
+          console.error("grecaptcha render error:", e);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    (window as any).onRecaptchaVerify = (token: string) => {
+      setRecaptchaToken(token);
+    };
+    (window as any).onRecaptchaExpired = () => {
+      setRecaptchaToken(null);
+    };
+
+    let interval: NodeJS.Timeout;
+    const checkAndRender = () => {
+      if (typeof window !== "undefined" && (window as any).grecaptcha && (window as any).grecaptcha.render) {
+        renderRecaptcha();
+        clearInterval(interval);
+      }
+    };
+
+    interval = setInterval(checkAndRender, 100);
+    checkAndRender();
+
+    return () => {
+      clearInterval(interval);
+      delete (window as any).onRecaptchaVerify;
+      delete (window as any).onRecaptchaExpired;
+    };
+  }, []);
 
   const {
     register,
@@ -54,32 +98,42 @@ function LoginForm() {
       const userCredential = await signIn(data.email, data.password);
       const token = await userCredential.user.getIdToken();
       document.cookie = `firebaseToken=${token}; path=/; max-age=3600; Secure; SameSite=Strict`;
-      
+
       await apiAuth.login();
       const profileRes = await apiUsers.getCurrentUser();
+      queryClient.setQueryData(["user-profile", userCredential.user.uid], profileRes);
       const role = profileRes.data?.role;
-      
+
       if (redirectPath) {
-        router.push(redirectPath);
+        if (!userCredential.user.emailVerified) {
+          router.push(`/verify-email?redirect=${encodeURIComponent(redirectPath)}`);
+        } else {
+          router.push(redirectPath);
+        }
       } else {
+        let targetPath = "/";
         if (role === "guest") {
           const companyId = profileRes.data?.companyId;
           const status = profileRes.data?.companyStatus;
           if (companyId || status) {
-            router.push("/application-status");
+            targetPath = "/application-status";
           } else {
-            router.push("/company-application");
+            targetPath = "/company-application";
           }
         } else if (role === "admin") {
-          router.push("/admin-dashboard");
+          targetPath = "/admin-dashboard";
         } else if (role === "company_owner") {
-          router.push("/owner-dashboard");
+          targetPath = "/owner-dashboard";
         } else if (role === "export_manager") {
-          router.push("/export-manager-dashboard");
+          targetPath = "/export-manager-dashboard";
         } else if (role === "finance_staff") {
-          router.push("/finance-dashboard");
+          targetPath = "/finance-dashboard";
+        }
+
+        if (!userCredential.user.emailVerified) {
+          router.push(`/verify-email?redirect=${encodeURIComponent(targetPath)}`);
         } else {
-          router.push("/");
+          router.push(targetPath);
         }
       }
     } catch (err: any) {
@@ -115,7 +169,7 @@ function LoginForm() {
               <Input
                 id="email"
                 type="email"
-                placeholder="manager@wacanatech.com"
+                placeholder="Enter Email"
                 className="pl-10 h-12 bg-[#EBF8F2] border-transparent focus:bg-white text-[#1F2937] placeholder:text-[#9CA3AF] text-base rounded-lg"
                 {...register("email")}
               />
@@ -137,7 +191,7 @@ function LoginForm() {
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="password123"
+                placeholder="Enter Password"
                 className="pl-10 pr-10 h-12 bg-[#EBF8F2] border-transparent focus:bg-white text-[#1F2937] placeholder:text-[#9CA3AF] text-base rounded-lg"
                 {...register("password")}
               />
@@ -158,17 +212,21 @@ function LoginForm() {
             </div>
           )}
 
-          <div className="flex justify-center my-2">
-            <Turnstile
-              sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
-              onVerify={(token) => setTurnstileToken(token)}
-            />
+          {/* Load Google reCAPTCHA v2 Script */}
+          <Script
+            src="https://www.google.com/recaptcha/api.js?render=explicit"
+            strategy="afterInteractive"
+            onLoad={renderRecaptcha}
+          />
+
+          <div className="flex justify-center my-4">
+            <div id="recaptcha-container"></div>
           </div>
 
-          <Button 
-            type="submit" 
-            className="w-full h-14 bg-[#00A651] hover:bg-[#008F44] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center space-x-2 transition-all duration-300 mt-4" 
-            disabled={isLoading || !turnstileToken}
+          <Button
+            type="submit"
+            className="w-full h-14 bg-[#00A651] hover:bg-[#008F44] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center space-x-2 transition-all duration-300 mt-4"
+            disabled={isLoading || !recaptchaToken}
           >
             <span>{isLoading ? "SIGNING IN..." : "LOG IN TO FEASIBILITY SUITE"}</span>
             {!isLoading && <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />}
@@ -195,5 +253,9 @@ function LoginForm() {
 }
 
 export default function LoginPage() {
-  return <LoginForm />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginForm />
+    </Suspense>
+  );
 }

@@ -17,7 +17,7 @@ const PUBLIC_ROUTES = [
   "/invite",
 ];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const token = request.cookies.get('firebaseToken')?.value;
   const { pathname } = request.nextUrl;
   

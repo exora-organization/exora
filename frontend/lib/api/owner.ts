@@ -60,4 +60,10 @@ export const apiOwner = {
       method: "DELETE",
     });
   },
+
+  deleteInvitation: async (invitationId: string): Promise<ApiResponse<any>> => {
+    return apiClient<ApiResponse<any>>(`/invitations/${invitationId}`, {
+      method: "DELETE",
+    });
+  },
 };

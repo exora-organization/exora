@@ -6,7 +6,9 @@ import (
 
 	"github.com/exora/backend/internal/actor"
 	"github.com/exora/backend/internal/apperror"
+	"github.com/exora/backend/internal/domain/costing"
 	"github.com/exora/backend/internal/domain/exportcase"
+	"github.com/exora/backend/internal/domain/pricing"
 	"github.com/exora/backend/internal/domain/risk"
 	"github.com/exora/backend/internal/domain/user"
 )
@@ -15,13 +17,23 @@ type Service struct {
 	exportCases exportcase.Repository
 	users       user.Repository
 	risks       risk.Repository
+	costing     costing.Repository
+	pricing     pricing.Repository
 }
 
-func NewService(exportCases exportcase.Repository, users user.Repository, risks risk.Repository) *Service {
+func NewService(
+	exportCases exportcase.Repository,
+	users user.Repository,
+	risks risk.Repository,
+	costing costing.Repository,
+	pricing pricing.Repository,
+) *Service {
 	return &Service{
 		exportCases: exportCases,
 		users:       users,
 		risks:       risks,
+		costing:     costing,
+		pricing:     pricing,
 	}
 }
 
@@ -53,6 +65,10 @@ type DashboardMetrics struct {
 	RecentCases             []any          `json:"recentCases"`
 	RiskSummary             *RiskSummary   `json:"riskSummary"`
 	TeamSummary             *TeamSummary   `json:"teamSummary"`
+	TotalFreightCost        float64        `json:"totalFreightCost"`
+	TotalInsurance          float64        `json:"totalInsurance"`
+	TotalExportValue        float64        `json:"totalExportValue"`
+	EstGrossMargin          float64        `json:"estGrossMargin"`
 }
 
 // GetDashboard gathers analytical and operational statistics for the dashboard views.
@@ -86,6 +102,11 @@ func (s *Service) GetDashboard(ctx context.Context) (*DashboardMetrics, error) {
 	active := inReview + draft
 	avg := 0.0
 
+	var totalFreightCost float64
+	var totalInsurance float64
+	var totalExportValue float64
+	var totalProfit float64
+
 	// Compute average feasibility score based on actual cases
 	cases, _, err := s.exportCases.ListByCompany(ctx, companyID, 1000, "")
 	if err == nil {
@@ -96,10 +117,27 @@ func (s *Service) GetDashboard(ctx context.Context) (*DashboardMetrics, error) {
 				sum += *c.FeasibilityScore
 				count++
 			}
+
+			// Compute projections
+			cd, _ := s.costing.GetByCaseID(ctx, c.ID)
+			pr, _ := s.pricing.GetByCaseID(ctx, c.ID)
+			if cd != nil {
+				totalFreightCost += cd.Freight
+				totalInsurance += cd.Insurance
+				if pr != nil {
+					totalExportValue += pr.SellingPriceIDR * cd.Quantity
+					totalProfit += pr.ProfitIDR * cd.Quantity
+				}
+			}
 		}
 		if count > 0 {
 			avg = sum / float64(count)
 		}
+	}
+
+	estGrossMargin := 0.0
+	if totalExportValue > 0 {
+		estGrossMargin = (totalProfit / totalExportValue) * 100
 	}
 
 	// Compute risk summary
@@ -152,8 +190,12 @@ func (s *Service) GetDashboard(ctx context.Context) (*DashboardMetrics, error) {
 			"in_review": inReview,
 			"finalized": finalized,
 		},
-		RecentCases: []any{},
-		RiskSummary: &riskSum,
-		TeamSummary: &teamSum,
+		RecentCases:      []any{},
+		RiskSummary:      &riskSum,
+		TeamSummary:      &teamSum,
+		TotalFreightCost: totalFreightCost,
+		TotalInsurance:   totalInsurance,
+		TotalExportValue: totalExportValue,
+		EstGrossMargin:   estGrossMargin,
 	}, nil
 }

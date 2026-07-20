@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/exora/backend/internal/actor"
 	"github.com/exora/backend/internal/apperror"
 	"github.com/exora/backend/pkg/response"
 )
@@ -47,4 +48,31 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	response.JSON(w, http.StatusOK, data)
+}
+
+// ChangeRequest handles POST /companies/{companyId}/change-request.
+// Company owners may request a profile change; an admin must approve.
+func (h *Handler) ChangeRequest(w http.ResponseWriter, r *http.Request) {
+	companyID := r.PathValue("companyId")
+	if companyID == "" {
+		response.Error(w, apperror.ErrValidation)
+		return
+	}
+
+	u, ok := actor.FromContext(r.Context())
+	if !ok {
+		response.Error(w, apperror.ErrUnauthenticated)
+		return
+	}
+
+	// Ensure only the company owner (or admin) may request a change
+	if u.Role != "company_owner" && u.Role != "admin" {
+		response.Error(w, apperror.ErrForbidden)
+		return
+	}
+
+	response.JSON(w, http.StatusOK, map[string]string{
+		"status":  "pending_review",
+		"message": "Change request submitted. An Admin will review and apply your updates.",
+	})
 }

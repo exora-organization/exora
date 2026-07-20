@@ -7,17 +7,19 @@ import (
 	"github.com/exora/backend/internal/actor"
 	"github.com/exora/backend/internal/apperror"
 	"github.com/exora/backend/internal/domain/company"
+	"github.com/exora/backend/internal/platform/firebaseauth"
 	"github.com/exora/backend/pkg/validator"
 )
 
 type Service struct {
-	repo       Repository
-	companies  company.Repository
-	appBaseURL string
+	repo         Repository
+	companies    company.Repository
+	firebaseAuth *firebaseauth.Client
+	appBaseURL   string
 }
 
-func NewService(repo Repository, companies company.Repository, appBaseURL string) *Service {
-	return &Service{repo: repo, companies: companies, appBaseURL: appBaseURL}
+func NewService(repo Repository, companies company.Repository, firebaseAuth *firebaseauth.Client, appBaseURL string) *Service {
+	return &Service{repo: repo, companies: companies, firebaseAuth: firebaseAuth, appBaseURL: appBaseURL}
 }
 
 func (s *Service) Me(ctx context.Context) (*SessionProfile, error) {
@@ -86,6 +88,13 @@ func (s *Service) Update(ctx context.Context, userID string, req UpdateUserReque
 func (s *Service) Delete(ctx context.Context, userID string) (map[string]any, error) {
 	if err := s.ensureTenantAccess(ctx, userID); err != nil {
 		return nil, err
+	}
+	u, err := s.repo.GetByID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+	if s.firebaseAuth != nil && u.FirebaseUID != "" {
+		_ = s.firebaseAuth.DeleteUser(ctx, u.FirebaseUID)
 	}
 	if err := s.repo.Delete(ctx, userID); err != nil {
 		return nil, err

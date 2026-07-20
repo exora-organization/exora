@@ -2,6 +2,7 @@ package company
 
 import (
 	"context"
+	"sort"
 	"time"
 
 	"cloud.google.com/go/firestore"
@@ -59,17 +60,13 @@ func (r *FirestoreRepository) List(ctx context.Context, status string, limit int
 	if limit <= 0 {
 		limit = 20
 	}
-	q := r.client.Collection(collection).OrderBy("submittedAt", firestore.Desc)
+	
+	var q firestore.Query
 	if status != "" {
-		q = q.Where("status", "==", status)
+		q = r.client.Collection(collection).Where("status", "==", status)
+	} else {
+		q = r.client.Collection(collection).Query
 	}
-	if cursor != "" {
-		doc, err := r.client.Collection(collection).Doc(cursor).Get(ctx)
-		if err == nil {
-			q = q.StartAfter(doc)
-		}
-	}
-	q = q.Limit(limit + 1)
 
 	iter := q.Documents(ctx)
 	var companies []*Company
@@ -86,6 +83,27 @@ func (r *FirestoreRepository) List(ctx context.Context, status string, limit int
 			return nil, nil, err
 		}
 		companies = append(companies, c)
+	}
+
+	// Sort in memory by submittedAt DESC to avoid composite index requirements
+	sort.Slice(companies, func(i, j int) bool {
+		return companies[i].SubmittedAt.After(companies[j].SubmittedAt)
+	})
+
+	// Apply cursor in memory
+	if cursor != "" {
+		startIndex := -1
+		for i, c := range companies {
+			if c.ID == cursor {
+				startIndex = i + 1
+				break
+			}
+		}
+		if startIndex != -1 && startIndex < len(companies) {
+			companies = companies[startIndex:]
+		} else if startIndex >= len(companies) {
+			companies = nil
+		}
 	}
 
 	var nextCursor *string
@@ -152,9 +170,12 @@ func ToStatusResponse(c *Company) ApplicationStatusResponse {
 		return resp
 	}
 	id, name := c.ID, c.CompanyName
+	sector, country := c.BusinessSector, c.Country
 	submitted := c.SubmittedAt.UTC().Format(time.RFC3339)
 	resp.CompanyID = &id
 	resp.CompanyName = &name
+	resp.BusinessSector = &sector
+	resp.Country = &country
 	resp.Status = c.Status
 	resp.SubmittedAt = &submitted
 	if c.ApprovedAt != nil {

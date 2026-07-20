@@ -12,10 +12,14 @@ import { LogoutButton } from "../../components/ui/logout-button";
 import logoImg from "../../public/logo.png";
 import { 
   LayoutDashboard, 
-  User, 
   FileText,
   Menu,
-  X
+  X,
+  Activity,
+  Lightbulb,
+  Calculator,
+  Briefcase,
+  FileBarChart2
 } from "lucide-react";
 
 export default function FinanceLayout({ children }: { children: React.ReactNode }) {
@@ -30,8 +34,11 @@ export default function FinanceLayout({ children }: { children: React.ReactNode 
 
   const navItems = [
     { name: "Dashboard", href: "/finance-dashboard", icon: LayoutDashboard },
-    { name: "Pricing Setup", href: "/pricing", icon: FileText },
-    { name: "Account", href: "/profile", icon: User },
+    { name: "Costing Configuration", href: "/costing", icon: Calculator },
+    { name: "Financial Analysis", href: "/financial-analysis", icon: Activity },
+    { name: "Export Cases (view only)", href: "/finance-export-cases", icon: Briefcase },
+    { name: "AI Advisor", href: "/finance-ai-advisor", icon: Lightbulb },
+    { name: "Documents", href: "/finance-documents", icon: FileBarChart2 },
   ];
 
   return (

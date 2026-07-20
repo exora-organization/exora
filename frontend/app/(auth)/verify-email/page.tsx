@@ -23,6 +23,8 @@ function VerifyEmailForm() {
       if (user) {
         await user.reload();
         if (user.emailVerified) {
+          const token = await user.getIdToken(true);
+          document.cookie = `firebaseToken=${token}; path=/; max-age=3600; Secure; SameSite=Strict`;
           router.push(redirectPath);
         }
       }

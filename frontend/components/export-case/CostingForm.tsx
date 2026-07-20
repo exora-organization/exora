@@ -24,7 +24,7 @@ const costingSchema = z.object({
   insurance: z.coerce.number().min(0, "Insurance must be at least 0"),
   exchangeRate: z.coerce.number().positive("Exchange Rate must be greater than 0"),
   targetMargin: z.coerce.number().positive("Target Margin must be greater than 0").max(100, "Cannot exceed 100%"),
-  quantity: z.coerce.number().positive("Quantity must be greater than 0"),
+  quantity: z.coerce.number().int("Quantity must be a whole number").positive("Quantity must be greater than 0"),
   paymentTerm: z.enum(["L/C", "T/T", "Doc. Collection", "Open Account"]),
 });
 
@@ -42,7 +42,11 @@ export function CostingForm({ caseId, initialData }: CostingFormProps) {
   const [warnings, setWarnings] = useState<string[]>(initialData?.warnings || []);
   const { profile } = useUserProfile();
 
-  const isReadOnly = profile?.role !== "finance_staff" && profile?.role !== "admin" && profile?.role !== "export_manager";
+  const isReadOnly = profile?.role !== "finance_staff" && profile?.role !== "admin";
+  const isFinanceStaff = profile?.role === "finance_staff";
+
+  // Role-aware base path: Finance Staff stays within /finance-case, others use /export-case
+  const caseBasePath = isFinanceStaff ? `/finance-case/${caseId}` : `/export-case/${caseId}`;
 
   const {
     register,
@@ -140,7 +144,7 @@ export function CostingForm({ caseId, initialData }: CostingFormProps) {
               
               <div className="space-y-2">
                 <Label htmlFor="quantity">Quantity (Units)</Label>
-                <Input id="quantity" type="number" step="any" disabled={isReadOnly} {...register("quantity")} />
+                <Input id="quantity" type="number" step="1" disabled={isReadOnly} {...register("quantity")} />
                 {errors.quantity && <p className="text-sm text-red-500">{errors.quantity.message}</p>}
               </div>
             </div>
@@ -198,12 +202,14 @@ export function CostingForm({ caseId, initialData }: CostingFormProps) {
           </div>
         </CardContent>
         <CardFooter className="flex justify-between border-t p-6">
-          <Button type="button" variant="outline" onClick={() => router.push(`/export-case/${caseId}`)}>
+          <Button type="button" variant="outline" onClick={() => router.push(caseBasePath)}>
             Back to Case
           </Button>
           <div className="space-x-4">
             {mutation.isSuccess && (
-              <Button type="button" variant="secondary" onClick={() => router.push(`/export-case/${caseId}/pricing`)}>
+              <Button type="button" variant="secondary" onClick={() => router.push(
+                isFinanceStaff ? `/finance-case/${caseId}/financial` : `/export-case/${caseId}/pricing`
+              )}>
                 Continue to Pricing
               </Button>
             )}

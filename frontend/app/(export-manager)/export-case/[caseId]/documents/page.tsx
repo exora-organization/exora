@@ -20,13 +20,61 @@ import {
   TableRow,
 } from "../../../../../components/ui/table";
 import { FileText, Download } from "lucide-react";
+import { useUserProfile } from "../../../../../hooks/useUserProfile";
 
 export default function DocumentGenerationPage() {
+  const { profile } = useUserProfile();
+  const role = profile?.role;
+  
   const params = useParams();
   const queryClient = useQueryClient();
   const caseId = params.caseId as string;
 
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const getMissingPrerequisite = (msg: string | null) => {
+    if (!msg) return null;
+    const lower = msg.toLowerCase();
+    if (lower.includes("cost_data required")) {
+      return {
+        type: "costing",
+        title: "Costing Data Missing",
+        description: "You must input and save direct and indirect costs for this case before generating reports.",
+        link: `/export-case/${caseId}/costing`,
+        linkLabel: "Configure Costing",
+      };
+    }
+    if (lower.includes("pricing_results required") || lower.includes("pricing/calculate")) {
+      return {
+        type: "pricing",
+        title: "Pricing Calculation Missing",
+        description: "You must run the pricing calculation model for this case before generating reports.",
+        link: `/export-case/${caseId}/pricing`,
+        linkLabel: "Go to Pricing Setup",
+      };
+    }
+    if (lower.includes("risk_assessment required") || lower.includes("risk-assessment")) {
+      return {
+        type: "risk",
+        title: "Risk Assessment Missing",
+        description: "You must perform the country and payment term risk assessment before generating reports.",
+        link: `/export-case/${caseId}/risk`,
+        linkLabel: "Assess Risks",
+      };
+    }
+    if (lower.includes("advisor_recommendations required") || lower.includes("advisor/recommendations")) {
+      return {
+        type: "advisor",
+        title: "AI Advisor Analysis Missing",
+        description: "You must consult the AI Advisor and generate strategic recommendations before generating the feasibility report.",
+        link: `/export-case/${caseId}/advisor`,
+        linkLabel: "Consult AI Advisor",
+      };
+    }
+    return null;
+  };
+
+  const missingInfo = getMissingPrerequisite(errorMsg);
 
   const { data: caseData, isLoading: caseLoading } = useQuery({
     queryKey: ["export-case", caseId],
@@ -138,61 +186,90 @@ export default function DocumentGenerationPage() {
         </Card>
       )}
 
-      {errorMsg && (
-        <Alert variant="destructive">
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{errorMsg}</AlertDescription>
+      {errorMsg && missingInfo && (
+        <Alert variant="destructive" className="border-red-200 bg-red-50/50 backdrop-blur-md rounded-3xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <AlertTitle className="text-lg font-black text-red-800 flex items-center gap-2">
+              <span className="w-2.5 h-2.5 bg-red-600 rounded-full animate-pulse"></span>
+              {missingInfo.title}
+            </AlertTitle>
+            <AlertDescription className="text-sm font-semibold text-red-700/90 leading-relaxed">
+              {missingInfo.description}
+            </AlertDescription>
+          </div>
+          <Link href={missingInfo.link} className="shrink-0">
+            <Button className="bg-red-600 hover:bg-red-700 text-white font-extrabold px-6 py-3 rounded-2xl h-auto shadow-md">
+              {missingInfo.linkLabel}
+            </Button>
+          </Link>
+        </Alert>
+      )}
+
+      {errorMsg && !missingInfo && (
+        <Alert variant="destructive" className="border-red-200 bg-red-50/50 backdrop-blur-md rounded-3xl p-6">
+          <AlertTitle className="text-lg font-black text-red-800">Error</AlertTitle>
+          <AlertDescription className="text-sm font-semibold text-red-700/90 mt-1 leading-relaxed">
+            {errorMsg}
+          </AlertDescription>
         </Alert>
       )}
 
       <div className="grid md:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-blue-500"/> Quotation</CardTitle>
-            <CardDescription>Generates a formal price quotation.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button onClick={() => generateQuotationMut.mutate()} disabled={generateQuotationMut.isPending} className="w-full">
-              {generateQuotationMut.isPending ? "Generating..." : "Generate Quotation"}
-            </Button>
-          </CardContent>
-        </Card>
+        {role === "export_manager" && (
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-blue-500" /> Quotation</CardTitle>
+              <CardDescription>Generates a formal price quotation.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button onClick={() => generateQuotationMut.mutate()} disabled={generateQuotationMut.isPending} className="w-full">
+                {generateQuotationMut.isPending ? "Generating..." : "Generate Quotation"}
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-indigo-500"/> Proforma Invoice</CardTitle>
-            <CardDescription>Generates a proforma invoice for buyers.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button onClick={() => generateProformaMut.mutate()} disabled={generateProformaMut.isPending} className="w-full">
-              {generateProformaMut.isPending ? "Generating..." : "Generate Proforma Invoice"}
-            </Button>
-          </CardContent>
-        </Card>
+        {role === "export_manager" && (
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-indigo-500" /> Proforma Invoice</CardTitle>
+              <CardDescription>Generates a proforma invoice for buyers.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button onClick={() => generateProformaMut.mutate()} disabled={generateProformaMut.isPending} className="w-full">
+                {generateProformaMut.isPending ? "Generating..." : "Generate Proforma Invoice"}
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-green-500"/> Cost Breakdown Report</CardTitle>
-            <CardDescription>Detailed export cost breakdown analysis.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button onClick={() => generateCostBreakdownMut.mutate()} disabled={generateCostBreakdownMut.isPending} className="w-full" variant="secondary">
-              {generateCostBreakdownMut.isPending ? "Generating..." : "Generate Cost Breakdown"}
-            </Button>
-          </CardContent>
-        </Card>
+        {role === "finance_staff" && (
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-green-500" /> Cost Breakdown Report</CardTitle>
+              <CardDescription>Detailed export cost breakdown analysis.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button onClick={() => generateCostBreakdownMut.mutate()} disabled={generateCostBreakdownMut.isPending} className="w-full" variant="secondary">
+                {generateCostBreakdownMut.isPending ? "Generating..." : "Generate Cost Breakdown"}
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-purple-500"/> Export Feasibility Report</CardTitle>
-            <CardDescription>Comprehensive risk and feasibility report.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button onClick={() => generateFeasibilityMut.mutate()} disabled={generateFeasibilityMut.isPending} className="w-full" variant="secondary">
-              {generateFeasibilityMut.isPending ? "Generating..." : "Generate Feasibility Report"}
-            </Button>
-          </CardContent>
-        </Card>
+        {role === "company_owner" && (
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-purple-500" /> Export Feasibility Report</CardTitle>
+              <CardDescription>Comprehensive risk and feasibility report.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button onClick={() => generateFeasibilityMut.mutate()} disabled={generateFeasibilityMut.isPending} className="w-full" variant="secondary">
+                {generateFeasibilityMut.isPending ? "Generating..." : "Generate Feasibility Report"}
+              </Button>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       <Card>

@@ -78,12 +78,8 @@ func (r *FirestoreRepository) Update(ctx context.Context, user *User) error {
 }
 
 func (r *FirestoreRepository) Delete(ctx context.Context, id string) error {
-	u, err := r.GetByID(ctx, id)
-	if err != nil {
-		return err
-	}
-	u.Status = StatusDisabled
-	return r.Update(ctx, u)
+	_, err := r.client.Collection(collection).Doc(id).Delete(ctx)
+	return err
 }
 
 func (r *FirestoreRepository) Count(ctx context.Context) (int, error) {

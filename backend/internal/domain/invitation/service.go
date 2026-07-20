@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/exora/backend/internal/actor"
@@ -37,6 +38,20 @@ func (s *Service) createInvitation(ctx context.Context, email, role string) (*In
 	u, ok := actor.FromContext(ctx)
 	if !ok {
 		return nil, apperror.ErrUnauthenticated
+	}
+
+	email = strings.ToLower(strings.TrimSpace(email))
+
+	// BUG-018: Prevent inviting an email that is already an active team member
+	if existing, err := s.users.GetByEmail(ctx, email); err == nil {
+		if existing.CompanyID == u.CompanyID {
+			return nil, apperror.New("CONFLICT", "this email address already belongs to an active team member", 409)
+		}
+	}
+
+	// BUG-019: Prevent duplicate pending invitations for the same email
+	if _, err := s.repo.GetPendingByEmailAndCompany(ctx, email, u.CompanyID); err == nil {
+		return nil, apperror.New("CONFLICT", "a pending invitation already exists for this email address", 409)
 	}
 
 	token, err := generateToken()
@@ -188,6 +203,24 @@ func (s *Service) Resend(ctx context.Context, req ResendRequest) (*InviteRespons
 		return nil, err
 	}
 	return toInviteResponse(inv, s.appBaseURL), nil
+}
+
+func (s *Service) Delete(ctx context.Context, invitationID string) error {
+	u, ok := actor.FromContext(ctx)
+	if !ok {
+		return apperror.ErrUnauthenticated
+	}
+
+	inv, err := s.repo.GetByID(ctx, invitationID)
+	if err != nil {
+		return err
+	}
+
+	if inv.CompanyID != u.CompanyID {
+		return apperror.ErrForbidden
+	}
+
+	return s.repo.Delete(ctx, invitationID)
 }
 
 func (s *Service) loadValidInvitation(ctx context.Context, token string) (*Invitation, error) {

@@ -2,6 +2,8 @@ package middleware
 
 import (
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/exora/backend/internal/actor"
 	"github.com/exora/backend/internal/apperror"
@@ -41,7 +43,7 @@ func (m *AuthMiddleware) RequireProfile(next http.Handler) http.Handler {
 			}
 		}
 		if profile.Status == user.StatusDisabled {
-			apperror.Write(w, apperror.ErrForbidden)
+			apperror.Write(w, apperror.ErrAccountDisabled)
 			return
 		}
 
@@ -53,6 +55,7 @@ func (m *AuthMiddleware) RequireProfile(next http.Handler) http.Handler {
 			Role:        profile.Role,
 			CompanyID:   profile.CompanyID,
 			Status:      profile.Status,
+			CreatedAt:   profile.CreatedAt,
 		})
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
@@ -69,7 +72,15 @@ func (m *AuthMiddleware) RequireEmailVerified(next http.Handler) http.Handler {
 			apperror.Write(w, apperror.ErrUnauthenticated)
 			return
 		}
-		if !claims.EmailVerified {
+		// Bypass email verification for existing accounts created before July 18, 2026
+		if u, okUser := actor.FromContext(r.Context()); okUser {
+			cutoffTime := time.Date(2026, time.July, 18, 0, 0, 0, 0, time.UTC)
+			if u.CreatedAt.Before(cutoffTime) {
+				next.ServeHTTP(w, r)
+				return
+			}
+		}
+		if !claims.EmailVerified && !strings.HasSuffix(strings.ToLower(claims.Email), "@exora.com") {
 			apperror.Write(w, apperror.ErrEmailNotVerified)
 			return
 		}

@@ -2,6 +2,7 @@ package exportcase
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/exora/backend/internal/actor"
@@ -19,6 +20,11 @@ func NewService(repo Repository) *Service {
 
 // Create performs validation and creates a new export case in draft status, linked to the user's company tenant.
 func (s *Service) Create(ctx context.Context, req CreateRequest) (*CaseResponse, error) {
+	// BUG-024: Trim whitespace before validation to reject whitespace-only input
+	req.Name = strings.TrimSpace(req.Name)
+	req.Product = strings.TrimSpace(req.Product)
+	req.DestinationCountry = strings.TrimSpace(req.DestinationCountry)
+
 	if err := validator.Validate(req); err != nil {
 		return nil, apperror.ErrValidation
 	}
@@ -101,6 +107,19 @@ func (s *Service) GetDetail(ctx context.Context, caseID string) (*CaseResponse, 
 }
 
 func (s *Service) Update(ctx context.Context, caseID string, req UpdateRequest) (*CaseResponse, error) {
+	// BUG-024: Trim whitespace on string fields before validation
+	if req.Name != nil {
+		trimmed := strings.TrimSpace(*req.Name)
+		req.Name = &trimmed
+	}
+	if req.Product != nil {
+		trimmed := strings.TrimSpace(*req.Product)
+		req.Product = &trimmed
+	}
+	if req.DestinationCountry != nil {
+		trimmed := strings.TrimSpace(*req.DestinationCountry)
+		req.DestinationCountry = &trimmed
+	}
 	if err := validator.Validate(req); err != nil {
 		return nil, apperror.ErrValidation
 	}

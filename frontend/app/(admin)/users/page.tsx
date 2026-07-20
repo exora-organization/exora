@@ -63,6 +63,8 @@ export default function UserManagementPage() {
     }
   });
 
+  const [sortBy, setSortBy] = useState<string>("name_asc");
+
   if (isLoading) return <div className="p-8 text-center">Loading users...</div>;
   if (error) return <div className="p-8 text-center text-red-500">Failed to load users</div>;
 
@@ -71,6 +73,23 @@ export default function UserManagementPage() {
     u.displayName?.toLowerCase().includes(search.toLowerCase()) || 
     u.email.toLowerCase().includes(search.toLowerCase())
   );
+
+  const sortedUsers = [...filteredUsers].sort((a, b) => {
+    switch (sortBy) {
+      case "name_asc":
+        return (a.displayName || "").localeCompare(b.displayName || "");
+      case "name_desc":
+        return (b.displayName || "").localeCompare(a.displayName || "");
+      case "email_asc":
+        return a.email.localeCompare(b.email);
+      case "date_newest":
+        return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+      case "date_oldest":
+        return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
+      default:
+        return 0;
+    }
+  });
 
   const isMutationPending = updateStatusMutation.isPending || changeRoleMutation.isPending || deleteUserMutation.isPending;
 
@@ -92,15 +111,30 @@ export default function UserManagementPage() {
           />
           <Search className="absolute right-4 top-3.5 h-5 w-5 text-[#9CA3AF]" />
         </div>
+
+        <div className="flex gap-4 items-center w-full md:w-auto">
+          <label className="text-sm font-bold text-[#4B5563] whitespace-nowrap">Sort By:</label>
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="px-4 py-3 rounded-2xl border border-white/60 shadow-md bg-white/90 backdrop-blur-md text-sm font-bold text-[#1F2937] focus:outline-none focus:ring-2 focus:ring-[#00A651] cursor-pointer"
+          >
+            <option value="name_asc">Name (A - Z)</option>
+            <option value="name_desc">Name (Z - A)</option>
+            <option value="email_asc">Email (A - Z)</option>
+            <option value="date_newest">Newest Joined</option>
+            <option value="date_oldest">Oldest Joined</option>
+          </select>
+        </div>
       </div>
 
       <div className="space-y-4">
-        {filteredUsers.length === 0 ? (
+        {sortedUsers.length === 0 ? (
           <div className="flex justify-center py-12 text-[#9CA3AF] font-bold">
             No users found.
           </div>
         ) : (
-          filteredUsers.map((user) => (
+          sortedUsers.map((user) => (
             <div key={user.userId} className="flex flex-col md:flex-row items-center justify-between p-6 rounded-3xl bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl hover:-translate-y-1 hover:shadow-2xl transition-all gap-6">
               
               {/* Profile Info */}

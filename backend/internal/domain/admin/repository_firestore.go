@@ -69,3 +69,19 @@ func (r *FirestoreRepository) ListAuditLogs(ctx context.Context, limit int) ([]A
 	return logs, nil
 }
 
+func (r *FirestoreRepository) CountAuditLogsByAction(ctx context.Context, action string, since time.Time) (int, error) {
+	iter := r.client.Collection(auditCollection).
+		Where("action", "==", action).
+		Where("timestamp", ">=", since).
+		Documents(ctx)
+	return countDocs(iter)
+}
+
+func (r *FirestoreRepository) CountExportCasesSince(ctx context.Context, since time.Time) (int, error) {
+	iter := r.client.Collection("export_cases").
+		Where("createdAt", ">=", since).
+		Documents(ctx)
+	return countDocs(iter)
+}
+
+

@@ -151,17 +151,138 @@ func (kb *KnowledgeBase) BuildContext(docs []Document) string {
 	return strings.Join(parts, "\n\n---\n\n")
 }
 
+// ── JSON schema structs ──────────────────────────────────────────────────────
+
+// countryKBFile maps the full structure of a country knowledge-base JSON file.
+type countryKBFile struct {
+	Title  string `json:"title"`
+	Source string `json:"source"`
+	Content struct {
+		Country           string   `json:"country"`
+		RiskLevel         string   `json:"riskLevel"`
+		Summary           string   `json:"summary"`
+		Currency          string   `json:"currency"`
+		PaymentPreference string   `json:"paymentPreference"`
+		BestPractices     []string `json:"bestPractices"`
+		ExportRequirements []string `json:"exportRequirements"`
+		LeadTime          string   `json:"leadTime"`
+	} `json:"content"`
+}
+
+// tradeFinanceTerm maps a single payment term entry.
+type tradeFinanceTerm struct {
+	Name        string `json:"name"`
+	RiskScore   int    `json:"riskScore"`
+	RiskLevel   string `json:"riskLevel"`
+	Description string `json:"description"`
+	BestFor     string `json:"bestFor"`
+	Drawbacks   string `json:"drawbacks"`
+}
+
+// tradeFinanceKBFile maps the full structure of a trade-finance knowledge-base JSON file.
+type tradeFinanceKBFile struct {
+	Title  string `json:"title"`
+	Source string `json:"source"`
+	Content struct {
+		Title           string             `json:"title"`
+		Terms           []tradeFinanceTerm `json:"terms"`
+		Recommendations struct {
+			NewBuyer         string `json:"newBuyer"`
+			EstablishedBuyer string `json:"establishedBuyer"`
+			HighRiskCountry  string `json:"highRiskCountry"`
+			ExportInsurance  string `json:"exportInsurance"`
+		} `json:"recommendations"`
+	} `json:"content"`
+}
+
+// ── Document flattening ──────────────────────────────────────────────────────
+
+// flattenCountryDoc converts a parsed countryKBFile into human-readable prose
+// that the LLM can consume as grounded context.
+func flattenCountryDoc(doc countryKBFile) string {
+	var sb strings.Builder
+	c := doc.Content
+	sb.WriteString(fmt.Sprintf("Country: %s\n", c.Country))
+	sb.WriteString(fmt.Sprintf("Risk Level: %s\n", c.RiskLevel))
+	sb.WriteString(fmt.Sprintf("Currency: %s\n", c.Currency))
+	sb.WriteString(fmt.Sprintf("Summary: %s\n", c.Summary))
+	sb.WriteString(fmt.Sprintf("Payment Preference: %s\n", c.PaymentPreference))
+	sb.WriteString(fmt.Sprintf("Typical Lead Time: %s\n", c.LeadTime))
+	if len(c.BestPractices) > 0 {
+		sb.WriteString("Best Practices:\n")
+		for _, bp := range c.BestPractices {
+			sb.WriteString(fmt.Sprintf("  - %s\n", bp))
+		}
+	}
+	if len(c.ExportRequirements) > 0 {
+		sb.WriteString("Required Export Documents:\n")
+		for _, req := range c.ExportRequirements {
+			sb.WriteString(fmt.Sprintf("  - %s\n", req))
+		}
+	}
+	return strings.TrimRight(sb.String(), "\n")
+}
+
+// flattenTradeFinanceDoc converts a parsed tradeFinanceKBFile into human-readable prose.
+func flattenTradeFinanceDoc(doc tradeFinanceKBFile) string {
+	var sb strings.Builder
+	sb.WriteString(fmt.Sprintf("%s\n\n", doc.Content.Title))
+	for _, term := range doc.Content.Terms {
+		sb.WriteString(fmt.Sprintf("Payment Method: %s\n", term.Name))
+		sb.WriteString(fmt.Sprintf("  Risk Level: %s (Score: %d/100)\n", term.RiskLevel, term.RiskScore))
+		sb.WriteString(fmt.Sprintf("  Description: %s\n", term.Description))
+		sb.WriteString(fmt.Sprintf("  Best For: %s\n", term.BestFor))
+		sb.WriteString(fmt.Sprintf("  Drawbacks: %s\n\n", term.Drawbacks))
+	}
+	r := doc.Content.Recommendations
+	sb.WriteString("Recommendations:\n")
+	if r.NewBuyer != "" {
+		sb.WriteString(fmt.Sprintf("  New buyer: %s\n", r.NewBuyer))
+	}
+	if r.EstablishedBuyer != "" {
+		sb.WriteString(fmt.Sprintf("  Established buyer: %s\n", r.EstablishedBuyer))
+	}
+	if r.HighRiskCountry != "" {
+		sb.WriteString(fmt.Sprintf("  High-risk country: %s\n", r.HighRiskCountry))
+	}
+	if r.ExportInsurance != "" {
+		sb.WriteString(fmt.Sprintf("  Export insurance: %s\n", r.ExportInsurance))
+	}
+	return strings.TrimRight(sb.String(), "\n")
+}
+
+// ── Parser ───────────────────────────────────────────────────────────────────
+
 func parseDocument(path string, content []byte) Document {
 	ext := filepath.Ext(path)
 	if ext == ".json" {
-		var doc struct {
+		// Try country profile format first
+		var countryDoc countryKBFile
+		if err := json.Unmarshal(content, &countryDoc); err == nil && countryDoc.Content.Country != "" {
+			return Document{
+				Title:   countryDoc.Title,
+				Source:  countryDoc.Source,
+				Content: flattenCountryDoc(countryDoc),
+			}
+		}
+		// Try trade-finance format
+		var tfDoc tradeFinanceKBFile
+		if err := json.Unmarshal(content, &tfDoc); err == nil && len(tfDoc.Content.Terms) > 0 {
+			return Document{
+				Title:   tfDoc.Title,
+				Source:  tfDoc.Source,
+				Content: flattenTradeFinanceDoc(tfDoc),
+			}
+		}
+		// Generic JSON fallback: use raw content (still better than nothing)
+		var generic struct {
 			Title  string `json:"title"`
 			Source string `json:"source"`
 		}
-		if err := json.Unmarshal(content, &doc); err == nil {
+		if err := json.Unmarshal(content, &generic); err == nil {
 			return Document{
-				Title:   doc.Title,
-				Source:  doc.Source,
+				Title:   generic.Title,
+				Source:  generic.Source,
 				Content: string(content),
 			}
 		}

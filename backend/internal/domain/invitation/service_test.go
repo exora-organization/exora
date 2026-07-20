@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/exora/backend/internal/actor"
+	"github.com/exora/backend/internal/apperror"
 	"github.com/exora/backend/internal/domain/company"
 	"github.com/exora/backend/internal/domain/user"
 )
@@ -18,6 +19,9 @@ func (s *stubInvitationRepo) Create(context.Context, *Invitation) error         
 func (s *stubInvitationRepo) GetByID(context.Context, string) (*Invitation, error) { return s.inv, nil }
 func (s *stubInvitationRepo) GetByToken(context.Context, string) (*Invitation, error) {
 	return s.inv, nil
+}
+func (s *stubInvitationRepo) GetPendingByEmailAndCompany(context.Context, string, string) (*Invitation, error) {
+	return nil, apperror.ErrNotFound
 }
 func (s *stubInvitationRepo) ListPendingByCompany(context.Context, string) ([]*Invitation, error) {
 	return nil, nil

@@ -66,8 +66,38 @@ func (r *FirestoreRepository) ListPendingByCompany(ctx context.Context, companyI
 	return invs, nil
 }
 
+func (r *FirestoreRepository) GetPendingByEmail(ctx context.Context, email string) (*Invitation, error) {
+	iter := r.client.Collection(collection).
+		Where("email", "==", email).
+		Where("status", "==", StatusPending).
+		Limit(1).Documents(ctx)
+	doc, err := iter.Next()
+	if err != nil {
+		return nil, apperror.ErrNotFound
+	}
+	return docToInvitation(doc)
+}
+
+func (r *FirestoreRepository) GetPendingByEmailAndCompany(ctx context.Context, email, companyID string) (*Invitation, error) {
+	iter := r.client.Collection(collection).
+		Where("email", "==", email).
+		Where("companyId", "==", companyID).
+		Where("status", "==", StatusPending).
+		Limit(1).Documents(ctx)
+	doc, err := iter.Next()
+	if err != nil {
+		return nil, apperror.ErrNotFound
+	}
+	return docToInvitation(doc)
+}
+
 func (r *FirestoreRepository) Update(ctx context.Context, inv *Invitation) error {
 	_, err := r.client.Collection(collection).Doc(inv.ID).Set(ctx, inv)
+	return err
+}
+
+func (r *FirestoreRepository) Delete(ctx context.Context, id string) error {
+	_, err := r.client.Collection(collection).Doc(id).Delete(ctx)
 	return err
 }
 

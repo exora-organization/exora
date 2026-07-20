@@ -65,3 +65,13 @@ func (h *Handler) Resend(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) Invite(ctx context.Context, req user.InviteRequest) (any, error) {
 	return h.service.Invite(ctx, req)
 }
+
+func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
+	invitationID := r.PathValue("invitationId")
+	err := h.service.Delete(r.Context(), invitationID)
+	if err != nil {
+		response.Error(w, err)
+		return
+	}
+	response.JSON(w, http.StatusOK, map[string]any{"invitationId": invitationID, "deleted": true})
+}

@@ -2,6 +2,7 @@ package admin
 
 import (
 	"context"
+	"time"
 
 	"github.com/exora/backend/internal/middleware"
 )
@@ -13,6 +14,8 @@ type Repository interface {
 	CountExportCases(ctx context.Context) (int, error)
 	CountAIRecommendations(ctx context.Context) (int, error)
 	ListAuditLogs(ctx context.Context, limit int) ([]AuditLog, error)
+	CountAuditLogsByAction(ctx context.Context, action string, since time.Time) (int, error)
+	CountExportCasesSince(ctx context.Context, since time.Time) (int, error)
 }
 
 type AuditRepository struct {

@@ -3,11 +3,14 @@
 import * as React from "react";
 import { Search, Building, Users, Activity, FileText, ArrowRight, Clock, Building2, Package } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import { apiAdmin } from "../../../lib/api/admin";
 import { Button } from "../../../components/ui/button";
 
 export default function AdminDashboardPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+
   const { data: monitoringData, isLoading: isMonitoringLoading } = useQuery({
     queryKey: ["admin-monitoring"],
     queryFn: () => apiAdmin.getMonitoring(),
@@ -26,11 +29,33 @@ export default function AdminDashboardPage() {
   const stats = monitoringData?.data;
   
   // Filter only pending applications and take latest 5
-  const pendingApplications = applicationsData?.data?.items
-    ?.filter(app => app.status === "pending")
-    ?.slice(0, 5) || [];
+  const allPendingApplications = applicationsData?.data?.items
+    ?.filter(app => app.status === "pending") || [];
 
-  const recentLogs = auditData?.data?.auditLogs || [];
+  const pendingApplications = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    const filtered = q
+      ? allPendingApplications.filter(
+          (app) =>
+            app.companyName?.toLowerCase().includes(q) ||
+            app.applicant?.email?.toLowerCase().includes(q)
+        )
+      : allPendingApplications;
+    return filtered.slice(0, 5);
+  }, [allPendingApplications, searchQuery]);
+
+  const allLogs = auditData?.data?.auditLogs || [];
+  const recentLogs = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    return q
+      ? allLogs.filter(
+          (log: any) =>
+            log.action?.toLowerCase().includes(q) ||
+            log.resource?.toLowerCase().includes(q) ||
+            log.actorId?.toLowerCase().includes(q)
+        )
+      : allLogs;
+  }, [allLogs, searchQuery]);
 
   return (
     <div className="space-y-10 text-[#1F2937] relative pb-10 max-w-7xl mx-auto">
@@ -45,8 +70,11 @@ export default function AdminDashboardPage() {
         {/* Search Bar */}
         <div className="relative w-full md:w-80">
           <input 
-            type="text" 
-            placeholder="Search data..." 
+            type="text"
+            id="admin-search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search applications & activity..." 
             className="w-full pl-4 pr-10 py-3 rounded-2xl border border-white/60 shadow-md focus:outline-none focus:ring-2 focus:ring-[#00A651] bg-white/90 backdrop-blur-md text-sm font-medium"
           />
           <Search className="absolute right-4 top-3.5 h-4 w-4 text-[#9CA3AF]" />
@@ -54,77 +82,129 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         
-        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 relative group transition-all hover:-translate-y-1 hover:shadow-2xl">
-          <div className="flex justify-between items-start mb-6">
-            <h3 className="text-xs font-bold text-[#4B5563] uppercase tracking-widest mt-2">Pending Approvals</h3>
-            <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
-              <Clock className="w-5 h-5 text-amber-500" />
+        <Link href="/company-approvals" className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-5 relative group transition-all hover:-translate-y-1 hover:shadow-2xl cursor-pointer">
+          <div className="flex justify-between items-start mb-4">
+            <h3 className="text-[10px] font-bold text-[#4B5563] uppercase tracking-widest mt-1">Pending Approvals</h3>
+            <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
+              <Clock className="w-4 h-4 text-amber-500" />
             </div>
           </div>
-          <div className="flex items-baseline gap-2 mb-4">
-            <div className="text-5xl font-extrabold text-[#1F2937]">
+          <div className="flex items-baseline gap-1 mb-2">
+            <div className="text-4xl font-extrabold text-[#1F2937]">
               {isMonitoringLoading ? "--" : (stats?.pendingApprovals ?? 0)}
             </div>
           </div>
-          <div className="flex items-center text-sm font-semibold text-[#4B5563]">
+          <div className="flex items-center text-xs font-semibold text-[#4B5563]">
             <span className="w-2 h-2 rounded-full bg-orange-500 mr-2 shrink-0"></span>
-            Applications awaiting review
+            Awaiting review
           </div>
-        </div>
+        </Link>
 
-        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 relative group transition-all hover:-translate-y-1 hover:shadow-2xl">
-          <div className="flex justify-between items-start mb-6">
-            <h3 className="text-xs font-bold text-[#4B5563] uppercase tracking-widest mt-2">Total Companies</h3>
-            <div className="w-10 h-10 rounded-xl bg-[#EBF8F2] flex items-center justify-center">
-              <Building2 className="w-5 h-5 text-[#00A651]" />
+        <Link href="/company-approvals" className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-5 relative group transition-all hover:-translate-y-1 hover:shadow-2xl cursor-pointer">
+          <div className="flex justify-between items-start mb-4">
+            <h3 className="text-[10px] font-bold text-[#4B5563] uppercase tracking-widest mt-1">Total Companies</h3>
+            <div className="w-8 h-8 rounded-lg bg-[#EBF8F2] flex items-center justify-center">
+              <Building2 className="w-4 h-4 text-[#00A651]" />
             </div>
           </div>
-          <div className="flex items-baseline gap-2 mb-4">
-            <div className="text-5xl font-extrabold text-[#1F2937]">
+          <div className="flex items-baseline gap-1 mb-2">
+            <div className="text-4xl font-extrabold text-[#1F2937]">
               {isMonitoringLoading ? "--" : (stats?.totalCompanies ?? 0)}
             </div>
           </div>
-          <div className="flex items-center text-sm font-semibold text-[#4B5563]">
+          <div className="flex items-center text-xs font-semibold text-[#4B5563]">
             <span className="w-2 h-2 rounded-full bg-[#00A651] mr-2 shrink-0"></span>
-            Registered on EXORA
+            Registered companies
           </div>
-        </div>
+        </Link>
 
-        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 relative group transition-all hover:-translate-y-1 hover:shadow-2xl">
-          <div className="flex justify-between items-start mb-6">
-            <h3 className="text-xs font-bold text-[#4B5563] uppercase tracking-widest mt-2">Total Users</h3>
-            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-              <Users className="w-5 h-5 text-blue-500" />
+        <Link href="/users" className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-5 relative group transition-all hover:-translate-y-1 hover:shadow-2xl cursor-pointer">
+          <div className="flex justify-between items-start mb-4">
+            <h3 className="text-[10px] font-bold text-[#4B5563] uppercase tracking-widest mt-1">Total Users</h3>
+            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+              <Users className="w-4 h-4 text-blue-500" />
             </div>
           </div>
-          <div className="flex items-baseline gap-2 mb-4">
-            <div className="text-5xl font-extrabold text-[#1F2937]">
+          <div className="flex items-baseline gap-1 mb-2">
+            <div className="text-4xl font-extrabold text-[#1F2937]">
               {isMonitoringLoading ? "--" : (stats?.totalUsers ?? 0)}
             </div>
           </div>
-          <div className="flex items-center text-sm font-semibold text-[#4B5563]">
+          <div className="flex items-center text-xs font-semibold text-[#4B5563]">
             <span className="w-2 h-2 rounded-full bg-blue-500 mr-2 shrink-0"></span>
             Across all roles
           </div>
-        </div>
+        </Link>
 
-        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 relative group transition-all hover:-translate-y-1 hover:shadow-2xl">
-          <div className="flex justify-between items-start mb-6">
-            <h3 className="text-xs font-bold text-[#4B5563] uppercase tracking-widest mt-2">Total Export Cases</h3>
-            <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
-              <Package className="w-5 h-5 text-purple-500" />
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-5 relative transition-all hover:-translate-y-1 hover:shadow-2xl">
+          <div className="flex justify-between items-start mb-4">
+            <h3 className="text-[10px] font-bold text-[#4B5563] uppercase tracking-widest mt-1">Active Users</h3>
+            <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
+              <Users className="w-4 h-4 text-emerald-500" />
             </div>
           </div>
-          <div className="flex items-baseline gap-2 mb-4">
-            <div className="text-5xl font-extrabold text-[#1F2937]">
+          <div className="flex items-baseline gap-1 mb-2">
+            <div className="text-4xl font-extrabold text-[#1F2937]">
+              {isMonitoringLoading ? "--" : (stats?.activeUsersLast30Days ?? 0)}
+            </div>
+          </div>
+          <div className="flex items-center text-xs font-semibold text-[#4B5563]">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 mr-2 shrink-0"></span>
+            Active last 30 days
+          </div>
+        </div>
+
+        <Link href="/export-case" className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-5 relative group transition-all hover:-translate-y-1 hover:shadow-2xl cursor-pointer">
+          <div className="flex justify-between items-start mb-4">
+            <h3 className="text-[10px] font-bold text-[#4B5563] uppercase tracking-widest mt-1">Total Export Cases</h3>
+            <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
+              <Package className="w-4 h-4 text-purple-500" />
+            </div>
+          </div>
+          <div className="flex items-baseline gap-1 mb-2">
+            <div className="text-4xl font-extrabold text-[#1F2937]">
               {isMonitoringLoading ? "--" : (stats?.totalExportCases ?? 0)}
             </div>
           </div>
-          <div className="flex items-center text-sm font-semibold text-[#4B5563]">
+          <div className="flex items-center text-xs font-semibold text-[#4B5563]">
             <span className="w-2 h-2 rounded-full bg-purple-500 mr-2 shrink-0"></span>
-            Managed in the system
+            System export cases
+          </div>
+        </Link>
+      </div>
+
+      {/* Platform Activity Metrics */}
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-8 mt-8">
+        <h3 className="text-xl font-bold text-[#1F2937] mb-6 flex items-center gap-2">
+          <span className="w-2 h-6 bg-[#00A651] rounded-full inline-block"></span>
+          7-Day Platform Activity Metrics
+        </h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="p-5 rounded-2xl border border-gray-150 bg-slate-50/50 flex flex-col justify-between">
+            <div className="text-xs font-bold text-[#4B5563] uppercase tracking-wider">User Logins</div>
+            <div className="text-3xl font-extrabold text-blue-600 mt-2">
+              {isMonitoringLoading ? "--" : (stats?.userActivityStats?.loginsLast7Days ?? 0)}
+            </div>
+            <span className="text-[11px] font-bold text-slate-400 mt-1">Successful platform sessions in the last 7 days</span>
+          </div>
+
+          <div className="p-5 rounded-2xl border border-gray-150 bg-slate-50/50 flex flex-col justify-between">
+            <div className="text-xs font-bold text-[#4B5563] uppercase tracking-wider">Export Cases Created</div>
+            <div className="text-3xl font-extrabold text-purple-600 mt-2">
+              {isMonitoringLoading ? "--" : (stats?.userActivityStats?.casesCreatedLast7Days ?? 0)}
+            </div>
+            <span className="text-[11px] font-bold text-slate-400 mt-1">New export management folders initialized</span>
+          </div>
+
+          <div className="p-5 rounded-2xl border border-gray-150 bg-slate-50/50 flex flex-col justify-between">
+            <div className="text-xs font-bold text-[#4B5563] uppercase tracking-wider">AI Recommendation Queries</div>
+            <div className="text-3xl font-extrabold text-emerald-600 mt-2">
+              {isMonitoringLoading ? "--" : (stats?.aiUsageCount ?? 0)}
+            </div>
+            <span className="text-[11px] font-bold text-slate-400 mt-1">AI Advisor recommendations generated</span>
           </div>
         </div>
       </div>

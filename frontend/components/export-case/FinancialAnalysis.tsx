@@ -9,6 +9,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "../ui/card
 import { Alert, AlertTitle, AlertDescription } from "../ui/alert";
 import { useUserProfile } from "../../hooks/useUserProfile";
 import { Label } from "../ui/label";
+import { Download, AlertTriangle, CheckCircle, ShieldAlert } from "lucide-react";
+import { apiClient } from "../../lib/api/client";
+import { toast } from "sonner";
 
 interface FinancialAnalysisProps {
   caseId: string;
@@ -21,6 +24,28 @@ export function FinancialAnalysis({ caseId, backUrl }: FinancialAnalysisProps) {
   
   const [selectedIncoterm, setSelectedIncoterm] = useState<"EXW" | "FOB" | "CFR" | "CIF">("FOB");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+
+  const handleDownloadCostBreakdown = async () => {
+    setIsGeneratingPdf(true);
+    try {
+      const res = await apiClient<any>(`/export-cases/${caseId}/documents/cost-breakdown-report`, {
+        method: "POST",
+      });
+      if (res.success) {
+        toast.success("Cost Breakdown Report PDF generated successfully!");
+        if (res.data?.documentUrl) {
+          window.open(res.data.documentUrl, "_blank");
+        }
+      } else {
+        toast.error("Failed to generate report PDF.");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Failed to generate report PDF.");
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  };
 
   const canRecalculate = profile?.role === "finance_staff" || profile?.role === "admin" || profile?.role === "export_manager";
 
@@ -127,6 +152,69 @@ export function FinancialAnalysis({ caseId, backUrl }: FinancialAnalysisProps) {
               </div>
             </CardContent>
           </Card>
+
+          {profile?.role === "finance_staff" && (
+            <Card className="border-purple-200">
+              <CardHeader className="bg-purple-50/50">
+                <CardTitle className="text-purple-900 text-lg flex items-center gap-2">
+                  <ShieldAlert className="w-5 h-5 text-purple-600" />
+                  Finance AI Advisor Panel
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6 space-y-6">
+                {/* Profitability Guidance */}
+                <div className="space-y-2">
+                  <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Profitability Guidance</h4>
+                  {(analysis.profitMarginPct || 0) < 15.0 ? (
+                    <div className="p-4 bg-amber-50 border border-amber-200 text-amber-800 rounded-xl text-xs flex gap-2.5 items-start">
+                      <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                      <div>
+                        <span className="font-extrabold block mb-1">Target Margin Warning</span>
+                        Actual profit margin ({(analysis.profitMarginPct || 0).toFixed(2)}%) is below the recommended 15.0% target parameters. Recommend adjusting transportation charges or negotiating cheaper ocean freight.
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs flex gap-2.5 items-start">
+                      <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                      <div>
+                        <span className="font-extrabold block mb-1">Target Margin Met</span>
+                        Actual profit margin ({(analysis.profitMarginPct || 0).toFixed(2)}%) satisfies target trade threshold (15.0%).
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Payment Term Risk Commentary */}
+                <div className="space-y-2 text-xs">
+                  <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest block">Payment Term Risk commentary</h4>
+                  <p className="text-gray-600 leading-relaxed font-medium">
+                    Payment terms hold a <span className="font-bold text-gray-900">20% risk factor weight</span> in calculations (FR-015). Ensure secure methods like Irrevocable Letters of Credit (L/C) are requested to minimize counterparty defaults compared to open accounts.
+                  </p>
+                </div>
+
+                {/* Financial Risk Narrative */}
+                <div className="space-y-2 text-xs">
+                  <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest block">Financial Risk Narrative</h4>
+                  <p className="text-gray-600 leading-relaxed font-medium">
+                    Profitability and margins are calculated based on simulated quantity configurations. Guard selling parameters by verifying fixed Incoterm logistics costs to avoid exposure to shipping rate spikes.
+                  </p>
+                </div>
+
+                {/* Report Download */}
+                <div className="pt-2 border-t border-gray-100 flex justify-between items-center">
+                  <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Report Authorization</span>
+                  <Button 
+                    onClick={handleDownloadCostBreakdown} 
+                    disabled={isGeneratingPdf} 
+                    className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs h-10 px-4 font-bold"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Download Cost Breakdown (PDF)
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         <div className="space-y-6">

@@ -16,9 +16,9 @@ import {
   Users,
   Activity,
   FileText,
-  User,
   Menu,
-  X
+  X,
+  Lightbulb
 } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -37,7 +37,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: "User Management", href: "/users", icon: Users },
     { name: "System Monitoring", href: "/system-monitoring", icon: Activity },
     { name: "Audit Logs", href: "/audit-logs", icon: FileText },
-    { name: "Account", href: "/profile", icon: User },
+    { name: "AI Advisor", href: "/admin-ai-advisor", icon: Lightbulb },
   ];
 
   return (
@@ -95,7 +95,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             {/* Navigation */}
             <nav className="flex-1 px-4 py-2 space-y-1">
               {navItems.map((item) => {
-                const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+                // Use exact match OR strict sub-path (e.g. /audit-logs/123) to prevent
+                // false positives from loose startsWith on short path segments
+                const isActive =
+                  pathname === item.href ||
+                  pathname.startsWith(`${item.href}/`);
                 const Icon = item.icon;
                 return (
                   <Link

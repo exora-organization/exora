@@ -2,166 +2,221 @@
 
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardHeader, CardTitle, CardContent } from "../../../components/ui/card";
-import { Button } from "../../../components/ui/button";
-import { Badge } from "../../../components/ui/badge";
-import { apiAnalytics } from "../../../lib/api/analytics";
 import { apiExportCase } from "../../../lib/api/export-case";
-import { Briefcase, Activity, BarChart, Plus, ArrowRight } from "lucide-react";
+import { apiCosting } from "../../../lib/api/costing";
+import { useState, useMemo } from "react";
+import { 
+  Briefcase, Plus, ArrowRight, AlertTriangle, 
+  CheckCircle, Clock, Filter, ShieldCheck, ChevronRight
+} from "lucide-react";
+import { ExportCaseListItem } from "../../../lib/types/export-case";
 
-export default function ExportManagerDashboardPage() {
-  const { data: analyticsData, isLoading: analyticsLoading } = useQuery({
-    queryKey: ["owner-analytics"],
-    queryFn: () => apiAnalytics.getDashboard(),
+const STATUS_FILTERS = [
+  { key: "all", label: "All" },
+  { key: "draft", label: "Draft" },
+  { key: "in_review", label: "In Review" },
+  { key: "finalized", label: "Finalized" },
+];
+
+const feasLabel = (score?: number | null) => {
+  if (score == null) return null;
+  const pct = score * 10;
+  if (pct >= 80) return { label: "High", color: "text-emerald-700", bg: "bg-emerald-100" };
+  if (pct >= 60) return { label: "Moderate", color: "text-amber-700", bg: "bg-amber-100" };
+  return { label: "Low", color: "text-rose-700", bg: "bg-rose-100" };
+};
+
+// Per-case pending action checker — fetches costing data lazily
+function CaseRow({ c }: { c: ExportCaseListItem }) {
+  const { data: costData } = useQuery({
+    queryKey: ["cost-data", c.caseId],
+    queryFn: () => apiCosting.getCostData(c.caseId),
+    retry: false,
+    staleTime: 60_000,
   });
 
-  const { data: casesData, isLoading: casesLoading } = useQuery({
+  const hasCostData = !!costData?.data?.hpp;
+  const pendingAction = !hasCostData ? "Costing not yet completed by Finance" : null;
+  const feas = feasLabel(c.feasibilityScore);
+  const feasPct = c.feasibilityScore != null ? (c.feasibilityScore * 10).toFixed(0) : null;
+
+  return (
+    <Link
+      href={`/export-case/${c.caseId}`}
+      className="flex flex-col md:flex-row md:items-center justify-between p-5 rounded-2xl border border-[#E8E3D9] bg-white/60 hover:bg-white hover:shadow-lg transition-all gap-4 group"
+    >
+      <div className="flex items-start gap-3 min-w-0">
+        <div className="w-9 h-9 rounded-xl bg-[#EBF8F2] flex items-center justify-center shrink-0 mt-0.5">
+          <Briefcase className="w-4 h-4 text-[#00A651]" />
+        </div>
+        <div className="min-w-0">
+          <p className="font-extrabold text-[#1F2937] text-sm truncate group-hover:text-[#00A651] transition-colors">
+            {c.name}
+          </p>
+          <p className="text-xs text-[#9CA3AF] font-medium mt-0.5">
+            {c.destinationCountry} · {new Date(c.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}
+          </p>
+          {pendingAction && (
+            <div className="flex items-center gap-1.5 mt-2 text-[11px] font-bold text-amber-700">
+              <AlertTriangle className="w-3 h-3 shrink-0" />
+              {pendingAction}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3 flex-wrap shrink-0">
+        {/* Feasibility Badge */}
+        {feas ? (
+          <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ${feas.bg} ${feas.color}`}>
+            {feas.label} · {feasPct}/100
+          </span>
+        ) : (
+          <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-gray-100 text-gray-500 uppercase tracking-wider">
+            No Score
+          </span>
+        )}
+        {/* Status Badge */}
+        <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ${
+          c.status === "finalized" ? "bg-emerald-100 text-emerald-800" :
+          c.status === "in_review" ? "bg-amber-100 text-amber-800" :
+          "bg-gray-100 text-gray-700"
+        }`}>
+          {c.status.replace("_", " ")}
+        </span>
+        <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-[#00A651] group-hover:translate-x-0.5 transition-all" />
+      </div>
+    </Link>
+  );
+}
+
+export default function ExportManagerDashboardPage() {
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  const { data: casesData, isLoading } = useQuery({
     queryKey: ["export-cases"],
     queryFn: () => apiExportCase.list(),
   });
 
-  if (analyticsLoading || casesLoading) {
-    return <div className="p-8 flex justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00A651]"></div></div>;
+  const allCases = casesData?.data?.items || [];
+
+  const filtered = useMemo(() => {
+    if (statusFilter === "all") return allCases;
+    return allCases.filter(c => c.status === statusFilter);
+  }, [allCases, statusFilter]);
+
+  const counts = useMemo(() => ({
+    total: allCases.length,
+    active: allCases.filter(c => c.status === "in_review").length,
+    draft: allCases.filter(c => c.status === "draft").length,
+    finalized: allCases.filter(c => c.status === "finalized").length,
+  }), [allCases]);
+
+  const avgFeasibility = useMemo(() => {
+    const scored = allCases.filter(c => c.feasibilityScore != null);
+    if (!scored.length) return null;
+    return scored.reduce((sum, c) => sum + (c.feasibilityScore! * 10), 0) / scored.length;
+  }, [allCases]);
+
+  if (isLoading) {
+    return (
+      <div className="p-8 flex justify-center items-center min-h-[50vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-[#00A651]" />
+      </div>
+    );
   }
 
-  const stats = analyticsData?.data;
-  const recentCases = casesData?.data?.items?.slice(0, 5) || [];
-
   return (
-    <div className="space-y-10 text-[#1F2937] relative pb-10 max-w-7xl mx-auto">
-      
-      {/* Header Area */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+    <div className="space-y-10 text-[#1F2937] pb-10 max-w-6xl mx-auto">
+
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">Export Manager Dashboard</h2>
-          <p className="text-[#4B5563] mt-2 font-medium">Overview of your company's export pipeline and performance.</p>
+          <h2 className="text-4xl font-extrabold tracking-tight">Export Manager Dashboard</h2>
+          <p className="text-sm text-[#4B5563] font-medium mt-1">Case-centric working view for your export pipeline</p>
         </div>
-        
         <div className="flex gap-3">
           <Link href="/export-case">
-            <Button variant="outline" className="border-white/60 bg-white/90 backdrop-blur-md text-[#4B5563] hover:bg-white font-bold shadow-md rounded-2xl px-6">
-              View Cases
-            </Button>
+            <button className="px-5 py-2.5 rounded-xl border border-[#E8E3D9] bg-white text-sm font-bold text-[#4B5563] hover:shadow-md transition-all">
+              View All Cases
+            </button>
           </Link>
           <Link href="/export-case/new">
-            <Button className="bg-[#00A651] hover:bg-[#008F44] text-white font-bold shadow-md flex items-center gap-2 rounded-2xl px-6">
-              <Plus className="w-5 h-5" /> Create Case
-            </Button>
+            <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#00A651] hover:bg-[#008F44] text-white text-sm font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all">
+              <Plus className="w-4 h-4" /> New Case
+            </button>
           </Link>
         </div>
       </div>
-      
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        
-        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 relative group transition-all hover:-translate-y-1 hover:shadow-2xl">
-          <div className="flex justify-between items-start mb-6">
-            <h3 className="text-xs font-bold text-[#4B5563] uppercase tracking-widest mt-2">My Cases</h3>
-            <div className="w-10 h-10 rounded-xl bg-[#EBF8F2] flex items-center justify-center">
-              <Briefcase className="w-5 h-5 text-[#00A651]" />
-            </div>
-          </div>
-          <div className="flex items-baseline gap-2 mb-4">
-            <div className="text-5xl font-extrabold text-[#1F2937]">
-              {stats?.totalExportCases || 0}
-            </div>
-          </div>
-          <div className="flex items-center text-sm font-semibold text-[#4B5563]">
-            <span className="w-2 h-2 rounded-full bg-[#00A651] mr-2 shrink-0"></span>
-            Total export cases
-          </div>
-        </div>
 
-        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 relative group transition-all hover:-translate-y-1 hover:shadow-2xl">
-          <div className="flex justify-between items-start mb-6">
-            <h3 className="text-xs font-bold text-[#4B5563] uppercase tracking-widest mt-2">Active Cases</h3>
-            <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
-              <Activity className="w-5 h-5 text-amber-500" />
+      {/* KPI Row */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+        {[
+          { label: "Total Cases", value: counts.total, color: "text-[#00A651]", bg: "bg-[#EBF8F2]", icon: <Briefcase className="w-5 h-5 text-[#00A651]" /> },
+          { label: "In Review", value: counts.active, color: "text-amber-600", bg: "bg-amber-50", icon: <Clock className="w-5 h-5 text-amber-500" /> },
+          { label: "Draft", value: counts.draft, color: "text-gray-600", bg: "bg-gray-100", icon: <Filter className="w-5 h-5 text-gray-500" /> },
+          { label: "Avg Feasibility", value: avgFeasibility != null ? `${avgFeasibility.toFixed(0)}/100` : "—", color: "text-blue-600", bg: "bg-blue-50", icon: <ShieldCheck className="w-5 h-5 text-blue-500" /> },
+        ].map((kpi, i) => (
+          <div key={i} className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6">
+            <div className="flex justify-between items-start mb-5">
+              <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">{kpi.label}</p>
+              <div className={`w-9 h-9 rounded-xl ${kpi.bg} flex items-center justify-center`}>{kpi.icon}</div>
             </div>
+            <p className={`text-4xl font-black ${kpi.color}`}>{kpi.value}</p>
           </div>
-          <div className="flex items-baseline gap-2 mb-4">
-            <div className="text-5xl font-extrabold text-[#1F2937]">
-              {stats?.activeCases || 0}
-            </div>
-          </div>
-          <div className="flex items-center text-sm font-semibold text-[#4B5563]">
-            <span className="w-2 h-2 rounded-full bg-amber-500 mr-2 shrink-0"></span>
-            Currently in review
-          </div>
-        </div>
-
-        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 relative group transition-all hover:-translate-y-1 hover:shadow-2xl">
-          <div className="flex justify-between items-start mb-6">
-            <h3 className="text-xs font-bold text-[#4B5563] uppercase tracking-widest mt-2">Recent Analysis</h3>
-            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-              <BarChart className="w-5 h-5 text-blue-500" />
-            </div>
-          </div>
-          <div className="flex items-baseline gap-2 mb-4">
-            <div className="text-5xl font-extrabold text-[#1F2937]">
-              {stats?.averageFeasibilityScore !== null && stats?.averageFeasibilityScore !== undefined 
-                ? stats.averageFeasibilityScore.toFixed(1) 
-                : "0.0"
-              }
-            </div>
-          </div>
-          <div className="flex items-center text-sm font-semibold text-[#4B5563]">
-            <span className="w-2 h-2 rounded-full bg-blue-500 mr-2 shrink-0"></span>
-            Avg feasibility score
-          </div>
-        </div>
+        ))}
       </div>
 
-      {/* Recent Cases List */}
-      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-8 relative flex flex-col mt-10">
-        <div className="flex justify-between items-center mb-8">
-          <h3 className="text-xl font-bold text-[#1F2937] flex items-center gap-2">
-            <span className="w-2 h-6 bg-[#00A651] rounded-full inline-block"></span>
-            Recent Export Cases
+      {/* Cases Section with Status Filter */}
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <h3 className="text-xl font-extrabold text-[#1F2937] flex items-center gap-2">
+            <span className="w-2.5 h-7 bg-[#00A651] rounded-full" />
+            My Export Cases
           </h3>
-          <Link href="/export-case" className="text-sm font-bold text-[#00A651] hover:text-[#008F44] flex items-center gap-1">
-            View All <ArrowRight className="w-4 h-4" />
-          </Link>
+          {/* Status filter tabs */}
+          <div className="flex gap-2 flex-wrap">
+            {STATUS_FILTERS.map(f => (
+              <button
+                key={f.key}
+                onClick={() => setStatusFilter(f.key)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                  statusFilter === f.key
+                    ? "bg-[#00A651] text-white shadow-md"
+                    : "bg-[#F3F4F6] text-[#4B5563] hover:bg-[#E8E3D9]"
+                }`}
+              >
+                {f.label}
+                <span className={`ml-1.5 px-1.5 py-0.5 rounded-md text-[10px] ${
+                  statusFilter === f.key ? "bg-white/20 text-white" : "bg-white text-[#9CA3AF]"
+                }`}>
+                  {f.key === "all" ? allCases.length :
+                   f.key === "draft" ? counts.draft :
+                   f.key === "in_review" ? counts.active :
+                   counts.finalized}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
-        
-        <div className="flex-1">
-          {recentCases.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-32 text-center">
-              <p className="text-sm font-bold text-[#4B5563]">No recent cases found.</p>
-              <p className="text-xs text-[#9CA3AF] mt-1 font-medium">Create one to get started.</p>
+
+        <div className="space-y-3">
+          {filtered.length === 0 ? (
+            <div className="py-12 text-center text-[#9CA3AF] font-bold">
+              No cases match this filter.
             </div>
           ) : (
-            <div className="space-y-4">
-              {recentCases.map((c) => (
-                <div key={c.caseId} className="flex flex-col md:flex-row md:items-center justify-between p-5 rounded-2xl border border-white bg-white/50 shadow-sm hover:shadow-md hover:bg-white transition-all gap-4">
-                  <div>
-                    <Link href={`/export-case/${c.caseId}`} className="font-extrabold text-[#1F2937] text-base hover:text-[#00A651] transition-colors">
-                      {c.name}
-                    </Link>
-                    <div className="text-sm font-semibold text-[#4B5563] mt-1 flex items-center gap-2">
-                      <span>{c.destinationCountry}</span>
-                      <span className="text-[#9CA3AF]">•</span>
-                      <span className="text-xs">{new Date(c.createdAt).toLocaleDateString()}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-6 self-end md:self-auto">
-                    <div className="text-right hidden md:block">
-                      <div className="text-base font-bold text-[#1F2937]">
-                        {c.feasibilityScore !== undefined && c.feasibilityScore !== null 
-                          ? `${c.feasibilityScore.toFixed(1)}/10` 
-                          : "-"}
-                      </div>
-                      <div className="text-[10px] uppercase font-bold text-[#9CA3AF] tracking-widest mt-1">Score</div>
-                    </div>
-                    <Badge variant={c.status === "finalized" ? "secondary" : c.status === "in_review" ? "default" : "outline"} className="shadow-sm font-bold uppercase tracking-wider text-[10px] py-1 px-3">
-                      {c.status.replace("_", " ")}
-                    </Badge>
-                  </div>
-                </div>
-              ))}
-            </div>
+            filtered.map(c => <CaseRow key={c.caseId} c={c} />)
           )}
         </div>
+
+        {filtered.length > 0 && (
+          <div className="mt-5 flex justify-end">
+            <Link href="/export-case" className="text-xs font-bold text-[#00A651] hover:underline flex items-center gap-1">
+              View all cases <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,9 @@
 package actor
 
-import "context"
+import (
+	"context"
+	"time"
+)
 
 type FirebaseClaims struct {
 	UID           string
@@ -16,6 +19,7 @@ type User struct {
 	Role        string
 	CompanyID   string
 	Status      string
+	CreatedAt   time.Time
 }
 
 type ctxKey int

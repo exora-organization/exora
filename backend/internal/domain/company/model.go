@@ -58,12 +58,14 @@ type ApplyResponse struct {
 }
 
 type ApplicationStatusResponse struct {
-	CompanyID     *string `json:"companyId"`
-	CompanyName   *string `json:"companyName"`
-	Status        string  `json:"status"`
-	SubmittedAt   *string `json:"submittedAt"`
-	ApprovedAt    *string `json:"approvedAt"`
-	RevisionNotes *string `json:"revisionNotes"`
+	CompanyID      *string `json:"companyId"`
+	CompanyName    *string `json:"companyName"`
+	BusinessSector *string `json:"businessSector"`
+	Country        *string `json:"country"`
+	Status         string  `json:"status"`
+	SubmittedAt    *string `json:"submittedAt"`
+	ApprovedAt     *string `json:"approvedAt"`
+	RevisionNotes  *string `json:"revisionNotes"`
 }
 
 type ApproveResponse struct {
