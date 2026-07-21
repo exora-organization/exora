@@ -13,10 +13,10 @@ import {
   Building2,
 } from "lucide-react";
 
-type ApplicationStatus = "pending" | "approved" | "rejected" | "revision_requested";
+type ApplicationStatus = "none" | "pending" | "approved" | "rejected" | "revision_requested";
 
 const STATUS_CONFIG: Record<
-  ApplicationStatus,
+  Exclude<ApplicationStatus, "none">,
   {
     icon: React.ReactNode;
     label: string;
@@ -83,7 +83,7 @@ export default function GuestDashboardPage() {
 
   const appData = data?.data;
   const status = appData?.status as ApplicationStatus | undefined;
-  const cfg = status ? STATUS_CONFIG[status] : null;
+  const cfg = status && status !== "none" ? STATUS_CONFIG[status] : null;
 
   return (
     <div className="space-y-10 max-w-3xl mx-auto pb-12">
