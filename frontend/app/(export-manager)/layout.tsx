@@ -4,7 +4,7 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ProtectedRoute } from "../../components/auth/ProtectedRoute";
 import { RoleGuard } from "../../components/auth/RoleGuard";
 import { useUserProfile } from "../../hooks/useUserProfile";
@@ -14,8 +14,18 @@ import { Icon } from "@iconify/react";
 
 export default function ExportManagerLayout({ children }: { children: React.ReactNode }) {
   const { role, profile } = useUserProfile();
+  const router = useRouter();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+
+  // Redirect if role is not export manager or admin
+  useEffect(() => {
+    if (role && role !== "export_manager" && role !== "admin") {
+      if (role === "company_owner") router.push("/owner-dashboard");
+      else if (role === "finance_staff") router.push("/finance-dashboard");
+      else if (role === "guest") router.push("/guest-dashboard");
+    }
+  }, [role, router]);
 
   // Close sidebar drawer when route changes
   useEffect(() => {
@@ -49,10 +59,15 @@ export default function ExportManagerLayout({ children }: { children: React.Reac
     divisionName = "System Admin";
   }
 
+  const isRedirecting = role && role !== "export_manager" && role !== "admin";
+
   return (
     <ProtectedRoute>
-      <RoleGuard allowedRoles={["export_manager", "admin"]}>
-        <div className="h-screen overflow-hidden flex flex-col md:flex-row bg-[#EBF8F2] md:bg-gradient-to-br from-[#EBF8F2] to-[#EBF8F2]">
+      {isRedirecting ? (
+        <div className="h-screen w-screen flex items-center justify-center bg-[#FAF8F3]" />
+      ) : (
+        <RoleGuard allowedRoles={["export_manager", "admin"]}>
+          <div className="h-screen overflow-hidden flex flex-col md:flex-row bg-[#EBF8F2] md:bg-gradient-to-br from-[#EBF8F2] to-[#EBF8F2]">
           
           {/* Mobile Header */}
           <header className="md:hidden flex items-center justify-between bg-white border-b border-[#E8E3D9] px-6 py-4 sticky top-0 z-20 w-full">
@@ -150,6 +165,7 @@ export default function ExportManagerLayout({ children }: { children: React.Reac
           </main>
         </div>
       </RoleGuard>
+      )}
     </ProtectedRoute>
   );
 }

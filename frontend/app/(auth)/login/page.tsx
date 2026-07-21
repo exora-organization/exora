@@ -15,6 +15,7 @@ import { signIn } from "../../../lib/firebase/auth";
 import { apiAuth } from "../../../lib/api/auth";
 import { apiUsers } from "../../../lib/api/users";
 import { useQueryClient } from "@tanstack/react-query";
+import { isRouteAllowed } from "../../../lib/route-guard";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
 import { Button } from "../../../components/ui/button";
@@ -104,37 +105,33 @@ function LoginForm() {
       queryClient.setQueryData(["user-profile", userCredential.user.uid], profileRes);
       const role = profileRes.data?.role;
 
-      if (redirectPath) {
-        if (!userCredential.user.emailVerified) {
-          router.push(`/verify-email?redirect=${encodeURIComponent(redirectPath)}`);
+      let targetPath = "/";
+      if (role === "guest") {
+        const companyId = profileRes.data?.companyId;
+        const status = profileRes.data?.companyStatus;
+        if (companyId || status) {
+          targetPath = "/application-status";
         } else {
-          router.push(redirectPath);
+          targetPath = "/company-application";
         }
-      } else {
-        let targetPath = "/";
-        if (role === "guest") {
-          const companyId = profileRes.data?.companyId;
-          const status = profileRes.data?.companyStatus;
-          if (companyId || status) {
-            targetPath = "/application-status";
-          } else {
-            targetPath = "/company-application";
-          }
-        } else if (role === "admin") {
-          targetPath = "/admin-dashboard";
-        } else if (role === "company_owner") {
-          targetPath = "/owner-dashboard";
-        } else if (role === "export_manager") {
-          targetPath = "/export-manager-dashboard";
-        } else if (role === "finance_staff") {
-          targetPath = "/finance-dashboard";
-        }
+      } else if (role === "admin") {
+        targetPath = "/admin-dashboard";
+      } else if (role === "company_owner") {
+        targetPath = "/owner-dashboard";
+      } else if (role === "export_manager") {
+        targetPath = "/export-manager-dashboard";
+      } else if (role === "finance_staff") {
+        targetPath = "/finance-dashboard";
+      }
 
-        if (!userCredential.user.emailVerified) {
-          router.push(`/verify-email?redirect=${encodeURIComponent(targetPath)}`);
-        } else {
-          router.push(targetPath);
-        }
+      const finalPath = redirectPath && isRouteAllowed(redirectPath, role || null)
+        ? redirectPath
+        : targetPath;
+
+      if (!userCredential.user.emailVerified) {
+        router.push(`/verify-email?redirect=${encodeURIComponent(finalPath)}`);
+      } else {
+        router.push(finalPath);
       }
     } catch (err: any) {
       setError(err.message || "Failed to login. Please check your credentials.");

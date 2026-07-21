@@ -7,6 +7,8 @@ import Image from "next/image";
 import logoImg from "../../../public/logo.png";
 import { auth } from "../../../lib/firebase/client";
 import { Button } from "../../../components/ui/button";
+import { apiUsers } from "../../../lib/api/users";
+import { isRouteAllowed } from "../../../lib/route-guard";
 
 function VerifyEmailForm() {
   const router = useRouter();
@@ -25,7 +27,37 @@ function VerifyEmailForm() {
         if (user.emailVerified) {
           const token = await user.getIdToken(true);
           document.cookie = `firebaseToken=${token}; path=/; max-age=3600; Secure; SameSite=Strict`;
-          router.push(redirectPath);
+          
+          let finalPath = redirectPath;
+          try {
+            const profileRes = await apiUsers.getCurrentUser();
+            const role = profileRes.data?.role;
+            if (!isRouteAllowed(redirectPath, role || null)) {
+              if (role === "guest") {
+                const companyId = profileRes.data?.companyId;
+                const status = profileRes.data?.companyStatus;
+                if (companyId || status) {
+                  finalPath = "/application-status";
+                } else {
+                  finalPath = "/company-application";
+                }
+              } else if (role === "admin") {
+                finalPath = "/admin-dashboard";
+              } else if (role === "company_owner") {
+                finalPath = "/owner-dashboard";
+              } else if (role === "export_manager") {
+                finalPath = "/export-manager-dashboard";
+              } else if (role === "finance_staff") {
+                finalPath = "/finance-dashboard";
+              } else {
+                finalPath = "/";
+              }
+            }
+          } catch (e) {
+            console.error("Failed to check user profile in verify-email:", e);
+          }
+          
+          router.push(finalPath);
         }
       }
     };

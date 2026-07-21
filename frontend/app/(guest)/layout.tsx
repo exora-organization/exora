@@ -37,10 +37,15 @@ export default function GuestLayout({ children }: { children: React.ReactNode })
     setIsOpen(false);
   }, [pathname]);
 
+  const isRedirecting = role && role !== "guest";
+
   return (
     <ProtectedRoute>
-      <RoleGuard allowedRoles={["guest", "company_owner"]}>
-        <div className="h-screen overflow-hidden flex flex-col md:flex-row bg-[#EBF8F2]">
+      {isRedirecting ? (
+        <div className="h-screen w-screen flex items-center justify-center bg-[#FAF8F3]" />
+      ) : (
+        <RoleGuard allowedRoles={["guest", "company_owner"]}>
+          <div className="h-screen overflow-hidden flex flex-col md:flex-row bg-[#EBF8F2]">
 
           {/* Mobile Header */}
           <header className="md:hidden flex items-center justify-between bg-white border-b border-[#E8E3D9] px-6 py-4 sticky top-0 z-20 w-full">
@@ -122,6 +127,7 @@ export default function GuestLayout({ children }: { children: React.ReactNode })
           </main>
         </div>
       </RoleGuard>
+      )}
     </ProtectedRoute>
   );
 }
