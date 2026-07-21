@@ -21,8 +21,8 @@ export default function ExportManagerLayout({ children }: { children: React.Reac
   // Redirect if role is not export manager or admin
   useEffect(() => {
     if (role && role !== "export_manager" && role !== "admin") {
-      if (role === "company_owner") router.push("/owner-dashboard");
-      else if (role === "finance_staff") router.push("/finance-dashboard");
+      if (role === "company_owner") router.push("/own-dashboard");
+      else if (role === "finance_staff") router.push("/fs-dashboard");
       else if (role === "guest") router.push("/guest-dashboard");
     }
   }, [role, router]);
@@ -34,13 +34,13 @@ export default function ExportManagerLayout({ children }: { children: React.Reac
 
   // Default: Export Manager nav
   let navItems = [
-    { name: "Dashboard", href: "/export-manager-dashboard", icon: "solar:widget-bold-duotone" },
-    { name: "Export Cases", href: "/export-case", icon: "solar:case-minimalistic-bold-duotone" },
+    { name: "Dashboard", href: "/em-dashboard", icon: "solar:widget-bold-duotone" },
+    { name: "Export Cases", href: "/em-export-case", icon: "solar:case-minimalistic-bold-duotone" },
     { name: "Pricing & Incoterms", href: "/em-pricing", icon: "solar:calculator-bold-duotone" },
     { name: "Cost Breakdown", href: "/em-cost-breakdown", icon: "solar:chart-square-bold-duotone" },
     { name: "Scenario Analysis", href: "/em-scenario", icon: "solar:pulse-bold-duotone" },
     { name: "Risk & Feasibility", href: "/em-risk", icon: "solar:shield-check-bold-duotone" },
-    { name: "AI Advisor", href: "/ai-advisor", icon: "solar:lightbulb-bold-duotone" },
+    { name: "AI Advisor", href: "/em-ai-advisor", icon: "solar:lightbulb-bold-duotone" },
     { name: "Documents", href: "/em-documents", icon: "solar:document-bold-duotone" },
   ];
   let portalTitle = "Export Manager";
@@ -49,10 +49,10 @@ export default function ExportManagerLayout({ children }: { children: React.Reac
   if (role === "admin") {
     navItems = [
       { name: "Dashboard", href: "/admin-dashboard", icon: "solar:widget-bold-duotone" },
-      { name: "Company Approvals", href: "/company-approvals", icon: "solar:buildings-bold-duotone" },
-      { name: "User Management", href: "/users", icon: "solar:users-group-rounded-bold-duotone" },
-      { name: "System Monitoring", href: "/system-monitoring", icon: "solar:pulse-bold-duotone" },
-      { name: "Audit Logs", href: "/audit-logs", icon: "solar:document-text-bold-duotone" },
+      { name: "Company Approvals", href: "/admin-company-approvals", icon: "solar:buildings-bold-duotone" },
+      { name: "User Management", href: "/admin-users", icon: "solar:users-group-rounded-bold-duotone" },
+      { name: "System Monitoring", href: "/admin-system-monitoring", icon: "solar:pulse-bold-duotone" },
+      { name: "Audit Logs", href: "/admin-audit-logs", icon: "solar:document-text-bold-duotone" },
       { name: "AI Advisor", href: "/admin-ai-advisor", icon: "solar:lightbulb-bold-duotone" },
     ];
     portalTitle = "Admin Portal";

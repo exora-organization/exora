@@ -86,7 +86,7 @@ export default function AdminDashboardPage() {
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         
-        <Link href="/company-approvals" className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-5 relative group transition-all hover:-translate-y-1 hover:shadow-2xl cursor-pointer">
+        <Link href="/admin-company-approvals" className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-5 relative group transition-all hover:-translate-y-1 hover:shadow-2xl cursor-pointer">
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-[10px] font-bold text-[#4B5563] uppercase tracking-widest mt-1">Pending Approvals</h3>
             <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
@@ -104,7 +104,7 @@ export default function AdminDashboardPage() {
           </div>
         </Link>
 
-        <Link href="/company-approvals" className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-5 relative group transition-all hover:-translate-y-1 hover:shadow-2xl cursor-pointer">
+        <Link href="/admin-company-approvals" className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-5 relative group transition-all hover:-translate-y-1 hover:shadow-2xl cursor-pointer">
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-[10px] font-bold text-[#4B5563] uppercase tracking-widest mt-1">Total Companies</h3>
             <div className="w-8 h-8 rounded-lg bg-[#EBF8F2] flex items-center justify-center">
@@ -122,7 +122,7 @@ export default function AdminDashboardPage() {
           </div>
         </Link>
 
-        <Link href="/users" className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-5 relative group transition-all hover:-translate-y-1 hover:shadow-2xl cursor-pointer">
+        <Link href="/admin-users" className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-5 relative group transition-all hover:-translate-y-1 hover:shadow-2xl cursor-pointer">
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-[10px] font-bold text-[#4B5563] uppercase tracking-widest mt-1">Total Users</h3>
             <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
@@ -158,7 +158,7 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        <Link href="/export-case" className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-5 relative group transition-all hover:-translate-y-1 hover:shadow-2xl cursor-pointer">
+        <Link href="/em-export-case" className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-5 relative group transition-all hover:-translate-y-1 hover:shadow-2xl cursor-pointer">
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-[10px] font-bold text-[#4B5563] uppercase tracking-widest mt-1">Total Export Cases</h3>
             <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
@@ -218,25 +218,25 @@ export default function AdminDashboardPage() {
           Quick Actions
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          <Link href="/company-approvals" className="flex items-center gap-4 p-5 bg-white/90 backdrop-blur-md rounded-3xl shadow-xl border border-white/60 hover:shadow-2xl hover:-translate-y-1 transition-all group">
+          <Link href="/admin-company-approvals" className="flex items-center gap-4 p-5 bg-white/90 backdrop-blur-md rounded-3xl shadow-xl border border-white/60 hover:shadow-2xl hover:-translate-y-1 transition-all group">
             <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
               <Icon icon="solar:buildings-bold-duotone" className="w-6 h-6" />
             </div>
             <span className="font-bold text-sm text-[#4B5563]">Company Approvals</span>
           </Link>
-          <Link href="/users" className="flex items-center gap-4 p-5 bg-white/90 backdrop-blur-md rounded-3xl shadow-xl border border-white/60 hover:shadow-2xl hover:-translate-y-1 transition-all group">
+          <Link href="/admin-users" className="flex items-center gap-4 p-5 bg-white/90 backdrop-blur-md rounded-3xl shadow-xl border border-white/60 hover:shadow-2xl hover:-translate-y-1 transition-all group">
             <div className="w-12 h-12 rounded-2xl bg-[#EBF8F2] flex items-center justify-center text-[#00A651] group-hover:scale-110 transition-transform">
               <Icon icon="solar:users-group-rounded-bold-duotone" className="w-6 h-6" />
             </div>
             <span className="font-bold text-sm text-[#4B5563]">User Management</span>
           </Link>
-          <Link href="/system-monitoring" className="flex items-center gap-4 p-5 bg-white/90 backdrop-blur-md rounded-3xl shadow-xl border border-white/60 hover:shadow-2xl hover:-translate-y-1 transition-all group">
+          <Link href="/admin-system-monitoring" className="flex items-center gap-4 p-5 bg-white/90 backdrop-blur-md rounded-3xl shadow-xl border border-white/60 hover:shadow-2xl hover:-translate-y-1 transition-all group">
             <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
               <Icon icon="solar:pulse-bold-duotone" className="w-6 h-6" />
             </div>
             <span className="font-bold text-sm text-[#4B5563]">System Monitoring</span>
           </Link>
-          <Link href="/audit-logs" className="flex items-center gap-4 p-5 bg-white/90 backdrop-blur-md rounded-3xl shadow-xl border border-white/60 hover:shadow-2xl hover:-translate-y-1 transition-all group">
+          <Link href="/admin-audit-logs" className="flex items-center gap-4 p-5 bg-white/90 backdrop-blur-md rounded-3xl shadow-xl border border-white/60 hover:shadow-2xl hover:-translate-y-1 transition-all group">
             <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-500 group-hover:scale-110 transition-transform">
               <Icon icon="solar:document-text-bold-duotone" className="w-6 h-6" />
             </div>
@@ -253,7 +253,7 @@ export default function AdminDashboardPage() {
               <span className="w-2 h-6 bg-amber-500 rounded-full inline-block"></span>
               Recent Pending Applications
             </h3>
-            <Link href="/company-approvals" className="text-sm font-bold text-[#00A651] hover:text-[#008F44] flex items-center gap-1">
+            <Link href="/admin-company-approvals" className="text-sm font-bold text-[#00A651] hover:text-[#008F44] flex items-center gap-1">
               View All <Icon icon="solar:arrow-right-bold-duotone" className="w-4 h-4" />
             </Link>
           </div>
@@ -271,7 +271,7 @@ export default function AdminDashboardPage() {
                     </div>
                     <div className="flex flex-col items-end">
                       <p className="text-xs font-bold text-[#4B5563] mb-2">{new Date(app.submittedAt).toLocaleDateString()}</p>
-                      <Link href={`/company-approvals/${app.companyId}`}>
+                      <Link href={`/admin-company-approvals/${app.companyId}`}>
                         <Button size="sm" className="bg-amber-100 text-amber-700 hover:bg-amber-200 border-none font-bold tracking-widest uppercase text-xs h-8 px-4 rounded-lg">
                           Review
                         </Button>
@@ -296,7 +296,7 @@ export default function AdminDashboardPage() {
               <span className="w-2 h-6 bg-blue-500 rounded-full inline-block"></span>
               Recent Activity
             </h3>
-            <Link href="/audit-logs" className="text-sm font-bold text-[#00A651] hover:text-[#008F44] flex items-center gap-1">
+            <Link href="/admin-audit-logs" className="text-sm font-bold text-[#00A651] hover:text-[#008F44] flex items-center gap-1">
               View All <Icon icon="solar:arrow-right-bold-duotone" className="w-4 h-4" />
             </Link>
           </div>

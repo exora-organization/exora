@@ -71,6 +71,11 @@ func (h *Handler) ChangeRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err := h.service.RequestChange(r.Context(), companyID); err != nil {
+		response.Error(w, err)
+		return
+	}
+
 	response.JSON(w, http.StatusOK, map[string]string{
 		"status":  "pending_review",
 		"message": "Change request submitted. An Admin will review and apply your updates.",

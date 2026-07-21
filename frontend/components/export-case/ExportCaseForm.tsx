@@ -72,7 +72,7 @@ export function ExportCaseForm({ initialData, isEdit = false }: ExportCaseFormPr
       if (isEdit && initialData) {
         queryClient.invalidateQueries({ queryKey: ["export-case", initialData.caseId] });
       }
-      router.push(`/export-case/${res.data?.caseId || initialData?.caseId}`);
+      router.push(`/em-export-case/${res.data?.caseId || initialData?.caseId}`);
     },
     onError: (error: any) => {
       setErrorMsg(error.message || "An error occurred while saving the export case.");

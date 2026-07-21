@@ -22,8 +22,8 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
   useEffect(() => {
     if (role && role !== "company_owner") {
       if (role === "admin") router.push("/admin-dashboard");
-      else if (role === "export_manager") router.push("/export-manager-dashboard");
-      else if (role === "finance_staff") router.push("/finance-dashboard");
+      else if (role === "export_manager") router.push("/em-dashboard");
+      else if (role === "finance_staff") router.push("/fs-dashboard");
       else if (role === "guest") router.push("/guest-dashboard");
     }
   }, [role, router]);
@@ -34,13 +34,13 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
   }, [pathname]);
 
   const navItems = [
-    { name: "Dashboard", href: "/owner-dashboard", icon: "solar:widget-bold-duotone" },
-    { name: "Company Profile", href: "/company-profile", icon: "solar:buildings-bold-duotone" },
-    { name: "Team Management", href: "/team-management", icon: "solar:users-group-rounded-bold-duotone" },
-    { name: "Export Cases", href: "/export-cases", icon: "solar:case-minimalistic-bold-duotone" },
-    { name: "Analytics", href: "/owner-analytics", icon: "solar:pulse-bold-duotone" },
-    { name: "AI Advisor", href: "/owner-ai-advisor", icon: "solar:lightbulb-bold-duotone" },
-    { name: "Export Feasibility Report", href: "/export-feasibility-report", icon: "solar:document-text-bold-duotone" },
+    { name: "Dashboard", href: "/own-dashboard", icon: "solar:widget-bold-duotone" },
+    { name: "Company Profile", href: "/own-company-profile", icon: "solar:buildings-bold-duotone" },
+    { name: "Team Management", href: "/own-team-management", icon: "solar:users-group-rounded-bold-duotone" },
+    { name: "Export Cases", href: "/own-export-cases", icon: "solar:case-minimalistic-bold-duotone" },
+    { name: "Analytics", href: "/own-analytics", icon: "solar:pulse-bold-duotone" },
+    { name: "AI Advisor", href: "/own-ai-advisor", icon: "solar:lightbulb-bold-duotone" },
+    { name: "Export Feasibility Report", href: "/own-feasibility-report", icon: "solar:document-text-bold-duotone" },
   ];
 
   const isRedirecting = role && role !== "company_owner";

@@ -4,13 +4,13 @@ import { AdvisorRecommendationResponse, GenerateAdvisorRequest, AdvisorHealthSta
 
 export const apiAdvisor = {
   getRecommendation: async (caseId: string): Promise<ApiResponse<AdvisorRecommendationResponse>> => {
-    return apiClient<ApiResponse<AdvisorRecommendationResponse>>(`/export-cases/${caseId}/advisor/recommendations`, {
+    return apiClient<ApiResponse<AdvisorRecommendationResponse>>(`/own-export-cases/${caseId}/advisor/recommendations`, {
       method: "GET",
     });
   },
 
   generateRecommendation: async (caseId: string, data: GenerateAdvisorRequest = {}): Promise<ApiResponse<AdvisorRecommendationResponse>> => {
-    return apiClient<ApiResponse<AdvisorRecommendationResponse>>(`/export-cases/${caseId}/advisor/recommendations`, {
+    return apiClient<ApiResponse<AdvisorRecommendationResponse>>(`/own-export-cases/${caseId}/advisor/recommendations`, {
       method: "POST",
       body: JSON.stringify(data),
     });

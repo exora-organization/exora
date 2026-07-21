@@ -110,7 +110,7 @@ export default function GuestDashboardPage() {
             <div className="flex items-center justify-center py-12">
               <div className="animate-spin h-10 w-10 rounded-full border-b-4 border-[#00A651]" />
             </div>
-          ) : !appData ? (
+          ) : !appData || status === "none" ? (
             /* No application yet */
             <div className="flex flex-col items-center gap-6 py-8 text-center">
               <div className="w-20 h-20 rounded-3xl bg-[#EBF8F2] flex items-center justify-center">
@@ -123,7 +123,7 @@ export default function GuestDashboardPage() {
                 </p>
               </div>
               <Link
-                href="/company-application"
+                href="/guest-company-application"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#00A651] hover:bg-[#008F44] text-white text-sm font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all"
               >
                 <FileText className="w-4 h-4" /> Submit Application
@@ -189,7 +189,7 @@ export default function GuestDashboardPage() {
         </h3>
         <div className="grid gap-3">
           <Link
-            href="/company-application"
+            href="/guest-company-application"
             className="flex items-center justify-between p-4 rounded-2xl border border-[#E8E3D9] bg-[#F9FAFB] hover:bg-white hover:shadow-md hover:border-[#00A651]/40 transition-all group"
           >
             <div className="flex items-center gap-3">
@@ -213,7 +213,7 @@ export default function GuestDashboardPage() {
           </Link>
 
           <Link
-            href="/application-status"
+            href="/guest-application-status"
             className="flex items-center justify-between p-4 rounded-2xl border border-[#E8E3D9] bg-[#F9FAFB] hover:bg-white hover:shadow-md hover:border-[#00A651]/40 transition-all group"
           >
             <div className="flex items-center gap-3">
@@ -254,7 +254,7 @@ export default function GuestDashboardPage() {
                   await auth.currentUser.reload();
                   await auth.currentUser.getIdToken(true);
                 }
-                window.location.href = "/owner-dashboard";
+                window.location.href = "/own-dashboard";
               }}
               className="flex items-center justify-between p-4 rounded-2xl border border-emerald-200 bg-emerald-50 hover:bg-white hover:shadow-md transition-all group cursor-pointer text-left"
             >

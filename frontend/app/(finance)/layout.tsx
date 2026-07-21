@@ -21,8 +21,8 @@ export default function FinanceLayout({ children }: { children: React.ReactNode 
   // Redirect if role is not finance staff or admin
   useEffect(() => {
     if (role && role !== "finance_staff" && role !== "admin") {
-      if (role === "company_owner") router.push("/owner-dashboard");
-      else if (role === "export_manager") router.push("/export-manager-dashboard");
+      if (role === "company_owner") router.push("/own-dashboard");
+      else if (role === "export_manager") router.push("/em-dashboard");
       else if (role === "guest") router.push("/guest-dashboard");
     }
   }, [role, router]);
@@ -33,12 +33,12 @@ export default function FinanceLayout({ children }: { children: React.ReactNode 
   }, [pathname]);
 
   const navItems = [
-    { name: "Dashboard", href: "/finance-dashboard", icon: "solar:widget-bold-duotone" },
-    { name: "Costing Configuration", href: "/costing", icon: "solar:calculator-bold-duotone" },
-    { name: "Financial Analysis", href: "/financial-analysis", icon: "solar:pulse-bold-duotone" },
-    { name: "Export Cases (view only)", href: "/finance-export-cases", icon: "solar:case-minimalistic-bold-duotone" },
-    { name: "AI Advisor", href: "/finance-ai-advisor", icon: "solar:lightbulb-bold-duotone" },
-    { name: "Documents", href: "/finance-documents", icon: "solar:document-bold-duotone" },
+    { name: "Dashboard", href: "/fs-dashboard", icon: "solar:widget-bold-duotone" },
+    { name: "Costing Configuration", href: "/fs-costing", icon: "solar:calculator-bold-duotone" },
+    { name: "Financial Analysis", href: "/fs-financial-analysis", icon: "solar:pulse-bold-duotone" },
+    { name: "Export Cases (view only)", href: "/fs-export-cases", icon: "solar:case-minimalistic-bold-duotone" },
+    { name: "AI Advisor", href: "/fs-ai-advisor", icon: "solar:lightbulb-bold-duotone" },
+    { name: "Documents", href: "/fs-documents", icon: "solar:document-bold-duotone" },
   ];
 
   const isRedirecting = role && role !== "finance_staff" && role !== "admin";

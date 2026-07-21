@@ -4,21 +4,21 @@ import { CreateScenarioRequest, CreateScenarioResponse, ListScenariosResponse, C
 
 export const apiScenario = {
   create: async (caseId: string, data: CreateScenarioRequest): Promise<ApiResponse<CreateScenarioResponse>> => {
-    return apiClient<ApiResponse<CreateScenarioResponse>>(`/export-cases/${caseId}/scenarios`, {
+    return apiClient<ApiResponse<CreateScenarioResponse>>(`/own-export-cases/${caseId}/scenarios`, {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   list: async (caseId: string): Promise<ApiResponse<ListScenariosResponse>> => {
-    return apiClient<ApiResponse<ListScenariosResponse>>(`/export-cases/${caseId}/scenarios/compare`, {
+    return apiClient<ApiResponse<ListScenariosResponse>>(`/own-export-cases/${caseId}/scenarios/compare`, {
       method: "GET",
     });
   },
 
   compare: async (caseId: string, scenarioIds: string[]): Promise<ApiResponse<ComparisonResponse>> => {
     const ids = scenarioIds.join(",");
-    return apiClient<ApiResponse<ComparisonResponse>>(`/export-cases/${caseId}/scenarios/compare?scenarioIds=${ids}`, {
+    return apiClient<ApiResponse<ComparisonResponse>>(`/own-export-cases/${caseId}/scenarios/compare?scenarioIds=${ids}`, {
       method: "GET",
     });
   },

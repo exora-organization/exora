@@ -13,7 +13,7 @@ import { isRouteAllowed } from "../../../lib/route-guard";
 function VerifyEmailForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectPath = searchParams.get("redirect") || "/company-application";
+  const redirectPath = searchParams.get("redirect") || "/guest-company-application";
 
   const [isResending, setIsResending] = useState(false);
   const [resendMessage, setResendMessage] = useState<string | null>(null);
@@ -37,18 +37,18 @@ function VerifyEmailForm() {
                 const companyId = profileRes.data?.companyId;
                 const status = profileRes.data?.companyStatus;
                 if (companyId || status) {
-                  finalPath = "/application-status";
+                  finalPath = "/guest-application-status";
                 } else {
-                  finalPath = "/company-application";
+                  finalPath = "/guest-company-application";
                 }
               } else if (role === "admin") {
                 finalPath = "/admin-dashboard";
               } else if (role === "company_owner") {
-                finalPath = "/owner-dashboard";
+                finalPath = "/own-dashboard";
               } else if (role === "export_manager") {
-                finalPath = "/export-manager-dashboard";
+                finalPath = "/em-dashboard";
               } else if (role === "finance_staff") {
-                finalPath = "/finance-dashboard";
+                finalPath = "/fs-dashboard";
               } else {
                 finalPath = "/";
               }

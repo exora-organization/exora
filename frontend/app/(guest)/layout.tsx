@@ -14,8 +14,8 @@ import { Icon } from "@iconify/react";
 
 const NAV_ITEMS = [
   { name: "Dashboard", href: "/guest-dashboard", icon: "solar:widget-bold-duotone" },
-  { name: "Company Application", href: "/company-application", icon: "solar:document-text-bold-duotone" },
-  { name: "Application Status", href: "/application-status", icon: "solar:document-text-bold-duotone" },
+  { name: "Company Application", href: "/guest-company-application", icon: "solar:document-text-bold-duotone" },
+  { name: "Application Status", href: "/guest-application-status", icon: "solar:document-text-bold-duotone" },
 ];
 
 export default function GuestLayout({ children }: { children: React.ReactNode }) {
@@ -26,9 +26,9 @@ export default function GuestLayout({ children }: { children: React.ReactNode })
 
   // Redirect if role has been upgraded
   useEffect(() => {
-    if (role === "company_owner") router.push("/owner-dashboard");
-    else if (role === "export_manager") router.push("/export-manager-dashboard");
-    else if (role === "finance_staff") router.push("/finance-dashboard");
+    if (role === "company_owner") router.push("/own-dashboard");
+    else if (role === "export_manager") router.push("/em-dashboard");
+    else if (role === "finance_staff") router.push("/fs-dashboard");
     else if (role === "admin") router.push("/admin-dashboard");
   }, [role, router]);
 

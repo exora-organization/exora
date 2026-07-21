@@ -103,7 +103,7 @@ func New(deps Dependencies, h Handlers) http.Handler {
 
 					// Company application
 					r.With(middleware.RequireRoles("guest")).Post("/companies/apply", h.Company.Apply)
-					r.With(middleware.RequireRoles("guest")).Get("/companies/application-status", h.Company.ApplicationStatus)
+					r.With(middleware.RequireRoles("guest", "company_owner")).Get("/companies/application-status", h.Company.ApplicationStatus)
 					r.With(middleware.RequireRoles("company_owner", "admin")).Get("/companies/{companyId}", h.Company.Get)
 					r.With(middleware.RequireRoles("company_owner", "admin")).Post("/companies/{companyId}/change-request", h.Company.ChangeRequest)
 

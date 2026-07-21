@@ -110,18 +110,18 @@ function LoginForm() {
         const companyId = profileRes.data?.companyId;
         const status = profileRes.data?.companyStatus;
         if (companyId || status) {
-          targetPath = "/application-status";
+          targetPath = "/guest-application-status";
         } else {
-          targetPath = "/company-application";
+          targetPath = "/guest-company-application";
         }
       } else if (role === "admin") {
         targetPath = "/admin-dashboard";
       } else if (role === "company_owner") {
-        targetPath = "/owner-dashboard";
+        targetPath = "/own-dashboard";
       } else if (role === "export_manager") {
-        targetPath = "/export-manager-dashboard";
+        targetPath = "/em-dashboard";
       } else if (role === "finance_staff") {
-        targetPath = "/finance-dashboard";
+        targetPath = "/fs-dashboard";
       }
 
       const finalPath = redirectPath && isRouteAllowed(redirectPath, role || null)

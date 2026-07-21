@@ -40,11 +40,11 @@ export default function InvitePage() {
       if (role === "admin") {
         router.push("/admin-dashboard");
       } else if (role === "company_owner") {
-        router.push("/owner-dashboard");
+        router.push("/own-dashboard");
       } else if (role === "export_manager") {
-        router.push("/export-manager-dashboard");
+        router.push("/em-dashboard");
       } else if (role === "finance_staff") {
-        router.push("/finance-dashboard");
+        router.push("/fs-dashboard");
       } else {
         router.push("/");
       }

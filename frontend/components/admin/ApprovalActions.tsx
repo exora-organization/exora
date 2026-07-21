@@ -29,7 +29,7 @@ export function ApprovalActions({ companyId }: ApprovalActionsProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-applications"] });
       setApproveOpen(false);
-      router.push("/company-approvals");
+      router.push("/admin-company-approvals");
     }
   });
 
@@ -38,7 +38,7 @@ export function ApprovalActions({ companyId }: ApprovalActionsProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-applications"] });
       setRejectOpen(false);
-      router.push("/company-approvals");
+      router.push("/admin-company-approvals");
     }
   });
 
@@ -47,7 +47,7 @@ export function ApprovalActions({ companyId }: ApprovalActionsProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-applications"] });
       setRevisionOpen(false);
-      router.push("/company-approvals");
+      router.push("/admin-company-approvals");
     }
   });
 

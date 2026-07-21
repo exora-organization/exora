@@ -180,7 +180,7 @@ export default function ServicesPage() {
           </div>
           <div className="shrink-0">
             <a
-              href="/company-application"
+              href="/guest-company-application"
               className="bg-[#00A651] hover:bg-[#008F44] text-white px-8 py-4 rounded-xl font-bold text-sm uppercase tracking-widest transition-colors shadow-sm whitespace-nowrap inline-flex items-center gap-2"
             >
               Register Your Company

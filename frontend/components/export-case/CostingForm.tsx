@@ -46,7 +46,7 @@ export function CostingForm({ caseId, initialData }: CostingFormProps) {
   const isFinanceStaff = profile?.role === "finance_staff";
 
   // Role-aware base path: Finance Staff stays within /finance-case, others use /export-case
-  const caseBasePath = isFinanceStaff ? `/finance-case/${caseId}` : `/export-case/${caseId}`;
+  const caseBasePath = isFinanceStaff ? `/fs-case/${caseId}` : `/em-export-case/${caseId}`;
 
   const {
     register,
@@ -208,7 +208,7 @@ export function CostingForm({ caseId, initialData }: CostingFormProps) {
           <div className="space-x-4">
             {mutation.isSuccess && (
               <Button type="button" variant="secondary" onClick={() => router.push(
-                isFinanceStaff ? `/finance-case/${caseId}/financial` : `/export-case/${caseId}/pricing`
+                isFinanceStaff ? `/fs-case/${caseId}/financial` : `/em-export-case/${caseId}/pricing`
               )}>
                 Continue to Pricing
               </Button>

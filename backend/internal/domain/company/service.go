@@ -105,3 +105,13 @@ func (s *Service) GetCompanyDetail(ctx context.Context, id string) (*CompanyDeta
 	resp := ToCompanyDetailResponse(c)
 	return &resp, nil
 }
+
+func (s *Service) RequestChange(ctx context.Context, companyID string) error {
+	c, err := s.repo.GetByID(ctx, companyID)
+	if err != nil {
+		return err
+	}
+	c.Status = StatusPending
+	c.UpdatedAt = time.Now().UTC()
+	return s.repo.Update(ctx, c)
+}

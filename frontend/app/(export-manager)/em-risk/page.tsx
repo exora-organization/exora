@@ -168,7 +168,7 @@ export default function EMRiskPage() {
 
               {/* Actions */}
               <div className="flex items-center md:ml-4 shrink-0">
-                <Link href={`/export-case/${c.caseId}/risk`} className="inline-block">
+                <Link href={`/em-export-case/${c.caseId}/risk`} className="inline-block">
                   <button className="bg-[#00A651] hover:bg-[#008F44] text-white font-bold rounded-xl px-5 py-2.5 text-[13px] shadow-md shadow-[#00A651]/20 transition-all">
                     View Risk
                   </button>

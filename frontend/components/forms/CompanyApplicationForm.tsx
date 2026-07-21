@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { apiCompany } from "../../lib/api/company";
 import { CompanyApplicationRequest } from "../../lib/types/company";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "../ui/card";
@@ -26,6 +27,7 @@ interface CompanyApplicationFormProps {
 }
 
 export function CompanyApplicationForm({ initialData, onSuccess, isRevision = false }: CompanyApplicationFormProps) {
+  const queryClient = useQueryClient();
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -72,6 +74,9 @@ export function CompanyApplicationForm({ initialData, onSuccess, isRevision = fa
       };
 
       await apiCompany.apply(payload);
+      
+      // Invalidate query cache to fetch the new pending status
+      await queryClient.invalidateQueries({ queryKey: ["application-status"] });
       
       if (onSuccess) {
         onSuccess();
