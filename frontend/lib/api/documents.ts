@@ -4,31 +4,31 @@ import { DocumentListResponse, GenerateDocumentResponse } from "../types/documen
 
 export const apiDocuments = {
   listDocuments: async (caseId: string): Promise<ApiResponse<DocumentListResponse>> => {
-    return apiClient<ApiResponse<DocumentListResponse>>(`/own-export-cases/${caseId}/documents`, {
+    return apiClient<ApiResponse<DocumentListResponse>>(`/export-cases/${caseId}/documents`, {
       method: "GET",
     });
   },
 
   generateQuotation: async (caseId: string): Promise<ApiResponse<GenerateDocumentResponse>> => {
-    return apiClient<ApiResponse<GenerateDocumentResponse>>(`/own-export-cases/${caseId}/documents/quotation`, {
+    return apiClient<ApiResponse<GenerateDocumentResponse>>(`/export-cases/${caseId}/documents/quotation`, {
       method: "POST",
     });
   },
 
   generateProformaInvoice: async (caseId: string): Promise<ApiResponse<GenerateDocumentResponse>> => {
-    return apiClient<ApiResponse<GenerateDocumentResponse>>(`/own-export-cases/${caseId}/documents/proforma-invoice`, {
+    return apiClient<ApiResponse<GenerateDocumentResponse>>(`/export-cases/${caseId}/documents/proforma-invoice`, {
       method: "POST",
     });
   },
 
   generateCostBreakdown: async (caseId: string): Promise<ApiResponse<GenerateDocumentResponse>> => {
-    return apiClient<ApiResponse<GenerateDocumentResponse>>(`/own-export-cases/${caseId}/documents/cost-breakdown-report`, {
+    return apiClient<ApiResponse<GenerateDocumentResponse>>(`/export-cases/${caseId}/documents/cost-breakdown-report`, {
       method: "POST",
     });
   },
 
   generateFeasibility: async (caseId: string): Promise<ApiResponse<GenerateDocumentResponse>> => {
-    return apiClient<ApiResponse<GenerateDocumentResponse>>(`/own-export-cases/${caseId}/documents/feasibility-report`, {
+    return apiClient<ApiResponse<GenerateDocumentResponse>>(`/export-cases/${caseId}/documents/feasibility-report`, {
       method: "POST",
     });
   },

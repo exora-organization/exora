@@ -4,7 +4,7 @@ import { RiskAssessmentResponse } from "../types/risk";
 
 export const apiRisk = {
   getRiskAssessment: async (caseId: string): Promise<ApiResponse<RiskAssessmentResponse>> => {
-    return apiClient<ApiResponse<RiskAssessmentResponse>>(`/own-export-cases/${caseId}/risk-assessment`, {
+    return apiClient<ApiResponse<RiskAssessmentResponse>>(`/export-cases/${caseId}/risk-assessment`, {
       method: "GET",
     });
   },

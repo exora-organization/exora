@@ -16,7 +16,7 @@ export const apiOwner = {
   },
 
   getTeamMembers: async (): Promise<ApiResponse<{ items: TeamMember[] }>> => {
-    return apiClient<ApiResponse<{ items: TeamMember[] }>>("/admin-users", {
+    return apiClient<ApiResponse<{ items: TeamMember[] }>>("/users", {
       method: "GET",
     });
   },
@@ -42,21 +42,21 @@ export const apiOwner = {
   },
 
   updateMember: async (userId: string, data: { displayName?: string; status?: string }): Promise<ApiResponse<any>> => {
-    return apiClient<ApiResponse<any>>(`/admin-users/${userId}`, {
+    return apiClient<ApiResponse<any>>(`/users/${userId}`, {
       method: "PATCH",
       body: JSON.stringify(data),
     });
   },
 
   changeRole: async (userId: string, role: string): Promise<ApiResponse<any>> => {
-    return apiClient<ApiResponse<any>>(`/admin-users/${userId}/role`, {
+    return apiClient<ApiResponse<any>>(`/users/${userId}/role`, {
       method: "PATCH",
       body: JSON.stringify({ role }),
     });
   },
 
   removeMember: async (userId: string): Promise<ApiResponse<any>> => {
-    return apiClient<ApiResponse<any>>(`/admin-users/${userId}`, {
+    return apiClient<ApiResponse<any>>(`/users/${userId}`, {
       method: "DELETE",
     });
   },
