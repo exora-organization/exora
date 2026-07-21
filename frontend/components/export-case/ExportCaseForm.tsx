@@ -87,48 +87,48 @@ export function ExportCaseForm({ initialData, isEdit = false }: ExportCaseFormPr
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full">
       <div className="space-y-5">
-        <div className="space-y-2">
-          <Label htmlFor="name" className="text-xs font-bold text-[#9CA3AF] uppercase tracking-widest">Case Name</Label>
+        <div className="space-y-1.5">
+          <Label htmlFor="name" className="font-bold text-[#4B5563] text-xs uppercase tracking-widest ml-4">Case Name</Label>
           <Input
             id="name"
             placeholder="e.g. Coffee Beans to Japan 2026"
             disabled={isReadOnly}
-            className="w-full pl-4 pr-4 py-3 h-12 rounded-2xl border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#00A651] focus:border-[#00A651] bg-white text-sm font-medium transition-all"
+            className="bg-[#EBF8F2] border-2 border-[#CDEBE0] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#00A651]/20 focus-visible:border-[#00A651] transition-all hover:bg-[#E3F4EC] hover:border-[#00A651]/40 hover:shadow-md rounded-full px-6 py-4 h-auto shadow-sm text-[#1F2937] font-semibold w-full"
             {...register("name")}
           />
-          {errors.name && <p className="text-xs font-bold text-red-500 mt-1">{errors.name.message}</p>}
+          {errors.name && <p className="text-sm text-red-500 font-bold ml-4">{errors.name.message}</p>}
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="product" className="text-xs font-bold text-[#9CA3AF] uppercase tracking-widest">Product</Label>
+        <div className="space-y-1.5">
+          <Label htmlFor="product" className="font-bold text-[#4B5563] text-xs uppercase tracking-widest ml-4">Product</Label>
           <Input
             id="product"
             placeholder="e.g. Arabica Coffee Beans"
             disabled={isReadOnly}
-            className="w-full pl-4 pr-4 py-3 h-12 rounded-2xl border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#00A651] focus:border-[#00A651] bg-white text-sm font-medium transition-all"
+            className="bg-[#EBF8F2] border-2 border-[#CDEBE0] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#00A651]/20 focus-visible:border-[#00A651] transition-all hover:bg-[#E3F4EC] hover:border-[#00A651]/40 hover:shadow-md rounded-full px-6 py-4 h-auto shadow-sm text-[#1F2937] font-semibold w-full"
             {...register("product")}
           />
-          {errors.product && <p className="text-xs font-bold text-red-500 mt-1">{errors.product.message}</p>}
+          {errors.product && <p className="text-sm text-red-500 font-bold ml-4">{errors.product.message}</p>}
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="destinationCountry" className="text-xs font-bold text-[#9CA3AF] uppercase tracking-widest">Destination Country</Label>
+        <div className="space-y-1.5">
+          <Label htmlFor="destinationCountry" className="font-bold text-[#4B5563] text-xs uppercase tracking-widest ml-4">Destination Country</Label>
           <Input
             id="destinationCountry"
             placeholder="e.g. Japan"
             disabled={isReadOnly}
-            className="w-full pl-4 pr-4 py-3 h-12 rounded-2xl border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#00A651] focus:border-[#00A651] bg-white text-sm font-medium transition-all"
+            className="bg-[#EBF8F2] border-2 border-[#CDEBE0] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#00A651]/20 focus-visible:border-[#00A651] transition-all hover:bg-[#E3F4EC] hover:border-[#00A651]/40 hover:shadow-md rounded-full px-6 py-4 h-auto shadow-sm text-[#1F2937] font-semibold w-full"
             {...register("destinationCountry")}
           />
-          {errors.destinationCountry && <p className="text-xs font-bold text-red-500 mt-1">{errors.destinationCountry.message}</p>}
+          {errors.destinationCountry && <p className="text-sm text-red-500 font-bold ml-4">{errors.destinationCountry.message}</p>}
         </div>
 
         {isEdit && (
-          <div className="space-y-2">
-            <Label htmlFor="status" className="text-xs font-bold text-[#9CA3AF] uppercase tracking-widest">Status</Label>
+          <div className="space-y-1.5">
+            <Label htmlFor="status" className="font-bold text-[#4B5563] text-xs uppercase tracking-widest ml-4">Status</Label>
             <select
               id="status"
-              className="w-full px-4 py-3 h-12 rounded-2xl border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#00A651] focus:border-[#00A651] bg-white text-sm font-medium transition-all cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-50"
+              className="w-full bg-[#EBF8F2] border-2 border-[#CDEBE0] focus:outline-none focus:ring-4 focus:ring-[#00A651]/20 focus:border-[#00A651] transition-all hover:bg-[#E3F4EC] hover:border-[#00A651]/40 hover:shadow-md rounded-full px-6 py-4 h-auto shadow-sm text-[#1F2937] font-semibold disabled:cursor-not-allowed disabled:opacity-50 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231F2937%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:12px_12px] bg-no-repeat bg-[position:right_1.5rem_center]"
               disabled={isReadOnly}
               {...register("status")}
             >
@@ -136,7 +136,7 @@ export function ExportCaseForm({ initialData, isEdit = false }: ExportCaseFormPr
               <option value="in_review">In Review</option>
               <option value="finalized">Finalized</option>
             </select>
-            {errors.status && <p className="text-xs font-bold text-red-500 mt-1">{errors.status.message}</p>}
+            {errors.status && <p className="text-sm text-red-500 font-bold ml-4">{errors.status.message}</p>}
           </div>
         )}
 
@@ -148,12 +148,12 @@ export function ExportCaseForm({ initialData, isEdit = false }: ExportCaseFormPr
         )}
       </div>
       
-      <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+      <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-4 pt-6 border-t border-gray-200 mt-8">
         <Button 
           type="button" 
           variant="outline" 
           onClick={() => router.back()}
-          className="h-12 px-6 rounded-full border-gray-200 text-gray-600 font-bold hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+          className="rounded-full font-bold px-10 py-4 text-[#4B5563] border-2 border-[#E5E7EB] hover:bg-gray-50 hover:text-[#1F2937] w-full sm:w-auto h-auto transition-all shadow-sm hover:shadow-md"
         >
           {isReadOnly ? "Back" : "Cancel"}
         </Button>
@@ -161,7 +161,7 @@ export function ExportCaseForm({ initialData, isEdit = false }: ExportCaseFormPr
           <Button 
             type="submit" 
             disabled={mutation.isPending}
-            className="h-12 px-8 rounded-full bg-[#00A651] hover:bg-[#008F44] text-white font-bold shadow-md shadow-[#00A651]/20 transition-all"
+            className="bg-[#00A651] hover:bg-[#008F44] text-white px-10 py-4 rounded-full font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all w-full sm:w-auto h-auto"
           >
             {mutation.isPending ? "Saving..." : isEdit ? "Update Case" : "Create Case"}
           </Button>

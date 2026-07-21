@@ -29,18 +29,18 @@ export function InvitationCard({ invite, token, isAuthenticated, acceptError }: 
           <CardDescription className="text-base">You have been invited to join the team.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="rounded-lg bg-slate-50 p-4 border space-y-3">
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-gray-500">Invited Email</span>
-              <span className="font-medium text-slate-900">{invite.email}</span>
+          <div className="rounded-2xl bg-[#EBF8F2] p-5 border-2 border-[#CDEBE0] space-y-4">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 text-sm">
+              <span className="font-bold text-[#4B5563] text-xs uppercase tracking-widest">Invited Email</span>
+              <span className="font-semibold text-[#1F2937]">{invite.email}</span>
             </div>
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-gray-500">Assigned Role</span>
-              <span className="font-medium text-slate-900">{formatRole(invite.role)}</span>
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 text-sm">
+              <span className="font-bold text-[#4B5563] text-xs uppercase tracking-widest">Assigned Role</span>
+              <span className="font-semibold text-[#1F2937]">{formatRole(invite.role)}</span>
             </div>
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-gray-500">Expires</span>
-              <span className="font-medium text-slate-900">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 text-sm">
+              <span className="font-bold text-[#4B5563] text-xs uppercase tracking-widest">Expires</span>
+              <span className="font-semibold text-[#1F2937]">
                 {new Date(invite.expiresAt).toLocaleDateString()}
               </span>
             </div>

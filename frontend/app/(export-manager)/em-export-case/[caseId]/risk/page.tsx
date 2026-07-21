@@ -115,11 +115,11 @@ export default function RiskAssessmentPage() {
 
       {assessment && (
         <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-8 bg-[#1F2937] text-white rounded-3xl shadow-xl hover:shadow-2xl transition-all border border-gray-700/50">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-8 bg-white/90 backdrop-blur-xl rounded-3xl shadow-xl hover:shadow-2xl transition-all border border-white/60 hover:-translate-y-1">
             <div>
               <p className="text-[#9CA3AF] text-[10px] font-bold uppercase tracking-widest mb-2">Overall Feasibility</p>
               <div className="flex items-center gap-4">
-                <span className="text-4xl font-black text-white">{assessment.feasibilityScore.toFixed(1)} <span className="text-gray-500 text-2xl font-bold">/ 100</span></span>
+                <span className="text-4xl font-black text-[#1F2937]">{assessment.feasibilityScore.toFixed(1)} <span className="text-[#6B7280] text-2xl font-bold">/ 100</span></span>
                 <div className="scale-110 origin-left">
                   {renderFeasibilityBadge(assessment.feasibilityClass)}
                 </div>
@@ -127,7 +127,7 @@ export default function RiskAssessmentPage() {
             </div>
             <div className="text-left sm:text-right mt-4 sm:mt-0">
               <p className="text-[#9CA3AF] text-[10px] font-bold uppercase tracking-widest">Calculated At</p>
-              <p className="text-sm font-bold mt-1 text-gray-300">{new Date(assessment.calculatedAt).toLocaleString()}</p>
+              <p className="text-sm font-bold mt-1 text-[#4B5563]">{new Date(assessment.calculatedAt).toLocaleString()}</p>
             </div>
           </div>
 
