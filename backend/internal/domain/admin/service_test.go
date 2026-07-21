@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/exora/backend/internal/domain/admin"
 	"github.com/exora/backend/internal/domain/company"
@@ -21,6 +22,12 @@ func (s *stubAdminRepo) CountExportCases(ctx context.Context) (int, error)      
 func (s *stubAdminRepo) CountAIRecommendations(ctx context.Context) (int, error) { return 0, nil }
 func (s *stubAdminRepo) ListAuditLogs(ctx context.Context, limit int) ([]admin.AuditLog, error) {
 	return nil, nil
+}
+func (s *stubAdminRepo) CountAuditLogsByAction(ctx context.Context, action string, since time.Time) (int, error) {
+	return 0, nil
+}
+func (s *stubAdminRepo) CountExportCasesSince(ctx context.Context, since time.Time) (int, error) {
+	return 0, nil
 }
 
 type stubCompanyRepo struct {

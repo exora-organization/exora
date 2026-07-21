@@ -27,6 +27,8 @@ func (s *stubInvitationRepo) ListPendingByCompany(context.Context, string) ([]*I
 	return nil, nil
 }
 func (s *stubInvitationRepo) Update(context.Context, *Invitation) error { return nil }
+func (s *stubInvitationRepo) GetPendingByEmail(context.Context, string) (*Invitation, error) { return nil, apperror.ErrNotFound }
+func (s *stubInvitationRepo) Delete(context.Context, string) error { return nil }
 
 type stubUserRepo struct {
 	user *user.User
