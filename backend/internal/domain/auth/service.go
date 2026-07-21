@@ -20,11 +20,11 @@ type Service struct {
 	users           user.Repository
 	companies       company.Repository
 	invitations     invitation.Repository
-	turnstileSecret string
+	recaptchaSecret string
 }
 
-func NewService(users user.Repository, companies company.Repository, invitations invitation.Repository, turnstileSecret string) *Service {
-	return &Service{users: users, companies: companies, invitations: invitations, turnstileSecret: turnstileSecret}
+func NewService(users user.Repository, companies company.Repository, invitations invitation.Repository, recaptchaSecret string) *Service {
+	return &Service{users: users, companies: companies, invitations: invitations, recaptchaSecret: recaptchaSecret}
 }
 
 func (s *Service) Register(ctx context.Context, req user.RegisterRequest) (*user.SessionProfile, error) {
@@ -120,7 +120,7 @@ func (s *Service) Me(ctx context.Context) (*user.SessionProfile, error) {
 }
 
 func (s *Service) verifyGoogleRecaptcha(ctx context.Context, token string) error {
-	secret := s.turnstileSecret
+	secret := s.recaptchaSecret
 	if secret == "" {
 		// bot protection disabled in this environment (e.g. local dev / testing)
 		return nil

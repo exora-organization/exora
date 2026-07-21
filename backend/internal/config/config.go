@@ -18,7 +18,7 @@ type Config struct {
 	InvitationTTL           time.Duration
 	CORSAllowedOrigins      []string
 	AppBaseURL              string
-	TurnstileSecretKey      string
+	RecaptchaSecretKey      string
 }
 
 func Load() (*Config, error) {
@@ -38,7 +38,7 @@ func Load() (*Config, error) {
 		InvitationTTL:           time.Duration(invitationTTLHours) * time.Hour,
 		CORSAllowedOrigins:      splitCSV(getEnv("CORS_ALLOWED_ORIGINS", "http://localhost:3000")),
 		AppBaseURL:              getEnv("APP_BASE_URL", "https://app.exora.app"),
-		TurnstileSecretKey:      getEnv("TURNSTILE_SECRET_KEY", ""),
+		RecaptchaSecretKey:      getEnv("RECAPTCHA_SECRET_KEY", getEnv("TURNSTILE_SECRET_KEY", "")),
 	}, nil
 }
 

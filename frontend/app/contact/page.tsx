@@ -11,7 +11,7 @@ import { apiClient } from "../../lib/api/client";
 import heroBg from "../../public/dashboard-bg.png";
 
 // Standard Google reCAPTCHA v2 testing Site Key (always works on localhost/127.0.0.1)
-const RECAPTCHA_SITE_KEY = "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI";
+const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI";
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);

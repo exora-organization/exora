@@ -77,8 +77,8 @@ func main() {
 	contactRepo := contact.NewFirestoreRepository(fsClient.Client)
 
 	// ── Services ──────────────────────────────────────────────────────────────
-	authSvc := auth.NewService(userRepo, companyRepo, invitationRepo, cfg.TurnstileSecretKey)
-	contactSvc := contact.NewService(contactRepo, cfg.TurnstileSecretKey)
+	authSvc := auth.NewService(userRepo, companyRepo, invitationRepo, cfg.RecaptchaSecretKey)
+	contactSvc := contact.NewService(contactRepo, cfg.RecaptchaSecretKey)
 	companySvc := company.NewService(companyRepo)
 	adminSvc := admin.NewService(adminRepo, companyRepo, userRepo)
 	userSvc := user.NewService(userRepo, companyRepo, fbAuth, cfg.AppBaseURL)

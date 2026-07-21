@@ -7,6 +7,7 @@ import (
 
 	"github.com/exora/backend/internal/actor"
 	"github.com/exora/backend/internal/domain/company"
+	"github.com/exora/backend/internal/domain/invitation"
 	"github.com/exora/backend/internal/domain/user"
 )
 
@@ -32,9 +33,17 @@ func (m *mockCompanyRepo) GetByApplicantUserID(ctx context.Context, userID strin
 	return nil, nil
 }
 
-func TestRegisterWithTurnstile(t *testing.T) {
-	// Test case 1: Turnstile is disabled (secret key is empty)
-	t.Run("Turnstile Disabled", func(t *testing.T) {
+type mockInvitationRepo struct {
+	invitation.Repository
+}
+
+func (m *mockInvitationRepo) GetPendingByEmail(ctx context.Context, email string) (*invitation.Invitation, error) {
+	return nil, http.ErrNoLocation
+}
+
+func TestRegisterWithRecaptcha(t *testing.T) {
+	// Test case 1: reCAPTCHA is disabled (secret key is empty)
+	t.Run("reCAPTCHA Disabled", func(t *testing.T) {
 		userRepo := &mockUserRepo{
 			GetByFirebaseUIDFn: func(ctx context.Context, uid string) (*user.User, error) {
 				return nil, http.ErrNoLocation
@@ -44,8 +53,9 @@ func TestRegisterWithTurnstile(t *testing.T) {
 			},
 		}
 		companyRepo := &mockCompanyRepo{}
+		invitationRepo := &mockInvitationRepo{}
 
-		svc := NewService(userRepo, companyRepo, "") // turnstileSecret is empty
+		svc := NewService(userRepo, companyRepo, invitationRepo, "") // recaptchaSecret is empty
 
 		ctx := actor.WithClaims(context.Background(), &actor.FirebaseClaims{
 			UID:   "test-uid",
@@ -54,7 +64,7 @@ func TestRegisterWithTurnstile(t *testing.T) {
 
 		req := user.RegisterRequest{
 			DisplayName:    "Test User",
-			TurnstileToken: "", // empty, should bypass
+			RecaptchaToken: "", // empty, should bypass
 		}
 
 		profile, err := svc.Register(ctx, req)
@@ -66,12 +76,13 @@ func TestRegisterWithTurnstile(t *testing.T) {
 		}
 	})
 
-	// Test case 2: Turnstile is enabled but token is missing
-	t.Run("Turnstile Enabled Token Missing", func(t *testing.T) {
+	// Test case 2: reCAPTCHA is enabled but token is missing
+	t.Run("reCAPTCHA Enabled Token Missing", func(t *testing.T) {
 		userRepo := &mockUserRepo{}
 		companyRepo := &mockCompanyRepo{}
+		invitationRepo := &mockInvitationRepo{}
 
-		svc := NewService(userRepo, companyRepo, "secret-key") // turnstileSecret is configured
+		svc := NewService(userRepo, companyRepo, invitationRepo, "secret-key") // recaptchaSecret is configured
 
 		ctx := actor.WithClaims(context.Background(), &actor.FirebaseClaims{
 			UID:   "test-uid",
@@ -80,14 +91,14 @@ func TestRegisterWithTurnstile(t *testing.T) {
 
 		req := user.RegisterRequest{
 			DisplayName:    "Test User",
-			TurnstileToken: "", // missing token
+			RecaptchaToken: "", // missing token
 		}
 
 		_, err := svc.Register(ctx, req)
 		if err == nil {
 			t.Fatal("expected error, got nil")
 		}
-		if err.Error() != "Turnstile verification token is required" {
+		if err.Error() != "reCAPTCHA verification token is required" {
 			t.Errorf("expected token missing error, got: %v", err)
 		}
 	})
