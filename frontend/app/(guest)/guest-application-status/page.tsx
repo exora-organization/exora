@@ -33,7 +33,7 @@ export default function ApplicationStatusPage() {
   );
 
   const PrimaryButton = ({ onClick, children }: { onClick: () => void, children: React.ReactNode }) => (
-    <Button 
+    <Button
       onClick={onClick}
       className="w-full h-12 bg-[#00A651] hover:bg-[#008F44] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 mt-4"
     >
@@ -42,7 +42,7 @@ export default function ApplicationStatusPage() {
   );
 
   const SecondaryButton = ({ onClick, children }: { onClick: () => void, children: React.ReactNode }) => (
-    <Button 
+    <Button
       variant="outline"
       onClick={onClick}
       className="w-full h-12 rounded-xl border-[#E8E3D9] text-[#4B5563] font-bold hover:bg-[#FAF8F3] transition-colors mt-4"
@@ -82,7 +82,7 @@ export default function ApplicationStatusPage() {
   const appData = data?.data;
 
   // If there's no application data, user might not have applied yet
-  if (!appData || appData.status === "none") {
+  if (!appData) {
     return (
       <Wrapper>
         <div className="text-center pt-6 pb-6">
@@ -103,11 +103,11 @@ export default function ApplicationStatusPage() {
           <div className="text-center pt-2 pb-6">
             <h2 className="text-2xl font-bold text-[#1F2937] mb-1 tracking-tight">Application Pending</h2>
             <p className="text-sm text-[#9CA3AF] mb-8">Your application is currently under review by our admin team.</p>
-            
+
             <div className="p-4 bg-[#F5F8F6] text-[#4B5563] rounded-xl mb-6 text-sm">
               <p>We will notify you once your application has been processed.</p>
             </div>
-            
+
             <PrimaryButton onClick={() => refetch()}>
               REFRESH STATUS
             </PrimaryButton>
@@ -121,12 +121,12 @@ export default function ApplicationStatusPage() {
           <div className="text-center pt-2 pb-6">
             <h2 className="text-2xl font-bold text-[#0a9b5c] mb-1 tracking-tight">Application Approved!</h2>
             <p className="text-sm text-[#9CA3AF] mb-8">Congratulations, your company has been approved.</p>
-            
+
             <p className="text-sm text-[#4B5563] mb-8 px-4">
-              You now have full access to EXORA as a Company Owner. 
+              You now have full access to EXORA as a Company Owner.
               Click below to proceed to your new dashboard.
             </p>
-            
+
             <PrimaryButton onClick={async () => {
               const { auth } = await import("../../../lib/firebase/client");
               if (auth.currentUser) {
@@ -148,7 +148,7 @@ export default function ApplicationStatusPage() {
           <div className="text-center pt-2 pb-6">
             <h2 className="text-2xl font-bold text-red-600 mb-1 tracking-tight">Application Rejected</h2>
             <p className="text-sm text-[#9CA3AF] mb-6">Unfortunately, your application was not approved.</p>
-            
+
             <p className="text-sm text-[#4B5563] px-4">
               Please contact support if you believe this was a mistake or if you need further clarification.
             </p>
@@ -163,13 +163,13 @@ export default function ApplicationStatusPage() {
             <h2 className="text-2xl font-bold text-amber-600 mb-1 tracking-tight">Revision Requested</h2>
             <p className="text-sm text-[#9CA3AF]">Please review the admin's feedback and resubmit your application.</p>
           </div>
-          
+
           <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl text-amber-800 text-sm mb-8 text-left">
             <p className="font-bold text-xs tracking-widest uppercase mb-1">Admin Notes:</p>
             <p>{appData.revisionNotes || "No notes provided."}</p>
           </div>
-          
-          <CompanyApplicationForm 
+
+          <CompanyApplicationForm
             isRevision={true}
             initialData={{
               companyName: appData.companyName,
