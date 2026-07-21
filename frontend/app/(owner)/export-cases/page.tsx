@@ -1,10 +1,11 @@
 "use client";
 
+import { Icon } from "@iconify/react";
 import { useQuery } from "@tanstack/react-query";
 import { apiExportCase } from "../../../lib/api/export-case";
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { Briefcase, Search, Filter, ChevronRight, AlertTriangle, CheckCircle, Clock } from "lucide-react";
+
 import { ExportCaseListItem } from "../../../lib/types/export-case";
 
 const statusColors: Record<string, string> = {
@@ -57,9 +58,9 @@ export default function OwnerExportCasesPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-2xl border border-[#E8E3D9] shadow-sm p-4 flex flex-wrap gap-3 items-center">
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl transition-all hover:shadow-2xl p-4 flex flex-wrap gap-3 items-center">
         <div className="flex items-center gap-2 flex-1 min-w-[200px] bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2">
-          <Search className="w-4 h-4 text-gray-400 shrink-0" />
+          <Icon icon="solar:magnifer-linear" className="w-4 h-4 text-gray-400 shrink-0"  />
           <input
             className="bg-transparent text-sm w-full outline-none font-medium placeholder:text-gray-400"
             placeholder="Search by name or country..."
@@ -68,7 +69,7 @@ export default function OwnerExportCasesPage() {
           />
         </div>
         <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-gray-400" />
+          <Icon icon="solar:filter-bold-duotone" className="w-4 h-4 text-gray-400"  />
           <select
             className="text-sm bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2 font-semibold outline-none"
             value={statusFilter}
@@ -94,8 +95,7 @@ export default function OwnerExportCasesPage() {
           {filtered.length} of {cases.length} cases
         </div>
       </div>
-
-      {/* Table */}
+      {/* List */}
       {isLoading ? (
         <div className="flex justify-center py-20">
           <div className="animate-spin h-10 w-10 rounded-full border-b-4 border-[#00A651]" />
@@ -103,58 +103,60 @@ export default function OwnerExportCasesPage() {
       ) : filtered.length === 0 ? (
         <div className="text-center py-20 text-[#9CA3AF] font-bold">No cases match your filters.</div>
       ) : (
-        <div className="bg-white rounded-2xl border border-[#E8E3D9] shadow-sm overflow-hidden">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-[#F9FAFB] border-b border-[#E8E3D9]">
-                <th className="text-left px-6 py-3 text-[11px] font-bold text-[#9CA3AF] uppercase tracking-widest">Case Name</th>
-                <th className="text-left px-4 py-3 text-[11px] font-bold text-[#9CA3AF] uppercase tracking-widest">Destination</th>
-                <th className="text-left px-4 py-3 text-[11px] font-bold text-[#9CA3AF] uppercase tracking-widest">Status</th>
-                <th className="text-left px-4 py-3 text-[11px] font-bold text-[#9CA3AF] uppercase tracking-widest">Feasibility</th>
-                <th className="text-left px-4 py-3 text-[11px] font-bold text-[#9CA3AF] uppercase tracking-widest">Created</th>
-                <th className="px-4 py-3" />
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#F3F4F6]">
-              {filtered.map((c) => {
-                const feas = feasibilityLabel(c.feasibilityScore);
-                return (
-                  <tr key={c.caseId} className="hover:bg-[#FAFCFB] transition-colors group">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-xl bg-[#EBF8F2] flex items-center justify-center shrink-0">
-                          <Briefcase className="w-4 h-4 text-[#00A651]" />
-                        </div>
-                        <span className="font-bold text-[#1F2937]">{c.name}</span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4 font-semibold text-[#4B5563]">{c.destinationCountry}</td>
-                    <td className="px-4 py-4">
-                      <span className={`px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider ${statusColors[c.status] || "bg-gray-100 text-gray-700"}`}>
-                        {c.status.replace("_", " ")}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4">
-                      <span className={`px-2.5 py-1 rounded-lg text-[11px] font-bold ${feas.bg} ${feas.color}`}>
-                        {feas.label}
-                        {c.feasibilityScore !== undefined && (
-                          <span className="ml-1 opacity-70">({(c.feasibilityScore * 10).toFixed(0)})</span>
-                        )}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4 text-xs text-[#9CA3AF] font-medium">
-                      {new Date(c.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}
-                    </td>
-                    <td className="px-4 py-4">
-                      <Link href={`/export-cases/${c.caseId}`} className="flex items-center gap-1 text-[#00A651] text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity hover:gap-2">
-                        View <ChevronRight className="w-3 h-3" />
-                      </Link>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        <div className="space-y-4">
+          {filtered.map((c) => {
+            const feas = feasibilityLabel(c.feasibilityScore);
+            return (
+              <Link href={`/export-cases/${c.caseId}`} key={c.caseId} className="flex flex-col md:flex-row items-center justify-between p-6 rounded-3xl bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl hover:-translate-y-1 hover:shadow-2xl transition-all gap-6 group">
+                
+                {/* Case Info */}
+                <div className="flex-[2] min-w-[200px] flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-[#EBF8F2] flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                    <Icon icon="solar:case-bold-duotone" className="w-6 h-6 text-[#00A651]"  />
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-extrabold text-[#1F2937] group-hover:text-[#00A651] transition-colors">{c.name}</h4>
+                    <p className="text-sm font-semibold text-[#4B5563] mt-1 flex items-center gap-1">
+                      <Icon icon="solar:map-point-bold-duotone" className="w-4 h-4 text-[#9CA3AF]" />
+                      {c.destinationCountry}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Status */}
+                <div className="flex-1">
+                  <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Status</p>
+                  <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold tracking-wide capitalize ${statusColors[c.status] || "bg-gray-100 text-gray-700"}`}>
+                    {c.status.replace("_", " ")}
+                  </span>
+                </div>
+
+                {/* Feasibility */}
+                <div className="flex-1">
+                  <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Feasibility</p>
+                  <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold ${feas.bg} ${feas.color}`}>
+                    {feas.label}
+                    {c.feasibilityScore !== undefined && (
+                      <span className="ml-1 opacity-70">({(c.feasibilityScore * 10).toFixed(0)})</span>
+                    )}
+                  </span>
+                </div>
+
+                {/* Date */}
+                <div className="flex-1 hidden md:block">
+                  <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Created</p>
+                  <p className="text-xs font-bold text-[#4B5563]">
+                    {new Date(c.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}
+                  </p>
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center justify-end md:ml-4">
+                  <Icon icon="solar:alt-arrow-right-linear" className="w-6 h-6 text-[#00A651] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                </div>
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>

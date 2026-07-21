@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/exora/backend/internal/actor"
+	"github.com/exora/backend/internal/apperror"
 	"github.com/exora/backend/internal/domain/company"
 	"github.com/exora/backend/internal/domain/invitation"
 	"github.com/exora/backend/internal/domain/user"
@@ -29,17 +30,23 @@ type mockCompanyRepo struct {
 	company.Repository
 }
 
+type mockInvitationRepo struct {
+	invitation.Repository
+	GetPendingByEmailFn func(ctx context.Context, email string) (*invitation.Invitation, error)
+}
+
+func (m *mockInvitationRepo) GetPendingByEmail(ctx context.Context, email string) (*invitation.Invitation, error) {
+	if m.GetPendingByEmailFn != nil {
+		return m.GetPendingByEmailFn(ctx, email)
+	}
+	return nil, apperror.ErrNotFound
+}
+
 func (m *mockCompanyRepo) GetByApplicantUserID(ctx context.Context, userID string) (*company.Company, error) {
 	return nil, nil
 }
 
-type mockInvitationRepo struct {
-	invitation.Repository
-}
 
-func (m *mockInvitationRepo) GetPendingByEmail(ctx context.Context, email string) (*invitation.Invitation, error) {
-	return nil, http.ErrNoLocation
-}
 
 func TestRegisterWithRecaptcha(t *testing.T) {
 	// Test case 1: reCAPTCHA is disabled (secret key is empty)
