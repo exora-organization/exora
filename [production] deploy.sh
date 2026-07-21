@@ -43,6 +43,14 @@ echo "Building Frontend..."
 
 cd ../frontend
 
+# Kill any stale next build process from a previous failed deploy
+echo "Cleaning up stale build processes..."
+pkill -f "next build" || true
+sleep 2
+
+# Clear cached build artifacts to avoid stale-lock conflicts
+rm -rf .next
+
 npm ci
 npm run build
 
