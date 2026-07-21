@@ -6,7 +6,7 @@ import { apiOwner } from "../../../lib/api/owner";
 import { apiClient } from "../../../lib/api/client";
 import { Button } from "../../../components/ui/button";
 import { useState } from "react";
-import { Building, MapPin, Briefcase, Hash, CalendarDays, ShieldCheck, Send, Loader2, CheckCircle } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { toast } from "sonner";
 
 export default function CompanyProfilePage() {
@@ -66,38 +66,38 @@ export default function CompanyProfilePage() {
 
   const fields = [
     {
-      icon: <Building className="w-7 h-7 text-blue-600" />,
+      icon: <Icon icon="solar:buildings-bold-duotone" className="w-7 h-7 text-blue-600" />,
       bg: "bg-blue-50",
       label: "Company Name",
       value: company?.companyName || "—",
     },
     {
-      icon: <Briefcase className="w-7 h-7 text-amber-600" />,
+      icon: <Icon icon="solar:case-minimalistic-bold-duotone" className="w-7 h-7 text-amber-600" />,
       bg: "bg-amber-50",
       label: "Business Sector",
       value: company?.businessSector || "—",
     },
     {
-      icon: <MapPin className="w-7 h-7 text-[#00A651]" />,
+      icon: <Icon icon="solar:map-point-bold-duotone" className="w-7 h-7 text-[#00A651]" />,
       bg: "bg-emerald-50",
       label: "Country",
       value: company?.country || "—",
     },
     {
-      icon: <Hash className="w-7 h-7 text-purple-600" />,
+      icon: <Icon icon="solar:hashtag-square-bold-duotone" className="w-7 h-7 text-purple-600" />,
       bg: "bg-purple-50",
       label: "Company ID",
       value: company?.companyId || companyId || "—",
       mono: true,
     },
     {
-      icon: <ShieldCheck className="w-7 h-7 text-indigo-600" />,
+      icon: <Icon icon="solar:shield-check-bold-duotone" className="w-7 h-7 text-indigo-600" />,
       bg: "bg-indigo-50",
       label: "Status",
       value: company?.status?.replace("_", " ").toUpperCase() || "ACTIVE",
     },
     {
-      icon: <CalendarDays className="w-7 h-7 text-rose-500" />,
+      icon: <Icon icon="solar:calendar-bold-duotone" className="w-7 h-7 text-rose-500" />,
       bg: "bg-rose-50",
       label: "Approved",
       value: company?.approvedAt
@@ -125,7 +125,7 @@ export default function CompanyProfilePage() {
 
       {/* Read-Only Info Notice */}
       <div className="flex items-center gap-3 p-4 bg-blue-50 border border-blue-200 rounded-2xl text-sm text-blue-800 font-semibold">
-        <ShieldCheck className="w-5 h-5 text-blue-500 shrink-0" />
+        <Icon icon="solar:shield-check-bold-duotone" className="w-5 h-5 text-blue-500 shrink-0" />
         Company profile fields are read-only. Only Admin can approve changes. Use the "Request Change" button below to submit a change request.
       </div>
 
@@ -158,7 +158,7 @@ export default function CompanyProfilePage() {
         <div className="flex items-start justify-between gap-6 flex-wrap">
           <div className="flex-1">
             <h3 className="text-xl font-extrabold text-[#1F2937] mb-2 flex items-center gap-2">
-              <Send className="w-5 h-5 text-[#00A651]" />
+              <Icon icon="solar:plain-bold-duotone" className="w-5 h-5 text-[#00A651]" />
               Request Profile Change
             </h3>
             <p className="text-sm text-[#6B7280] font-medium leading-relaxed">
@@ -166,7 +166,7 @@ export default function CompanyProfilePage() {
             </p>
             {requestSent && (
               <div className="mt-4 flex items-center gap-2 text-sm font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3">
-                <CheckCircle className="w-4 h-4 shrink-0" />
+                <Icon icon="solar:check-circle-bold-duotone" className="w-4 h-4 shrink-0" />
                 Change request submitted. Status: <span className="uppercase tracking-wider">Pending Admin Review</span>
               </div>
             )}
@@ -177,11 +177,11 @@ export default function CompanyProfilePage() {
             className="rounded-2xl bg-[#00A651] hover:bg-[#008F44] text-white font-extrabold h-12 px-8 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all disabled:opacity-60 shrink-0"
           >
             {isSending ? (
-              <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Sending...</>
+              <><Icon icon="solar:refresh-circle-bold-duotone" className="w-4 h-4 mr-2 animate-spin" /> Sending...</>
             ) : requestSent ? (
-              <><CheckCircle className="w-4 h-4 mr-2" /> Request Sent</>
+              <><Icon icon="solar:check-circle-bold-duotone" className="w-4 h-4 mr-2" /> Request Sent</>
             ) : (
-              <><Send className="w-4 h-4 mr-2" /> Request Change</>
+              <><Icon icon="solar:plain-bold-duotone" className="w-4 h-4 mr-2" /> Request Change</>
             )}
           </Button>
         </div>

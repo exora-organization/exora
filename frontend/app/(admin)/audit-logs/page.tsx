@@ -5,28 +5,7 @@ import { apiAdmin } from "../../../lib/api/admin";
 import { Button } from "../../../components/ui/button";
 import { useState, useMemo } from "react";
 import { useUserProfile } from "../../../hooks/useUserProfile";
-import { 
-  Activity, 
-  Search, 
-  Filter, 
-  Calendar, 
-  User, 
-  Eye, 
-  PlusCircle, 
-  CheckCircle2, 
-  AlertTriangle, 
-  XCircle, 
-  Trash2, 
-  ArrowRight, 
-  ChevronDown, 
-  ChevronUp, 
-  RefreshCw, 
-  FileText, 
-  Lock, 
-  Terminal, 
-  Settings, 
-  Layers 
-} from "lucide-react";
+import { Icon } from "@iconify/react";
 import { AuditLog } from "../../../lib/types/admin";
 
 interface AuditLogExtended {
@@ -850,13 +829,13 @@ export default function AuditLogsPage() {
 
   const getModuleIcon = (module: string) => {
     switch (module) {
-      case "Company": return <Layers className="w-3.5 h-3.5" />;
-      case "Export Case": return <Activity className="w-3.5 h-3.5" />;
-      case "Finance": return <Settings className="w-3.5 h-3.5" />;
-      case "Document": return <FileText className="w-3.5 h-3.5" />;
-      case "AI": return <Terminal className="w-3.5 h-3.5" />;
-      case "User": return <User className="w-3.5 h-3.5" />;
-      default: return <Settings className="w-3.5 h-3.5" />;
+      case "Company": return <Icon icon="solar:box-bold-duotone" className="w-3.5 h-3.5" />;
+      case "Export Case": return <Icon icon="solar:pulse-bold-duotone" className="w-3.5 h-3.5" />;
+      case "Finance": return <Icon icon="solar:settings-bold-duotone" className="w-3.5 h-3.5" />;
+      case "Document": return <Icon icon="solar:document-text-bold-duotone" className="w-3.5 h-3.5" />;
+      case "AI": return <Icon icon="solar:box-bold-duotone" className="w-3.5 h-3.5" />;
+      case "User": return <Icon icon="solar:user-bold-duotone" className="w-3.5 h-3.5" />;
+      default: return <Icon icon="solar:settings-bold-duotone" className="w-3.5 h-3.5" />;
     }
   };
 
@@ -889,7 +868,7 @@ export default function AuditLogsPage() {
               <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block mb-1">Status</span>
               <div className="flex items-center gap-2 mt-1">
                 <span className="px-2 py-0.5 text-xs font-semibold rounded-md bg-rose-50 text-rose-700 border border-rose-200 line-through">{details.status.before}</span>
-                <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+                <Icon icon="solar:arrow-right-bold-duotone" className="w-3.5 h-3.5 text-slate-400" />
                 <span className="px-2 py-0.5 text-xs font-semibold rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">{details.status.after}</span>
               </div>
             </div>
@@ -905,7 +884,7 @@ export default function AuditLogsPage() {
                 {isDiff ? (
                   <div className="flex items-center gap-2 mt-1">
                     <span className="px-2 py-0.5 text-xs font-medium rounded-md bg-rose-50 text-rose-700 border border-rose-200 line-through">{val.before}</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+                    <Icon icon="solar:arrow-right-bold-duotone" className="w-3.5 h-3.5 text-slate-400" />
                     <span className="px-2 py-0.5 text-xs font-medium rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">{val.after}</span>
                   </div>
                 ) : (
@@ -973,7 +952,7 @@ export default function AuditLogsPage() {
             className="bg-[#00A651] hover:bg-[#008F44] text-white px-5 py-5 rounded-2xl shadow-md hover:shadow-lg font-bold transition-all flex items-center gap-2"
             disabled={isFetching || isLoading}
           >
-            <RefreshCw className={`w-4 h-4 ${isFetching ? "animate-spin" : ""}`} />
+            <Icon icon="solar:refresh-bold-duotone" className={`w-4 h-4 ${isFetching ? "animate-spin" : ""}`} />
             {isFetching ? "Syncing..." : "Sync Logs"}
           </Button>
         </div>
@@ -986,7 +965,7 @@ export default function AuditLogsPage() {
           <div className="flex justify-between items-start">
             <span className="text-[10px] font-extrabold text-[#4B5563] uppercase tracking-wider">Total Feed Events</span>
             <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-500 shrink-0">
-              <Activity className="w-4 h-4" />
+              <Icon icon="solar:pulse-bold-duotone" className="w-4 h-4" />
             </div>
           </div>
           <div className="text-3xl font-extrabold text-[#1F2937] mt-4">{stats.total}</div>
@@ -997,7 +976,7 @@ export default function AuditLogsPage() {
           <div className="flex justify-between items-start">
             <span className="text-[10px] font-extrabold text-emerald-600 uppercase tracking-wider">System Activities</span>
             <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500 shrink-0">
-              <CheckCircle2 className="w-4 h-4" />
+              <Icon icon="solar:check-circle-bold-duotone" className="w-4 h-4" />
             </div>
           </div>
           <div className="text-3xl font-extrabold text-emerald-700 mt-4">{stats.activities}</div>
@@ -1008,7 +987,7 @@ export default function AuditLogsPage() {
           <div className="flex justify-between items-start">
             <span className="text-[10px] font-extrabold text-amber-600 uppercase tracking-wider">Configuration Updates</span>
             <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500 shrink-0">
-              <Settings className="w-4 h-4" />
+              <Icon icon="solar:settings-bold-duotone" className="w-4 h-4" />
             </div>
           </div>
           <div className="text-3xl font-extrabold text-amber-700 mt-4">{stats.updates}</div>
@@ -1019,7 +998,7 @@ export default function AuditLogsPage() {
           <div className="flex justify-between items-start">
             <span className="text-[10px] font-extrabold text-rose-600 uppercase tracking-wider">Security Alerts</span>
             <div className="w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center text-rose-500 shrink-0">
-              <AlertTriangle className="w-4 h-4" />
+              <Icon icon="solar:danger-triangle-bold-duotone" className="w-4 h-4" />
             </div>
           </div>
           <div className="text-3xl font-extrabold text-rose-700 mt-4">{stats.alerts}</div>
@@ -1033,7 +1012,7 @@ export default function AuditLogsPage() {
         {/* Search Bar */}
         <div className="flex flex-col md:flex-row gap-4 items-center">
           <div className="relative flex-1 w-full">
-            <Search className="absolute left-4 top-3.5 h-4 w-4 text-[#9CA3AF]" />
+            <Icon icon="solar:magnifer-bold-duotone" className="absolute left-4 top-3.5 h-4 w-4 text-[#9CA3AF]" />
             <input 
               type="text"
               placeholder="Search by Actor, Case ID, Company, Action, Metadata, IP..."
@@ -1158,7 +1137,7 @@ export default function AuditLogsPage() {
         </div>
       ) : filteredLogs.length === 0 ? (
         <div className="flex flex-col items-center justify-center p-16 bg-white/90 backdrop-blur-xl rounded-3xl border border-white shadow-xl text-center">
-          <AlertTriangle className="w-10 h-10 text-amber-500 mb-3" />
+          <Icon icon="solar:danger-triangle-bold-duotone" className="w-10 h-10 text-amber-500 mb-3" />
           <p className="font-extrabold text-lg text-gray-700">No activity events match your active filters.</p>
           <p className="text-sm font-semibold text-gray-500 mt-1">Try resetting the search keywords or selecting a broader date range.</p>
           <Button onClick={resetFilters} className="mt-4 bg-[#00A651] hover:bg-[#008F44]">Reset Filters</Button>
@@ -1250,7 +1229,7 @@ export default function AuditLogsPage() {
                                 {item.action}
                               </span>
                               <div className="text-gray-400 group-hover:text-gray-600">
-                                {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                                {isExpanded ? <Icon icon="solar:box-bold-duotone" className="w-5 h-5" /> : <Icon icon="solar:alt-arrow-down-bold-duotone" className="w-5 h-5" />}
                               </div>
                             </div>
                           </div>

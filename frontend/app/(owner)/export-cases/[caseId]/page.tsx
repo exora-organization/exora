@@ -1,11 +1,12 @@
 "use client";
 
+import { Icon } from "@iconify/react";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { apiExportCase } from "../../../../lib/api/export-case";
 import { apiPricing } from "../../../../lib/api/pricing";
 import Link from "next/link";
-import { ArrowLeft, Briefcase, MapPin, Package, CalendarDays, ShieldCheck, TrendingUp } from "lucide-react";
+
 
 const statusColors: Record<string, { bg: string; text: string; label: string }> = {
   draft: { bg: "bg-gray-100", text: "text-gray-700", label: "Draft" },
@@ -56,7 +57,7 @@ export default function OwnerExportCaseDetailPage() {
     <div className="space-y-8 max-w-4xl mx-auto pb-12">
       {/* Back */}
       <Link href="/export-cases" className="inline-flex items-center gap-1.5 text-sm font-bold text-[#00A651] hover:underline">
-        <ArrowLeft className="w-4 h-4" /> Back to Export Cases
+        <Icon icon="solar:arrow-left-linear" className="w-4 h-4"  /> Back to Export Cases
       </Link>
 
       {/* Title */}
@@ -73,11 +74,11 @@ export default function OwnerExportCaseDetailPage() {
       {/* Info Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { icon: <Package className="w-5 h-5 text-blue-500" />, bg: "bg-blue-50", label: "Product", value: ec.product || "—" },
-          { icon: <MapPin className="w-5 h-5 text-emerald-600" />, bg: "bg-emerald-50", label: "Destination", value: ec.destinationCountry },
-          { icon: <CalendarDays className="w-5 h-5 text-purple-500" />, bg: "bg-purple-50", label: "Created", value: new Date(ec.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }) },
+          { icon: <Icon icon="solar:box-bold-duotone" className="w-5 h-5 text-blue-500"  />, bg: "bg-blue-50", label: "Product", value: ec.product || "—" },
+          { icon: <Icon icon="solar:map-point-bold-duotone" className="w-5 h-5 text-emerald-600"  />, bg: "bg-emerald-50", label: "Destination", value: ec.destinationCountry },
+          { icon: <Icon icon="solar:calendar-bold-duotone" className="w-5 h-5 text-purple-500"  />, bg: "bg-purple-50", label: "Created", value: new Date(ec.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }) },
           {
-            icon: <ShieldCheck className={`w-5 h-5 ${feasColor}`} />,
+            icon: <Icon icon="solar:shield-check-bold-duotone" className={`w-5 h-5 ${feasColor}`}  />,
             bg: "bg-gray-50",
             label: "Feasibility",
             value: feasPct != null ? `${feasLabel} (${feasPct.toFixed(0)}/100)` : "Not scored",
@@ -96,10 +97,10 @@ export default function OwnerExportCaseDetailPage() {
 
       {/* Pricing Summary */}
       {pricing ? (
-        <div className="bg-white rounded-2xl border border-[#E8E3D9] shadow-sm p-6">
+        <div className="bg-white rounded-2xl border border-[#E8E3D9] shadow-sm p-5">
           <div className="flex items-center gap-3 mb-5">
             <div className="w-8 h-8 rounded-xl bg-[#EBF8F2] flex items-center justify-center">
-              <TrendingUp className="w-4 h-4 text-[#00A651]" />
+              <Icon icon="solar:graph-up-bold-duotone" className="w-4 h-4 text-[#00A651]"  />
             </div>
             <h3 className="text-lg font-extrabold text-[#1F2937]">Cost & Pricing Summary</h3>
             {pricing.incoterm && (
@@ -123,14 +124,14 @@ export default function OwnerExportCaseDetailPage() {
           </div>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-[#E8E3D9] shadow-sm p-6 text-center text-[#9CA3AF] font-bold text-sm">
+        <div className="bg-white rounded-2xl border border-[#E8E3D9] shadow-sm p-5 text-center text-[#9CA3AF] font-bold text-sm">
           No pricing data available for this case yet.
         </div>
       )}
 
       {/* Read-only notice */}
       <div className="flex items-center gap-3 p-4 bg-blue-50 border border-blue-200 rounded-2xl text-sm text-blue-800 font-semibold">
-        <ShieldCheck className="w-5 h-5 text-blue-500 shrink-0" />
+        <Icon icon="solar:shield-check-bold-duotone" className="w-5 h-5 text-blue-500 shrink-0"  />
         This is a read-only view. Only Export Managers and Finance Staff assigned to this case can edit its details.
       </div>
     </div>

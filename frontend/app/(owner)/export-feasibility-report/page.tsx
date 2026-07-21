@@ -5,7 +5,7 @@ import { apiExportCase } from "../../../lib/api/export-case";
 import { apiAdvisor } from "../../../lib/api/advisor";
 import { apiClient } from "../../../lib/api/client";
 import { useState } from "react";
-import { FileBarChart2, Download, ChevronDown, Loader2, AlertTriangle, CheckCircle, ShieldCheck, Eye } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { toast } from "sonner";
 import { ExportCaseListItem } from "../../../lib/types/export-case";
 import { PdfPreviewModal } from "../../../components/ui/pdf-preview-modal";
@@ -105,7 +105,7 @@ export default function ExportFeasibilityReportPage() {
       <div>
         <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 rounded-2xl bg-[#EBF8F2] flex items-center justify-center">
-            <FileBarChart2 className="w-5 h-5 text-[#00A651]" />
+            <Icon icon="solar:document-text-bold-duotone" className="w-5 h-5 text-[#00A651]" />
           </div>
           <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Export Feasibility Report</h2>
         </div>
@@ -116,12 +116,12 @@ export default function ExportFeasibilityReportPage() {
 
       {/* Notice */}
       <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 rounded-2xl text-sm text-blue-800 font-semibold">
-        <ShieldCheck className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
+        <Icon icon="solar:shield-check-bold-duotone" className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
         <span>Reports are generated per-case. Company-wide combined reports are out of scope (Section 3.2). Download happens immediately — no history is stored.</span>
       </div>
 
       {/* Case Selector */}
-      <div className="bg-white rounded-2xl border border-[#E8E3D9] shadow-sm p-6 space-y-5">
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl transition-all hover:shadow-2xl p-6 space-y-5">
         <h3 className="text-base font-extrabold text-[#1F2937]">1 · Select Export Case</h3>
         <div className="relative">
           <select
@@ -137,7 +137,7 @@ export default function ExportFeasibilityReportPage() {
               </option>
             ))}
           </select>
-          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+          <Icon icon="solar:alt-arrow-down-bold-duotone" className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
         </div>
 
         {/* Selected case snapshot */}
@@ -159,16 +159,16 @@ export default function ExportFeasibilityReportPage() {
 
       {/* AI Recommendation Preview */}
       {selectedCaseId && (
-        <div className="bg-white rounded-2xl border border-[#E8E3D9] shadow-sm p-6 space-y-4">
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl transition-all hover:shadow-2xl p-6 space-y-4">
           <h3 className="text-base font-extrabold text-[#1F2937]">2 · AI Recommendation Preview</h3>
           {advisorLoading ? (
             <div className="flex items-center gap-2 text-sm text-[#9CA3AF] font-bold py-4">
-              <Loader2 className="w-4 h-4 animate-spin" /> Loading recommendation...
+              <Icon icon="solar:refresh-circle-bold-duotone" className="w-4 h-4 animate-spin" /> Loading recommendation...
             </div>
           ) : recommendation ? (
             <div className="p-4 bg-indigo-50 border border-indigo-100 rounded-xl">
               <div className="flex items-center gap-2 mb-3">
-                <CheckCircle className="w-4 h-4 text-indigo-600" />
+                <Icon icon="solar:check-circle-bold-duotone" className="w-4 h-4 text-indigo-600" />
                 <span className="text-xs font-bold text-indigo-700 uppercase tracking-wider">
                   Confidence: {recommendation.confidence}
                 </span>
@@ -182,7 +182,7 @@ export default function ExportFeasibilityReportPage() {
             </div>
           ) : (
             <div className="flex items-center gap-2.5 p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-sm font-semibold">
-              <AlertTriangle className="w-4 h-4 shrink-0" />
+              <Icon icon="solar:danger-triangle-bold-duotone" className="w-4 h-4 shrink-0" />
               No AI recommendation found for this case. The report will be generated without AI content.
             </div>
           )}
@@ -190,7 +190,7 @@ export default function ExportFeasibilityReportPage() {
       )}
 
       {/* Generate Button */}
-      <div className="bg-white rounded-2xl border border-[#E8E3D9] shadow-sm p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl transition-all hover:shadow-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div>
           <h3 className="text-base font-extrabold text-[#1F2937]">3 · Generate & Download PDF</h3>
           <p className="text-xs text-[#9CA3AF] font-medium mt-0.5">
@@ -203,9 +203,9 @@ export default function ExportFeasibilityReportPage() {
           className="flex items-center gap-2 px-6 py-3 rounded-xl bg-[#00A651] hover:bg-[#008F44] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-sm transition-all shadow-lg shadow-[#00A651]/25 hover:shadow-xl hover:shadow-[#00A651]/30 hover:-translate-y-0.5"
         >
           {isGenerating ? (
-            <><Loader2 className="w-4 h-4 animate-spin" /> Generating...</>
+            <><Icon icon="solar:refresh-circle-bold-duotone" className="w-4 h-4 animate-spin" /> Generating...</>
           ) : (
-            <><Download className="w-4 h-4" /> Generate Report</>
+            <><Icon icon="solar:download-minimalistic-bold-duotone" className="w-4 h-4" /> Generate Report</>
           )}
         </button>
       </div>
@@ -213,7 +213,7 @@ export default function ExportFeasibilityReportPage() {
       {/* Result Banner */}
       {reportResult && (
         <div className="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-300 rounded-2xl">
-          <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
+          <Icon icon="solar:check-circle-bold-duotone" className="w-5 h-5 text-emerald-600 shrink-0" />
           <div className="flex-1">
             <p className="text-sm font-bold text-emerald-900">Report generated successfully!</p>
             {reportResult.generatedAt && (
@@ -228,13 +228,13 @@ export default function ExportFeasibilityReportPage() {
                 onClick={() => setPreviewModal({ open: true, documentId: reportResult.documentId!, filename: reportResult.filename! })}
                 className="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold hover:bg-blue-700 transition-colors flex items-center gap-1.5"
               >
-                <Eye className="w-3.5 h-3.5" /> Preview
+                <Icon icon="solar:eye-bold-duotone" className="w-3.5 h-3.5" /> Preview
               </button>
               <button
                 onClick={() => handleBlobDownload(reportResult.documentId!, reportResult.filename!)}
                 className="px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-colors flex items-center gap-1.5"
               >
-                <Download className="w-3.5 h-3.5" /> Download
+                <Icon icon="solar:download-minimalistic-bold-duotone" className="w-3.5 h-3.5" /> Download
               </button>
             </div>
           )}

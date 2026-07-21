@@ -8,7 +8,7 @@ import { apiUsers } from "../../../lib/api/users";
 import { UserProfile } from "../../../lib/types/user";
 import { useUserProfile } from "../../../hooks/useUserProfile";
 import { ConfirmWarningDialog } from "../../../components/ui/confirm-warning-dialog";
-import { Search } from "lucide-react";
+import { Icon } from "@iconify/react";
 
 export default function UserManagementPage() {
   const queryClient = useQueryClient();
@@ -109,7 +109,7 @@ export default function UserManagementPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <Search className="absolute right-4 top-3.5 h-5 w-5 text-[#9CA3AF]" />
+          <Icon icon="solar:magnifer-bold-duotone" className="absolute right-4 top-3.5 h-5 w-5 text-[#9CA3AF]" />
         </div>
 
         <div className="flex gap-4 items-center w-full md:w-auto">

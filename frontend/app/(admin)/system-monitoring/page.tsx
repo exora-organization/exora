@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiAdmin } from "../../../lib/api/admin";
 import { useUserProfile } from "../../../hooks/useUserProfile";
-import { Building2, Users, Package, Zap, LogIn, Server } from "lucide-react";
+import { Icon } from "@iconify/react";
 
 export default function SystemMonitoringPage() {
   const { firebaseUser, loading: authLoading } = useUserProfile();
@@ -33,7 +33,7 @@ export default function SystemMonitoringPage() {
           <div className="flex justify-between items-start mb-6">
             <h3 className="text-xs font-bold text-[#4B5563] uppercase tracking-widest mt-2">Total Companies</h3>
             <div className="w-10 h-10 rounded-xl bg-[#EBF8F2] flex items-center justify-center">
-              <Building2 className="w-5 h-5 text-[#00A651]" />
+              <Icon icon="solar:city-bold-duotone" className="w-5 h-5 text-[#00A651]" />
             </div>
           </div>
           <div className="flex items-baseline gap-2 mb-4">
@@ -51,7 +51,7 @@ export default function SystemMonitoringPage() {
           <div className="flex justify-between items-start mb-6">
             <h3 className="text-xs font-bold text-[#4B5563] uppercase tracking-widest mt-2">Total Users</h3>
             <div className="w-10 h-10 rounded-xl bg-[#EBF8F2] flex items-center justify-center">
-              <Users className="w-5 h-5 text-[#00A651]" />
+              <Icon icon="solar:users-group-rounded-bold-duotone" className="w-5 h-5 text-[#00A651]" />
             </div>
           </div>
           <div className="flex items-baseline gap-2 mb-4">
@@ -68,7 +68,7 @@ export default function SystemMonitoringPage() {
           <div className="flex justify-between items-start mb-6">
             <h3 className="text-xs font-bold text-[#4B5563] uppercase tracking-widest mt-2">Total Export Cases</h3>
             <div className="w-10 h-10 rounded-xl bg-[#EBF8F2] flex items-center justify-center">
-              <Package className="w-5 h-5 text-[#00A651]" />
+              <Icon icon="solar:box-bold-duotone" className="w-5 h-5 text-[#00A651]" />
             </div>
           </div>
           <div className="flex items-baseline gap-2 mb-4">
@@ -85,7 +85,7 @@ export default function SystemMonitoringPage() {
           <div className="flex justify-between items-start mb-6">
             <h3 className="text-xs font-bold text-[#4B5563] uppercase tracking-widest mt-2">AI Usage<br/>(Recommendations)</h3>
             <div className="w-10 h-10 rounded-xl bg-[#EBF8F2] flex items-center justify-center shrink-0">
-              <Zap className="w-5 h-5 text-[#00A651]" />
+              <Icon icon="solar:bolt-bold-duotone" className="w-5 h-5 text-[#00A651]" />
             </div>
           </div>
           <div className="flex items-baseline gap-2 mb-4">
@@ -101,7 +101,7 @@ export default function SystemMonitoringPage() {
           <div className="flex justify-between items-start mb-6">
             <h3 className="text-xs font-bold text-[#4B5563] uppercase tracking-widest mt-2">User Logins</h3>
             <div className="w-10 h-10 rounded-xl bg-[#EBF8F2] flex items-center justify-center">
-              <LogIn className="w-5 h-5 text-[#00A651]" />
+              <Icon icon="solar:login-2-bold-duotone" className="w-5 h-5 text-[#00A651]" />
             </div>
           </div>
           <div className="flex items-baseline gap-2 mb-4">
@@ -117,7 +117,7 @@ export default function SystemMonitoringPage() {
           <div className="flex justify-between items-start mb-6">
             <h3 className="text-xs font-bold text-[#4B5563] uppercase tracking-widest mt-2">API Connection</h3>
             <div className="w-10 h-10 rounded-xl bg-[#EBF8F2] flex items-center justify-center">
-              <Server className="w-5 h-5 text-[#00A651]" />
+              <Icon icon="solar:server-path-bold-duotone" className="w-5 h-5 text-[#00A651]" />
             </div>
           </div>
           <div className="mb-4">

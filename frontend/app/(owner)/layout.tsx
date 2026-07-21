@@ -10,17 +10,7 @@ import { RoleGuard } from "../../components/auth/RoleGuard";
 import { useUserProfile } from "../../hooks/useUserProfile";
 import { LogoutButton } from "../../components/ui/logout-button";
 import logoImg from "../../public/logo.png";
-import { 
-  LayoutDashboard, 
-  Building, 
-  Users, 
-  Activity, 
-  Lightbulb, 
-  Menu,
-  X,
-  Briefcase,
-  FileBarChart2
-} from "lucide-react";
+import { Icon } from "@iconify/react";
 
 export default function OwnerLayout({ children }: { children: React.ReactNode }) {
   const { profile } = useUserProfile();
@@ -33,20 +23,20 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
   }, [pathname]);
 
   const navItems = [
-    { name: "Dashboard", href: "/owner-dashboard", icon: LayoutDashboard },
-    { name: "Company Profile", href: "/company-profile", icon: Building },
-    { name: "Team Management", href: "/team-management", icon: Users },
-    { name: "Export Cases", href: "/export-cases", icon: Briefcase },
-    { name: "Analytics", href: "/owner-analytics", icon: Activity },
-    { name: "AI Advisor", href: "/owner-ai-advisor", icon: Lightbulb },
-    { name: "Export Feasibility Report", href: "/export-feasibility-report", icon: FileBarChart2 },
+    { name: "Dashboard", href: "/owner-dashboard", icon: "solar:widget-bold-duotone" },
+    { name: "Company Profile", href: "/company-profile", icon: "solar:buildings-bold-duotone" },
+    { name: "Team Management", href: "/team-management", icon: "solar:users-group-rounded-bold-duotone" },
+    { name: "Export Cases", href: "/export-cases", icon: "solar:case-minimalistic-bold-duotone" },
+    { name: "Analytics", href: "/owner-analytics", icon: "solar:pulse-bold-duotone" },
+    { name: "AI Advisor", href: "/owner-ai-advisor", icon: "solar:lightbulb-bold-duotone" },
+    { name: "Export Feasibility Report", href: "/export-feasibility-report", icon: "solar:document-text-bold-duotone" },
   ];
 
   return (
     <ProtectedRoute>
       <RoleGuard allowedRoles={["company_owner"]}>
         <div className="h-screen overflow-hidden flex flex-col md:flex-row bg-[#EBF8F2] md:bg-gradient-to-br from-[#EBF8F2] to-[#EBF8F2]">
-          
+
           {/* Mobile Header */}
           <header className="md:hidden flex items-center justify-between bg-white border-b border-[#E8E3D9] px-6 py-4 sticky top-0 z-20 w-full">
             <div className="flex items-center gap-2">
@@ -55,17 +45,17 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
               </div>
               <h1 className="text-2xl font-extrabold tracking-tight text-[#1F2937]">EXORA</h1>
             </div>
-            <button 
+            <button
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 text-gray-600 hover:text-gray-900 transition-colors focus:outline-none cursor-pointer"
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isOpen ? <Icon icon="solar:close-circle-bold-duotone" className="w-6 h-6" /> : <Icon icon="solar:box-bold-duotone" className="w-6 h-6" />}
             </button>
           </header>
 
           {/* Mobile Overlay Backdrop */}
           {isOpen && (
-            <div 
+            <div
               className="md:hidden fixed inset-0 bg-black/30 backdrop-blur-xs z-20 transition-opacity duration-200"
               onClick={() => setIsOpen(false)}
             />
@@ -85,11 +75,11 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
                 </div>
                 <h1 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">EXORA</h1>
               </div>
-              <button 
-                onClick={() => setIsOpen(false)} 
+              <button
+                onClick={() => setIsOpen(false)}
                 className="md:hidden p-1 text-gray-400 hover:text-gray-600 cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <Icon icon="solar:close-circle-bold-duotone" className="w-5 h-5" />
               </button>
             </div>
             <p className="text-xs font-bold text-[#9CA3AF] -mt-5 mb-4 ml-[72px] hidden md:block">Company Owner Portal</p>
@@ -98,18 +88,16 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
             <nav className="flex-1 px-4 py-2 space-y-1">
               {navItems.map((item) => {
                 const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
-                const Icon = item.icon;
                 return (
-                  <Link 
-                    key={item.href} 
-                    href={item.href} 
-                    className={`flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-extrabold text-sm ${
-                      isActive 
-                        ? "bg-[#00A651] text-white shadow-lg shadow-[#00A651]/30 -translate-y-0.5" 
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-extrabold text-sm ${isActive
+                        ? "bg-[#00A651] text-white shadow-lg shadow-[#00A651]/30 -translate-y-0.5"
                         : "text-[#4B5563] hover:bg-white hover:shadow-md hover:text-[#00A651] hover:-translate-y-0.5"
-                    }`}
+                      }`}
                   >
-                    <Icon className="w-5 h-5" />
+                    <Icon icon={item.icon} className="w-5 h-5" />
                     <span className="tracking-wide uppercase text-[11px]">{item.name}</span>
                   </Link>
                 );
