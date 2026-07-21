@@ -2,7 +2,7 @@
 
 import { PublicNavbar } from "../../components/public/PublicNavbar";
 import { PublicFooter } from "../../components/public/PublicFooter";
-import { ArrowRight, BookOpen, Clock, Tag } from "lucide-react";
+import { Icon } from "@iconify/react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import heroBg from "../../public/dashboard-bg.png";
@@ -14,30 +14,35 @@ export default function BlogPage() {
       desc: "Learn how different Incoterms influence export pricing, responsibilities, and logistics.",
       category: "Incoterms",
       readTime: "5 min read",
+      image: "/blog/blog1.jpg",
     },
     {
       title: "Common Mistakes New Exporters Should Avoid",
       desc: "Discover the financial and operational mistakes that often lead to unsuccessful export projects.",
       category: "Strategy",
       readTime: "7 min read",
+      image: "/blog/blog2.jpg",
     },
     {
       title: "How Exchange Rates Affect Export Profitability",
       desc: "Understand how currency fluctuations influence pricing and overall business performance.",
       category: "Finance",
       readTime: "6 min read",
+      image: "/blog/blog3.jpg",
     },
     {
       title: "Preparing Financial Data Before Exporting",
       desc: "A practical guide to gathering production costs, logistics expenses, and pricing information.",
       category: "Costing",
       readTime: "8 min read",
+      image: "/blog/blog4.jpg",
     },
     {
       title: "Using AI to Support Export Decisions",
       desc: "Learn how AI-powered recommendations can assist businesses in evaluating export opportunities.",
       category: "Technology",
       readTime: "4 min read",
+      image: "/blog/blog5.jpg",
     }
   ];
 
@@ -47,19 +52,13 @@ export default function BlogPage() {
       <PublicNavbar />
 
       {/* ================= HERO SECTION ================= */}
-      <div className="relative flex flex-col overflow-hidden h-[50vh] min-h-[400px] justify-center">
-        <Image
-          src={heroBg}
-          alt="Blog Background"
-          fill
-          sizes="100vw"
-          className="object-cover object-center"
-          priority
-        />
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm z-0" />
-
+      <div
+        className="relative flex flex-col overflow-hidden h-[50vh] min-h-[400px] justify-center bg-cover bg-center"
+        style={{
+          backgroundImage: `linear-gradient(rgba(12, 30, 28, 0.72), rgba(12, 30, 28, 0.60)), url(${heroBg.src})`
+        }}
+      >
         <main className="relative z-10 flex flex-col items-center justify-center px-6 lg:px-20 max-w-4xl mx-auto w-full text-center">
-          
           <h1 className="text-5xl lg:text-7xl font-extrabold text-white leading-[1.1] tracking-tight drop-shadow">
             Export Insights &amp; Resources
           </h1>
@@ -79,19 +78,22 @@ export default function BlogPage() {
               className="bg-white rounded-2xl border border-[#D1EDE4] shadow-sm hover:shadow-lg hover:border-[#00A651] transition-all duration-300 group flex flex-col overflow-hidden h-full"
             >
               <div className="w-full h-44 bg-[#EBF8F2] relative flex items-center justify-center overflow-hidden">
-                <div className="w-12 h-12 rounded-xl bg-[#00A651] text-white flex items-center justify-center shadow-sm">
-                  <BookOpen className="w-6 h-6 group-hover:scale-110 transition-all duration-500" />
-                </div>
+                <Image
+                  src={article.image}
+                  alt={article.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
               </div>
               
               <div className="p-7 flex flex-col flex-1 border-t-4 border-[#00A651]">
                 <div className="flex items-center space-x-4 mb-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider">
                   <div className="flex items-center text-[#00A651] bg-[#EBF8F2] px-2 py-1 rounded-md">
-                    <Tag className="w-3 h-3 mr-1" />
+                    <Icon icon="solar:tag-bold-duotone" className="w-3 h-3 mr-1" />
                     {article.category}
                   </div>
                   <div className="flex items-center">
-                    <Clock className="w-3 h-3 mr-1" />
+                    <Icon icon="solar:clock-circle-bold-duotone" className="w-3 h-3 mr-1" />
                     {article.readTime}
                   </div>
                 </div>
@@ -106,7 +108,7 @@ export default function BlogPage() {
                 
                 <div className="pt-4 mt-auto border-t border-[#D1EDE4] flex items-center text-[#00A651] font-bold text-sm cursor-pointer hover:text-[#008F44] transition-colors">
                   Read Article
-                  <ArrowRight className="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" />
+                  <Icon icon="solar:arrow-right-bold-duotone" className="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
             </motion.div>

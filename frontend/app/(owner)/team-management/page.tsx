@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiOwner } from "../../../lib/api/owner";
 import { InviteMemberDialog } from "../../../components/owner/InviteMemberDialog";
 import { ConfirmWarningDialog } from "../../../components/ui/confirm-warning-dialog";
-import { Mail, UserX, Clock, Send, Users, Trash2, Copy, CheckCircle2, Search, Filter } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "../../../components/ui/dialog";
 import { Button } from "../../../components/ui/button";
@@ -221,7 +221,7 @@ export default function TeamManagementPage() {
         {/* Member Search & Filter */}
         <div className="flex flex-wrap gap-3 mb-6">
           <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2">
-            <Search className="w-4 h-4 text-gray-400 shrink-0" />
+            <Icon icon="solar:magnifer-bold-duotone" className="w-4 h-4 text-gray-400 shrink-0" />
             <input
               className="bg-transparent text-sm w-full outline-none font-medium placeholder:text-gray-400"
               placeholder="Search by name or email..."
@@ -230,7 +230,7 @@ export default function TeamManagementPage() {
             />
           </div>
           <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-gray-400 shrink-0" />
+            <Icon icon="solar:filter-bold-duotone" className="w-4 h-4 text-gray-400 shrink-0" />
             <select
               className="text-sm bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2 font-semibold outline-none"
               value={memberRoleFilter}
@@ -250,7 +250,7 @@ export default function TeamManagementPage() {
           </div>
         ) : filteredMembers.length === 0 ? (
           <div className="text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-300 flex flex-col items-center">
-            <Users className="w-12 h-12 text-gray-300 mb-3" />
+            <Icon icon="solar:users-group-rounded-bold-duotone" className="w-12 h-12 text-gray-300 mb-3" />
             <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">No members match your filters</p>
           </div>
         ) : (
@@ -262,7 +262,7 @@ export default function TeamManagementPage() {
                   <div className="flex-1 min-w-0 pr-4">
                     <h4 className="text-xl font-black text-[#1F2937] truncate">{member.displayName || "Unknown User"}</h4>
                     <p className="text-xs font-bold text-[#9CA3AF] truncate flex items-center gap-1 mt-1">
-                      <Mail className="w-3 h-3" />
+                      <Icon icon="solar:letter-bold-duotone" className="w-3 h-3" />
                       {member.email}
                     </p>
                   </div>
@@ -318,7 +318,7 @@ export default function TeamManagementPage() {
                       className="flex items-center justify-center w-8 h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-colors disabled:opacity-50 cursor-pointer"
                       title="Remove Member"
                     >
-                      <UserX className="w-4 h-4" />
+                      <Icon icon="solar:user-cross-bold-duotone" className="w-4 h-4" />
                     </button>
                   )}
                 </div>
@@ -343,7 +343,7 @@ export default function TeamManagementPage() {
         {/* Invitation Search & Filter */}
         <div className="flex flex-wrap gap-3 mb-6">
           <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2">
-            <Search className="w-4 h-4 text-gray-400 shrink-0" />
+            <Icon icon="solar:magnifer-bold-duotone" className="w-4 h-4 text-gray-400 shrink-0" />
             <input
               className="bg-transparent text-sm w-full outline-none font-medium placeholder:text-gray-400"
               placeholder="Search by email..."
@@ -352,7 +352,7 @@ export default function TeamManagementPage() {
             />
           </div>
           <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-gray-400 shrink-0" />
+            <Icon icon="solar:filter-bold-duotone" className="w-4 h-4 text-gray-400 shrink-0" />
             <select
               className="text-sm bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2 font-semibold outline-none"
               value={inviteRoleFilter}
@@ -371,7 +371,7 @@ export default function TeamManagementPage() {
           </div>
         ) : filteredInvitations.length === 0 ? (
           <div className="text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-300 flex flex-col items-center">
-            <Mail className="w-12 h-12 text-gray-300 mb-3" />
+            <Icon icon="solar:letter-bold-duotone" className="w-12 h-12 text-gray-300 mb-3" />
             <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">No invitations match your filters</p>
           </div>
         ) : (
@@ -381,7 +381,7 @@ export default function TeamManagementPage() {
                 <div className="flex-1">
                   <div className="flex items-start justify-between mb-2">
                     <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
-                      <Clock className="w-5 h-5 text-amber-500" />
+                      <Icon icon="solar:clock-circle-bold-duotone" className="w-5 h-5 text-amber-500" />
                     </div>
                     <span className="px-2.5 py-1 bg-gray-100 text-gray-600 rounded-lg text-[9px] font-bold uppercase tracking-widest">
                       {inv.status}
@@ -408,7 +408,7 @@ export default function TeamManagementPage() {
                     onClick={() => resendMutation.mutate(inv.invitationId)}
                     className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white font-black text-xs uppercase tracking-widest transition-colors disabled:opacity-50 cursor-pointer"
                   >
-                    <Send className="w-4 h-4" />
+                    <Icon icon="solar:plain-bold-duotone" className="w-4 h-4" />
                     Resend
                   </button>
                   <button
@@ -417,7 +417,7 @@ export default function TeamManagementPage() {
                     className="flex items-center justify-center w-10 h-10 rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-colors disabled:opacity-50 cursor-pointer shrink-0"
                     title="Cancel Invitation"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Icon icon="solar:trash-bin-trash-bold-duotone" className="w-4 h-4" />
                   </button>
                 </div>
               </div>
@@ -449,7 +449,7 @@ export default function TeamManagementPage() {
           <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-amber-50 to-transparent rounded-bl-full opacity-60 -z-10 pointer-events-none"></div>
           <div className="p-8">
             <div className="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center mb-4">
-              <CheckCircle2 className="w-6 h-6 text-amber-500" />
+              <Icon icon="solar:check-circle-bold-duotone" className="w-6 h-6 text-amber-500" />
             </div>
             <DialogTitle className="text-2xl font-black text-[#1F2937]">Invitation Renewed</DialogTitle>
             <DialogDescription className="text-sm font-bold text-[#9CA3AF] uppercase tracking-widest mt-1">
@@ -475,7 +475,7 @@ export default function TeamManagementPage() {
                 }}
                 className="bg-amber-500 hover:bg-amber-600 text-white font-extrabold px-6 rounded-2xl h-12 shrink-0 flex items-center gap-2"
               >
-                {copiedResent ? <CheckCircle2 className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                {copiedResent ? <Icon icon="solar:check-circle-bold-duotone" className="w-5 h-5" /> : <Icon icon="solar:copy-bold-duotone" className="w-5 h-5" />}
                 {copiedResent ? "Copied" : "Copy"}
               </Button>
             </div>

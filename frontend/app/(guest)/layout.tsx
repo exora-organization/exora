@@ -10,12 +10,12 @@ import { LogoutButton } from "../../components/ui/logout-button";
 import { ProtectedRoute } from "../../components/auth/ProtectedRoute";
 import { RoleGuard } from "../../components/auth/RoleGuard";
 import logoImg from "../../public/logo.png";
-import { LayoutDashboard, FileText, Menu, X } from "lucide-react";
+import { Icon } from "@iconify/react";
 
 const NAV_ITEMS = [
-  { name: "Dashboard", href: "/guest-dashboard", icon: LayoutDashboard },
-  { name: "Company Application", href: "/company-application", icon: FileText },
-  { name: "Application Status", href: "/application-status", icon: FileText },
+  { name: "Dashboard", href: "/guest-dashboard", icon: "solar:widget-bold-duotone" },
+  { name: "Company Application", href: "/company-application", icon: "solar:document-text-bold-duotone" },
+  { name: "Application Status", href: "/application-status", icon: "solar:document-text-bold-duotone" },
 ];
 
 export default function GuestLayout({ children }: { children: React.ReactNode }) {
@@ -54,7 +54,7 @@ export default function GuestLayout({ children }: { children: React.ReactNode })
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 text-gray-600 hover:text-gray-900 transition-colors focus:outline-none cursor-pointer"
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isOpen ? <Icon icon="solar:close-circle-bold-duotone" className="w-6 h-6" /> : <Icon icon="solar:hamburger-menu-linear" className="w-6 h-6" />}
             </button>
           </header>
 
@@ -81,7 +81,7 @@ export default function GuestLayout({ children }: { children: React.ReactNode })
                 <h1 className="text-2xl font-extrabold tracking-tight text-[#1F2937]">EXORA</h1>
               </div>
               <button onClick={() => setIsOpen(false)} className="md:hidden p-1 text-gray-400 hover:text-gray-600 cursor-pointer">
-                <X className="w-5 h-5" />
+                <Icon icon="solar:close-circle-bold-duotone" className="w-5 h-5" />
               </button>
             </div>
             <p className="text-[10px] font-bold text-[#9CA3AF] -mt-4 mb-5 ml-[72px] hidden md:block uppercase tracking-widest">
@@ -92,7 +92,6 @@ export default function GuestLayout({ children }: { children: React.ReactNode })
             <nav className="flex-1 px-4 py-2 space-y-1">
               {NAV_ITEMS.map((item) => {
                 const isActive = pathname === item.href;
-                const Icon = item.icon;
                 return (
                   <Link
                     key={item.href}
@@ -103,7 +102,7 @@ export default function GuestLayout({ children }: { children: React.ReactNode })
                         : "text-[#4B5563] hover:bg-white hover:shadow-md hover:text-[#00A651] hover:-translate-y-0.5"
                     }`}
                   >
-                    <Icon className="w-5 h-5" />
+                    <Icon icon={item.icon} className="w-5 h-5" />
                     <span className="tracking-wide uppercase text-[11px]">{item.name}</span>
                   </Link>
                 );

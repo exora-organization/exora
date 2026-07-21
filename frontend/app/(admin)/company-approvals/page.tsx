@@ -6,7 +6,7 @@ import { useState, useMemo } from "react";
 import { apiAdmin } from "../../../lib/api/admin";
 import { Button } from "../../../components/ui/button";
 import { useUserProfile } from "../../../hooks/useUserProfile";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Icon } from "@iconify/react";
 
 const STATUS_TABS = [
   { label: "All", value: "all" },
@@ -100,7 +100,7 @@ export default function CompanyApprovalsPage() {
       {/* Search & Sort Bar */}
       <div className="bg-white rounded-2xl border border-[#E8E3D9] shadow-sm p-4 flex flex-wrap gap-3 items-center">
         <div className="flex items-center gap-2 flex-1 min-w-[220px] bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2">
-          <Search className="w-4 h-4 text-gray-400 shrink-0" />
+          <Icon icon="solar:magnifer-bold-duotone" className="w-4 h-4 text-gray-400 shrink-0" />
           <input
             className="bg-transparent text-sm w-full outline-none font-medium placeholder:text-gray-400"
             placeholder="Search by company, email, sector..."
@@ -109,7 +109,7 @@ export default function CompanyApprovalsPage() {
           />
         </div>
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="w-4 h-4 text-gray-400 shrink-0" />
+          <Icon icon="solar:slider-horizontal-bold-duotone" className="w-4 h-4 text-gray-400 shrink-0" />
           <select
             className="text-sm bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2 font-semibold outline-none"
             value={sortBy}

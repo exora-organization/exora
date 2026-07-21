@@ -66,7 +66,7 @@ export default function ExportManagerLayout({ children }: { children: React.Reac
 
   return (
     <ProtectedRoute>
-      <RoleGuard allowedRoles={["company_owner", "export_manager", "finance_staff", "admin"]}>
+      <RoleGuard allowedRoles={["export_manager", "admin"]}>
         <div className="h-screen overflow-hidden flex flex-col md:flex-row bg-[#EBF8F2] md:bg-gradient-to-br from-[#EBF8F2] to-[#EBF8F2]">
           
           {/* Mobile Header */}

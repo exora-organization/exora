@@ -70,7 +70,7 @@ export default function AnalyticsDashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
+
         {/* Total Export Cases */}
         <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 transition-all hover:-translate-y-1 hover:shadow-2xl group flex flex-col justify-between">
           <div>
@@ -83,7 +83,7 @@ export default function AnalyticsDashboardPage() {
             <div className="text-6xl font-black text-[#1F2937] mb-2">{metrics.totalExportCases}</div>
           </div>
         </div>
-        
+
         {/* Active Cases */}
         <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 transition-all hover:-translate-y-1 hover:shadow-2xl group flex flex-col justify-between">
           <div>
@@ -111,15 +111,15 @@ export default function AnalyticsDashboardPage() {
             </div>
           </div>
         </div>
-        
+
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
+
         {/* Cases by Status */}
         <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-8 relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-blue-50 to-transparent rounded-bl-full opacity-50 -z-10 group-hover:scale-110 transition-transform duration-700"></div>
-          
+
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
               <PieChartIcon className="w-5 h-5 text-blue-600" />
@@ -129,7 +129,7 @@ export default function AnalyticsDashboardPage() {
               <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mt-1">Distribution of your export cases pipeline</p>
             </div>
           </div>
-          
+
           <div className="h-[300px] mt-8">
             {statusData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
@@ -148,7 +148,7 @@ export default function AnalyticsDashboardPage() {
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} className="hover:opacity-80 transition-opacity" />
                     ))}
                   </Pie>
-                  <Tooltip 
+                  <Tooltip
                     contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)', fontWeight: 'bold' }}
                     itemStyle={{ fontWeight: '900' }}
                   />
@@ -166,7 +166,7 @@ export default function AnalyticsDashboardPage() {
         {/* Recent Export Cases */}
         <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-8 relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-green-50 to-transparent rounded-bl-full opacity-50 -z-10 group-hover:scale-110 transition-transform duration-700"></div>
-          
+
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
               <Clock className="w-5 h-5 text-green-600" />
@@ -176,7 +176,7 @@ export default function AnalyticsDashboardPage() {
               <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mt-1">Latest cases created by the team</p>
             </div>
           </div>
-          
+
           <div>
             {metrics.recentCases && metrics.recentCases.length > 0 ? (
               <ul className="space-y-4">

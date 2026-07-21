@@ -2,9 +2,7 @@
 
 import { PublicNavbar } from "../../components/public/PublicNavbar";
 import { PublicFooter } from "../../components/public/PublicFooter";
-import {
-  ArrowRight, CheckCircle2
-} from "lucide-react";
+import { Icon } from "@iconify/react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import heroBg from "../../public/dashboard-bg.png";
@@ -15,113 +13,152 @@ export default function ServicesPage() {
       title: "Export Cost Analysis",
       desc: "Understand the true cost of every export transaction before making business decisions. EXORA helps you organize and calculate all export-related expenses in one place for better cost control.",
       items: ["Production, packaging, and certification costs", "Freight, insurance, and transportation costs", "Complete export cost breakdown"],
-      image: "/service_cost.png",
+      icon: "solar:calculator-minimalistic-bold-duotone",
       imageLeft: true,
     },
     {
       title: "Pricing Engine",
       desc: "Generate accurate export prices based on international Incoterms while maintaining your desired profit margin. Compare pricing scenarios to stay competitive in global markets.",
       items: ["EXW, FOB, CFR, and CIF pricing", "Target profit margin calculation", "Flexible pricing simulation"],
-      image: "/service_pricing.png",
+      icon: "solar:tag-price-bold-duotone",
       imageLeft: false,
     },
     {
       title: "Financial Analysis",
       desc: "Evaluate the financial viability of your export opportunities with clear performance indicators. Make informed decisions using reliable financial projections.",
       items: ["Revenue and profit analysis", "ROI and profit margin calculation", "Break-even point estimation"],
-      image: "/service_financial.png",
+      icon: "solar:graph-up-bold-duotone",
       imageLeft: true,
     },
     {
       title: "Risk Assessment",
       desc: "Identify potential risks before entering international markets. EXORA evaluates multiple risk factors to help you reduce uncertainty and improve decision-making.",
       items: ["Destination country risk analysis", "Payment method evaluation", "Export feasibility assessment"],
-      image: "/service_risk.png",
+      icon: "solar:shield-warning-bold-duotone",
       imageLeft: false,
     },
     {
       title: "AI Export Advisor",
       desc: "Turn complex export data into practical business insights. Receive AI-generated recommendations based on your financial analysis, pricing, and risk evaluation.",
       items: ["Executive summary and insights", "Strategic recommendations", "Go or reconsider decision support"],
-      image: "/service_ai.png",
+      icon: "solar:cpu-bold-duotone",
       imageLeft: true,
     },
     {
       title: "Export Reports",
       desc: "Create professional export reports with a single click. Share clear and structured analyses with management, clients, or business partners.",
       items: ["Export feasibility report", "Financial and cost summary", "Downloadable PDF documents"],
-      image: "/about-image.jpg",
+      icon: "solar:document-text-bold-duotone",
       imageLeft: false,
     }
   ];
 
   return (
-    <div className="flex flex-col font-sans bg-white min-h-screen selection:bg-[#00A651]/20">
+    <div className="flex flex-col font-sans bg-[#EBF8F2] min-h-screen selection:bg-[#00A651]/20">
 
       <PublicNavbar />
 
       {/* ================= HERO SECTION ================= */}
-      <div className="relative flex flex-col overflow-hidden h-[50vh] min-h-[400px] justify-center">
-        <Image
-          src={heroBg}
-          alt="Services Background"
-          fill
-          sizes="100vw"
-          className="object-cover object-center"
-          priority
-        />
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm z-0" />
-
+      <div
+        className="relative flex flex-col overflow-hidden h-[50vh] min-h-[400px] justify-center bg-cover bg-center"
+        style={{
+          backgroundImage: `linear-gradient(rgba(12, 30, 28, 0.72), rgba(12, 30, 28, 0.60)), url(${heroBg.src})`
+        }}
+      >
         <main className="relative z-10 flex flex-col items-center justify-center px-6 lg:px-20 max-w-4xl mx-auto w-full text-center">
-
           <h1 className="text-5xl lg:text-7xl font-extrabold text-white leading-[1.1] tracking-tight drop-shadow-lg">
             What EXORA Provides
           </h1>
         </main>
       </div>
 
-      {/* ================= SHOWCASE SECTIONS ================= */}
-      <section className="py-24 px-6 lg:px-20 max-w-7xl mx-auto w-full space-y-32">
-        {showcases.map((showcase, idx) => (
-          <motion.div
-            key={idx}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6 }}
-            className={`flex flex-col gap-12 lg:gap-20 items-stretch lg:h-[560px] ${
-              showcase.imageLeft ? "lg:flex-row" : "lg:flex-row-reverse"
-            }`}
-          >
-            {/* Image Block */}
-            <div className="w-full lg:w-1/2 relative rounded-3xl overflow-hidden shadow-2xl border-[8px] border-[#EBF8F2] h-[350px] sm:h-[450px] lg:h-full bg-[#EBF8F2]/50 shrink-0 flex items-center justify-center p-4 lg:p-8">
-              <img src={`${showcase.image}?v=2`} alt={showcase.title} className="w-full h-full object-contain" />
-            </div>
+      {/* ================= SHOWCASE SECTIONS (TIMELINE) ================= */}
+      <section className="py-24 px-6 lg:px-20 max-w-6xl mx-auto w-full relative">
+        {/* Center Vertical Line */}
+        <div className="absolute left-1/2 top-32 bottom-32 w-[2px] bg-gradient-to-b from-transparent via-[#00A651]/30 to-transparent hidden md:block transform -translate-x-1/2" />
 
-            {/* Text Block */}
-            <div className="w-full lg:w-1/2 flex flex-col justify-center space-y-5 lg:h-full">
-              <div className="inline-flex items-center gap-2 text-[#00A651] text-sm font-bold uppercase tracking-widest">
-                <span className="w-2 h-2 rounded-full bg-[#00A651] inline-block" />
-                Feature {idx + 1}
-              </div>
-              <h2 className="text-3xl lg:text-4xl font-extrabold text-[#111827] leading-tight">
-                {showcase.title}
-              </h2>
-              <p className="text-[#4B5563] text-lg leading-relaxed">
-                {showcase.desc}
-              </p>
-              
-              <ul className="space-y-4 py-2 mt-2">
-                {showcase.items.map((item, i) => (
-                  <li key={i} className="flex items-start text-[#1F2937] font-semibold text-lg">
-                    <CheckCircle2 className="w-6 h-6 text-[#00A651] shrink-0 mr-3 mt-0.5" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </motion.div>
-        ))}
+        <div className="space-y-20 md:space-y-32">
+          {showcases.map((showcase, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6 }}
+              className="relative flex flex-col md:flex-row items-center w-full"
+            >
+              {showcase.imageLeft ? (
+                <>
+                  {/* Left Side: Icon */}
+                  <div className="w-full md:w-1/2 pr-0 md:pr-16 flex justify-center md:justify-end mb-8 md:mb-0">
+                    <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border-2 border-[#00A651] flex items-center justify-center bg-white shadow-md">
+                      <Icon icon={showcase.icon as string} className="w-10 h-10 md:w-14 md:h-14 text-[#00A651]" />
+                    </div>
+                  </div>
+
+                  {/* Center Node (Number) */}
+                  <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 items-center justify-center w-10 h-10 rounded-full bg-[#00A651] text-white font-bold text-lg border-4 border-white z-10 shadow-sm">
+                    {idx + 1}
+                  </div>
+
+                  {/* Right Side: Text */}
+                  <div className="w-full md:w-1/2 pl-0 md:pl-16 text-center md:text-left">
+                    <div className="md:hidden flex items-center justify-center w-10 h-10 rounded-full bg-[#00A651] text-white font-bold text-lg mx-auto mb-4">
+                      {idx + 1}
+                    </div>
+                    <h3 className="text-xl md:text-2xl font-extrabold text-[#111827] mb-3">{showcase.title}</h3>
+                    <p className="text-[#4B5563] text-[15px] md:text-base leading-relaxed">
+                      {showcase.desc}
+                    </p>
+                    <ul className="mt-4 space-y-2 text-left md:text-left inline-block">
+                      {showcase.items.map((item, i) => (
+                        <li key={i} className="flex items-start text-[#4B5563] text-sm font-medium">
+                          <Icon icon="solar:check-circle-linear" className="w-4 h-4 text-[#00A651] shrink-0 mr-2 mt-0.5" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Left Side: Text */}
+                  <div className="w-full md:w-1/2 pr-0 md:pr-16 text-center md:text-right mb-8 md:mb-0">
+                    <div className="md:hidden flex items-center justify-center w-10 h-10 rounded-full bg-[#00A651] text-white font-bold text-lg mx-auto mb-4">
+                      {idx + 1}
+                    </div>
+                    <h3 className="text-xl md:text-2xl font-extrabold text-[#111827] mb-3">{showcase.title}</h3>
+                    <p className="text-[#4B5563] text-[15px] md:text-base leading-relaxed">
+                      {showcase.desc}
+                    </p>
+                    <div className="flex md:justify-end w-full">
+                      <ul className="mt-4 space-y-2 text-left inline-block">
+                        {showcase.items.map((item, i) => (
+                          <li key={i} className="flex items-start text-[#4B5563] text-sm font-medium text-left">
+                            <Icon icon="solar:check-circle-linear" className="w-4 h-4 text-[#00A651] shrink-0 mr-2 mt-0.5" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* Center Node (Number) */}
+                  <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 items-center justify-center w-10 h-10 rounded-full bg-[#00A651] text-white font-bold text-lg border-4 border-white z-10 shadow-sm">
+                    {idx + 1}
+                  </div>
+
+                  {/* Right Side: Icon */}
+                  <div className="w-full md:w-1/2 pl-0 md:pl-16 flex justify-center md:justify-start">
+                    <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border-2 border-[#00A651] flex items-center justify-center bg-white shadow-md">
+                      <Icon icon={showcase.icon as string} className="w-10 h-10 md:w-14 md:h-14 text-[#00A651]" />
+                    </div>
+                  </div>
+                </>
+              )}
+            </motion.div>
+          ))}
+        </div>
       </section>
 
       {/* ================= BOTTOM CTA ================= */}
@@ -147,7 +184,7 @@ export default function ServicesPage() {
               className="bg-[#00A651] hover:bg-[#008F44] text-white px-8 py-4 rounded-xl font-bold text-sm uppercase tracking-widest transition-colors shadow-sm whitespace-nowrap inline-flex items-center gap-2"
             >
               Register Your Company
-              <ArrowRight size={16} />
+              <Icon icon="solar:arrow-right-bold-duotone" className="w-4 h-4" />
             </a>
           </div>
         </motion.div>

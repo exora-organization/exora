@@ -5,7 +5,7 @@ import { apiAnalytics } from "../../../lib/api/analytics";
 import { apiExportCase } from "../../../lib/api/export-case";
 import { useMemo } from "react";
 import Link from "next/link";
-import { TrendingUp, DollarSign, ShieldCheck, BarChart3, AlertTriangle, CheckCircle, Minus } from "lucide-react";
+import { Icon } from "@iconify/react";
 
 function BarRow({ label, value, total, colorClass }: { label: string; value: number; total: number; colorClass: string }) {
   const pct = total > 0 ? Math.round((value / total) * 100) : 0;
@@ -81,31 +81,31 @@ export default function OwnerAnalyticsPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
         {[
           {
-            icon: <DollarSign className="w-6 h-6 text-emerald-600" />,
+            icon: <Icon icon="solar:dollar-bold-duotone" className="w-6 h-6 text-emerald-600" />,
             bg: "bg-emerald-50",
             label: "Total Export Value",
             value: fmtIDR(stats?.totalExportValue),
           },
           {
-            icon: <TrendingUp className="w-6 h-6 text-blue-500" />,
+            icon: <Icon icon="solar:graph-up-bold-duotone" className="w-6 h-6 text-blue-500" />,
             bg: "bg-blue-50",
             label: "Estimated Gross Margin",
             value: fmtPct(stats?.estGrossMargin),
           },
           {
-            icon: <BarChart3 className="w-6 h-6 text-purple-500" />,
+            icon: <Icon icon="solar:chart-square-bold-duotone" className="w-6 h-6 text-purple-500" />,
             bg: "bg-purple-50",
             label: "Total Freight Cost",
             value: fmtIDR(stats?.totalFreightCost),
           },
           {
-            icon: <ShieldCheck className="w-6 h-6 text-amber-500" />,
+            icon: <Icon icon="solar:shield-check-bold-duotone" className="w-6 h-6 text-amber-500" />,
             bg: "bg-amber-50",
             label: "Total Insurance",
             value: fmtIDR(stats?.totalInsurance),
           },
         ].map((kpi, i) => (
-          <div key={i} className="bg-white rounded-2xl border border-[#E8E3D9] shadow-sm p-5 flex flex-col gap-3">
+          <div key={i} className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl transition-all hover:shadow-2xl p-5 flex flex-col gap-3">
             <div className={`w-10 h-10 rounded-xl ${kpi.bg} flex items-center justify-center`}>
               {kpi.icon}
             </div>
@@ -120,7 +120,7 @@ export default function OwnerAnalyticsPage() {
       {/* Feasibility + Risk Distribution */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Feasibility Score Distribution */}
-        <div className="bg-white rounded-2xl border border-[#E8E3D9] shadow-sm p-6 space-y-5">
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl transition-all hover:shadow-2xl p-6 space-y-5">
           <div className="flex items-center gap-3 mb-2">
             <span className="w-1 h-6 bg-[#00A651] rounded-full inline-block" />
             <h3 className="text-lg font-extrabold text-[#1F2937]">Feasibility Distribution</h3>
@@ -136,7 +136,7 @@ export default function OwnerAnalyticsPage() {
         </div>
 
         {/* Risk Distribution */}
-        <div className="bg-white rounded-2xl border border-[#E8E3D9] shadow-sm p-6 space-y-5">
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl transition-all hover:shadow-2xl p-6 space-y-5">
           <div className="flex items-center gap-3 mb-2">
             <span className="w-1 h-6 bg-rose-500 rounded-full inline-block" />
             <h3 className="text-lg font-extrabold text-[#1F2937]">Risk Distribution</h3>
@@ -157,7 +157,7 @@ export default function OwnerAnalyticsPage() {
       </div>
 
       {/* Cases by Status */}
-      <div className="bg-white rounded-2xl border border-[#E8E3D9] shadow-sm p-6">
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl transition-all hover:shadow-2xl p-6">
         <div className="flex items-center gap-3 mb-6">
           <span className="w-1 h-6 bg-blue-500 rounded-full inline-block" />
           <h3 className="text-lg font-extrabold text-[#1F2937]">Cases by Status</h3>
@@ -178,7 +178,7 @@ export default function OwnerAnalyticsPage() {
 
       {/* Recent Cases */}
       {stats?.recentCases && stats.recentCases.length > 0 && (
-        <div className="bg-white rounded-2xl border border-[#E8E3D9] shadow-sm p-6">
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl transition-all hover:shadow-2xl p-6">
           <div className="flex items-center gap-3 mb-6">
             <span className="w-1 h-6 bg-purple-500 rounded-full inline-block" />
             <h3 className="text-lg font-extrabold text-[#1F2937]">Recent Case Activity</h3>
@@ -187,9 +187,9 @@ export default function OwnerAnalyticsPage() {
             {stats.recentCases.slice(0, 5).map((c: any, i: number) => (
               <Link key={i} href={`/export-cases/${c.caseId}`} className="flex items-center justify-between px-4 py-3 rounded-xl bg-[#F9FAFB] border border-[#E8E3D9] hover:border-[#00A651]/40 hover:bg-[#EBF8F2]/30 transition-all group">
                 <div className="flex items-center gap-3">
-                  {c.feasibilityScore >= 8 ? <CheckCircle className="w-4 h-4 text-emerald-500" /> :
-                    c.feasibilityScore >= 6 ? <Minus className="w-4 h-4 text-amber-500" /> :
-                      <AlertTriangle className="w-4 h-4 text-rose-500" />}
+                  {c.feasibilityScore >= 8 ? <Icon icon="solar:check-circle-bold-duotone" className="w-4 h-4 text-emerald-500" /> :
+                    c.feasibilityScore >= 6 ? <Icon icon="solar:minus-circle-bold-duotone" className="w-4 h-4 text-amber-500" /> :
+                      <Icon icon="solar:danger-triangle-bold-duotone" className="w-4 h-4 text-rose-500" />}
                   <div>
                     <p className="text-sm font-bold text-[#1F2937]">{c.name}</p>
                     <p className="text-xs text-[#9CA3AF] font-medium">{c.destinationCountry}</p>

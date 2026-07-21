@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Search, Building, Users, Activity, FileText, ArrowRight, Clock, Building2, Package } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import Link from "next/link";
@@ -22,8 +22,8 @@ export default function AdminDashboardPage() {
   });
 
   const { data: auditData, isLoading: isAuditLoading } = useQuery({
-    queryKey: ["admin-audit-logs", 5],
-    queryFn: () => apiAdmin.getAuditLogs(5),
+    queryKey: ["admin-audit-logs", 50],
+    queryFn: () => apiAdmin.getAuditLogs(50),
   });
 
   const stats = monitoringData?.data;
@@ -34,20 +34,21 @@ export default function AdminDashboardPage() {
 
   const pendingApplications = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    const filtered = q
-      ? allPendingApplications.filter(
-          (app) =>
-            app.companyName?.toLowerCase().includes(q) ||
-            app.applicant?.email?.toLowerCase().includes(q)
-        )
-      : allPendingApplications;
-    return filtered.slice(0, 5);
-  }, [allPendingApplications, searchQuery]);
+    if (q) {
+      const allApps = applicationsData?.data?.items || [];
+      return allApps.filter(
+        (app) =>
+          app.companyName?.toLowerCase().includes(q) ||
+          app.applicant?.email?.toLowerCase().includes(q)
+      ).slice(0, 5);
+    }
+    return allPendingApplications.slice(0, 5);
+  }, [applicationsData, allPendingApplications, searchQuery]);
 
   const allLogs = auditData?.data?.auditLogs || [];
   const recentLogs = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    return q
+    const filtered = q
       ? allLogs.filter(
           (log: any) =>
             log.action?.toLowerCase().includes(q) ||
@@ -55,6 +56,7 @@ export default function AdminDashboardPage() {
             log.actorId?.toLowerCase().includes(q)
         )
       : allLogs;
+    return filtered.slice(0, 5);
   }, [allLogs, searchQuery]);
 
   return (
@@ -77,7 +79,7 @@ export default function AdminDashboardPage() {
             placeholder="Search applications & activity..." 
             className="w-full pl-4 pr-10 py-3 rounded-2xl border border-white/60 shadow-md focus:outline-none focus:ring-2 focus:ring-[#00A651] bg-white/90 backdrop-blur-md text-sm font-medium"
           />
-          <Search className="absolute right-4 top-3.5 h-4 w-4 text-[#9CA3AF]" />
+          <Icon icon="solar:magnifer-bold-duotone" className="absolute right-4 top-3.5 h-4 w-4 text-[#9CA3AF]" />
         </div>
       </div>
 
@@ -88,7 +90,7 @@ export default function AdminDashboardPage() {
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-[10px] font-bold text-[#4B5563] uppercase tracking-widest mt-1">Pending Approvals</h3>
             <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
-              <Clock className="w-4 h-4 text-amber-500" />
+              <Icon icon="solar:clock-circle-bold-duotone" className="w-4 h-4 text-amber-500" />
             </div>
           </div>
           <div className="flex items-baseline gap-1 mb-2">
@@ -106,7 +108,7 @@ export default function AdminDashboardPage() {
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-[10px] font-bold text-[#4B5563] uppercase tracking-widest mt-1">Total Companies</h3>
             <div className="w-8 h-8 rounded-lg bg-[#EBF8F2] flex items-center justify-center">
-              <Building2 className="w-4 h-4 text-[#00A651]" />
+              <Icon icon="solar:city-bold-duotone" className="w-4 h-4 text-[#00A651]" />
             </div>
           </div>
           <div className="flex items-baseline gap-1 mb-2">
@@ -124,7 +126,7 @@ export default function AdminDashboardPage() {
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-[10px] font-bold text-[#4B5563] uppercase tracking-widest mt-1">Total Users</h3>
             <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
-              <Users className="w-4 h-4 text-blue-500" />
+              <Icon icon="solar:users-group-rounded-bold-duotone" className="w-4 h-4 text-blue-500" />
             </div>
           </div>
           <div className="flex items-baseline gap-1 mb-2">
@@ -142,7 +144,7 @@ export default function AdminDashboardPage() {
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-[10px] font-bold text-[#4B5563] uppercase tracking-widest mt-1">Active Users</h3>
             <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
-              <Users className="w-4 h-4 text-emerald-500" />
+              <Icon icon="solar:users-group-rounded-bold-duotone" className="w-4 h-4 text-emerald-500" />
             </div>
           </div>
           <div className="flex items-baseline gap-1 mb-2">
@@ -160,7 +162,7 @@ export default function AdminDashboardPage() {
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-[10px] font-bold text-[#4B5563] uppercase tracking-widest mt-1">Total Export Cases</h3>
             <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
-              <Package className="w-4 h-4 text-purple-500" />
+              <Icon icon="solar:box-bold-duotone" className="w-4 h-4 text-purple-500" />
             </div>
           </div>
           <div className="flex items-baseline gap-1 mb-2">
@@ -218,25 +220,25 @@ export default function AdminDashboardPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           <Link href="/company-approvals" className="flex items-center gap-4 p-5 bg-white/90 backdrop-blur-md rounded-3xl shadow-xl border border-white/60 hover:shadow-2xl hover:-translate-y-1 transition-all group">
             <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
-              <Building className="w-6 h-6" />
+              <Icon icon="solar:buildings-bold-duotone" className="w-6 h-6" />
             </div>
             <span className="font-bold text-sm text-[#4B5563]">Company Approvals</span>
           </Link>
           <Link href="/users" className="flex items-center gap-4 p-5 bg-white/90 backdrop-blur-md rounded-3xl shadow-xl border border-white/60 hover:shadow-2xl hover:-translate-y-1 transition-all group">
             <div className="w-12 h-12 rounded-2xl bg-[#EBF8F2] flex items-center justify-center text-[#00A651] group-hover:scale-110 transition-transform">
-              <Users className="w-6 h-6" />
+              <Icon icon="solar:users-group-rounded-bold-duotone" className="w-6 h-6" />
             </div>
             <span className="font-bold text-sm text-[#4B5563]">User Management</span>
           </Link>
           <Link href="/system-monitoring" className="flex items-center gap-4 p-5 bg-white/90 backdrop-blur-md rounded-3xl shadow-xl border border-white/60 hover:shadow-2xl hover:-translate-y-1 transition-all group">
             <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
-              <Activity className="w-6 h-6" />
+              <Icon icon="solar:pulse-bold-duotone" className="w-6 h-6" />
             </div>
             <span className="font-bold text-sm text-[#4B5563]">System Monitoring</span>
           </Link>
           <Link href="/audit-logs" className="flex items-center gap-4 p-5 bg-white/90 backdrop-blur-md rounded-3xl shadow-xl border border-white/60 hover:shadow-2xl hover:-translate-y-1 transition-all group">
             <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-500 group-hover:scale-110 transition-transform">
-              <FileText className="w-6 h-6" />
+              <Icon icon="solar:document-text-bold-duotone" className="w-6 h-6" />
             </div>
             <span className="font-bold text-sm text-[#4B5563]">Audit Logs</span>
           </Link>
@@ -252,7 +254,7 @@ export default function AdminDashboardPage() {
               Recent Pending Applications
             </h3>
             <Link href="/company-approvals" className="text-sm font-bold text-[#00A651] hover:text-[#008F44] flex items-center gap-1">
-              View All <ArrowRight className="w-4 h-4" />
+              View All <Icon icon="solar:arrow-right-bold-duotone" className="w-4 h-4" />
             </Link>
           </div>
           
@@ -295,7 +297,7 @@ export default function AdminDashboardPage() {
               Recent Activity
             </h3>
             <Link href="/audit-logs" className="text-sm font-bold text-[#00A651] hover:text-[#008F44] flex items-center gap-1">
-              View All <ArrowRight className="w-4 h-4" />
+              View All <Icon icon="solar:arrow-right-bold-duotone" className="w-4 h-4" />
             </Link>
           </div>
           
@@ -307,7 +309,7 @@ export default function AdminDashboardPage() {
                 {recentLogs.map((log, idx) => (
                   <div key={log.id || `log-${idx}`} className="flex gap-4 p-4 rounded-2xl bg-white/50 border border-white shadow-sm hover:shadow-md hover:bg-white transition-all">
                     <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500 shrink-0">
-                      <Activity className="w-5 h-5" />
+                      <Icon icon="solar:pulse-bold-duotone" className="w-5 h-5" />
                     </div>
                     <div className="flex-1">
                       <p className="text-sm text-[#1F2937]">
