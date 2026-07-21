@@ -35,7 +35,7 @@ export default function FinanceCostingPage() {
     <div className="space-y-6 max-w-5xl mx-auto">
       <div>
         <Link href="/finance-dashboard" className="text-sm text-blue-500 hover:underline mb-2 block">
-          &larr; Back to Dashboard
+          &larr; Back To Dashboard 
         </Link>
         <h2 className="text-3xl font-bold tracking-tight">Costing Configuration</h2>
         <p className="text-[#9CA3AF] mt-1">Input and manage direct and indirect costs.</p>

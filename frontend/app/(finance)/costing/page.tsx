@@ -3,10 +3,8 @@
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { apiExportCase } from "../../../lib/api/export-case";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/table";
-import { Card, CardHeader, CardTitle, CardContent } from "../../../components/ui/card";
-import { Badge } from "../../../components/ui/badge";
-import { Button } from "../../../components/ui/button";
+import { Icon } from "@iconify/react";
+import { useState, useMemo } from "react";
 
 export default function CostingCaseListPage() {
   const { data, isLoading, error, refetch } = useQuery({
@@ -14,91 +12,128 @@ export default function CostingCaseListPage() {
     queryFn: () => apiExportCase.list(),
   });
 
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  const cases = data?.data?.items || [];
+
+  const filtered = useMemo(() => {
+    let arr = [...cases];
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      arr = arr.filter(
+        (c) => c.name.toLowerCase().includes(q) || c.destinationCountry.toLowerCase().includes(q)
+      );
+    }
+    if (statusFilter !== "all") arr = arr.filter((c) => c.status === statusFilter);
+    return arr;
+  }, [cases, search, statusFilter]);
+
   if (isLoading) {
-    return <div className="p-8 flex justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div></div>;
+    return <div className="flex justify-center py-20"><div className="animate-spin h-10 w-10 rounded-full border-b-4 border-[#00A651]" /></div>;
   }
 
   if (error) {
     return (
-      <div className="p-8 text-center space-y-4">
-        <p className="text-red-500">Failed to load export cases.</p>
-        <Button onClick={() => refetch()} variant="outline">Retry</Button>
+      <div className="p-8 text-center bg-red-50 text-red-600 rounded-3xl font-bold max-w-lg mx-auto mt-10 shadow-xl">
+        <p>Failed to load export cases.</p>
+        <button onClick={() => refetch()} className="mt-4 rounded-full bg-red-600 text-white px-6 py-2 shadow-md hover:bg-red-700 transition-all">Retry</button>
       </div>
     );
   }
 
-  const cases = data?.data?.items || [];
-
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">Export Cases (Costing)</h2>
-          <p className="text-[#9CA3AF] mt-1">Configure product costing sheets and logistics charges for active cases.</p>
+    <div className="space-y-8 max-w-6xl mx-auto pb-12">
+      <div>
+        <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">Export Cases (Costing)</h2>
+        <p className="text-sm text-[#4B5563] font-medium mt-2">
+          Configure product costing sheets and logistics charges for active cases.
+        </p>
+      </div>
+
+      {/* Search & Filter */}
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl transition-all hover:shadow-2xl p-4 flex flex-wrap gap-3 items-center">
+        <div className="flex items-center gap-2 flex-1 min-w-[200px] bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2">
+          <Icon icon="solar:magnifer-linear" className="w-4 h-4 text-gray-400 shrink-0" />
+          <input
+            className="bg-transparent text-sm w-full outline-none font-medium placeholder:text-gray-400"
+            placeholder="Search by case name or country..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <Icon icon="solar:filter-bold-duotone" className="w-4 h-4 text-gray-400 shrink-0" />
+          <select
+            className="text-sm bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2 font-semibold outline-none"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="all">All Statuses</option>
+            <option value="draft">Draft</option>
+            <option value="in_review">In Review</option>
+            <option value="finalized">Finalized</option>
+          </select>
+        </div>
+        <div className="ml-auto text-xs font-bold text-[#9CA3AF] uppercase tracking-widest shrink-0">
+          {filtered.length} of {cases.length} cases
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Active Costing Cases</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Case Name</TableHead>
-              <TableHead>Destination</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Feasibility</TableHead>
-              <TableHead>Date Created</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {cases.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={6} className="text-center py-12">
-                  <div className="flex flex-col items-center justify-center space-y-3">
-                    <div className="text-[#9CA3AF]">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                    </div>
-                    <p className="text-lg font-medium text-[#1F2937]">No Export Cases Found</p>
-                    <p className="text-sm text-[#9CA3AF] max-w-sm text-center">
-                      There are no export cases to review. Export Managers need to create them first.
-                    </p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : (
-              cases.map((c) => (
-                <TableRow key={c.caseId}>
-                  <TableCell className="font-medium">{c.name}</TableCell>
-                  <TableCell>{c.destinationCountry}</TableCell>
-                  <TableCell>
-                    <Badge variant={c.status === "finalized" ? "secondary" : c.status === "in_review" ? "default" : "outline"}>
-                      {c.status.replace("_", " ")}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {c.feasibilityScore !== undefined && c.feasibilityScore !== null 
-                      ? `${c.feasibilityScore.toFixed(1)} / 10` 
-                      : "Not analyzed"}
-                  </TableCell>
-                  <TableCell>{new Date(c.createdAt).toLocaleDateString()}</TableCell>
-                  <TableCell className="text-right">
-                    <Link href={`/finance-case/${c.caseId}/costing`}>
-                      <Button variant="outline" size="sm">Configure Costing</Button>
-                    </Link>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-        </CardContent>
-      </Card>
+      <div className="space-y-4">
+        {filtered.length === 0 ? (
+          <div className="flex justify-center py-12 text-[#9CA3AF] font-bold">No cases match your filters.</div>
+        ) : filtered.map(c => (
+          <div key={c.caseId} className="flex flex-col md:flex-row items-center justify-between p-6 rounded-3xl bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl hover:-translate-y-1 hover:shadow-2xl transition-all gap-6">
+            
+            {/* Case Info */}
+            <div className="flex-[2] min-w-[200px] flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-[#EBF8F2] flex items-center justify-center shrink-0">
+                <Icon icon="solar:calculator-bold-duotone" className="w-6 h-6 text-[#00A651]" />
+              </div>
+              <div>
+                <h4 className="text-xl font-extrabold text-[#1F2937]">{c.name}</h4>
+                <p className="text-sm font-semibold text-[#4B5563] mt-1">{c.destinationCountry}</p>
+              </div>
+            </div>
+
+            {/* Status */}
+            <div className="flex-1">
+              <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Status</p>
+              <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-wide capitalize ${
+                c.status === "finalized" ? "bg-emerald-100 text-emerald-700" :
+                c.status === "in_review" ? "bg-amber-100 text-amber-700" :
+                "bg-gray-100 text-gray-700"
+              }`}>
+                <span className={`w-2 h-2 rounded-full ${
+                  c.status === "finalized" ? "bg-emerald-500" :
+                  c.status === "in_review" ? "bg-amber-500" :
+                  "bg-gray-500"
+                }`}></span>
+                {c.status.replace("_", " ")}
+              </span>
+            </div>
+            
+            {/* Created Date */}
+            <div className="flex-1 hidden md:block">
+              <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Created</p>
+              <p className="text-xs font-bold text-[#4B5563]">
+                {new Date(c.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}
+              </p>
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center md:ml-4 shrink-0">
+              <Link href={`/finance-case/${c.caseId}/costing`} className="inline-block">
+                <button className="bg-[#00A651] hover:bg-[#008F44] text-white font-bold rounded-full px-6 py-3 text-[13px] shadow-md shadow-[#00A651]/20 transition-all">
+                  Configure Costing
+                </button>
+              </Link>
+            </div>
+
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

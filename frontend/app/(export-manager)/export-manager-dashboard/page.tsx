@@ -5,10 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { apiExportCase } from "../../../lib/api/export-case";
 import { apiCosting } from "../../../lib/api/costing";
 import { useState, useMemo } from "react";
-import { 
-  Briefcase, Plus, ArrowRight, AlertTriangle, 
-  CheckCircle, Clock, Filter, ShieldCheck, ChevronRight
-} from "lucide-react";
+import { Icon } from "@iconify/react";
 import { ExportCaseListItem } from "../../../lib/types/export-case";
 
 const STATUS_FILTERS = [
@@ -47,7 +44,7 @@ function CaseRow({ c }: { c: ExportCaseListItem }) {
     >
       <div className="flex items-start gap-3 min-w-0">
         <div className="w-9 h-9 rounded-xl bg-[#EBF8F2] flex items-center justify-center shrink-0 mt-0.5">
-          <Briefcase className="w-4 h-4 text-[#00A651]" />
+          <Icon icon="solar:case-minimalistic-bold-duotone" className="w-4 h-4 text-[#00A651]" />
         </div>
         <div className="min-w-0">
           <p className="font-extrabold text-[#1F2937] text-sm truncate group-hover:text-[#00A651] transition-colors">
@@ -58,7 +55,7 @@ function CaseRow({ c }: { c: ExportCaseListItem }) {
           </p>
           {pendingAction && (
             <div className="flex items-center gap-1.5 mt-2 text-[11px] font-bold text-amber-700">
-              <AlertTriangle className="w-3 h-3 shrink-0" />
+              <Icon icon="solar:danger-triangle-bold-duotone" className="w-3 h-3 shrink-0" />
               {pendingAction}
             </div>
           )}
@@ -84,7 +81,11 @@ function CaseRow({ c }: { c: ExportCaseListItem }) {
         }`}>
           {c.status.replace("_", " ")}
         </span>
-        <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-[#00A651] group-hover:translate-x-0.5 transition-all" />
+        <div className="ml-2">
+          <span className="bg-[#00A651] hover:bg-[#008F44] text-white font-bold rounded-xl py-1.5 px-3 text-[10px] shadow-sm">
+            View Detail
+          </span>
+        </div>
       </div>
     </Link>
   );
@@ -143,7 +144,7 @@ export default function ExportManagerDashboardPage() {
           </Link>
           <Link href="/export-case/new">
             <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#00A651] hover:bg-[#008F44] text-white text-sm font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all">
-              <Plus className="w-4 h-4" /> New Case
+              <Icon icon="solar:add-circle-bold-duotone" className="w-4 h-4" /> New Case
             </button>
           </Link>
         </div>
@@ -152,17 +153,23 @@ export default function ExportManagerDashboardPage() {
       {/* KPI Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
         {[
-          { label: "Total Cases", value: counts.total, color: "text-[#00A651]", bg: "bg-[#EBF8F2]", icon: <Briefcase className="w-5 h-5 text-[#00A651]" /> },
-          { label: "In Review", value: counts.active, color: "text-amber-600", bg: "bg-amber-50", icon: <Clock className="w-5 h-5 text-amber-500" /> },
-          { label: "Draft", value: counts.draft, color: "text-gray-600", bg: "bg-gray-100", icon: <Filter className="w-5 h-5 text-gray-500" /> },
-          { label: "Avg Feasibility", value: avgFeasibility != null ? `${avgFeasibility.toFixed(0)}/100` : "—", color: "text-blue-600", bg: "bg-blue-50", icon: <ShieldCheck className="w-5 h-5 text-blue-500" /> },
+          { label: "Total Cases", value: counts.total, icon: <Icon icon="solar:case-minimalistic-bold-duotone" className="w-4 h-4 text-[#00A651]" />, bg: "bg-[#EBF8F2]", dot: "bg-[#00A651]", subtitle: "All export cases" },
+          { label: "In Review", value: counts.active, icon: <Icon icon="solar:clock-circle-bold-duotone" className="w-4 h-4 text-amber-500" />, bg: "bg-amber-50", dot: "bg-amber-500", subtitle: "Active pipeline" },
+          { label: "Draft", value: counts.draft, icon: <Icon icon="solar:filter-bold-duotone" className="w-4 h-4 text-gray-500" />, bg: "bg-gray-100", dot: "bg-gray-500", subtitle: "Incomplete cases" },
+          { label: "Avg Feasibility", value: avgFeasibility != null ? `${avgFeasibility.toFixed(0)}/100` : "—", icon: <Icon icon="solar:shield-check-bold-duotone" className="w-4 h-4 text-blue-500" />, bg: "bg-blue-50", dot: "bg-blue-500", subtitle: "Overall score" },
         ].map((kpi, i) => (
-          <div key={i} className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6">
-            <div className="flex justify-between items-start mb-5">
-              <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">{kpi.label}</p>
-              <div className={`w-9 h-9 rounded-xl ${kpi.bg} flex items-center justify-center`}>{kpi.icon}</div>
+          <div key={i} className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-5 relative transition-all hover:-translate-y-1 hover:shadow-2xl">
+            <div className="flex justify-between items-start mb-4">
+              <h3 className="text-[10px] font-bold text-[#4B5563] uppercase tracking-widest mt-1">{kpi.label}</h3>
+              <div className={`w-8 h-8 rounded-lg ${kpi.bg} flex items-center justify-center`}>{kpi.icon}</div>
             </div>
-            <p className={`text-4xl font-black ${kpi.color}`}>{kpi.value}</p>
+            <div className="flex items-baseline gap-1 mb-2">
+              <div className="text-4xl font-extrabold text-[#1F2937]">{kpi.value}</div>
+            </div>
+            <div className="flex items-center text-xs font-semibold text-[#4B5563]">
+              <span className={`w-2 h-2 rounded-full ${kpi.dot} mr-2 shrink-0`}></span>
+              {kpi.subtitle}
+            </div>
           </div>
         ))}
       </div>
@@ -170,8 +177,8 @@ export default function ExportManagerDashboardPage() {
       {/* Cases Section with Status Filter */}
       <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-          <h3 className="text-xl font-extrabold text-[#1F2937] flex items-center gap-2">
-            <span className="w-2.5 h-7 bg-[#00A651] rounded-full" />
+          <h3 className="text-xl font-bold text-[#1F2937] flex items-center gap-2">
+            <span className="w-2 h-6 bg-[#00A651] rounded-full inline-block"></span>
             My Export Cases
           </h3>
           {/* Status filter tabs */}
@@ -213,7 +220,7 @@ export default function ExportManagerDashboardPage() {
         {filtered.length > 0 && (
           <div className="mt-5 flex justify-end">
             <Link href="/export-case" className="text-xs font-bold text-[#00A651] hover:underline flex items-center gap-1">
-              View all cases <ArrowRight className="w-3 h-3" />
+              View all cases <Icon icon="solar:arrow-right-bold-duotone" className="w-3 h-3" />
             </Link>
           </div>
         )}

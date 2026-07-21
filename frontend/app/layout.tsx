@@ -10,6 +10,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "EXORA | Export Feasibility & Costing Engine",
   description: "Calculate production, logistics, freight, insurance, and certification costs for your export business.",
+  icons: {
+    icon: '/logo.png',
+  },
 };
 
 import { QueryProvider } from "@/components/providers/QueryProvider";

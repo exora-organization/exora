@@ -83,7 +83,7 @@ export default function ResetPasswordPage() {
                   id="email"
                   type="email"
                   placeholder="manager@company.com"
-                  className="pl-10 h-12 bg-[#EBF8F2] border-transparent focus:bg-white text-[#1F2937] placeholder:text-[#9CA3AF] text-base rounded-lg"
+                  className="pl-10 h-12 bg-white border border-[#D1EDE4] focus:border-[#00A651] focus:ring-1 focus:ring-[#00A651] shadow-sm text-[#1F2937] placeholder:text-[#9CA3AF] text-base rounded-lg"
                   {...register("email")}
                 />
               </div>

@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { apiCosting } from "../../../../../lib/api/costing";
 import { apiExportCase } from "../../../../../lib/api/export-case";
-import { ShieldCheck, AlertTriangle, ArrowLeft } from "lucide-react";
+import { Icon } from "@iconify/react";
 
 const COST_FIELDS: { key: keyof import("../../../../../lib/types/costing").CostDataResponse; label: string; prefix?: string; suffix?: string }[] = [
   { key: "hpp", label: "Cost of Goods (HPP)", prefix: "Rp" },
@@ -49,8 +49,8 @@ export default function EMCostBreakdownDetailPage() {
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto pb-12">
-      <Link href={`/export-case/${caseId}`} className="inline-flex items-center gap-1.5 text-sm font-bold text-[#00A651] hover:underline">
-        <ArrowLeft className="w-4 h-4" /> Back to Case
+      <Link href={`/export-case/${caseId}`} className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00A651] hover:bg-[#008F44] text-white text-[13px] font-bold rounded-full shadow-md hover:shadow-lg transition-all mb-5">
+        <Icon icon="solar:arrow-left-bold-duotone" className="w-4 h-4" /> Back to Case
       </Link>
 
       <div className="flex items-start justify-between gap-4 flex-wrap">
@@ -61,20 +61,21 @@ export default function EMCostBreakdownDetailPage() {
           </p>
         </div>
         <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 border border-blue-200 rounded-xl text-xs font-bold text-blue-700">
-          <ShieldCheck className="w-4 h-4 text-blue-500" />
+          <Icon icon="solar:shield-check-bold-duotone" className="w-4 h-4 text-blue-500" />
           Read-only · US-031
         </div>
       </div>
 
       {/* Read-only notice */}
       <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 rounded-2xl text-sm text-blue-800 font-semibold">
-        <ShieldCheck className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
+        <Icon icon="solar:shield-check-bold-duotone" className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
         Cost data is entered and managed by Finance Staff. Export Managers have read-only access to view cost components (US-031).
       </div>
 
       {costMissing ? (
-        <div className="flex flex-col items-center gap-4 p-10 bg-amber-50 border border-amber-200 rounded-3xl text-center">
-          <AlertTriangle className="w-12 h-12 text-amber-500" />
+        <div className="flex flex-col items-center gap-4 p-10 bg-white/90 backdrop-blur-xl border border-amber-200 shadow-xl rounded-3xl text-center relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-amber-100 rounded-bl-full opacity-50 -z-10" />
+          <Icon icon="solar:danger-triangle-bold-duotone" className="w-12 h-12 text-amber-500" />
           <div>
             <p className="text-lg font-extrabold text-amber-900 mb-1">Costing not yet completed by Finance</p>
             <p className="text-sm text-amber-700 font-semibold">
@@ -83,8 +84,8 @@ export default function EMCostBreakdownDetailPage() {
           </div>
         </div>
       ) : (
-        <div className="bg-white rounded-3xl border border-[#E8E3D9] shadow-md overflow-hidden">
-          <div className="bg-[#F9FAFB] border-b border-[#E8E3D9] px-6 py-4">
+        <div className="bg-white/90 backdrop-blur-xl rounded-3xl border border-white/60 shadow-xl overflow-hidden">
+          <div className="bg-white/50 backdrop-blur-sm border-b border-white/60 px-6 py-4">
             <p className="text-xs font-bold text-[#9CA3AF] uppercase tracking-widest">
               Cost Components — Incoterm: {cost?.paymentTerm}
             </p>

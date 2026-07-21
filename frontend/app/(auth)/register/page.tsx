@@ -138,31 +138,31 @@ function RegisterForm() {
 
   return (
     <div className="w-full">
-      <div className="group bg-white/80 backdrop-blur-xl border border-white/60 p-6 sm:p-8 pt-6 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
+      <div className="group bg-[#E6F4F1] p-5 sm:p-6 pt-5 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#EBF8F2] to-transparent rounded-bl-full opacity-50 -z-10 group-hover:scale-150 transition-transform duration-700"></div>
-        <div className="flex items-center justify-center space-x-3 mb-4 text-center">
-          <div className="relative w-10 h-10 flex items-center justify-center shrink-0">
+        <div className="flex items-center justify-center space-x-2 mb-2 text-center">
+          <div className="relative w-8 h-8 flex items-center justify-center shrink-0">
             <Image src={logoImg} alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
-          <h1 className="font-extrabold text-[#1F2937] tracking-tight text-2xl leading-tight">EXORA</h1>
+          <h1 className="font-extrabold text-[#1F2937] tracking-tight text-xl leading-tight">EXORA</h1>
         </div>
 
-        <div className="mb-4">
-          <h2 className="text-2xl font-bold text-[#1F2937] mb-1 tracking-tight">Get Started</h2>
-          <p className="text-sm text-[#9CA3AF]">Create your account to access the dashboard.</p>
+        <div className="mb-3">
+          <h2 className="text-xl font-bold text-[#1F2937] mb-0.5 tracking-tight">Get Started</h2>
+          <p className="text-[13px] text-[#9CA3AF]">Create your account to access the dashboard.</p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="displayName" className="text-xs font-bold text-[#4B5563] tracking-widest uppercase">Full Name</Label>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-2.5">
+          <div className="space-y-1.5">
+            <Label htmlFor="displayName" className="text-[10px] font-bold text-[#4B5563] tracking-widest uppercase">Full Name</Label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#9CA3AF]">
-                <User size={18} />
+              <div className="absolute inset-y-0 left-0 flex items-center pl-2.5 pointer-events-none text-[#9CA3AF]">
+                <User size={16} />
               </div>
               <Input
                 id="displayName"
                 placeholder="John Doe"
-                className="pl-10 h-10 bg-[#EBF8F2] border-transparent focus:bg-white text-[#1F2937] placeholder:text-[#9CA3AF] text-sm rounded-lg"
+                className="pl-9 h-9 bg-white border border-[#D1EDE4] focus:border-[#00A651] focus:ring-1 focus:ring-[#00A651] shadow-sm text-[#1F2937] placeholder:text-[#9CA3AF] text-xs rounded-lg"
                 {...register("displayName")}
               />
             </div>
@@ -171,17 +171,17 @@ function RegisterForm() {
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-xs font-bold text-[#4B5563] tracking-widest uppercase">Corporate Email Address</Label>
+          <div className="space-y-1.5">
+            <Label htmlFor="email" className="text-[10px] font-bold text-[#4B5563] tracking-widest uppercase">Corporate Email Address</Label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#9CA3AF]">
-                <Mail size={18} />
+              <div className="absolute inset-y-0 left-0 flex items-center pl-2.5 pointer-events-none text-[#9CA3AF]">
+                <Mail size={16} />
               </div>
               <Input
                 id="email"
                 type="email"
                 placeholder="manager@company.com"
-                className="pl-10 h-10 bg-[#EBF8F2] border-transparent focus:bg-white text-[#1F2937] placeholder:text-[#9CA3AF] text-sm rounded-lg"
+                className="pl-9 h-9 bg-white border border-[#D1EDE4] focus:border-[#00A651] focus:ring-1 focus:ring-[#00A651] shadow-sm text-[#1F2937] placeholder:text-[#9CA3AF] text-xs rounded-lg"
                 {...register("email")}
               />
             </div>
@@ -190,29 +190,29 @@ function RegisterForm() {
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="password" className="text-xs font-bold text-[#4B5563] tracking-widest uppercase">Secure Password</Label>
+          <div className="space-y-1.5">
+            <Label htmlFor="password" className="text-[10px] font-bold text-[#4B5563] tracking-widest uppercase">Secure Password</Label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#9CA3AF]">
-                <Lock size={18} />
+              <div className="absolute inset-y-0 left-0 flex items-center pl-2.5 pointer-events-none text-[#9CA3AF]">
+                <Lock size={16} />
               </div>
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••••••"
-                className="pl-10 pr-10 h-10 bg-[#EBF8F2] border-transparent focus:bg-white text-[#1F2937] placeholder:text-[#9CA3AF] text-sm rounded-lg"
+                className="pl-9 pr-9 h-9 bg-white border border-[#D1EDE4] focus:border-[#00A651] focus:ring-1 focus:ring-[#00A651] shadow-sm text-[#1F2937] placeholder:text-[#9CA3AF] text-xs rounded-lg"
                 {...register("password")}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#9CA3AF] hover:text-[#4B5563] focus:outline-none"
+                className="absolute inset-y-0 right-0 flex items-center pr-2.5 text-[#9CA3AF] hover:text-[#4B5563] focus:outline-none"
               >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
             {passwordValue && (
-              <div className="mt-2 bg-[#EBF8F2] rounded-xl p-3 border border-[#E8E3D9]">
+              <div className="mt-1.5 bg-[#EBF8F2] rounded-lg p-2 border border-[#E8E3D9]">
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-[10px] font-bold text-[#9CA3AF] tracking-widest uppercase">Strength:</span>
                   <span className={`text-[10px] font-bold tracking-widest uppercase ${strength.label === "Weak" ? "text-[#F43F5E]" : strength.label === "Medium" ? "text-yellow-500" : "text-[#00A651]"}`}>
@@ -253,23 +253,23 @@ function RegisterForm() {
             )}
           </div>
 
-          <div className="flex items-center space-x-2 pt-2">
+          <div className="flex items-center space-x-2 pt-1">
             <input 
               type="checkbox" 
               id="terms" 
-              className="w-4 h-4 rounded border-gray-300 text-[#0a9b5c] focus:ring-[#0a9b5c]"
+              className="w-3.5 h-3.5 rounded border-gray-300 text-[#0a9b5c] focus:ring-[#0a9b5c]"
               {...register("terms")}
             />
-            <Label htmlFor="terms" className="text-sm text-[#4B5563] font-medium cursor-pointer">
+            <Label htmlFor="terms" className="text-xs text-[#4B5563] font-medium cursor-pointer">
               I agree to the <span className="text-blue-600 hover:underline">Terms of Service</span> and <span className="text-blue-600 hover:underline">Privacy Policy</span>.
             </Label>
           </div>
           {errors.terms && (
-            <p className="text-sm text-red-500 mt-1">{errors.terms.message}</p>
+            <p className="text-xs text-red-500 mt-1">{errors.terms.message}</p>
           )}
 
           {error && (
-            <div className="p-3 text-sm bg-red-50 text-red-600 rounded-md border border-red-100">
+            <div className="p-2 text-xs bg-red-50 text-red-600 rounded-md border border-red-100">
               {error}
             </div>
           )}
@@ -281,32 +281,32 @@ function RegisterForm() {
             onLoad={renderRecaptcha}
           />
 
-          <div className="flex justify-center my-4">
+          <div className="flex justify-center my-2 transform scale-95 origin-top">
             <div id="recaptcha-container"></div>
           </div>
 
           <Button 
             type="submit" 
-            className="w-full h-10 bg-[#00A651] hover:bg-[#008F44] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center space-x-2 transition-all duration-300 group" 
+            className="w-full h-9 bg-[#00A651] hover:bg-[#008F44] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center space-x-2 transition-all duration-300 group text-[11px]" 
             disabled={isLoading || !recaptchaToken}
           >
             <span>{isLoading ? "CREATING..." : "CREATE ACCOUNT"}</span>
-            {!isLoading && <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />}
+            {!isLoading && <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />}
           </Button>
         </form>
 
-        <div className="flex items-center justify-between mt-5 w-full pt-4 border-t border-[#E8E3D9]">
-          <div className="text-[#9CA3AF] text-xs font-medium">
-            Already have an account?
+        <div className="flex items-center justify-between mt-4 w-full pt-3 border-t border-[#E8E3D9]">
+          <div className="text-[#9CA3AF] text-[10px] font-medium uppercase tracking-wider">
+            Have an account?
           </div>
-          <Link href={`/login${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ""}`} className="px-5 py-2.5 rounded-xl bg-white border border-[#00A651] text-[#00A651] hover:bg-[#00A651] hover:text-white text-xs font-extrabold uppercase tracking-wide shadow-sm hover:shadow-md transition-all">
+          <Link href={`/login${redirectPath ? `?redirect=${encodeURIComponent(redirectPath)}` : ""}`} className="px-4 py-2 rounded-lg bg-white border border-[#00A651] text-[#00A651] hover:bg-[#00A651] hover:text-white text-[10px] font-extrabold uppercase tracking-wide shadow-sm hover:shadow-md transition-all">
             Log in to portal
           </Link>
         </div>
       </div>
 
-      <div className="mt-6 text-center">
-        <Link href="/" className="inline-flex items-center justify-center px-8 py-3 rounded-2xl bg-white hover:bg-[#F3F4F6] border border-[#E8E3D9] shadow-md hover:shadow-lg text-sm text-[#1F2937] font-extrabold transition-all">
+      <div className="mt-4 text-center">
+        <Link href="/" className="inline-flex items-center justify-center px-6 py-2 rounded-xl bg-white hover:bg-[#F3F4F6] border border-[#E8E3D9] shadow-sm hover:shadow-md text-xs text-[#1F2937] font-extrabold transition-all">
           Back to Home
         </Link>
       </div>

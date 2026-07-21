@@ -8,7 +8,6 @@ import { apiDocuments } from "../../../../../lib/api/documents";
 import { apiExportCase } from "../../../../../lib/api/export-case";
 import { apiPricing } from "../../../../../lib/api/pricing";
 import { Button } from "../../../../../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../../../../components/ui/card";
 import { Badge } from "../../../../../components/ui/badge";
 import { Alert, AlertTitle, AlertDescription } from "../../../../../components/ui/alert";
 import {
@@ -19,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../../../../components/ui/table";
-import { FileText, Download, Eye } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useUserProfile } from "../../../../../hooks/useUserProfile";
 import { PdfPreviewModal } from "../../../../../components/ui/pdf-preview-modal";
 import { toast } from "sonner";
@@ -191,39 +190,42 @@ export default function DocumentGenerationPage() {
       />
 
       <div className="space-y-6 max-w-5xl mx-auto pb-12">
-        <div>
-          <Link href={`/export-case/${caseId}`} className="text-sm text-blue-500 hover:underline mb-2 block">
-            &larr; Back to Case Details
+        <div className="mb-5 flex justify-between items-center">
+          <Link href={`/export-case/${caseId}`} className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00A651] hover:bg-[#008F44] text-white text-[13px] font-bold rounded-full shadow-md hover:shadow-lg transition-all">
+            <Icon icon="solar:arrow-left-bold-duotone" className="w-4 h-4" /> Back to Case
           </Link>
-          <h2 className="text-3xl font-bold tracking-tight">Document Generation</h2>
-          <p className="text-[#9CA3AF] mt-1">Generate and download official PDF reports securely built by the Exora backend.</p>
+        </div>
+
+        <div>
+          <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Document Generation</h2>
+          <p className="text-[#6B7280] font-medium mt-1">Generate and download official PDF reports securely built by the Exora backend.</p>
         </div>
 
         {exportCase && (
-          <Card className="bg-[#FAF8F3]">
-            <CardContent className="p-4 grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
+          <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
               <div>
-                <p className="text-xs text-[#9CA3AF] font-medium">Case Name</p>
-                <p className="font-semibold text-[#1F2937] truncate">{exportCase.name}</p>
+                <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Case Name</p>
+                <p className="font-extrabold text-[#1F2937] truncate mt-1">{exportCase.name}</p>
               </div>
               <div>
-                <p className="text-xs text-[#9CA3AF] font-medium">Product</p>
-                <p className="font-semibold text-[#1F2937] truncate">{exportCase.product}</p>
+                <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Product</p>
+                <p className="font-extrabold text-[#1F2937] truncate mt-1">{exportCase.product}</p>
               </div>
               <div>
-                <p className="text-xs text-[#9CA3AF] font-medium">Destination</p>
-                <p className="font-semibold text-[#1F2937] truncate">{exportCase.destinationCountry}</p>
+                <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Destination</p>
+                <p className="font-extrabold text-[#1F2937] truncate mt-1">{exportCase.destinationCountry}</p>
               </div>
               <div>
-                <p className="text-xs text-[#9CA3AF] font-medium">Active Incoterm</p>
+                <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Active Incoterm</p>
                 {activeIncoterm ? (
-                  <Badge variant="default" className="mt-1">{activeIncoterm}</Badge>
+                  <div className="mt-1 inline-flex items-center px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-bold text-xs">{activeIncoterm}</div>
                 ) : (
-                  <span className="text-sm text-[#9CA3AF] mt-1 block">Unknown</span>
+                  <span className="text-sm text-[#9CA3AF] mt-1 block font-bold">Unknown</span>
                 )}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
 
         {errorMsg && missingInfo && (
@@ -254,110 +256,103 @@ export default function DocumentGenerationPage() {
           </Alert>
         )}
 
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid md:grid-cols-2 gap-6">
           {role === "export_manager" && (
-            <Card className="hover:shadow-md transition-shadow">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-blue-500" /> Quotation</CardTitle>
-                <CardDescription>Generates a formal price quotation.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button onClick={() => generateQuotationMut.mutate()} disabled={generateQuotationMut.isPending} className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                  {generateQuotationMut.isPending ? "Generating..." : "Generate & Preview Quotation"}
-                </Button>
-              </CardContent>
-            </Card>
+            <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 hover:-translate-y-1 transition-transform flex flex-col justify-between h-full">
+              <div>
+                <h3 className="text-xl font-extrabold text-[#1F2937] flex items-center gap-2 mb-2"><Icon icon="solar:document-text-bold-duotone" className="h-6 w-6 text-blue-500" /> Quotation</h3>
+                <p className="text-[#6B7280] font-medium text-sm mb-6">Generates a formal price quotation.</p>
+              </div>
+              <Button onClick={() => generateQuotationMut.mutate()} disabled={generateQuotationMut.isPending} className="w-full h-12 rounded-full bg-[#00A651] hover:bg-[#008F44] text-white font-bold text-[13px] shadow-md hover:shadow-lg transition-all">
+                {generateQuotationMut.isPending ? "Generating..." : "Generate & Preview Quotation"}
+              </Button>
+            </div>
           )}
 
           {role === "export_manager" && (
-            <Card className="hover:shadow-md transition-shadow">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-indigo-500" /> Proforma Invoice</CardTitle>
-                <CardDescription>Generates a proforma invoice for buyers.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button onClick={() => generateProformaMut.mutate()} disabled={generateProformaMut.isPending} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">
-                  {generateProformaMut.isPending ? "Generating..." : "Generate & Preview Proforma Invoice"}
-                </Button>
-              </CardContent>
-            </Card>
+            <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 hover:-translate-y-1 transition-transform flex flex-col justify-between h-full">
+              <div>
+                <h3 className="text-xl font-extrabold text-[#1F2937] flex items-center gap-2 mb-2"><Icon icon="solar:document-text-bold-duotone" className="h-6 w-6 text-indigo-500" /> Proforma Invoice</h3>
+                <p className="text-[#6B7280] font-medium text-sm mb-6">Generates a proforma invoice for buyers.</p>
+              </div>
+              <Button onClick={() => generateProformaMut.mutate()} disabled={generateProformaMut.isPending} className="w-full h-12 rounded-full bg-[#00A651] hover:bg-[#008F44] text-white font-bold text-[13px] shadow-md hover:shadow-lg transition-all">
+                {generateProformaMut.isPending ? "Generating..." : "Generate & Preview Proforma Invoice"}
+              </Button>
+            </div>
           )}
 
           {role === "finance_staff" && (
-            <Card className="hover:shadow-md transition-shadow">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-green-500" /> Cost Breakdown Report</CardTitle>
-                <CardDescription>Detailed export cost breakdown analysis.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button onClick={() => generateCostBreakdownMut.mutate()} disabled={generateCostBreakdownMut.isPending} className="w-full bg-emerald-600 hover:bg-emerald-700 text-white">
-                  {generateCostBreakdownMut.isPending ? "Generating..." : "Generate & Preview Cost Breakdown"}
-                </Button>
-              </CardContent>
-            </Card>
+            <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 hover:-translate-y-1 transition-transform flex flex-col justify-between h-full">
+              <div>
+                <h3 className="text-xl font-extrabold text-[#1F2937] flex items-center gap-2 mb-2"><Icon icon="solar:document-text-bold-duotone" className="h-6 w-6 text-emerald-500" /> Cost Breakdown Report</h3>
+                <p className="text-[#6B7280] font-medium text-sm mb-6">Detailed export cost breakdown analysis.</p>
+              </div>
+              <Button onClick={() => generateCostBreakdownMut.mutate()} disabled={generateCostBreakdownMut.isPending} className="w-full h-12 rounded-full bg-[#00A651] hover:bg-[#008F44] text-white font-bold text-[13px] shadow-md hover:shadow-lg transition-all">
+                {generateCostBreakdownMut.isPending ? "Generating..." : "Generate & Preview Cost Breakdown"}
+              </Button>
+            </div>
           )}
 
           {role === "company_owner" && (
-            <Card className="hover:shadow-md transition-shadow">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5 text-purple-500" /> Export Feasibility Report</CardTitle>
-                <CardDescription>Comprehensive risk and feasibility report.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button onClick={() => generateFeasibilityMut.mutate()} disabled={generateFeasibilityMut.isPending} className="w-full bg-purple-600 hover:bg-purple-700 text-white">
-                  {generateFeasibilityMut.isPending ? "Generating..." : "Generate & Preview Feasibility Report"}
-                </Button>
-              </CardContent>
-            </Card>
+            <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 hover:-translate-y-1 transition-transform flex flex-col justify-between h-full">
+              <div>
+                <h3 className="text-xl font-extrabold text-[#1F2937] flex items-center gap-2 mb-2"><Icon icon="solar:document-text-bold-duotone" className="h-6 w-6 text-purple-500" /> Export Feasibility Report</h3>
+                <p className="text-[#6B7280] font-medium text-sm mb-6">Comprehensive risk and feasibility report.</p>
+              </div>
+              <Button onClick={() => generateFeasibilityMut.mutate()} disabled={generateFeasibilityMut.isPending} className="w-full h-12 rounded-full bg-[#00A651] hover:bg-[#008F44] text-white font-bold text-[13px] shadow-md hover:shadow-lg transition-all">
+                {generateFeasibilityMut.isPending ? "Generating..." : "Generate & Preview Feasibility Report"}
+              </Button>
+            </div>
           )}
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Generated Documents</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl overflow-hidden">
+          <div className="bg-white/50 backdrop-blur-sm border-b border-white/60 px-6 py-5">
+            <h3 className="text-xl font-extrabold text-[#1F2937]">Generated Documents</h3>
+          </div>
+          <div className="p-6">
             {documents.length === 0 ? (
-              <div className="text-center py-8 text-[#9CA3AF]">
-                <FileText className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-                <p>No documents have been generated yet.</p>
+              <div className="text-center py-10 text-[#9CA3AF]">
+                <Icon icon="solar:document-text-bold-duotone" className="h-16 w-16 mx-auto text-gray-300 mb-4" />
+                <p className="font-medium">No documents have been generated yet.</p>
                 <p className="text-sm">Select a document type to begin.</p>
               </div>
             ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Document Name</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Generated At</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead className="font-bold text-[#6B7280]">Document Name</TableHead>
+                    <TableHead className="font-bold text-[#6B7280]">Type</TableHead>
+                    <TableHead className="font-bold text-[#6B7280]">Generated At</TableHead>
+                    <TableHead className="font-bold text-[#6B7280]">Status</TableHead>
+                    <TableHead className="text-right font-bold text-[#6B7280]">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {documents.map((doc) => (
                     <TableRow key={doc.documentId}>
-                      <TableCell className="font-medium">{doc.filename}</TableCell>
-                      <TableCell>{formatDocType(doc.documentType)}</TableCell>
-                      <TableCell>{new Date(doc.generatedAt).toLocaleString()}</TableCell>
-                      <TableCell><Badge variant="outline" className="bg-green-50 text-green-700">Generated</Badge></TableCell>
+                      <TableCell className="font-extrabold text-[#1F2937]">{doc.filename}</TableCell>
+                      <TableCell className="font-medium text-[#4B5563]">{formatDocType(doc.documentType)}</TableCell>
+                      <TableCell className="text-[#6B7280] font-medium">{new Date(doc.generatedAt).toLocaleString()}</TableCell>
+                      <TableCell><div className="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 rounded-full font-bold text-[10px] uppercase tracking-widest">Generated</div></TableCell>
                       <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-1">
+                        <div className="flex items-center justify-end gap-2">
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => openPreview(doc.documentId, doc.filename)}
-                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            className="text-[#00A651] hover:text-[#008F44] hover:bg-green-50 font-bold rounded-full transition-colors"
                           >
-                            <Eye className="h-4 w-4 mr-1" />
+                            <Icon icon="solar:eye-bold-duotone" className="h-5 w-5 mr-1" />
                             Preview
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDownload(doc.documentId, doc.filename)}
+                            className="text-[#1F2937] hover:text-black hover:bg-gray-100 font-bold rounded-full transition-colors"
                           >
-                            <Download className="h-4 w-4 mr-1" />
+                            <Icon icon="solar:download-square-bold-duotone" className="h-5 w-5 mr-1" />
                             Download
                           </Button>
                         </div>
@@ -367,8 +362,8 @@ export default function DocumentGenerationPage() {
                 </TableBody>
               </Table>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </>
   );

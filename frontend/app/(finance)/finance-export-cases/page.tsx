@@ -2,9 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { apiExportCase } from "../../../lib/api/export-case";
-import { Badge } from "../../../components/ui/badge";
-import { Button } from "../../../components/ui/button";
-import { Info, Search, Filter, SlidersHorizontal } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useState, useMemo } from "react";
 
 const SORT_OPTIONS = [
@@ -46,18 +44,14 @@ export default function FinanceExportCasesPage() {
   }, [cases, search, statusFilter, sortBy]);
 
   if (isLoading) {
-    return (
-      <div className="p-8 flex justify-center items-center min-h-[50vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-[#00A651]"></div>
-      </div>
-    );
+    return <div className="flex justify-center py-20"><div className="animate-spin h-10 w-10 rounded-full border-b-4 border-[#00A651]" /></div>;
   }
 
   if (error) {
     return (
-      <div className="p-8 text-center bg-red-50 text-red-600 rounded-3xl font-bold max-w-lg mx-auto mt-10">
+      <div className="p-8 text-center bg-red-50 text-red-600 rounded-3xl font-bold max-w-lg mx-auto mt-10 shadow-xl">
         <p>Failed to load export cases.</p>
-        <Button onClick={() => refetch()} variant="destructive" className="mt-4 rounded-xl">Retry</Button>
+        <button onClick={() => refetch()} className="mt-4 rounded-full bg-red-600 text-white px-6 py-2 shadow-md hover:bg-red-700 transition-all">Retry</button>
       </div>
     );
   }
@@ -65,27 +59,27 @@ export default function FinanceExportCasesPage() {
   return (
     <div className="space-y-8 max-w-6xl mx-auto pb-12">
       <div>
-        <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Export Cases (View Only)</h2>
-        <p className="text-sm text-[#4B5563] font-medium mt-1">
+        <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">Export Cases (View Only)</h2>
+        <p className="text-sm text-[#4B5563] font-medium mt-2">
           Review general export case registry parameters (FR-007)
         </p>
       </div>
 
       {/* Info notice */}
-      <div className="flex items-start gap-3 p-4 bg-[#FAF8F3] border border-[#E8E3D9] rounded-2xl text-sm text-[#78350F] font-semibold">
-        <Info className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+      <div className="flex items-start gap-4 p-6 bg-amber-50/80 backdrop-blur-md border border-amber-200 rounded-3xl shadow-sm text-sm text-[#78350F] font-semibold">
+        <Icon icon="solar:info-circle-bold-duotone" className="w-6 h-6 text-amber-600 shrink-0 mt-0.5" />
         <div>
-          <p className="font-extrabold mb-1">Metadata-Only Access Restricted</p>
-          <p className="text-xs text-[#92400E] font-medium leading-relaxed">
+          <p className="font-extrabold text-lg mb-1">Metadata-Only Access Restricted</p>
+          <p className="text-sm text-[#92400E] font-medium leading-relaxed">
             In compliance with FR-007, Finance Staff may only view case metadata. Detailed costing sheets and financial simulations are restricted to cases assigned to you under your Costing Configuration dashboard.
           </p>
         </div>
       </div>
 
       {/* Search & Sort Bar */}
-      <div className="bg-white rounded-2xl border border-[#E8E3D9] shadow-sm p-4 flex flex-wrap gap-3 items-center">
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl transition-all hover:shadow-2xl p-4 flex flex-wrap gap-3 items-center">
         <div className="flex items-center gap-2 flex-1 min-w-[200px] bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2">
-          <Search className="w-4 h-4 text-gray-400 shrink-0" />
+          <Icon icon="solar:magnifer-linear" className="w-4 h-4 text-gray-400 shrink-0" />
           <input
             className="bg-transparent text-sm w-full outline-none font-medium placeholder:text-gray-400"
             placeholder="Search by case name or country..."
@@ -94,7 +88,7 @@ export default function FinanceExportCasesPage() {
           />
         </div>
         <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-gray-400 shrink-0" />
+          <Icon icon="solar:filter-bold-duotone" className="w-4 h-4 text-gray-400 shrink-0" />
           <select
             className="text-sm bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2 font-semibold outline-none"
             value={statusFilter}
@@ -107,7 +101,7 @@ export default function FinanceExportCasesPage() {
           </select>
         </div>
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="w-4 h-4 text-gray-400 shrink-0" />
+          <Icon icon="solar:slider-horizontal-bold-duotone" className="w-4 h-4 text-gray-400 shrink-0" />
           <select
             className="text-sm bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2 font-semibold outline-none"
             value={sortBy}
@@ -123,48 +117,57 @@ export default function FinanceExportCasesPage() {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="bg-white border border-[#E8E3D9] shadow-md rounded-3xl overflow-hidden">
-        <div className="bg-gray-50/50 border-b border-[#E8E3D9] px-6 py-4">
-          <h3 className="text-lg font-bold text-[#1F2937]">Company Export Case Registry</h3>
-        </div>
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50/40">
-            <tr className="border-b border-[#E8E3D9]">
-              <th className="text-left px-6 py-4 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Case Name</th>
-              <th className="text-left px-4 py-4 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Destination</th>
-              <th className="text-left px-4 py-4 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Status</th>
-              <th className="text-right px-6 py-4 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Date Created</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[#F3F4F6]">
-            {filtered.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="text-center py-12 font-bold text-gray-400">
-                  No cases match your filters.
-                </td>
-              </tr>
-            ) : (
-              filtered.map((c) => (
-                <tr key={c.caseId} className="hover:bg-[#FAFCFB] transition-colors border-b border-[#F3F4F6]">
-                  <td className="px-6 py-4 font-bold text-[#1F2937]">{c.name}</td>
-                  <td className="px-4 py-4 font-semibold text-[#4B5563]">{c.destinationCountry}</td>
-                  <td className="px-4 py-4">
-                    <Badge
-                      variant={c.status === "finalized" ? "secondary" : c.status === "in_review" ? "default" : "outline"}
-                      className="font-bold py-1 px-3"
-                    >
-                      {c.status.replace("_", " ").toUpperCase()}
-                    </Badge>
-                  </td>
-                  <td className="px-6 py-4 text-right text-xs text-gray-400 font-bold">
-                    {new Date(c.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+      <div className="space-y-4">
+        {filtered.length === 0 ? (
+          <div className="flex justify-center py-12 text-[#9CA3AF] font-bold">No cases match your filters.</div>
+        ) : filtered.map(c => (
+          <div key={c.caseId} className="flex flex-col md:flex-row items-center justify-between p-6 rounded-3xl bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl hover:-translate-y-1 hover:shadow-2xl transition-all gap-6">
+            
+            {/* Case Info */}
+            <div className="flex-[2] min-w-[200px] flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-[#EBF8F2] flex items-center justify-center shrink-0">
+                <Icon icon="solar:case-minimalistic-bold-duotone" className="w-6 h-6 text-[#00A651]" />
+              </div>
+              <div>
+                <h4 className="text-xl font-extrabold text-[#1F2937]">{c.name}</h4>
+                <p className="text-sm font-semibold text-[#4B5563] mt-1">{c.destinationCountry}</p>
+              </div>
+            </div>
+
+            {/* Status */}
+            <div className="flex-1">
+              <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Status</p>
+              <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-wide capitalize ${
+                c.status === "finalized" ? "bg-emerald-100 text-emerald-700" :
+                c.status === "in_review" ? "bg-amber-100 text-amber-700" :
+                "bg-gray-100 text-gray-700"
+              }`}>
+                <span className={`w-2 h-2 rounded-full ${
+                  c.status === "finalized" ? "bg-emerald-500" :
+                  c.status === "in_review" ? "bg-amber-500" :
+                  "bg-gray-500"
+                }`}></span>
+                {c.status.replace("_", " ")}
+              </span>
+            </div>
+            
+            {/* Created Date */}
+            <div className="flex-1">
+              <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Created</p>
+              <p className="text-xs font-bold text-[#4B5563]">
+                {new Date(c.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}
+              </p>
+            </div>
+
+            {/* View Only Tag */}
+            <div className="flex items-center md:ml-4 shrink-0">
+              <span className="flex items-center gap-1.5 text-xs font-bold text-gray-500 bg-gray-100 border border-gray-200 px-3 py-1.5 rounded-full">
+                <Icon icon="solar:eye-bold-duotone" className="w-4 h-4" /> View Only
+              </span>
+            </div>
+
+          </div>
+        ))}
       </div>
     </div>
   );

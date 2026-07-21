@@ -53,9 +53,9 @@ export function PublicNavbar() {
         {navLinks.map((link) => {
           const isActive = pathname === link.href;
           return (
-            <Link 
-              key={link.href} 
-              href={link.href} 
+            <Link
+              key={link.href}
+              href={link.href}
               className={`${isActive ? 'text-[#00A651]' : 'text-[#4B5563] hover:text-[#1F2937]'} transition-colors`}
             >
               {link.label}
@@ -65,7 +65,7 @@ export function PublicNavbar() {
       </nav>
 
       <div className="flex items-center space-x-4">
-        <button 
+        <button
           onClick={handlePortalClick}
           disabled={isNavigating || loading}
           className="bg-[#00A651] hover:bg-[#008F44] text-white px-6 py-2.5 rounded text-sm font-bold tracking-widest uppercase transition-colors shadow-md disabled:opacity-70 flex items-center space-x-2"

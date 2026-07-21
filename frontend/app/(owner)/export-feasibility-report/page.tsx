@@ -100,147 +100,164 @@ export default function ExportFeasibilityReportPage() {
         documentId={previewModal.documentId}
         filename={previewModal.filename}
       />
-    <div className="space-y-8 max-w-3xl mx-auto pb-12">
-      {/* Header */}
-      <div>
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-2xl bg-[#EBF8F2] flex items-center justify-center">
-            <Icon icon="solar:document-text-bold-duotone" className="w-5 h-5 text-[#00A651]" />
+      <div className="space-y-8 max-w-6xl mx-auto pb-12">
+        {/* Header */}
+        <div>
+          <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937] flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-[#EBF8F2] flex items-center justify-center shadow-inner">
+              <Icon icon="solar:document-text-bold-duotone" className="w-6 h-6 text-[#00A651]" />
+            </div>
+            Export Feasibility Report
+          </h2>
+          <p className="text-sm text-[#4B5563] font-medium mt-3">
+            Select one export case and generate a PDF report containing metrics, risk scores, feasibility assessment, and AI recommendations. (FR-022)
+          </p>
+        </div>
+
+        {/* Notice */}
+        <div className="flex items-start gap-4 p-5 bg-blue-50/80 backdrop-blur-md border border-blue-200 rounded-3xl text-sm text-blue-900 font-semibold shadow-sm">
+          <Icon icon="solar:shield-check-bold-duotone" className="w-6 h-6 text-blue-500 shrink-0 mt-0.5" />
+          <span className="leading-relaxed">Reports are generated per-case. Company-wide combined reports are out of scope (Section 3.2). Download happens immediately — no history is stored.</span>
+        </div>
+
+        {/* Case Selector */}
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 md:p-8 hover:shadow-2xl transition-all">
+          <h3 className="text-xl font-extrabold text-[#1F2937] flex items-center gap-3 mb-6">
+            <span className="flex items-center justify-center w-7 h-7 rounded-full bg-[#00A651] text-white text-xs font-black shadow-md">1</span>
+            Select Target Export Case
+          </h3>
+          <div className="relative max-w-xl">
+            <select
+              className="w-full appearance-none bg-[#F9FAFB] border border-[#E5E7EB] rounded-2xl px-5 py-4 pr-12 text-sm font-bold outline-none text-[#1F2937] disabled:opacity-60 cursor-pointer focus:ring-2 focus:ring-[#00A651]/20 transition-all shadow-sm"
+              value={selectedCaseId}
+              onChange={(e) => { setSelectedCaseId(e.target.value); setReportResult(null); }}
+              disabled={casesLoading}
+            >
+              <option value="">— Select a case —</option>
+              {cases.map((c) => (
+                <option key={c.caseId} value={c.caseId}>
+                  {c.name} · {c.destinationCountry} · {c.status.replace("_", " ")}
+                </option>
+              ))}
+            </select>
+            <Icon icon="solar:alt-arrow-down-bold-duotone" className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#00A651] pointer-events-none" />
           </div>
-          <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Export Feasibility Report</h2>
-        </div>
-        <p className="text-sm text-[#6B7280] font-medium">
-          Select one export case and generate a PDF report containing metrics, risk scores, feasibility assessment, and AI recommendations. (FR-022)
-        </p>
-      </div>
-
-      {/* Notice */}
-      <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 rounded-2xl text-sm text-blue-800 font-semibold">
-        <Icon icon="solar:shield-check-bold-duotone" className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
-        <span>Reports are generated per-case. Company-wide combined reports are out of scope (Section 3.2). Download happens immediately — no history is stored.</span>
-      </div>
-
-      {/* Case Selector */}
-      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl transition-all hover:shadow-2xl p-6 space-y-5">
-        <h3 className="text-base font-extrabold text-[#1F2937]">1 · Select Export Case</h3>
-        <div className="relative">
-          <select
-            className="w-full appearance-none bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-4 py-3 pr-10 text-sm font-semibold outline-none text-[#1F2937] disabled:opacity-60 cursor-pointer"
-            value={selectedCaseId}
-            onChange={(e) => { setSelectedCaseId(e.target.value); setReportResult(null); }}
-            disabled={casesLoading}
-          >
-            <option value="">— Select a case —</option>
-            {cases.map((c) => (
-              <option key={c.caseId} value={c.caseId}>
-                {c.name} · {c.destinationCountry} · {c.status.replace("_", " ")}
-              </option>
-            ))}
-          </select>
-          <Icon icon="solar:alt-arrow-down-bold-duotone" className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+          
+          {/* Selected case snapshot */}
+          {selectedCase && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 mt-6 border-t border-[#E5E7EB]">
+              {[
+                { label: "Destination", value: selectedCase.destinationCountry },
+                { label: "Status", value: selectedCase.status.replace("_", " ") },
+                { label: "Feasibility", value: feasLabel ? `${feasLabel} (${feasPct?.toFixed(0)}/100)` : "Not scored", color: feasColor },
+              ].map((item, i) => (
+                <div key={i} className="bg-[#F9FAFB] rounded-2xl border border-[#E8E3D9] p-4 shadow-sm">
+                  <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1.5">{item.label}</p>
+                  <p className={`text-base font-black ${item.color || "text-[#1F2937]"} capitalize`}>{item.value}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Selected case snapshot */}
-        {selectedCase && (
-          <div className="grid grid-cols-3 gap-3 pt-2">
-            {[
-              { label: "Destination", value: selectedCase.destinationCountry },
-              { label: "Status", value: selectedCase.status.replace("_", " ") },
-              { label: "Feasibility", value: feasLabel ? `${feasLabel} (${feasPct?.toFixed(0)}/100)` : "Not scored", color: feasColor },
-            ].map((item, i) => (
-              <div key={i} className="bg-[#F9FAFB] rounded-xl border border-[#E8E3D9] p-3">
-                <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">{item.label}</p>
-                <p className={`text-sm font-black ${item.color || "text-[#1F2937]"}`}>{item.value}</p>
+        {/* AI Recommendation Preview */}
+        {selectedCaseId && (
+          <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 md:p-8 hover:shadow-2xl transition-all animate-in slide-in-from-bottom-4 duration-500">
+            <h3 className="text-xl font-extrabold text-[#1F2937] flex items-center gap-3 mb-6">
+              <span className="flex items-center justify-center w-7 h-7 rounded-full bg-[#00A651] text-white text-xs font-black shadow-md">2</span>
+              AI Recommendation Preview
+            </h3>
+            {advisorLoading ? (
+              <div className="flex items-center justify-center py-6">
+                <div className="bg-white/80 backdrop-blur px-6 py-4 rounded-full shadow-md flex items-center gap-3 text-[#00A651] font-bold text-sm">
+                  <Icon icon="solar:round-transfer-horizontal-bold-duotone" className="w-5 h-5 animate-spin" /> Fetching AI insight...
+                </div>
               </div>
-            ))}
+            ) : recommendation ? (
+              <div className="p-6 bg-indigo-50/80 backdrop-blur-sm border border-indigo-200 rounded-2xl shadow-inner">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
+                    <Icon icon="solar:check-circle-bold-duotone" className="w-5 h-5 text-indigo-600" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold text-indigo-700 uppercase tracking-wider block">
+                      Confidence: {recommendation.confidence}
+                    </span>
+                    <span className="text-[10px] text-[#9CA3AF] font-bold uppercase tracking-widest block">
+                      {new Date(recommendation.generatedAt).toLocaleString("id-ID")}
+                    </span>
+                  </div>
+                </div>
+                <p className="text-sm text-indigo-950 font-semibold leading-relaxed p-4 bg-white/60 rounded-xl border border-indigo-100/50">
+                  {recommendation.answer}
+                </p>
+              </div>
+            ) : (
+              <div className="flex items-start gap-4 p-5 bg-amber-50 border border-amber-200 rounded-2xl text-amber-800 text-sm font-semibold shadow-sm">
+                <Icon icon="solar:danger-triangle-bold-duotone" className="w-6 h-6 shrink-0 mt-0.5 text-amber-500" />
+                <span className="leading-relaxed">No AI recommendation found for this case. The report will be generated without AI content. Query the advisor on the case details page to fetch trade insights.</span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Generate Button */}
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 md:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 hover:shadow-2xl transition-all">
+          <div>
+            <h3 className="text-xl font-extrabold text-[#1F2937] flex items-center gap-3">
+              <span className="flex items-center justify-center w-7 h-7 rounded-full bg-[#00A651] text-white text-xs font-black shadow-md">3</span>
+              Generate & Download PDF
+            </h3>
+            <p className="text-xs text-[#9CA3AF] font-bold mt-2 ml-10 uppercase tracking-widest leading-relaxed">
+              Includes metrics, risk scores, feasibility & AI recommendations.
+            </p>
+          </div>
+          <button
+            onClick={handleGenerate}
+            disabled={!selectedCaseId || isGenerating}
+            className="flex items-center gap-3 px-8 py-4 rounded-full bg-[#00A651] hover:bg-[#008F44] disabled:bg-gray-400 disabled:shadow-none text-white font-bold text-sm shadow-lg shadow-[#00A651]/30 transition-all w-full sm:w-auto shrink-0"
+          >
+            {isGenerating ? (
+              <><Icon icon="solar:round-transfer-horizontal-bold-duotone" className="w-5 h-5 animate-spin" /> Generating...</>
+            ) : (
+              <><Icon icon="solar:download-minimalistic-bold-duotone" className="w-5 h-5" /> Generate Report</>
+            )}
+          </button>
+        </div>
+
+        {/* Result Banner */}
+        {reportResult && (
+          <div className="flex items-center gap-4 p-6 bg-emerald-50/90 backdrop-blur-md border border-emerald-300 rounded-3xl shadow-lg animate-in slide-in-from-bottom-4 duration-500">
+            <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 border border-emerald-200">
+              <Icon icon="solar:check-circle-bold-duotone" className="w-7 h-7 text-emerald-600" />
+            </div>
+            <div className="flex-1">
+              <p className="text-base font-extrabold text-emerald-950">Report generated successfully!</p>
+              {reportResult.generatedAt && (
+                <p className="text-[11px] text-emerald-700 font-bold uppercase tracking-widest mt-1">
+                  {new Date(reportResult.generatedAt).toLocaleString("id-ID")}
+                </p>
+              )}
+            </div>
+            {reportResult.documentId && reportResult.filename && (
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setPreviewModal({ open: true, documentId: reportResult.documentId!, filename: reportResult.filename! })}
+                  className="px-6 py-2.5 rounded-full bg-white border border-gray-200 text-[#1F2937] text-sm font-bold hover:bg-gray-50 shadow-sm transition-all flex items-center gap-2"
+                >
+                  <Icon icon="solar:eye-bold-duotone" className="w-4 h-4 text-blue-600" /> Preview
+                </button>
+                <button
+                  onClick={() => handleBlobDownload(reportResult.documentId!, reportResult.filename!)}
+                  className="px-6 py-2.5 rounded-full bg-[#00A651] text-white text-sm font-bold hover:bg-[#008F44] shadow-md shadow-[#00A651]/20 transition-all flex items-center gap-2"
+                >
+                  <Icon icon="solar:download-minimalistic-bold-duotone" className="w-4 h-4" /> Download
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
-
-      {/* AI Recommendation Preview */}
-      {selectedCaseId && (
-        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl transition-all hover:shadow-2xl p-6 space-y-4">
-          <h3 className="text-base font-extrabold text-[#1F2937]">2 · AI Recommendation Preview</h3>
-          {advisorLoading ? (
-            <div className="flex items-center gap-2 text-sm text-[#9CA3AF] font-bold py-4">
-              <Icon icon="solar:refresh-circle-bold-duotone" className="w-4 h-4 animate-spin" /> Loading recommendation...
-            </div>
-          ) : recommendation ? (
-            <div className="p-4 bg-indigo-50 border border-indigo-100 rounded-xl">
-              <div className="flex items-center gap-2 mb-3">
-                <Icon icon="solar:check-circle-bold-duotone" className="w-4 h-4 text-indigo-600" />
-                <span className="text-xs font-bold text-indigo-700 uppercase tracking-wider">
-                  Confidence: {recommendation.confidence}
-                </span>
-                <span className="ml-auto text-[10px] text-[#9CA3AF] font-medium">
-                  {new Date(recommendation.generatedAt).toLocaleString("id-ID")}
-                </span>
-              </div>
-              <p className="text-sm text-indigo-950 font-semibold leading-relaxed line-clamp-4">
-                {recommendation.answer}
-              </p>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2.5 p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-sm font-semibold">
-              <Icon icon="solar:danger-triangle-bold-duotone" className="w-4 h-4 shrink-0" />
-              No AI recommendation found for this case. The report will be generated without AI content.
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Generate Button */}
-      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl transition-all hover:shadow-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div>
-          <h3 className="text-base font-extrabold text-[#1F2937]">3 · Generate & Download PDF</h3>
-          <p className="text-xs text-[#9CA3AF] font-medium mt-0.5">
-            Includes: metrics, risk scores, feasibility, AI recommendations — scoped to the selected case only.
-          </p>
-        </div>
-        <button
-          onClick={handleGenerate}
-          disabled={!selectedCaseId || isGenerating}
-          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-[#00A651] hover:bg-[#008F44] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-sm transition-all shadow-lg shadow-[#00A651]/25 hover:shadow-xl hover:shadow-[#00A651]/30 hover:-translate-y-0.5"
-        >
-          {isGenerating ? (
-            <><Icon icon="solar:refresh-circle-bold-duotone" className="w-4 h-4 animate-spin" /> Generating...</>
-          ) : (
-            <><Icon icon="solar:download-minimalistic-bold-duotone" className="w-4 h-4" /> Generate Report</>
-          )}
-        </button>
-      </div>
-
-      {/* Result Banner */}
-      {reportResult && (
-        <div className="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-300 rounded-2xl">
-          <Icon icon="solar:check-circle-bold-duotone" className="w-5 h-5 text-emerald-600 shrink-0" />
-          <div className="flex-1">
-            <p className="text-sm font-bold text-emerald-900">Report generated successfully!</p>
-            {reportResult.generatedAt && (
-              <p className="text-xs text-emerald-700 font-medium">
-                {new Date(reportResult.generatedAt).toLocaleString("id-ID")}
-              </p>
-            )}
-          </div>
-          {reportResult.documentId && reportResult.filename && (
-            <div className="flex gap-2">
-              <button
-                onClick={() => setPreviewModal({ open: true, documentId: reportResult.documentId!, filename: reportResult.filename! })}
-                className="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold hover:bg-blue-700 transition-colors flex items-center gap-1.5"
-              >
-                <Icon icon="solar:eye-bold-duotone" className="w-3.5 h-3.5" /> Preview
-              </button>
-              <button
-                onClick={() => handleBlobDownload(reportResult.documentId!, reportResult.filename!)}
-                className="px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-colors flex items-center gap-1.5"
-              >
-                <Icon icon="solar:download-minimalistic-bold-duotone" className="w-3.5 h-3.5" /> Download
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
     </>
   );
 }

@@ -10,7 +10,7 @@ import { apiExportCase } from "../../lib/api/export-case";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "../ui/card";
+import { Icon } from "@iconify/react";
 import { ExportCaseResponse } from "../../lib/types/export-case";
 import { useUserProfile } from "../../hooks/useUserProfile";
 
@@ -85,79 +85,88 @@ export function ExportCaseForm({ initialData, isEdit = false }: ExportCaseFormPr
   };
 
   return (
-    <Card className="max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle>{isEdit ? "Edit Export Case" : "Create New Export Case"}</CardTitle>
-      </CardHeader>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <CardContent className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full">
+      <div className="space-y-5">
+        <div className="space-y-2">
+          <Label htmlFor="name" className="text-xs font-bold text-[#9CA3AF] uppercase tracking-widest">Case Name</Label>
+          <Input
+            id="name"
+            placeholder="e.g. Coffee Beans to Japan 2026"
+            disabled={isReadOnly}
+            className="w-full pl-4 pr-4 py-3 h-12 rounded-2xl border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#00A651] focus:border-[#00A651] bg-white text-sm font-medium transition-all"
+            {...register("name")}
+          />
+          {errors.name && <p className="text-xs font-bold text-red-500 mt-1">{errors.name.message}</p>}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="product" className="text-xs font-bold text-[#9CA3AF] uppercase tracking-widest">Product</Label>
+          <Input
+            id="product"
+            placeholder="e.g. Arabica Coffee Beans"
+            disabled={isReadOnly}
+            className="w-full pl-4 pr-4 py-3 h-12 rounded-2xl border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#00A651] focus:border-[#00A651] bg-white text-sm font-medium transition-all"
+            {...register("product")}
+          />
+          {errors.product && <p className="text-xs font-bold text-red-500 mt-1">{errors.product.message}</p>}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="destinationCountry" className="text-xs font-bold text-[#9CA3AF] uppercase tracking-widest">Destination Country</Label>
+          <Input
+            id="destinationCountry"
+            placeholder="e.g. Japan"
+            disabled={isReadOnly}
+            className="w-full pl-4 pr-4 py-3 h-12 rounded-2xl border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#00A651] focus:border-[#00A651] bg-white text-sm font-medium transition-all"
+            {...register("destinationCountry")}
+          />
+          {errors.destinationCountry && <p className="text-xs font-bold text-red-500 mt-1">{errors.destinationCountry.message}</p>}
+        </div>
+
+        {isEdit && (
           <div className="space-y-2">
-            <Label htmlFor="name">Case Name</Label>
-            <Input
-              id="name"
-              placeholder="e.g. Coffee Beans to Japan 2026"
+            <Label htmlFor="status" className="text-xs font-bold text-[#9CA3AF] uppercase tracking-widest">Status</Label>
+            <select
+              id="status"
+              className="w-full px-4 py-3 h-12 rounded-2xl border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#00A651] focus:border-[#00A651] bg-white text-sm font-medium transition-all cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-50"
               disabled={isReadOnly}
-              {...register("name")}
-            />
-            {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
+              {...register("status")}
+            >
+              <option value="draft">Draft</option>
+              <option value="in_review">In Review</option>
+              <option value="finalized">Finalized</option>
+            </select>
+            {errors.status && <p className="text-xs font-bold text-red-500 mt-1">{errors.status.message}</p>}
           </div>
+        )}
 
-          <div className="space-y-2">
-            <Label htmlFor="product">Product</Label>
-            <Input
-              id="product"
-              placeholder="e.g. Arabica Coffee Beans"
-              disabled={isReadOnly}
-              {...register("product")}
-            />
-            {errors.product && <p className="text-sm text-red-500">{errors.product.message}</p>}
+        {errorMsg && (
+          <div className="p-4 text-sm font-semibold bg-red-50 text-red-600 rounded-2xl border border-red-100 flex items-center gap-3">
+             <Icon icon="solar:danger-circle-bold-duotone" className="w-5 h-5 shrink-0" />
+             {errorMsg}
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="destinationCountry">Destination Country</Label>
-            <Input
-              id="destinationCountry"
-              placeholder="e.g. Japan"
-              disabled={isReadOnly}
-              {...register("destinationCountry")}
-            />
-            {errors.destinationCountry && <p className="text-sm text-red-500">{errors.destinationCountry.message}</p>}
-          </div>
-
-          {isEdit && (
-            <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
-              <select
-                id="status"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                disabled={isReadOnly}
-                {...register("status")}
-              >
-                <option value="draft">Draft</option>
-                <option value="in_review">In Review</option>
-                <option value="finalized">Finalized</option>
-              </select>
-              {errors.status && <p className="text-sm text-red-500">{errors.status.message}</p>}
-            </div>
-          )}
-
-          {errorMsg && (
-            <div className="p-3 text-sm bg-red-50 text-red-500 rounded-md">
-              {errorMsg}
-            </div>
-          )}
-        </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button type="button" variant="outline" onClick={() => router.back()}>
-            {isReadOnly ? "Back" : "Cancel"}
+        )}
+      </div>
+      
+      <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+        <Button 
+          type="button" 
+          variant="outline" 
+          onClick={() => router.back()}
+          className="h-12 px-6 rounded-full border-gray-200 text-gray-600 font-bold hover:bg-gray-50 hover:text-gray-900 transition-all shadow-sm"
+        >
+          {isReadOnly ? "Back" : "Cancel"}
+        </Button>
+        {!isReadOnly && (
+          <Button 
+            type="submit" 
+            disabled={mutation.isPending}
+            className="h-12 px-8 rounded-full bg-[#00A651] hover:bg-[#008F44] text-white font-bold shadow-md shadow-[#00A651]/20 transition-all"
+          >
+            {mutation.isPending ? "Saving..." : isEdit ? "Update Case" : "Create Case"}
           </Button>
-          {!isReadOnly && (
-            <Button type="submit" disabled={mutation.isPending}>
-              {mutation.isPending ? "Saving..." : isEdit ? "Update Case" : "Create Case"}
-            </Button>
-          )}
-        </CardFooter>
-      </form>
-    </Card>
+        )}
+      </div>
+    </form>
   );
 }

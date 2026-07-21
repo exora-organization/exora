@@ -16,17 +16,17 @@ const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "6LeIxA
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  
+
   // Controlled form inputs
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
-  
+
   // reCAPTCHA state
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
-  
+
   // Error/validation states
   const [emailError, setEmailError] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -67,16 +67,11 @@ export default function ContactPage() {
       setSubmitError("Full Name must be at least 2 characters.");
       return;
     }
-    
+
     // Explicit regex check to enforce top-level domain (e.g. .com)
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(email)) {
       setEmailError("Please enter a valid email address with a top-level domain (e.g. .com)");
-      return;
-    }
-
-    if (subject.trim().length < 3) {
-      setSubmitError("Subject must be at least 3 characters.");
       return;
     }
 
@@ -98,7 +93,7 @@ export default function ContactPage() {
           name: fullName,
           email,
           companyName,
-          subject,
+          subject: "Contact Form Inquiry",
           message,
           recaptchaToken,
         }),
@@ -130,10 +125,10 @@ export default function ContactPage() {
   return (
     <div className="flex flex-col font-sans bg-[#EBF8F2] min-h-screen selection:bg-[#00A651]/20">
       <PublicNavbar />
-      
+
       {/* Load Google reCAPTCHA v2 Script */}
-      <Script 
-        src="https://www.google.com/recaptcha/api.js" 
+      <Script
+        src="https://www.google.com/recaptcha/api.js"
         strategy="afterInteractive"
       />
 
@@ -154,7 +149,7 @@ export default function ContactPage() {
       {/* ================= CONTACT LAYOUT ================= */}
       <section className="py-16 px-6 lg:px-20 max-w-7xl mx-auto w-full">
         <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-stretch">
-          
+
           {/* Left Column - Contact Info */}
           <div className="w-full lg:w-1/3 space-y-6">
             <div className="bg-white/70 backdrop-blur-md p-8 lg:p-10 rounded-3xl border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,166,81,0.1)] transition-all duration-300 flex flex-col h-full group">
@@ -218,7 +213,7 @@ export default function ContactPage() {
                   <p className="text-[#4B5563] text-lg max-w-sm">
                     Thank you for reaching out. Our team has received your message and will get back to you shortly.
                   </p>
-                  <button 
+                  <button
                     onClick={() => {
                       setSubmitted(false);
                       setFullName("");
@@ -238,82 +233,60 @@ export default function ContactPage() {
               ) : null}
 
               <h3 className="text-2xl font-bold text-[#1F2937] mb-8">Send us a message</h3>
-              
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-[#4B5563]">Full Name</label>
-                    <input 
-                      type="text" 
-                      required
-                      minLength={2}
-                      value={fullName || ""}
-                      onChange={(e) => setFullName(e.target.value)}
-                      placeholder="John Doe"
-                      className="w-full px-4 py-3 rounded-xl border border-[#D1EDE4] focus:outline-none focus:ring-2 focus:ring-[#00A651]/20 focus:border-[#00A651] transition-all bg-[#EBF8F2]/30"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-[#4B5563]">Email Address</label>
-                    <input 
-                      type="email" 
-                      required
-                      value={email || ""}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                        if (emailError) setEmailError(null);
-                      }}
-                      placeholder="john@example.com"
-                      className="w-full px-4 py-3 rounded-xl border border-[#D1EDE4] focus:outline-none focus:ring-2 focus:ring-[#00A651]/20 focus:border-[#00A651] transition-all bg-[#EBF8F2]/30"
-                    />
-                    {emailError && (
-                      <p className="text-xs font-bold text-red-500 mt-1">{emailError}</p>
-                    )}
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-[#4B5563]">Company Name</label>
-                    <input 
-                      type="text" 
-                      value={companyName || ""}
-                      onChange={(e) => setCompanyName(e.target.value)}
-                      placeholder="Your Company Ltd"
-                      className="w-full px-4 py-3 rounded-xl border border-[#D1EDE4] focus:outline-none focus:ring-2 focus:ring-[#00A651]/20 focus:border-[#00A651] transition-all bg-[#EBF8F2]/30"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-[#4B5563]">Subject</label>
-                    <input 
-                      type="text" 
-                      required
-                      minLength={3}
-                      value={subject || ""}
-                      onChange={(e) => setSubject(e.target.value)}
-                      placeholder="How can we help?"
-                      className="w-full px-4 py-3 rounded-xl border border-[#D1EDE4] focus:outline-none focus:ring-2 focus:ring-[#00A651]/20 focus:border-[#00A651] transition-all bg-[#EBF8F2]/30"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-bold text-[#4B5563]">Message</label>
-                  <textarea 
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <input
+                    type="email"
                     required
-                    rows={5}
-                    minLength={10}
-                    value={message || ""}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Tell us more about your inquiry..."
-                    className="w-full px-4 py-3 rounded-xl border border-[#D1EDE4] focus:outline-none focus:ring-2 focus:ring-[#00A651]/20 focus:border-[#00A651] transition-all bg-[#EBF8F2]/30 resize-none"
-                  ></textarea>
+                    value={email || ""}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (emailError) setEmailError(null);
+                    }}
+                    placeholder="Email"
+                    className="w-full px-6 py-4 rounded-full border-2 border-[#CDEBE0] focus:outline-none focus:ring-4 focus:ring-[#00A651]/20 focus:border-[#00A651] transition-all bg-[#EBF8F2] hover:bg-[#E3F4EC] hover:border-[#00A651]/40 hover:shadow-md shadow-sm text-[#1F2937] placeholder:text-[#80988E]"
+                  />
+                  <input
+                    type="tel"
+                    value={companyName || ""} // Using companyName state for Phone to avoid backend changes
+                    onChange={(e) => setCompanyName(e.target.value)}
+                    placeholder="Phone"
+                    className="w-full px-6 py-4 rounded-full border-2 border-[#CDEBE0] focus:outline-none focus:ring-4 focus:ring-[#00A651]/20 focus:border-[#00A651] transition-all bg-[#EBF8F2] hover:bg-[#E3F4EC] hover:border-[#00A651]/40 hover:shadow-md shadow-sm text-[#1F2937] placeholder:text-[#80988E]"
+                  />
                 </div>
+
+                <input
+                  type="text"
+                  required
+                  minLength={2}
+                  value={fullName || ""}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="Name"
+                  className="w-full px-6 py-4 rounded-full border-2 border-[#CDEBE0] focus:outline-none focus:ring-4 focus:ring-[#00A651]/20 focus:border-[#00A651] transition-all bg-[#EBF8F2] hover:bg-[#E3F4EC] hover:border-[#00A651]/40 hover:shadow-md shadow-sm text-[#1F2937] placeholder:text-[#80988E]"
+                />
+
+                <textarea
+                  required
+                  rows={6}
+                  minLength={10}
+                  value={message || ""}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Message"
+                  className="w-full px-6 py-5 rounded-[2rem] border-2 border-[#CDEBE0] focus:outline-none focus:ring-4 focus:ring-[#00A651]/20 focus:border-[#00A651] transition-all bg-[#EBF8F2] hover:bg-[#E3F4EC] hover:border-[#00A651]/40 hover:shadow-md shadow-sm text-[#1F2937] placeholder:text-[#80988E] resize-none"
+                ></textarea>
+
+                {emailError && (
+                  <p className="text-sm font-bold text-red-500 px-2">{emailError}</p>
+                )}
+                {submitError && (
+                  <p className="text-sm font-bold text-red-500 px-2">{submitError}</p>
+                )}
 
                 {/* Google reCAPTCHA v2 Widget Container */}
-                <div className="flex justify-center my-4">
-                  <div 
-                    className="g-recaptcha" 
+                <div className="my-2 transform scale-90 origin-top-left">
+                  <div
+                    className="g-recaptcha"
                     data-sitekey={RECAPTCHA_SITE_KEY}
                     data-callback="onRecaptchaVerify"
                     data-expired-callback="onRecaptchaExpired"
@@ -321,18 +294,17 @@ export default function ContactPage() {
                 </div>
 
                 {submitError && (
-                  <div className="p-3 text-sm bg-red-50 text-red-600 rounded-xl border border-red-100 font-bold">
+                  <div className="p-3 text-sm bg-red-50 text-red-600 rounded-xl border border-red-100 font-bold mb-4">
                     {submitError}
                   </div>
                 )}
 
-                <button 
+                <button
                   type="submit"
                   disabled={isSubmitting || !recaptchaToken}
-                  className="w-full bg-[#00A651] hover:bg-[#008F44] text-white px-8 py-4 rounded-xl font-bold transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                  className="bg-[#00A651] hover:bg-[#008F44] text-white px-10 py-4 rounded-full font-bold transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed mt-2 shadow-md hover:shadow-lg hover:-translate-y-0.5"
                 >
-                  <span>{isSubmitting ? "Sending..." : "Send Message"}</span>
-                  {!isSubmitting && <Icon icon="solar:plain-bold-duotone" className="w-5 h-5 ml-2" />}
+                  {isSubmitting ? "Sending..." : "Submit"}
                 </button>
               </form>
             </div>

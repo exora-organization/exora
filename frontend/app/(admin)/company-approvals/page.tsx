@@ -135,16 +135,14 @@ export default function CompanyApprovalsPage() {
             <button
               key={tab.value}
               onClick={() => setStatusFilter(tab.value)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
-                statusFilter === tab.value
-                  ? "bg-[#00A651] text-white shadow-md"
-                  : "bg-white border border-[#E8E3D9] text-[#6B7280] hover:border-[#00A651]/40 hover:text-[#00A651]"
-              }`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${statusFilter === tab.value
+                ? "bg-[#00A651] text-white shadow-md"
+                : "bg-white border border-[#E8E3D9] text-[#6B7280] hover:border-[#00A651]/40 hover:text-[#00A651]"
+                }`}
             >
               {tab.label}
-              <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-black ${
-                statusFilter === tab.value ? "bg-white/20 text-white" : "bg-gray-100 text-gray-500"
-              }`}>
+              <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-black ${statusFilter === tab.value ? "bg-white/20 text-white" : "bg-gray-100 text-gray-500"
+                }`}>
                 {count}
               </span>
             </button>
@@ -161,7 +159,7 @@ export default function CompanyApprovalsPage() {
         ) : (
           filtered.map((app) => (
             <div key={app.companyId} className="flex flex-col md:flex-row items-center justify-between p-6 rounded-3xl bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl hover:-translate-y-1 hover:shadow-2xl transition-all gap-6">
-              
+
               {/* Company Info */}
               <div className="flex-[2] min-w-[200px]">
                 <h4 className="text-xl font-extrabold text-[#1F2937]">{app.companyName}</h4>
@@ -183,14 +181,12 @@ export default function CompanyApprovalsPage() {
               {/* Status */}
               <div className="flex-1">
                 <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Status</p>
-                <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-wide capitalize ${
-                  app.status === "pending" ? "bg-amber-100 text-amber-700" : 
+                <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-wide capitalize ${app.status === "pending" ? "bg-amber-100 text-amber-700" :
                   app.status === "approved" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-                }`}>
-                  <span className={`w-2 h-2 rounded-full ${
-                    app.status === "pending" ? "bg-amber-500" : 
+                  }`}>
+                  <span className={`w-2 h-2 rounded-full ${app.status === "pending" ? "bg-amber-500" :
                     app.status === "approved" ? "bg-green-500" : "bg-red-500"
-                  }`}></span>
+                    }`}></span>
                   {app.status.replace("_", " ")}
                 </span>
               </div>

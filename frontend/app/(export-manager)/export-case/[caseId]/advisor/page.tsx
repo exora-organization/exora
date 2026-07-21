@@ -8,13 +8,11 @@ import { apiAdvisor } from "../../../../../lib/api/advisor";
 import { apiExportCase } from "../../../../../lib/api/export-case";
 import { apiPricing } from "../../../../../lib/api/pricing";
 import { Button } from "../../../../../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../../../../../components/ui/card";
-import { Badge } from "../../../../../components/ui/badge";
 import { Alert, AlertTitle, AlertDescription } from "../../../../../components/ui/alert";
 import { GenerateAdvisorRequest } from "../../../../../lib/types/advisor";
 import { useState } from "react";
 import { useUserProfile } from "../../../../../hooks/useUserProfile";
-import { Lightbulb, DollarSign, Scale, ArrowRight, Download, Eye } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { toast } from "sonner";
 import { apiClient } from "../../../../../lib/api/client";
 import { PdfPreviewModal } from "../../../../../components/ui/pdf-preview-modal";
@@ -147,39 +145,42 @@ export default function AIAdvisorPage() {
         filename={previewModal.filename}
       />
     <div className="space-y-8 max-w-5xl mx-auto pb-12">
-      <div>
-        <Link href={`/export-case/${caseId}`} className="text-sm text-blue-500 hover:underline mb-2 block">
-          &larr; Back to Case Details
+      <div className="mb-5 flex justify-between items-center">
+        <Link href={`/export-case/${caseId}`} className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00A651] hover:bg-[#008F44] text-white text-[13px] font-bold rounded-full shadow-md hover:shadow-lg transition-all">
+          <Icon icon="solar:arrow-left-bold-duotone" className="w-4 h-4" /> Back to Case
         </Link>
-        <h2 className="text-3xl font-bold tracking-tight">AI Advisor</h2>
-        <p className="text-gray-500 mt-1">Get intelligent export recommendations and feasibility summaries powered by the EXORA engine.</p>
+      </div>
+
+      <div>
+        <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">AI Advisor</h2>
+        <p className="text-[#6B7280] font-medium mt-1">Get intelligent export recommendations and feasibility summaries powered by the EXORA engine.</p>
       </div>
 
       {exportCase && (
-        <Card className="bg-[#FAF8F3]">
-          <CardContent className="p-4 grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
             <div>
-              <p className="text-xs text-[#9CA3AF] font-medium">Case Name</p>
-              <p className="font-semibold text-[#1F2937] truncate">{exportCase.name}</p>
+              <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Case Name</p>
+              <p className="font-extrabold text-[#1F2937] truncate mt-1">{exportCase.name}</p>
             </div>
             <div>
-              <p className="text-xs text-[#9CA3AF] font-medium">Product</p>
-              <p className="font-semibold text-[#1F2937] truncate">{exportCase.product}</p>
+              <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Product</p>
+              <p className="font-extrabold text-[#1F2937] truncate mt-1">{exportCase.product}</p>
             </div>
             <div>
-              <p className="text-xs text-[#9CA3AF] font-medium">Destination</p>
-              <p className="font-semibold text-[#1F2937] truncate">{exportCase.destinationCountry}</p>
+              <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Destination</p>
+              <p className="font-extrabold text-[#1F2937] truncate mt-1">{exportCase.destinationCountry}</p>
             </div>
             <div>
-              <p className="text-xs text-[#9CA3AF] font-medium">Active Incoterm</p>
+              <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Active Incoterm</p>
               {activeIncoterm ? (
-                <Badge variant="default" className="mt-1">{activeIncoterm}</Badge>
+                <div className="mt-1 inline-flex items-center px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-bold text-xs">{activeIncoterm}</div>
               ) : (
-                <span className="text-sm text-[#9CA3AF] mt-1 block">Unknown</span>
+                <span className="text-sm text-[#9CA3AF] mt-1 block font-bold">Unknown</span>
               )}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {(errorMsg || advisorLoadError) && (
@@ -207,62 +208,62 @@ export default function AIAdvisorPage() {
       {role === "export_manager" && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Incoterm Scenario Guidance */}
-          <Card className="border-blue-100 hover:shadow-md transition-shadow">
-            <CardHeader className="bg-blue-50/50 pb-3">
-              <CardTitle className="text-lg text-blue-900 flex items-center gap-2">
-                <Scale className="w-5 h-5 text-blue-600" />
+          <div className="bg-blue-50/90 backdrop-blur-xl border border-blue-100 shadow-xl rounded-3xl overflow-hidden hover:-translate-y-1 transition-transform">
+            <div className="bg-blue-100/50 backdrop-blur-sm border-b border-blue-200 px-6 py-5">
+              <h3 className="text-xl font-extrabold text-blue-900 flex items-center gap-2">
+                <Icon icon="solar:scale-bold-duotone" className="w-5 h-5 text-blue-600" />
                 Incoterm Scenario Guidance
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-4 space-y-3 text-sm text-gray-600 font-medium">
+              </h3>
+            </div>
+            <div className="p-6 space-y-3 text-sm text-[#4B5563] font-medium">
               <p>EXORA recommends the following shipping scenario optimizations:</p>
-              <ul className="space-y-2 list-disc pl-4 text-xs">
-                <li><strong className="text-gray-900">FOB (Free on Board)</strong>: Recommended to minimize sea freight liability while retaining local port dispatch control.</li>
-                <li><strong className="text-gray-900">CIF (Cost, Insurance & Freight)</strong>: Choose only if you have negotiated volume insurance rates to secure additional margins.</li>
-                <li><strong className="text-gray-900">EXW (Ex Works)</strong>: Safest logistics route, but severely limits profitability optimization.</li>
+              <ul className="space-y-3 list-disc pl-4 text-xs">
+                <li><strong className="text-[#1F2937] font-bold">FOB (Free on Board)</strong>: Recommended to minimize sea freight liability while retaining local port dispatch control.</li>
+                <li><strong className="text-[#1F2937] font-bold">CIF (Cost, Insurance & Freight)</strong>: Choose only if you have negotiated volume insurance rates to secure additional margins.</li>
+                <li><strong className="text-[#1F2937] font-bold">EXW (Ex Works)</strong>: Safest logistics route, but severely limits profitability optimization.</li>
               </ul>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Pricing Sensitivity Notes */}
-          <Card className="border-emerald-100 hover:shadow-md transition-shadow">
-            <CardHeader className="bg-emerald-50/50 pb-3">
-              <CardTitle className="text-lg text-emerald-900 flex items-center gap-2">
-                <DollarSign className="w-5 h-5 text-emerald-600" />
+          <div className="bg-emerald-50/90 backdrop-blur-xl border border-emerald-100 shadow-xl rounded-3xl overflow-hidden hover:-translate-y-1 transition-transform">
+            <div className="bg-emerald-100/50 backdrop-blur-sm border-b border-emerald-200 px-6 py-5">
+              <h3 className="text-xl font-extrabold text-emerald-900 flex items-center gap-2">
+                <Icon icon="solar:dollar-minimalistic-bold-duotone" className="w-5 h-5 text-emerald-600" />
                 Pricing Sensitivity Analysis
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-4 space-y-3 text-sm text-gray-600 font-medium">
+              </h3>
+            </div>
+            <div className="p-6 space-y-3 text-sm text-[#4B5563] font-medium">
               <p>Exchange rate and cost margin fluctuation vulnerabilities:</p>
-              <ul className="space-y-2 list-disc pl-4 text-xs">
-                <li><strong className="text-gray-900">FX Buffer</strong>: A 5% depreciation in IDR relative to USD impacts your net pricing margin by approximately 1.8%.</li>
-                <li><strong className="text-gray-900">Target Margin</strong>: Configured at 15%. Any freight cost escalation of &gt;10% requires adjusting the FOB price to maintain target profits.</li>
+              <ul className="space-y-3 list-disc pl-4 text-xs">
+                <li><strong className="text-[#1F2937] font-bold">FX Buffer</strong>: A 5% depreciation in IDR relative to USD impacts your net pricing margin by approximately 1.8%.</li>
+                <li><strong className="text-[#1F2937] font-bold">Target Margin</strong>: Configured at 15%. Any freight cost escalation of &gt;10% requires adjusting the FOB price to maintain target profits.</li>
               </ul>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       )}
 
       {/* Ask the Advisor Form */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Consult Export Advisor</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl overflow-hidden hover:-translate-y-1 transition-transform">
+        <div className="bg-white/50 backdrop-blur-sm border-b border-white/60 px-6 py-5">
+          <h3 className="text-xl font-extrabold text-[#1F2937]">Consult Export Advisor</h3>
+        </div>
+        <div className="p-6 space-y-4">
           <textarea
-            className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00A651] disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex min-h-[100px] w-full rounded-2xl border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-3 text-sm font-medium text-[#1F2937] transition-all focus:outline-none focus:ring-2 focus:ring-[#00A651] disabled:cursor-not-allowed disabled:opacity-50"
             placeholder="Optional: Ask a specific question about your export case..."
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             disabled={generateMutation.isPending}
           />
           <div className="flex justify-end">
-            <Button onClick={handleGenerate} disabled={generateMutation.isPending} className="bg-[#00A651] hover:bg-[#008F44]">
+            <Button onClick={handleGenerate} disabled={generateMutation.isPending} className="h-12 rounded-full px-8 bg-[#00A651] hover:bg-[#008F44] text-white font-bold text-[13px] shadow-md hover:shadow-lg transition-all">
               {generateMutation.isPending ? "Consulting..." : recommendation ? "Regenerate Analysis" : "Run Advisor Check"}
             </Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {!recommendation && !advisorLoading && !advisorError && !errorMsg && (
         <Alert>
@@ -275,86 +276,85 @@ export default function AIAdvisorPage() {
 
       {recommendation && (
         <div className="space-y-6">
-          <div className="flex items-center justify-between p-4 bg-[#FAF8F3] rounded-xl border border-[#E8E3D9]">
-            <div className="flex items-center gap-2">
-              <span className="text-[#00A651] font-extrabold text-sm">AI Response Status:</span>
-              <Badge className="bg-[#00A651]">Ready</Badge>
+          <div className="flex items-center justify-between p-5 bg-white/90 backdrop-blur-xl shadow-md rounded-2xl border border-white/60">
+            <div className="flex items-center gap-3">
+              <span className="text-[#00A651] font-extrabold text-sm uppercase tracking-widest">AI Response Status:</span>
+              <div className="px-3 py-1 bg-green-100 text-green-700 rounded-full font-bold text-xs">Ready</div>
             </div>
-            <div className="text-xs text-gray-500 font-bold">
+            <div className="text-[11px] text-[#9CA3AF] font-bold uppercase tracking-widest">
               Generated: {new Date(recommendation.generatedAt).toLocaleString()}
             </div>
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Advisor Report</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl overflow-hidden hover:-translate-y-1 transition-transform">
+            <div className="bg-white/50 backdrop-blur-sm border-b border-white/60 px-6 py-5">
+              <h3 className="text-xl font-extrabold text-[#1F2937]">Advisor Report</h3>
+            </div>
+            <div className="p-8">
               <div className="prose prose-sm md:prose-base max-w-none text-[#4B5563] leading-relaxed font-medium">
                 <ReactMarkdown>{recommendation.answer}</ReactMarkdown>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Pricing data panel if exists */}
           {pricingData?.data?.pricing && (
-            <Card className="border-[#E8E3D9]">
-              <CardHeader className="pb-3 border-b border-[#E8E3D9] bg-gray-50/50">
-                <CardTitle className="text-lg text-[#1F2937]">Case Cost Summary</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-6">
+            <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl overflow-hidden hover:-translate-y-1 transition-transform">
+              <div className="bg-[#FAF8F3]/50 backdrop-blur-sm border-b border-[#E8E3D9] px-6 py-5">
+                <h3 className="text-xl font-extrabold text-[#1F2937]">Case Cost Summary</h3>
+              </div>
+              <div className="p-6">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                   <div>
-                    <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Freight</p>
-                    <p className="text-base font-extrabold text-[#1F2937]">
+                    <p className="text-[10px] text-[#9CA3AF] font-bold uppercase tracking-widest mb-1">Freight</p>
+                    <p className="text-lg font-black text-[#1F2937]">
                       Rp {pricingData.data.pricing.breakdown.freight.toLocaleString("id-ID")}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Insurance</p>
-                    <p className="text-base font-extrabold text-[#1F2937]">
+                    <p className="text-[10px] text-[#9CA3AF] font-bold uppercase tracking-widest mb-1">Insurance</p>
+                    <p className="text-lg font-black text-[#1F2937]">
                       Rp {pricingData.data.pricing.breakdown.insurance.toLocaleString("id-ID")}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Total Case Cost</p>
-                    <p className="text-base font-extrabold text-[#1F2937]">
+                    <p className="text-[10px] text-[#9CA3AF] font-bold uppercase tracking-widest mb-1">Total Case Cost</p>
+                    <p className="text-lg font-black text-[#1F2937]">
                       Rp {pricingData.data.pricing.totalCostIDR.toLocaleString("id-ID")}
                     </p>
                   </div>
-                  <div className="bg-[#FAF8F3] p-3 rounded-lg border border-[#E8E3D9]">
-                    <p className="text-xs text-[#00A651] font-bold uppercase tracking-wider mb-1">FOB Price (USD)</p>
-                    <p className="text-xl font-black text-[#00A651]">
+                  <div className="bg-[#FAF8F3] p-4 rounded-2xl border border-[#E8E3D9]">
+                    <p className="text-[10px] text-[#00A651] font-bold uppercase tracking-widest mb-1">FOB Price (USD)</p>
+                    <p className="text-2xl font-black text-[#00A651]">
                       $ {pricingData.data.pricing.sellingPriceUSD.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </p>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           )}
 
           {/* Report download actions depending on role */}
           {role === "export_manager" && (
-            <div className="bg-white border border-[#E8E3D9] rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 flex flex-col sm:flex-row justify-between items-center gap-6">
               <div>
-                <p className="font-extrabold text-[#1F2937]">Export Documents</p>
-                <p className="text-xs text-gray-500">Generate and preview the case Quotation and Proforma Invoice PDFs.</p>
+                <p className="text-xl font-extrabold text-[#1F2937]">Export Documents</p>
+                <p className="text-sm text-[#6B7280] font-medium mt-1">Generate and preview the case Quotation and Proforma Invoice PDFs.</p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-3 w-full sm:w-auto">
                 <Button 
                   onClick={() => handleDownloadPDF("quotation")} 
                   disabled={isGeneratingPdf} 
-                  variant="outline" 
-                  className="border-gray-300 text-gray-700 bg-white"
+                  className="flex-1 sm:flex-none h-12 rounded-full px-6 bg-white border border-[#E5E7EB] text-[#1F2937] font-bold text-[13px] shadow-sm hover:shadow-md hover:bg-[#F9FAFB] transition-all"
                 >
-                  <Eye className="w-4 h-4 mr-2" /> Quotation (PDF)
+                  <Icon icon="solar:document-bold-duotone" className="w-5 h-5 mr-2 text-[#9CA3AF]" /> Quotation
                 </Button>
                 <Button 
                   onClick={() => handleDownloadPDF("proforma")} 
                   disabled={isGeneratingPdf} 
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                  className="flex-1 sm:flex-none h-12 rounded-full px-6 bg-[#00A651] hover:bg-[#008F44] text-white font-bold text-[13px] shadow-md hover:shadow-lg transition-all"
                 >
-                  <Eye className="w-4 h-4 mr-2" /> Proforma (PDF)
+                  <Icon icon="solar:document-text-bold-duotone" className="w-5 h-5 mr-2" /> Proforma
                 </Button>
               </div>
             </div>

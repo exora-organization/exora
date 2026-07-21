@@ -7,10 +7,7 @@ import { Button } from "../../../components/ui/button";
 import { Badge } from "../../../components/ui/badge";
 import { apiAnalytics } from "../../../lib/api/analytics";
 import { apiExportCase } from "../../../lib/api/export-case";
-import { 
-  Briefcase, Activity, TrendingUp, ArrowRight, AlertTriangle, 
-  Calculator, CheckCircle, Scale, DollarSign 
-} from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useMemo } from "react";
 
 export default function FinanceDashboardPage() {
@@ -67,74 +64,35 @@ export default function FinanceDashboardPage() {
       
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        
-        {/* Total Cases */}
-        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 transition-all hover:-translate-y-1 hover:shadow-2xl">
-          <div className="flex justify-between items-start mb-6">
-            <h3 className="text-xs font-bold text-[#4B5563] uppercase tracking-widest mt-2">Total Cases</h3>
-            <div className="w-10 h-10 rounded-xl bg-[#EBF8F2] flex items-center justify-center">
-              <Briefcase className="w-5 h-5 text-[#00A651]" />
+        {[
+          { label: "Total Cases", value: stats?.totalExportCases || 0, icon: <Icon icon="solar:case-minimalistic-bold-duotone" className="w-4 h-4 text-[#00A651]" />, bg: "bg-[#EBF8F2]", dot: "bg-[#00A651]", subtitle: "Company-wide cases" },
+          { label: "Active Cases", value: stats?.activeCases || 0, icon: <Icon icon="solar:pulse-bold-duotone" className="w-4 h-4 text-amber-500" />, bg: "bg-amber-50", dot: "bg-amber-500", subtitle: "In review / finalized" },
+          { label: "Avg Feasibility", value: stats?.averageFeasibilityScore !== null && stats?.averageFeasibilityScore !== undefined ? (stats.averageFeasibilityScore / 10).toFixed(1) : "0.0", icon: <Icon icon="solar:question-circle-bold-duotone" className="w-4 h-4 text-blue-500" />, bg: "bg-blue-50", dot: "bg-blue-500", subtitle: "Feasibility aggregate" },
+          { label: "Costing Queue", value: awaitingCosting.length, icon: <Icon icon="solar:calculator-bold-duotone" className="w-4 h-4 text-emerald-600" />, bg: "bg-emerald-50", dot: "bg-emerald-500", subtitle: "Awaiting input" },
+        ].map((kpi, i) => (
+          <div key={i} className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-5 relative transition-all hover:-translate-y-1 hover:shadow-2xl">
+            <div className="flex justify-between items-start mb-4">
+              <h3 className="text-[10px] font-bold text-[#4B5563] uppercase tracking-widest mt-1">{kpi.label}</h3>
+              <div className={`w-8 h-8 rounded-lg ${kpi.bg} flex items-center justify-center`}>{kpi.icon}</div>
+            </div>
+            <div className="flex items-baseline gap-1 mb-2">
+              <div className="text-4xl font-extrabold text-[#1F2937]">{kpi.value}</div>
+            </div>
+            <div className="flex items-center text-xs font-semibold text-[#4B5563]">
+              <span className={`w-2 h-2 rounded-full ${kpi.dot} mr-2 shrink-0`}></span>
+              {kpi.subtitle}
             </div>
           </div>
-          <div className="text-5xl font-black text-[#1F2937] mb-2">
-            {stats?.totalExportCases || 0}
-          </div>
-          <div className="text-xs font-bold text-[#9CA3AF] uppercase tracking-wider">Company-wide cases</div>
-        </div>
-
-        {/* Active Cases */}
-        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 transition-all hover:-translate-y-1 hover:shadow-2xl">
-          <div className="flex justify-between items-start mb-6">
-            <h3 className="text-xs font-bold text-[#4B5563] uppercase tracking-widest mt-2">Active Cases</h3>
-            <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
-              <Activity className="w-5 h-5 text-amber-500" />
-            </div>
-          </div>
-          <div className="text-5xl font-black text-[#1F2937] mb-2">
-            {stats?.activeCases || 0}
-          </div>
-          <div className="text-xs font-bold text-[#9CA3AF] uppercase tracking-wider">In review / finalized</div>
-        </div>
-
-        {/* Average Margin/Feasibility */}
-        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 transition-all hover:-translate-y-1 hover:shadow-2xl">
-          <div className="flex justify-between items-start mb-6">
-            <h3 className="text-xs font-bold text-[#4B5563] uppercase tracking-widest mt-2">Avg Feasibility</h3>
-            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-blue-500" />
-            </div>
-          </div>
-          <div className="text-5xl font-black text-[#1F2937] mb-2">
-            {stats?.averageFeasibilityScore !== null && stats?.averageFeasibilityScore !== undefined 
-              ? (stats.averageFeasibilityScore / 10).toFixed(1) 
-              : "0.0"
-            }
-          </div>
-          <div className="text-xs font-bold text-[#9CA3AF] uppercase tracking-wider">Feasibility aggregate</div>
-        </div>
-
-        {/* Total Costings Pending */}
-        <div className="bg-white/90 backdrop-blur-xl border border-[#D1EDE4] shadow-xl rounded-3xl p-6 transition-all hover:-translate-y-1 hover:shadow-2xl">
-          <div className="flex justify-between items-start mb-6">
-            <h3 className="text-xs font-bold text-[#4B5563] uppercase tracking-widest mt-2">Costing Queue</h3>
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-              <Calculator className="w-5 h-5 text-emerald-600" />
-            </div>
-          </div>
-          <div className="text-5xl font-black text-[#00A651] mb-2">
-            {awaitingCosting.length}
-          </div>
-          <div className="text-xs font-bold text-[#9CA3AF] uppercase tracking-wider">Awaiting input</div>
-        </div>
+        ))}
       </div>
 
       {/* Validation Warnings (FR-010) */}
       {incompleteCostingInPricing.length > 0 && (
         <div className="bg-white/90 backdrop-blur-xl border border-rose-200 shadow-xl rounded-3xl p-8 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-rose-50 to-transparent rounded-bl-full opacity-60 -z-10"></div>
-          <h3 className="text-2xl font-extrabold text-[#1F2937] mb-2 flex items-center gap-3">
-            <span className="w-3 h-8 bg-rose-500 rounded-full inline-block"></span>
-            <AlertTriangle className="w-6 h-6 text-rose-600" />
+          <h3 className="text-xl font-bold text-[#1F2937] mb-2 flex items-center gap-3">
+            <span className="w-2 h-6 bg-rose-500 rounded-full inline-block"></span>
+            <Icon icon="solar:danger-triangle-bold-duotone" className="w-5 h-5 text-rose-600" />
             Incomplete Costing validation Alerts
           </h3>
           <p className="text-xs text-[#9CA3AF] font-bold uppercase tracking-widest mb-6">
@@ -163,8 +121,8 @@ export default function FinanceDashboardPage() {
         
         {/* Awaiting Costing Input */}
         <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-8">
-          <h3 className="text-2xl font-extrabold text-[#1F2937] mb-2 flex items-center gap-2">
-            <span className="w-2.5 h-6 bg-[#00A651] rounded-full inline-block"></span>
+          <h3 className="text-xl font-bold text-[#1F2937] mb-2 flex items-center gap-2">
+            <span className="w-2 h-6 bg-[#00A651] rounded-full inline-block"></span>
             Awaiting Costing Input
           </h3>
           <p className="text-xs text-[#9CA3AF] font-bold uppercase tracking-widest mb-6">Cases awaiting first configuration sheets</p>
@@ -194,8 +152,8 @@ export default function FinanceDashboardPage() {
 
         {/* Low Margin Alerts */}
         <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-8">
-          <h3 className="text-2xl font-extrabold text-[#1F2937] mb-2 flex items-center gap-2">
-            <span className="w-2.5 h-6 bg-amber-500 rounded-full inline-block"></span>
+          <h3 className="text-xl font-bold text-[#1F2937] mb-2 flex items-center gap-2">
+            <span className="w-2 h-6 bg-amber-500 rounded-full inline-block"></span>
             Profitability below Target
           </h3>
           <p className="text-xs text-[#9CA3AF] font-bold uppercase tracking-widest mb-6">Cases performing below the 15.0% margin target (FR-013)</p>

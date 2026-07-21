@@ -10,22 +10,7 @@ import { RoleGuard } from "../../components/auth/RoleGuard";
 import { useUserProfile } from "../../hooks/useUserProfile";
 import { LogoutButton } from "../../components/ui/logout-button";
 import logoImg from "../../public/logo.png";
-import { 
-  LayoutDashboard, 
-  Briefcase, 
-  Activity, 
-  Lightbulb,
-  User,
-  Menu,
-  X,
-  Building,
-  Users,
-  FileText,
-  Calculator,
-  BarChart2,
-  ShieldCheck,
-  FileBarChart2
-} from "lucide-react";
+import { Icon } from "@iconify/react";
 
 export default function ExportManagerLayout({ children }: { children: React.ReactNode }) {
   const { role, profile } = useUserProfile();
@@ -39,26 +24,26 @@ export default function ExportManagerLayout({ children }: { children: React.Reac
 
   // Default: Export Manager nav
   let navItems = [
-    { name: "Dashboard", href: "/export-manager-dashboard", icon: LayoutDashboard },
-    { name: "Export Cases", href: "/export-case", icon: Briefcase },
-    { name: "Pricing & Incoterms", href: "/em-pricing", icon: Calculator },
-    { name: "Cost Breakdown", href: "/em-cost-breakdown", icon: BarChart2 },
-    { name: "Scenario Analysis", href: "/em-scenario", icon: Activity },
-    { name: "Risk & Feasibility", href: "/em-risk", icon: ShieldCheck },
-    { name: "AI Advisor", href: "/ai-advisor", icon: Lightbulb },
-    { name: "Documents", href: "/em-documents", icon: FileBarChart2 },
+    { name: "Dashboard", href: "/export-manager-dashboard", icon: "solar:widget-bold-duotone" },
+    { name: "Export Cases", href: "/export-case", icon: "solar:case-minimalistic-bold-duotone" },
+    { name: "Pricing & Incoterms", href: "/em-pricing", icon: "solar:calculator-bold-duotone" },
+    { name: "Cost Breakdown", href: "/em-cost-breakdown", icon: "solar:chart-square-bold-duotone" },
+    { name: "Scenario Analysis", href: "/em-scenario", icon: "solar:pulse-bold-duotone" },
+    { name: "Risk & Feasibility", href: "/em-risk", icon: "solar:shield-check-bold-duotone" },
+    { name: "AI Advisor", href: "/ai-advisor", icon: "solar:lightbulb-bold-duotone" },
+    { name: "Documents", href: "/em-documents", icon: "solar:document-bold-duotone" },
   ];
   let portalTitle = "Export Manager";
   let divisionName = "Export Division";
 
   if (role === "admin") {
     navItems = [
-      { name: "Dashboard", href: "/admin-dashboard", icon: LayoutDashboard },
-      { name: "Company Approvals", href: "/company-approvals", icon: Building },
-      { name: "User Management", href: "/users", icon: Users },
-      { name: "System Monitoring", href: "/system-monitoring", icon: Activity },
-      { name: "Audit Logs", href: "/audit-logs", icon: FileText },
-      { name: "AI Advisor", href: "/admin-ai-advisor", icon: Lightbulb },
+      { name: "Dashboard", href: "/admin-dashboard", icon: "solar:widget-bold-duotone" },
+      { name: "Company Approvals", href: "/company-approvals", icon: "solar:buildings-bold-duotone" },
+      { name: "User Management", href: "/users", icon: "solar:users-group-rounded-bold-duotone" },
+      { name: "System Monitoring", href: "/system-monitoring", icon: "solar:pulse-bold-duotone" },
+      { name: "Audit Logs", href: "/audit-logs", icon: "solar:document-text-bold-duotone" },
+      { name: "AI Advisor", href: "/admin-ai-advisor", icon: "solar:lightbulb-bold-duotone" },
     ];
     portalTitle = "Admin Portal";
     divisionName = "System Admin";
@@ -81,7 +66,7 @@ export default function ExportManagerLayout({ children }: { children: React.Reac
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 text-gray-600 hover:text-gray-900 transition-colors focus:outline-none cursor-pointer"
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isOpen ? <Icon icon="solar:close-circle-bold-duotone" className="w-6 h-6" /> : <Icon icon="solar:hamburger-menu-bold-duotone" className="w-6 h-6" />}
             </button>
           </header>
 
@@ -111,7 +96,7 @@ export default function ExportManagerLayout({ children }: { children: React.Reac
                 onClick={() => setIsOpen(false)} 
                 className="md:hidden p-1 text-gray-400 hover:text-gray-600 cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <Icon icon="solar:close-circle-bold-duotone" className="w-5 h-5" />
               </button>
             </div>
             <p className="text-xs font-bold text-[#9CA3AF] -mt-5 mb-4 ml-[72px] hidden md:block">{portalTitle}</p>
@@ -120,7 +105,7 @@ export default function ExportManagerLayout({ children }: { children: React.Reac
             <nav className="flex-1 px-4 py-2 space-y-1">
               {navItems.map((item) => {
                 const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
-                const Icon = item.icon;
+                
                 return (
                   <Link
                     key={item.href}
@@ -130,7 +115,7 @@ export default function ExportManagerLayout({ children }: { children: React.Reac
                         : "text-[#4B5563] hover:bg-white hover:shadow-md hover:text-[#00A651] hover:-translate-y-0.5"
                       }`}
                   >
-                    <Icon className="w-5 h-5" />
+                    <Icon icon={item.icon} className="w-5 h-5" />
                     <span className="tracking-wide uppercase text-[11px]">{item.name}</span>
                   </Link>
                 );

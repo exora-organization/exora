@@ -15,7 +15,9 @@ export default function NewExportCasePage() {
         <p className="text-[#9CA3AF] mt-1">Fill in the initial details to start analyzing feasibility.</p>
       </div>
 
-      <ExportCaseForm />
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-8 mt-6">
+        <ExportCaseForm />
+      </div>
     </div>
     </RoleGuard>
   );

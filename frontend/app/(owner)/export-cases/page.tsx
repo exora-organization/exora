@@ -60,7 +60,7 @@ export default function OwnerExportCasesPage() {
       {/* Filters */}
       <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl transition-all hover:shadow-2xl p-4 flex flex-wrap gap-3 items-center">
         <div className="flex items-center gap-2 flex-1 min-w-[200px] bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2">
-          <Icon icon="solar:magnifer-linear" className="w-4 h-4 text-gray-400 shrink-0"  />
+          <Icon icon="solar:magnifer-linear" className="w-4 h-4 text-gray-400 shrink-0" />
           <input
             className="bg-transparent text-sm w-full outline-none font-medium placeholder:text-gray-400"
             placeholder="Search by name or country..."
@@ -69,7 +69,7 @@ export default function OwnerExportCasesPage() {
           />
         </div>
         <div className="flex items-center gap-2">
-          <Icon icon="solar:filter-bold-duotone" className="w-4 h-4 text-gray-400"  />
+          <Icon icon="solar:filter-bold-duotone" className="w-4 h-4 text-gray-400" />
           <select
             className="text-sm bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2 font-semibold outline-none"
             value={statusFilter}
@@ -101,32 +101,40 @@ export default function OwnerExportCasesPage() {
           <div className="animate-spin h-10 w-10 rounded-full border-b-4 border-[#00A651]" />
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-20 text-[#9CA3AF] font-bold">No cases match your filters.</div>
+        <div className="flex justify-center py-12 text-[#9CA3AF] font-bold">
+          No cases match your filters.
+        </div>
       ) : (
         <div className="space-y-4">
           {filtered.map((c) => {
             const feas = feasibilityLabel(c.feasibilityScore);
             return (
-              <Link href={`/export-cases/${c.caseId}`} key={c.caseId} className="flex flex-col md:flex-row items-center justify-between p-6 rounded-3xl bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl hover:-translate-y-1 hover:shadow-2xl transition-all gap-6 group">
+              <div key={c.caseId} className="flex flex-col md:flex-row items-center justify-between p-6 rounded-3xl bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl hover:-translate-y-1 hover:shadow-2xl transition-all gap-6">
                 
                 {/* Case Info */}
                 <div className="flex-[2] min-w-[200px] flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-[#EBF8F2] flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                    <Icon icon="solar:case-bold-duotone" className="w-6 h-6 text-[#00A651]"  />
+                  <div className="w-12 h-12 rounded-2xl bg-[#EBF8F2] flex items-center justify-center shrink-0">
+                    <Icon icon="solar:case-minimalistic-bold-duotone" className="w-6 h-6 text-[#00A651]" />
                   </div>
                   <div>
-                    <h4 className="text-xl font-extrabold text-[#1F2937] group-hover:text-[#00A651] transition-colors">{c.name}</h4>
-                    <p className="text-sm font-semibold text-[#4B5563] mt-1 flex items-center gap-1">
-                      <Icon icon="solar:map-point-bold-duotone" className="w-4 h-4 text-[#9CA3AF]" />
-                      {c.destinationCountry}
-                    </p>
+                    <h4 className="text-xl font-extrabold text-[#1F2937]">{c.name}</h4>
+                    <p className="text-sm font-semibold text-[#4B5563] mt-1">{c.destinationCountry}</p>
                   </div>
                 </div>
 
                 {/* Status */}
                 <div className="flex-1">
                   <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Status</p>
-                  <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold tracking-wide capitalize ${statusColors[c.status] || "bg-gray-100 text-gray-700"}`}>
+                  <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-wide capitalize ${
+                    c.status === "finalized" ? "bg-emerald-100 text-emerald-700" :
+                    c.status === "in_review" ? "bg-amber-100 text-amber-700" :
+                    "bg-gray-100 text-gray-700"
+                  }`}>
+                    <span className={`w-2 h-2 rounded-full ${
+                      c.status === "finalized" ? "bg-emerald-500" :
+                      c.status === "in_review" ? "bg-amber-500" :
+                      "bg-gray-500"
+                    }`}></span>
                     {c.status.replace("_", " ")}
                   </span>
                 </div>
@@ -134,15 +142,15 @@ export default function OwnerExportCasesPage() {
                 {/* Feasibility */}
                 <div className="flex-1">
                   <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Feasibility</p>
-                  <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold ${feas.bg} ${feas.color}`}>
+                  <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold tracking-wide ${feas.bg} ${feas.color}`}>
                     {feas.label}
-                    {c.feasibilityScore !== undefined && (
+                    {c.feasibilityScore !== undefined && c.feasibilityScore !== null && (
                       <span className="ml-1 opacity-70">({(c.feasibilityScore * 10).toFixed(0)})</span>
                     )}
                   </span>
                 </div>
-
-                {/* Date */}
+                
+                {/* Created Date */}
                 <div className="flex-1 hidden md:block">
                   <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Created</p>
                   <p className="text-xs font-bold text-[#4B5563]">
@@ -151,10 +159,15 @@ export default function OwnerExportCasesPage() {
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center justify-end md:ml-4">
-                  <Icon icon="solar:alt-arrow-right-linear" className="w-6 h-6 text-[#00A651] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                <div className="flex items-center md:ml-4 shrink-0">
+                  <Link href={`/export-cases/${c.caseId}`} className="inline-block">
+                    <button className="bg-[#00A651] hover:bg-[#008F44] text-white font-bold rounded-xl px-5 py-2.5 text-[13px] shadow-md shadow-[#00A651]/20">
+                      View Detail
+                    </button>
+                  </Link>
                 </div>
-              </Link>
+
+              </div>
             );
           })}
         </div>

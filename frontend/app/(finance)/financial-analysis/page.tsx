@@ -5,12 +5,7 @@ import Link from "next/link";
 import { apiExportCase } from "../../../lib/api/export-case";
 import { apiFinancial } from "../../../lib/api/financial";
 import { useState, useMemo } from "react";
-import { Badge } from "../../../components/ui/badge";
-import { Button } from "../../../components/ui/button";
-import { 
-  ChevronDown, ChevronUp, AlertCircle, Loader2,
-  Search, Filter, SlidersHorizontal
-} from "lucide-react";
+import { Icon } from "@iconify/react";
 
 const SORT_OPTIONS = [
   { label: "Newest First", value: "newest" },
@@ -41,89 +36,115 @@ function FinancialCaseRow({ c }: { c: any }) {
   const analysis = finData?.data?.analysis;
 
   return (
-    <>
-      <tr className="hover:bg-[#FAFCFB] transition-colors border-b border-[#F3F4F6]">
-        <td className="px-6 py-4 font-bold text-[#1F2937]">{c.name}</td>
-        <td className="px-4 py-4 font-semibold text-[#4B5563]">{c.destinationCountry}</td>
-        <td className="px-4 py-4">
-          <Badge variant={c.status === "finalized" ? "secondary" : c.status === "in_review" ? "default" : "outline"} className="font-bold py-1 px-3">
-            {c.status.replace("_", " ").toUpperCase()}
-          </Badge>
-        </td>
-        <td className="px-4 py-4">
+    <div className="flex flex-col bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl overflow-hidden hover:shadow-2xl transition-all">
+      <div className="flex flex-col md:flex-row items-center justify-between p-6 gap-6">
+        {/* Case Info */}
+        <div className="flex-[2] min-w-[200px] flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-[#EBF8F2] flex items-center justify-center shrink-0">
+            <Icon icon="solar:pulse-bold-duotone" className="w-6 h-6 text-[#00A651]" />
+          </div>
+          <div>
+            <h4 className="text-xl font-extrabold text-[#1F2937]">{c.name}</h4>
+            <p className="text-sm font-semibold text-[#4B5563] mt-1">{c.destinationCountry}</p>
+          </div>
+        </div>
+
+        {/* Status */}
+        <div className="flex-1">
+          <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Status</p>
+          <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-wide capitalize ${
+            c.status === "finalized" ? "bg-emerald-100 text-emerald-700" :
+            c.status === "in_review" ? "bg-amber-100 text-amber-700" :
+            "bg-gray-100 text-gray-700"
+          }`}>
+            <span className={`w-2 h-2 rounded-full ${
+              c.status === "finalized" ? "bg-emerald-500" :
+              c.status === "in_review" ? "bg-amber-500" :
+              "bg-gray-500"
+            }`}></span>
+            {c.status.replace("_", " ")}
+          </span>
+        </div>
+
+        {/* Feasibility */}
+        <div className="flex-1">
+          <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Feasibility</p>
           {c.feasibilityScore !== undefined && c.feasibilityScore !== null 
-            ? <span className="font-black text-[#00A651]">{(c.feasibilityScore * 10).toFixed(0)}/100</span>
-            : <span className="text-gray-400 font-bold">Unanalyzed</span>
+            ? <span className="font-black text-[#00A651] text-lg">{(c.feasibilityScore * 10).toFixed(0)}/100</span>
+            : <span className="text-gray-400 font-bold text-sm bg-gray-100 px-3 py-1 rounded-full">Unanalyzed</span>
           }
-        </td>
-        <td className="px-4 py-4">
-          <Button 
-            variant="ghost" 
-            size="sm" 
+        </div>
+
+        {/* Actions */}
+        <div className="flex flex-col md:flex-row items-center gap-3 shrink-0">
+          <button 
             onClick={() => setIsOpen(!isOpen)}
-            className="text-gray-500 hover:text-gray-900 font-bold flex items-center gap-1"
+            className="flex items-center justify-center gap-2 font-bold text-sm text-[#00A651] hover:text-[#008F44] transition-colors py-2 px-3 rounded-full hover:bg-[#EBF8F2]"
           >
-            {isOpen ? (
-              <>Hide Details <ChevronUp className="w-4 h-4" /></>
-            ) : (
-              <>Quick Profit View <ChevronDown className="w-4 h-4" /></>
-            )}
-          </Button>
-        </td>
-        <td className="px-6 py-4 text-right">
-          <Link href={`/finance-case/${c.caseId}/financial`}>
-            <Button className="bg-[#00A651] hover:bg-[#008F44] text-white font-bold rounded-xl text-xs px-4">
+            {isOpen ? "Hide Overview" : "Quick Profit View"}
+            <Icon icon={isOpen ? "solar:alt-arrow-up-bold-duotone" : "solar:alt-arrow-down-bold-duotone"} className="w-5 h-5" />
+          </button>
+          
+          <Link href={`/finance-case/${c.caseId}/financial`} className="inline-block">
+            <button className="bg-[#00A651] hover:bg-[#008F44] text-white font-bold rounded-full px-6 py-3 text-[13px] shadow-md shadow-[#00A651]/20 transition-all w-full md:w-auto">
               Open Simulator
-            </Button>
+            </button>
           </Link>
-        </td>
-      </tr>
-      
+        </div>
+      </div>
+
+      {/* Expanded Quick View */}
       {isOpen && (
-        <tr className="bg-[#FAF8F3]/40 border-b border-[#E8E3D9]">
-          <td colSpan={6} className="px-8 py-5">
-            {finLoading ? (
-              <div className="flex items-center gap-2 text-sm text-[#9CA3AF] font-bold">
-                <Loader2 className="w-4 h-4 animate-spin text-[#00A651]" /> Loading financial metrics...
+        <div className="px-6 pb-6 pt-2 bg-gradient-to-b from-white/0 to-[#FAF8F3]/50 border-t border-[#E8E3D9]/50">
+          {finLoading ? (
+            <div className="flex items-center gap-3 text-sm text-[#9CA3AF] font-bold py-4">
+              <Icon icon="solar:round-transfer-horizontal-bold-duotone" className="w-5 h-5 animate-spin text-[#00A651]" /> Loading financial metrics...
+            </div>
+          ) : error ? (
+            <div className="flex items-center gap-3 text-sm text-rose-600 font-bold py-4 bg-rose-50 px-5 rounded-2xl border border-rose-100">
+              <Icon icon="solar:danger-triangle-bold-duotone" className="w-6 h-6" /> Costing data incomplete for this case. Configure costing sheet first.
+            </div>
+          ) : analysis ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
+              <div className="bg-white/80 p-5 rounded-2xl border border-white shadow-sm hover:shadow-md transition-shadow">
+                <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-2 flex items-center gap-2">
+                  <Icon icon="solar:wallet-money-bold-duotone" className="w-4 h-4 text-blue-500" /> Revenue
+                </p>
+                <p className="text-xl font-extrabold text-[#1F2937]">
+                  Rp {(analysis.sellingPriceIDR * analysis.quantity).toLocaleString("id-ID")}
+                </p>
               </div>
-            ) : error ? (
-              <div className="flex items-center gap-2 text-sm text-rose-600 font-bold">
-                <AlertCircle className="w-4 h-4" /> Costing data incomplete for this case. Configure costing sheet first.
+              <div className="bg-white/80 p-5 rounded-2xl border border-white shadow-sm hover:shadow-md transition-shadow">
+                <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-2 flex items-center gap-2">
+                  <Icon icon="solar:graph-up-bold-duotone" className="w-4 h-4 text-emerald-500" /> Gross Profit
+                </p>
+                <p className="text-xl font-extrabold text-[#1F2937]">
+                  Rp {((analysis.sellingPriceIDR - analysis.totalCostIDR) * analysis.quantity).toLocaleString("id-ID")}
+                </p>
               </div>
-            ) : analysis ? (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div className="bg-white p-4 rounded-xl border border-[#E8E3D9]">
-                  <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Revenue</p>
-                  <p className="text-base font-extrabold text-[#1F2937]">
-                    Rp {(analysis.sellingPriceIDR * analysis.quantity).toLocaleString("id-ID")}
-                  </p>
-                </div>
-                <div className="bg-white p-4 rounded-xl border border-[#E8E3D9]">
-                  <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Gross Profit</p>
-                  <p className="text-base font-extrabold text-[#1F2937]">
-                    Rp {((analysis.sellingPriceIDR - analysis.totalCostIDR) * analysis.quantity).toLocaleString("id-ID")}
-                  </p>
-                </div>
-                <div className="bg-white p-4 rounded-xl border border-[#E8E3D9]">
-                  <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Profit Margin</p>
-                  <p className={`text-base font-black ${analysis.profitMarginPct < 15 ? 'text-amber-600' : 'text-emerald-700'}`}>
-                    {analysis.profitMarginPct.toFixed(2)}%
-                  </p>
-                </div>
-                <div className="bg-white p-4 rounded-xl border border-[#E8E3D9]">
-                  <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Break Even Qty</p>
-                  <p className="text-base font-extrabold text-[#1F2937]">
-                    {Math.ceil(analysis.breakEvenQty).toLocaleString()} units
-                  </p>
-                </div>
+              <div className="bg-white/80 p-5 rounded-2xl border border-white shadow-sm hover:shadow-md transition-shadow">
+                <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-2 flex items-center gap-2">
+                  <Icon icon="solar:pie-chart-2-bold-duotone" className="w-4 h-4 text-purple-500" /> Profit Margin
+                </p>
+                <p className={`text-xl font-black ${analysis.profitMarginPct < 15 ? 'text-amber-600' : 'text-emerald-700'}`}>
+                  {analysis.profitMarginPct.toFixed(2)}%
+                </p>
               </div>
-            ) : (
-              <div className="text-sm text-gray-500 font-bold">No data found.</div>
-            )}
-          </td>
-        </tr>
+              <div className="bg-white/80 p-5 rounded-2xl border border-white shadow-sm hover:shadow-md transition-shadow">
+                <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-2 flex items-center gap-2">
+                  <Icon icon="solar:box-minimalistic-bold-duotone" className="w-4 h-4 text-amber-500" /> Break Even Qty
+                </p>
+                <p className="text-xl font-extrabold text-[#1F2937]">
+                  {Math.ceil(analysis.breakEvenQty).toLocaleString()} units
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="text-sm text-gray-500 font-bold py-4">No data found.</div>
+          )}
+        </div>
       )}
-    </>
+    </div>
   );
 }
 
@@ -165,17 +186,17 @@ export default function ProfitabilityReportsPage() {
 
   if (isLoading) {
     return (
-      <div className="p-8 flex justify-center items-center min-h-[50vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-[#00A651]"></div>
+      <div className="flex justify-center py-20">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-4 border-[#00A651]"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-8 text-center bg-red-50 text-red-600 rounded-3xl font-bold max-w-lg mx-auto mt-10">
+      <div className="p-8 text-center bg-red-50 text-red-600 rounded-3xl font-bold max-w-lg mx-auto mt-10 shadow-xl">
         <p>Failed to load export cases.</p>
-        <Button onClick={() => refetch()} variant="destructive" className="mt-4 rounded-xl">Retry</Button>
+        <button onClick={() => refetch()} className="mt-4 rounded-full bg-red-600 text-white px-6 py-2 shadow-md hover:bg-red-700 transition-all">Retry</button>
       </div>
     );
   }
@@ -183,16 +204,16 @@ export default function ProfitabilityReportsPage() {
   return (
     <div className="space-y-8 max-w-6xl mx-auto pb-12">
       <div>
-        <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Financial Analysis</h2>
-        <p className="text-sm text-[#4B5563] font-medium mt-1">
+        <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">Financial Analysis</h2>
+        <p className="text-sm text-[#4B5563] font-medium mt-2">
           Perform margins checks, ROI calculations, and run simulations for export plans.
         </p>
       </div>
 
       {/* Search, Filter & Sort Bar */}
-      <div className="bg-white rounded-2xl border border-[#E8E3D9] shadow-sm p-4 flex flex-wrap gap-3 items-center">
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl transition-all hover:shadow-2xl p-4 flex flex-wrap gap-3 items-center">
         <div className="flex items-center gap-2 flex-1 min-w-[200px] bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2">
-          <Search className="w-4 h-4 text-gray-400 shrink-0" />
+          <Icon icon="solar:magnifer-linear" className="w-4 h-4 text-gray-400 shrink-0" />
           <input
             className="bg-transparent text-sm w-full outline-none font-medium placeholder:text-gray-400"
             placeholder="Search by case name or country..."
@@ -201,7 +222,7 @@ export default function ProfitabilityReportsPage() {
           />
         </div>
         <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-gray-400 shrink-0" />
+          <Icon icon="solar:filter-bold-duotone" className="w-4 h-4 text-gray-400 shrink-0" />
           <select
             className="text-sm bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2 font-semibold outline-none"
             value={statusFilter}
@@ -214,7 +235,7 @@ export default function ProfitabilityReportsPage() {
           </select>
         </div>
         <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-gray-400 shrink-0" />
+          <Icon icon="solar:filter-bold-duotone" className="w-4 h-4 text-gray-400 shrink-0" />
           <select
             className="text-sm bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2 font-semibold outline-none"
             value={feasibilityFilter}
@@ -228,7 +249,7 @@ export default function ProfitabilityReportsPage() {
           </select>
         </div>
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="w-4 h-4 text-gray-400 shrink-0" />
+          <Icon icon="solar:slider-horizontal-bold-duotone" className="w-4 h-4 text-gray-400 shrink-0" />
           <select
             className="text-sm bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2 font-semibold outline-none"
             value={sortBy}
@@ -244,36 +265,13 @@ export default function ProfitabilityReportsPage() {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="bg-white border border-[#E8E3D9] shadow-md rounded-3xl overflow-hidden">
-        <div className="bg-gray-50/50 border-b border-[#E8E3D9] px-6 py-4">
-          <h3 className="text-lg font-bold text-[#1F2937]">Company Profitability Analysis</h3>
-        </div>
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50/40">
-            <tr className="border-b border-[#E8E3D9]">
-              <th className="text-left px-6 py-4 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Case Name</th>
-              <th className="text-left px-4 py-4 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Destination</th>
-              <th className="text-left px-4 py-4 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Status</th>
-              <th className="text-left px-4 py-4 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Feasibility</th>
-              <th className="text-left px-4 py-4 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Quick View</th>
-              <th className="text-right px-6 py-4 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Simulation</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[#F3F4F6]">
-            {filtered.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="text-center py-12 font-bold text-gray-400">
-                  No cases match your filters.
-                </td>
-              </tr>
-            ) : (
-              filtered.map((c) => (
-                <FinancialCaseRow key={c.caseId} c={c} />
-              ))
-            )}
-          </tbody>
-        </table>
+      {/* List Container */}
+      <div className="space-y-4">
+        {filtered.length === 0 ? (
+          <div className="flex justify-center py-12 text-[#9CA3AF] font-bold">No cases match your filters.</div>
+        ) : filtered.map((c) => (
+          <FinancialCaseRow key={c.caseId} c={c} />
+        ))}
       </div>
     </div>
   );

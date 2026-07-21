@@ -10,17 +10,7 @@ import { RoleGuard } from "../../components/auth/RoleGuard";
 import { useUserProfile } from "../../hooks/useUserProfile";
 import { LogoutButton } from "../../components/ui/logout-button";
 import logoImg from "../../public/logo.png";
-import { 
-  LayoutDashboard, 
-  FileText,
-  Menu,
-  X,
-  Activity,
-  Lightbulb,
-  Calculator,
-  Briefcase,
-  FileBarChart2
-} from "lucide-react";
+import { Icon } from "@iconify/react";
 
 export default function FinanceLayout({ children }: { children: React.ReactNode }) {
   const { profile } = useUserProfile();
@@ -33,12 +23,12 @@ export default function FinanceLayout({ children }: { children: React.ReactNode 
   }, [pathname]);
 
   const navItems = [
-    { name: "Dashboard", href: "/finance-dashboard", icon: LayoutDashboard },
-    { name: "Costing Configuration", href: "/costing", icon: Calculator },
-    { name: "Financial Analysis", href: "/financial-analysis", icon: Activity },
-    { name: "Export Cases (view only)", href: "/finance-export-cases", icon: Briefcase },
-    { name: "AI Advisor", href: "/finance-ai-advisor", icon: Lightbulb },
-    { name: "Documents", href: "/finance-documents", icon: FileBarChart2 },
+    { name: "Dashboard", href: "/finance-dashboard", icon: "solar:widget-bold-duotone" },
+    { name: "Costing Configuration", href: "/costing", icon: "solar:calculator-bold-duotone" },
+    { name: "Financial Analysis", href: "/financial-analysis", icon: "solar:pulse-bold-duotone" },
+    { name: "Export Cases (view only)", href: "/finance-export-cases", icon: "solar:case-minimalistic-bold-duotone" },
+    { name: "AI Advisor", href: "/finance-ai-advisor", icon: "solar:lightbulb-bold-duotone" },
+    { name: "Documents", href: "/finance-documents", icon: "solar:document-bold-duotone" },
   ];
 
   return (
@@ -58,7 +48,7 @@ export default function FinanceLayout({ children }: { children: React.ReactNode 
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 text-gray-600 hover:text-gray-900 transition-colors focus:outline-none cursor-pointer"
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isOpen ? <Icon icon="solar:close-circle-bold-duotone" className="w-6 h-6" /> : <Icon icon="solar:hamburger-menu-bold-duotone" className="w-6 h-6" />}
             </button>
           </header>
 
@@ -88,7 +78,7 @@ export default function FinanceLayout({ children }: { children: React.ReactNode 
                 onClick={() => setIsOpen(false)} 
                 className="md:hidden p-1 text-gray-400 hover:text-gray-600 cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <Icon icon="solar:close-circle-bold-duotone" className="w-5 h-5" />
               </button>
             </div>
             <p className="text-xs font-bold text-[#9CA3AF] -mt-5 mb-4 ml-[72px] hidden md:block">Finance Portal</p>
@@ -97,7 +87,7 @@ export default function FinanceLayout({ children }: { children: React.ReactNode 
             <nav className="flex-1 px-4 py-2 space-y-1">
               {navItems.map((item) => {
                 const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
-                const Icon = item.icon;
+                
                 return (
                   <Link
                     key={item.href}
@@ -107,7 +97,7 @@ export default function FinanceLayout({ children }: { children: React.ReactNode 
                         : "text-[#4B5563] hover:bg-white hover:shadow-md hover:text-[#00A651] hover:-translate-y-0.5"
                       }`}
                   >
-                    <Icon className="w-5 h-5" />
+                    <Icon icon={item.icon} className="w-5 h-5" />
                     <span className="tracking-wide uppercase text-[11px]">{item.name}</span>
                   </Link>
                 );

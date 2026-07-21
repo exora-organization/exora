@@ -39,7 +39,7 @@ export default function BlogPage() {
     },
     {
       title: "Using AI to Support Export Decisions",
-      desc: "Learn how AI-powered recommendations can assist businesses in evaluating export opportunities.",
+      desc: "Learn how AI powered recommendations can assist businesses in evaluating export opportunities.",
       category: "Technology",
       readTime: "4 min read",
       image: "/blog/blog5.jpg",

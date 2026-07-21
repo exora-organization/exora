@@ -3,11 +3,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { Icon } from "@iconify/react";
 import { apiRisk } from "../../../../../lib/api/risk";
 import { apiExportCase } from "../../../../../lib/api/export-case";
 import { apiPricing } from "../../../../../lib/api/pricing";
 import { Button } from "../../../../../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../../../../../components/ui/card";
 import { Badge } from "../../../../../components/ui/badge";
 import { Alert, AlertTitle, AlertDescription } from "../../../../../components/ui/alert";
 
@@ -57,39 +57,42 @@ export default function RiskAssessmentPage() {
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-12">
-      <div>
-        <Link href={`/export-case/${caseId}`} className="text-sm text-blue-500 hover:underline mb-2 block">
-          &larr; Back to Case Details
+      <div className="mb-5 flex justify-between items-center">
+        <Link href={`/export-case/${caseId}`} className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00A651] hover:bg-[#008F44] text-white text-[13px] font-bold rounded-full shadow-md hover:shadow-lg transition-all">
+          <Icon icon="solar:arrow-left-bold-duotone" className="w-4 h-4" /> Back to Case
         </Link>
-        <h2 className="text-3xl font-bold tracking-tight">Risk Assessment</h2>
-        <p className="text-[#9CA3AF] mt-1">Review the comprehensive risk analysis generated from your financial models.</p>
+      </div>
+
+      <div>
+        <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Risk Assessment</h2>
+        <p className="text-[#6B7280] mt-1 font-medium">Review the comprehensive risk analysis generated from your financial models.</p>
       </div>
 
       {exportCase && (
-        <Card className="bg-[#FAF8F3]">
-          <CardContent className="p-4 grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
             <div>
-              <p className="text-xs text-[#9CA3AF] font-medium">Case Name</p>
-              <p className="font-semibold text-[#1F2937] truncate">{exportCase.name}</p>
+              <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Case Name</p>
+              <p className="font-extrabold text-[#1F2937] truncate mt-1">{exportCase.name}</p>
             </div>
             <div>
-              <p className="text-xs text-[#9CA3AF] font-medium">Product</p>
-              <p className="font-semibold text-[#1F2937] truncate">{exportCase.product}</p>
+              <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Product</p>
+              <p className="font-extrabold text-[#1F2937] truncate mt-1">{exportCase.product}</p>
             </div>
             <div>
-              <p className="text-xs text-[#9CA3AF] font-medium">Destination</p>
-              <p className="font-semibold text-[#1F2937] truncate">{exportCase.destinationCountry}</p>
+              <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Destination</p>
+              <p className="font-extrabold text-[#1F2937] truncate mt-1">{exportCase.destinationCountry}</p>
             </div>
             <div>
-              <p className="text-xs text-[#9CA3AF] font-medium">Active Incoterm</p>
+              <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Active Incoterm</p>
               {activeIncoterm ? (
-                <Badge variant="default" className="mt-1">{activeIncoterm}</Badge>
+                <Badge className="mt-1 bg-blue-100 text-blue-700 hover:bg-blue-200 border-none rounded-full px-3">{activeIncoterm}</Badge>
               ) : (
-                <span className="text-sm text-[#9CA3AF] mt-1 block">Unknown</span>
+                <span className="text-sm text-[#9CA3AF] mt-1 block font-bold">Unknown</span>
               )}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {riskError && (
@@ -112,79 +115,87 @@ export default function RiskAssessmentPage() {
 
       {assessment && (
         <div className="space-y-6">
-          <div className="flex items-center justify-between p-6 bg-slate-900 text-white rounded-lg shadow-sm">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-8 bg-[#1F2937] text-white rounded-3xl shadow-xl hover:shadow-2xl transition-all border border-gray-700/50">
             <div>
-              <p className="text-[#9CA3AF] text-sm font-medium uppercase tracking-wider mb-1">Overall Feasibility</p>
-              <div className="flex items-center gap-3">
-                <span className="text-3xl font-bold">{assessment.feasibilityScore.toFixed(1)} <span className="text-[#9CA3AF] text-xl">/ 100</span></span>
-                {renderFeasibilityBadge(assessment.feasibilityClass)}
+              <p className="text-[#9CA3AF] text-[10px] font-bold uppercase tracking-widest mb-2">Overall Feasibility</p>
+              <div className="flex items-center gap-4">
+                <span className="text-4xl font-black text-white">{assessment.feasibilityScore.toFixed(1)} <span className="text-gray-500 text-2xl font-bold">/ 100</span></span>
+                <div className="scale-110 origin-left">
+                  {renderFeasibilityBadge(assessment.feasibilityClass)}
+                </div>
               </div>
             </div>
-            <div className="text-right">
-              <p className="text-[#9CA3AF] text-sm font-medium">Calculated At</p>
-              <p className="text-sm">{new Date(assessment.calculatedAt).toLocaleString()}</p>
+            <div className="text-left sm:text-right mt-4 sm:mt-0">
+              <p className="text-[#9CA3AF] text-[10px] font-bold uppercase tracking-widest">Calculated At</p>
+              <p className="text-sm font-bold mt-1 text-gray-300">{new Date(assessment.calculatedAt).toLocaleString()}</p>
             </div>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg">Country Risk</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-3xl font-bold">{assessment.countryRiskScore.toFixed(0)}</span>
-                  {renderRiskBadge(assessment.countryRiskLevel)}
-                </div>
-                <p className="text-sm text-[#9CA3AF] mt-4">
-                  Evaluates the economic and political stability of <strong>{assessment.destinationCountry}</strong>.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg">Payment Risk</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-3xl font-bold">{assessment.paymentTermScore.toFixed(0)}</span>
-                </div>
-                <p className="text-sm font-medium text-blue-600 mt-2">{assessment.paymentTerm}</p>
-                <p className="text-sm text-[#9CA3AF] mt-2">
-                  Assesses the reliability of the chosen payment method in securing funds.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg">Profitability Risk</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-3xl font-bold">{assessment.profitabilityScore.toFixed(0)}</span>
-                </div>
-                <div className="mt-2 space-y-1">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-[#9CA3AF]">Actual Margin</span>
-                    <span className="font-medium">{assessment.actualMarginPct.toFixed(1)}%</span>
+            <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 hover:-translate-y-1 transition-transform flex flex-col h-full">
+              <div className="pb-4">
+                <h3 className="text-xl font-extrabold text-[#1F2937]">Country Risk</h3>
+              </div>
+              <div className="flex-1 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-4xl font-black text-[#1F2937]">{assessment.countryRiskScore.toFixed(0)}</span>
+                    <div className="scale-110">{renderRiskBadge(assessment.countryRiskLevel)}</div>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-[#9CA3AF]">Target Margin</span>
-                    <span className="font-medium">{assessment.targetMarginPct.toFixed(1)}%</span>
-                  </div>
+                  <p className="text-sm text-[#6B7280] font-medium leading-relaxed">
+                    Evaluates the economic and political stability of <strong className="text-[#1F2937] font-extrabold">{assessment.destinationCountry}</strong>.
+                  </p>
                 </div>
-                <p className="text-sm text-[#9CA3AF] mt-4">
-                  Measures the gap between the actual projected margin and the company's target margin.
-                </p>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
+
+            <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 hover:-translate-y-1 transition-transform flex flex-col h-full">
+              <div className="pb-4">
+                <h3 className="text-xl font-extrabold text-[#1F2937]">Payment Risk</h3>
+              </div>
+              <div className="flex-1 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-4xl font-black text-[#1F2937]">{assessment.paymentTermScore.toFixed(0)}</span>
+                  </div>
+                  <p className="text-sm font-extrabold text-blue-600 mb-2">{assessment.paymentTerm}</p>
+                  <p className="text-sm text-[#6B7280] font-medium leading-relaxed">
+                    Assesses the reliability of the chosen payment method in securing funds.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 hover:-translate-y-1 transition-transform flex flex-col h-full">
+              <div className="pb-4">
+                <h3 className="text-xl font-extrabold text-[#1F2937]">Profitability Risk</h3>
+              </div>
+              <div className="flex-1 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-4xl font-black text-[#1F2937]">{assessment.profitabilityScore.toFixed(0)}</span>
+                  </div>
+                  <div className="mb-4 space-y-2">
+                    <div className="flex justify-between items-center text-sm border-b border-gray-100 pb-1">
+                      <span className="text-[#9CA3AF] font-bold">Actual Margin</span>
+                      <span className="font-extrabold text-[#1F2937]">{assessment.actualMarginPct.toFixed(1)}%</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm border-b border-gray-100 pb-1">
+                      <span className="text-[#9CA3AF] font-bold">Target Margin</span>
+                      <span className="font-extrabold text-[#1F2937]">{assessment.targetMarginPct.toFixed(1)}%</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-[#6B7280] font-medium leading-relaxed">
+                    Measures the gap between the actual projected margin and the company's target margin.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="flex justify-end pt-4">
-            <Button onClick={() => router.push(`/export-case/${caseId}/advisor`)} size="lg" className="bg-[#2F6B4F] hover:bg-[#25563F] text-white">
-              Continue to AI Advisor &rarr;
+            <Button onClick={() => router.push(`/export-case/${caseId}/advisor`)} className="bg-[#00A651] hover:bg-[#008F44] text-white rounded-full px-8 h-12 text-[13px] font-bold shadow-md hover:shadow-lg transition-all group">
+              Continue to AI Advisor <Icon icon="solar:arrow-right-bold-duotone" className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>
         </div>

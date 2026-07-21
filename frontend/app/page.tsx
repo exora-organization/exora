@@ -47,7 +47,7 @@ export default function Home() {
       icon: "solar:settings-bold-duotone",
     },
     {
-      title: "AI-Powered Strategic Insights",
+      title: "AI Powered Strategic Insights",
       desc: "Transform complex export data into actionable recommendations with AI, helping your business identify opportunities, mitigate risks, and plan with confidence.",
       icon: "solar:cpu-bold-duotone",
     },
@@ -89,28 +89,28 @@ export default function Home() {
   ];
 
   return (
-    <div className="flex flex-col font-sans bg-[#EBF8F2] min-h-screen selection:bg-[#00A651]/20">
+    <div className="flex flex-col font-sans bg-[#E6F4F1] min-h-screen selection:bg-[#00A651]/20">
 
       <PublicNavbar />
 
 
 
       {/* ================= HERO SECTION ================= */}
-      <div
-        className="relative flex flex-col min-h-[90vh] overflow-hidden bg-cover bg-center"
-        style={{
-          backgroundImage: `linear-gradient(rgba(12, 30, 28, 0.72), rgba(12, 30, 28, 0.60)), url(${heroBg.src})`
-        }}
-      >
+      <div className="relative flex flex-col min-h-[90vh]">
+        {/* Background layer with mask */}
+        <div
+          className="absolute inset-0 z-0 bg-cover bg-center pointer-events-none"
+          style={{
+            backgroundImage: `linear-gradient(rgba(12, 30, 28, 0.72), rgba(12, 30, 28, 0.60)), url(${heroBg.src})`,
+            maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)'
+          }}
+        />
 
         <main className="relative z-10 flex-1 flex flex-col lg:flex-row items-center justify-between px-6 lg:px-20 max-w-7xl mx-auto w-full pt-16 pb-20 lg:pt-24 lg:pb-24 gap-12 lg:gap-16">
 
           {/* Left Column - Copy */}
           <div className="flex-1 space-y-7 max-w-xl mt-8 lg:mt-0">
-            <div className="inline-flex items-center gap-2 bg-[#EBF8F2] text-[#00A651] px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest shadow-sm border border-[#00A651]/20">
-              <span className="w-2 h-2 rounded-full bg-[#00A651] inline-block" />
-              Your Intelligent Export Decision Platform
-            </div>
 
             <h1 className="text-4xl lg:text-5xl xl:text-6xl font-extrabold text-white leading-[1.15] tracking-tight drop-shadow">
               Export Feasibility &amp; Decision Support Platform
@@ -177,7 +177,7 @@ export default function Home() {
       </div>
 
       {/* ================= STATISTICS ================= */}
-      <section className="pt-20 pb-10 px-6 lg:px-20 w-full">
+      <section className="relative z-10 -mt-4 pt-24 pb-10 px-6 lg:px-20 w-full">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -187,12 +187,12 @@ export default function Home() {
         >
           {stats.map((stat, idx) => {
             return (
-              <div key={idx} className="relative bg-white/70 backdrop-blur-md pt-14 px-8 pb-10 rounded-3xl border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,166,81,0.1)] hover:-translate-y-1 transition-all duration-300 flex flex-col items-center text-center mt-6 group">
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-16 h-16 rounded-2xl bg-[#00A651] shadow-md flex items-center justify-center group-hover:-translate-y-2 group-hover:shadow-lg transition-all duration-300">
-                  <Icon icon={stat.icon} className="w-8 h-8 text-white" />
+              <div key={idx} className="relative bg-white/90 backdrop-blur-xl pt-10 px-5 pb-7 rounded-3xl border border-white/60 shadow-[0_4px_20px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_30px_rgb(0,166,81,0.1)] hover:-translate-y-1.5 transition-all duration-500 flex flex-col items-center text-center mt-8 group">
+                <div className="absolute -top-7 left-1/2 -translate-x-1/2 w-14 h-14 rounded-[1rem] bg-[#EBF8F2] border-4 border-white shadow-sm flex items-center justify-center group-hover:-translate-y-1 group-hover:scale-110 transition-all duration-500">
+                  <Icon icon={stat.icon} className="w-7 h-7 text-[#00A651] group-hover:scale-110 transition-transform duration-500" />
                 </div>
-                <div className="text-4xl font-extrabold text-[#1F2937] mt-2 mb-2">{stat.value}</div>
-                <div className="text-sm font-semibold text-[#4B5563] uppercase tracking-wide">{stat.label}</div>
+                <div className="text-4xl lg:text-5xl font-black text-[#00A651] tracking-tight mt-2 mb-2">{stat.value}</div>
+                <div className="text-[11px] lg:text-xs font-bold text-[#4B5563] uppercase tracking-widest leading-relaxed">{stat.label}</div>
               </div>
             );
           })}
@@ -200,7 +200,7 @@ export default function Home() {
       </section>
 
       {/* ================= WHY CHOOSE EXORA ================= */}
-      <section className="py-24 px-6 lg:px-20 max-w-none mx-auto w-full bg-gradient-to-b from-[#EBF8F2] to-white">
+      <section className="py-24 px-6 lg:px-20 max-w-none mx-auto w-full bg-gradient-to-b from-[#E6F4F1] to-white">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -210,25 +210,25 @@ export default function Home() {
         >
           <div className="text-center mb-16 space-y-4">
             <h2 className="text-4xl lg:text-5xl font-extrabold text-[#1F2937]">
-              Why Businesses Choose EXORA
+              Why Businesses Choose EXORA?
             </h2>
             <p className="text-[#4B5563] text-lg max-w-2xl mx-auto">
-              Empowering businesses to make confident export decisions through accurate analysis, integrated planning, and AI-powered insights.
+              Empowering businesses to make confident export decisions through accurate analysis, integrated planning, and AI Powered insights.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12 mt-8">
             {features.map((feature, idx) => {
               return (
-                <div key={idx} className="relative bg-white/70 backdrop-blur-md pt-14 px-8 pb-10 rounded-3xl border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,166,81,0.1)] hover:-translate-y-1 transition-all duration-300 flex flex-col items-center text-center mt-6 group">
-                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-16 h-16 rounded-2xl bg-[#00A651] shadow-md flex items-center justify-center group-hover:-translate-y-2 group-hover:shadow-lg transition-all duration-300">
+                <div key={idx} className="relative bg-white/90 backdrop-blur-xl pt-10 px-6 pb-8 rounded-3xl border border-white/60 shadow-[0_4px_20px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_30px_rgb(0,166,81,0.1)] hover:-translate-y-1.5 transition-all duration-500 flex flex-col items-center text-center mt-8 group">
+                  <div className="absolute -top-7 left-1/2 -translate-x-1/2 w-14 h-14 rounded-[1rem] bg-[#EBF8F2] border-4 border-white shadow-sm flex items-center justify-center group-hover:-translate-y-1 group-hover:scale-110 transition-all duration-500">
                     <Icon
                       icon={feature.icon as string}
-                      className="w-8 h-8 text-white"
+                      className="w-7 h-7 text-[#00A651] group-hover:scale-110 transition-transform duration-500"
                     />
                   </div>
-                  <h3 className="text-xl font-bold text-[#1F2937] mb-3">{feature.title}</h3>
-                  <p className="text-[#4B5563] leading-relaxed">{feature.desc}</p>
+                  <h3 className="text-lg font-extrabold text-[#1F2937] group-hover:text-[#00A651] transition-colors duration-300 mb-2 mt-2">{feature.title}</h3>
+                  <p className="text-sm font-medium text-[#4B5563] leading-relaxed">{feature.desc}</p>
                 </div>
               );
             })}
@@ -237,7 +237,7 @@ export default function Home() {
       </section>
 
       {/* ================= EXPORT WORKFLOW ================= */}
-      <section className="py-24 px-6 lg:px-20 w-full bg-gradient-to-b from-white to-[#EBF8F2]">
+      <section className="py-24 px-6 lg:px-20 w-full bg-gradient-to-b from-white to-[#E6F4F1]">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -321,7 +321,7 @@ export default function Home() {
       </section>
 
       {/* ================= CTA SECTION ================= */}
-      <section className="py-16 px-6 lg:px-20 w-full bg-gradient-to-b from-[#EBF8F2] to-white">
+      <section className="py-16 px-6 lg:px-20 w-full bg-gradient-to-b from-[#E6F4F1] to-white">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

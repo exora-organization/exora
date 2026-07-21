@@ -4,13 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { apiExportCase } from "../../../lib/api/export-case";
 import { apiClient } from "../../../lib/api/client";
 import { useState } from "react";
-import { 
-  FileText, Download, ChevronDown, Loader2, 
-  AlertTriangle, CheckCircle, ShieldCheck, Eye
-} from "lucide-react";
+import { Icon } from "@iconify/react";
 import { toast } from "sonner";
-import { Button } from "../../../components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "../../../components/ui/card";
 import { PdfPreviewModal } from "../../../components/ui/pdf-preview-modal";
 import { auth } from "../../../lib/firebase/client";
 
@@ -87,35 +82,35 @@ export default function FinanceDocumentsPage() {
         documentId={previewModal.documentId}
         filename={previewModal.filename}
       />
-    <div className="space-y-8 max-w-3xl mx-auto pb-12">
-      {/* Header */}
-      <div>
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-2xl bg-[#EBF8F2] flex items-center justify-center">
-            <FileText className="w-5 h-5 text-[#00A651]" />
-          </div>
-          <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Cost Breakdown Documents</h2>
+      <div className="space-y-8 max-w-6xl mx-auto pb-12">
+        {/* Header */}
+        <div>
+          <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937] flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-[#EBF8F2] flex items-center justify-center shadow-inner">
+              <Icon icon="solar:document-text-bold-duotone" className="w-6 h-6 text-[#00A651]" />
+            </div>
+            Cost Breakdown Documents
+          </h2>
+          <p className="text-sm text-[#4B5563] font-medium mt-3">
+            Generate cumulative Incoterm cost breakdowns (EXW, FOB, CFR, CIF) into standard PDF reports (FR-012, FR-023).
+          </p>
         </div>
-        <p className="text-sm text-[#4B5563] font-medium">
-          Generate cumulative Incoterm cost breakdowns (EXW, FOB, CFR, CIF) into standard PDF reports (FR-012, FR-023).
-        </p>
-      </div>
 
-      {/* Notice */}
-      <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 rounded-2xl text-sm text-blue-800 font-semibold">
-        <ShieldCheck className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
-        <span>Reports are generated instantly per selected case. Cost details are compiled automatically from configuration sheets. Download happens immediately without history storage.</span>
-      </div>
+        {/* Notice */}
+        <div className="flex items-start gap-4 p-5 bg-blue-50/80 backdrop-blur-md border border-blue-200 rounded-3xl text-sm text-blue-900 font-semibold shadow-sm">
+          <Icon icon="solar:shield-check-bold-duotone" className="w-6 h-6 text-blue-500 shrink-0 mt-0.5" />
+          <span className="leading-relaxed">Reports are generated instantly per selected case. Cost details are compiled automatically from configuration sheets. Download happens immediately without history storage.</span>
+        </div>
 
-      {/* Case Selector */}
-      <Card className="border-[#E8E3D9] shadow-md">
-        <CardHeader>
-          <CardTitle className="text-base font-extrabold">1 · Select Target Export Case</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="relative">
+        {/* Case Selector */}
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 md:p-8">
+          <h3 className="text-xl font-extrabold text-[#1F2937] flex items-center gap-3 mb-6">
+            <span className="flex items-center justify-center w-7 h-7 rounded-full bg-[#00A651] text-white text-xs font-black shadow-md">1</span>
+            Select Target Export Case
+          </h3>
+          <div className="relative max-w-xl">
             <select
-              className="w-full appearance-none bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-4 py-3 pr-10 text-sm font-semibold outline-none text-[#1F2937] disabled:opacity-60 cursor-pointer"
+              className="w-full appearance-none bg-[#F9FAFB] border border-[#E5E7EB] rounded-2xl px-5 py-4 pr-12 text-sm font-bold outline-none text-[#1F2937] disabled:opacity-60 cursor-pointer focus:ring-2 focus:ring-[#00A651]/20 transition-all shadow-sm"
               value={selectedCaseId}
               onChange={(e) => { setSelectedCaseId(e.target.value); setReportResult(null); }}
               disabled={casesLoading}
@@ -127,63 +122,67 @@ export default function FinanceDocumentsPage() {
                 </option>
               ))}
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+            <Icon icon="solar:alt-arrow-down-bold-duotone" className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#00A651] pointer-events-none" />
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Action Button */}
-      <div className="bg-white rounded-2xl border border-[#E8E3D9] shadow-md p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div>
-          <h3 className="text-base font-extrabold text-[#1F2937]">2 · Export PDF Report</h3>
-          <p className="text-xs text-[#9CA3AF] font-bold mt-0.5">
-            Generates standard Cost Breakdown analysis.
-          </p>
         </div>
-        <Button
-          onClick={handleGenerate}
-          disabled={!selectedCaseId || isGenerating}
-          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-[#00A651] hover:bg-[#008F44] text-white font-bold text-sm transition-all"
-        >
-          {isGenerating ? (
-            <><Loader2 className="w-4 h-4 animate-spin" /> Generating...</>
-          ) : (
-            <><Download className="w-4 h-4" /> Download Report</>
-          )}
-        </Button>
-      </div>
 
-      {/* Result Alert */}
-      {reportResult && (
-        <div className="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-300 rounded-2xl">
-          <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
-          <div className="flex-1">
-            <p className="text-sm font-bold text-emerald-900">PDF Document successfully compiled!</p>
-            {reportResult.generatedAt && (
-              <p className="text-xs text-emerald-700 font-bold">
-                {new Date(reportResult.generatedAt).toLocaleString()}
-              </p>
+        {/* Action Button */}
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 md:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 hover:shadow-2xl transition-all">
+          <div>
+            <h3 className="text-xl font-extrabold text-[#1F2937] flex items-center gap-3">
+              <span className="flex items-center justify-center w-7 h-7 rounded-full bg-[#00A651] text-white text-xs font-black shadow-md">2</span>
+              Export PDF Report
+            </h3>
+            <p className="text-xs text-[#9CA3AF] font-bold mt-2 ml-10 uppercase tracking-widest">
+              Generates standard Cost Breakdown analysis.
+            </p>
+          </div>
+          <button
+            onClick={handleGenerate}
+            disabled={!selectedCaseId || isGenerating}
+            className="flex items-center gap-3 px-8 py-4 rounded-full bg-[#00A651] hover:bg-[#008F44] disabled:bg-gray-400 disabled:shadow-none text-white font-bold text-sm shadow-lg shadow-[#00A651]/30 transition-all w-full sm:w-auto"
+          >
+            {isGenerating ? (
+              <><Icon icon="solar:round-transfer-horizontal-bold-duotone" className="w-5 h-5 animate-spin" /> Generating...</>
+            ) : (
+              <><Icon icon="solar:download-square-bold-duotone" className="w-5 h-5" /> Download Report</>
+            )}
+          </button>
+        </div>
+
+        {/* Result Alert */}
+        {reportResult && (
+          <div className="flex items-center gap-4 p-6 bg-emerald-50/90 backdrop-blur-md border border-emerald-300 rounded-3xl shadow-lg animate-in slide-in-from-bottom-4 duration-500">
+            <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 border border-emerald-200">
+              <Icon icon="solar:check-circle-bold-duotone" className="w-7 h-7 text-emerald-600" />
+            </div>
+            <div className="flex-1">
+              <p className="text-base font-extrabold text-emerald-950">PDF Document successfully compiled!</p>
+              {reportResult.generatedAt && (
+                <p className="text-[11px] text-emerald-700 font-bold uppercase tracking-widest mt-1">
+                  {new Date(reportResult.generatedAt).toLocaleString()}
+                </p>
+              )}
+            </div>
+            {reportResult.documentId && reportResult.filename && (
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setPreviewModal({ open: true, documentId: reportResult.documentId!, filename: reportResult.filename! })}
+                  className="px-6 py-2.5 rounded-full bg-white border border-gray-200 text-[#1F2937] text-sm font-bold hover:bg-gray-50 shadow-sm transition-all flex items-center gap-2"
+                >
+                  <Icon icon="solar:eye-bold-duotone" className="w-4 h-4 text-blue-600" /> Preview
+                </button>
+                <button
+                  onClick={() => handleBlobDownload(reportResult.documentId!, reportResult.filename!)}
+                  className="px-6 py-2.5 rounded-full bg-[#00A651] text-white text-sm font-bold hover:bg-[#008F44] shadow-md shadow-[#00A651]/20 transition-all flex items-center gap-2"
+                >
+                  <Icon icon="solar:download-square-bold-duotone" className="w-4 h-4" /> Save
+                </button>
+              </div>
             )}
           </div>
-          {reportResult.documentId && reportResult.filename && (
-            <div className="flex gap-2">
-              <button
-                onClick={() => setPreviewModal({ open: true, documentId: reportResult.documentId!, filename: reportResult.filename! })}
-                className="px-4 py-2 rounded-xl bg-blue-600 text-white text-xs font-bold hover:bg-blue-700 transition-colors flex items-center gap-1.5"
-              >
-                <Eye className="w-3.5 h-3.5" /> Preview
-              </button>
-              <button
-                onClick={() => handleBlobDownload(reportResult.documentId!, reportResult.filename!)}
-                className="px-4 py-2 rounded-xl bg-[#00A651] text-white text-xs font-bold hover:bg-[#008F44] transition-colors flex items-center gap-1.5"
-              >
-                <Download className="w-3.5 h-3.5" /> Download
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
+        )}
+      </div>
     </>
   );
 }

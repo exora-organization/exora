@@ -5,7 +5,7 @@ import { apiAnalytics } from "../../../lib/api/analytics";
 import { useUserProfile } from "../../../hooks/useUserProfile";
 import { Button } from "../../../components/ui/button";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
-import { BarChart3, Activity, Target, PieChart as PieChartIcon, Clock } from "lucide-react";
+import { Icon } from "@iconify/react";
 
 export default function AnalyticsDashboardPage() {
   const { loading: profileLoading, companyId } = useUserProfile();
@@ -45,7 +45,7 @@ export default function AnalyticsDashboardPage() {
         </div>
         <div className="p-12 text-center bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl flex flex-col items-center gap-4">
           <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-2">
-            <BarChart3 className="w-8 h-8 text-blue-500" />
+            <Icon icon="solar:chart-bold-duotone" className="w-8 h-8 text-blue-500" />
           </div>
           <h3 className="text-2xl font-black text-[#1F2937]">No analytics available yet.</h3>
           <p className="text-sm font-bold text-[#9CA3AF] uppercase tracking-widest">Create export cases to begin generating insights.</p>
@@ -76,7 +76,7 @@ export default function AnalyticsDashboardPage() {
           <div>
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <BarChart3 className="w-6 h-6 text-blue-500" />
+                <Icon icon="solar:chart-bold-duotone" className="w-6 h-6 text-blue-500" />
               </div>
               <p className="text-[11px] font-bold text-[#9CA3AF] uppercase tracking-widest">Total Export Cases</p>
             </div>
@@ -89,7 +89,7 @@ export default function AnalyticsDashboardPage() {
           <div>
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Activity className="w-6 h-6 text-green-500" />
+                <Icon icon="solar:pulse-bold-duotone" className="w-6 h-6 text-green-500" />
               </div>
               <p className="text-[11px] font-bold text-[#9CA3AF] uppercase tracking-widest">Active Cases</p>
             </div>
@@ -102,7 +102,7 @@ export default function AnalyticsDashboardPage() {
           <div>
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Target className="w-6 h-6 text-purple-500" />
+                <Icon icon="solar:target-bold-duotone" className="w-6 h-6 text-purple-500" />
               </div>
               <p className="text-[11px] font-bold text-[#9CA3AF] uppercase tracking-widest">Avg Feasibility Score</p>
             </div>
@@ -122,7 +122,7 @@ export default function AnalyticsDashboardPage() {
 
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-              <PieChartIcon className="w-5 h-5 text-blue-600" />
+              <Icon icon="solar:pie-chart-bold-duotone" className="w-5 h-5 text-blue-600" />
             </div>
             <div>
               <h3 className="text-2xl font-extrabold text-[#1F2937]">Cases by Status</h3>
@@ -169,7 +169,7 @@ export default function AnalyticsDashboardPage() {
 
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
-              <Clock className="w-5 h-5 text-green-600" />
+              <Icon icon="solar:clock-circle-bold-duotone" className="w-5 h-5 text-green-600" />
             </div>
             <div>
               <h3 className="text-2xl font-extrabold text-[#1F2937]">Recent Cases</h3>
