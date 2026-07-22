@@ -29,15 +29,15 @@ const STATUS_CONFIG: Record<
   }
 > = {
   pending: {
-    icon: <Clock className="w-10 h-10 text-amber-500" />,
+    icon: <Clock className="w-10 h-10 text-[#00A651]" />,
     label: "Under Review",
     description:
       "Your company application has been submitted and is currently being reviewed by the EXORA admin team. You will be notified once a decision is made.",
-    bg: "bg-amber-50",
-    border: "border-amber-200",
-    badge: "bg-amber-100 text-amber-800",
+    bg: "bg-[#EBF8F2]",
+    border: "border-[#CDEBE0]",
+    badge: "bg-[#D1EDE4] text-[#00A651]",
     badgeText: "PENDING",
-    textColor: "text-amber-800",
+    textColor: "text-[#00A651]",
   },
   approved: {
     icon: <CheckCircle className="w-10 h-10 text-emerald-500" />,
@@ -74,6 +74,8 @@ const STATUS_CONFIG: Record<
   },
 };
 
+import heroBg from "../../../public/dashboard-bg.png";
+
 export default function GuestDashboardPage() {
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["application-status"],
@@ -86,26 +88,34 @@ export default function GuestDashboardPage() {
   const cfg = status && status !== "none" ? STATUS_CONFIG[status] : null;
 
   return (
-    <div className="space-y-10 max-w-3xl mx-auto pb-12">
+    <div className="-m-6 md:-m-10 p-6 md:p-10 relative min-h-screen">
+      {/* Full Bleed Background layer */}
+      <div
+        className="absolute inset-0 z-0 bg-cover bg-center pointer-events-none"
+        style={{
+          backgroundImage: `linear-gradient(rgba(12, 30, 28, 0.72), rgba(12, 30, 28, 0.60)), url(${heroBg.src})`,
+        }}
+      />
+      
+      <div className="relative z-10 max-w-5xl mx-auto pb-12 pt-4">
 
-      {/* Page Header */}
-      <div>
-        <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">Welcome to EXORA</h2>
-        <p className="text-sm text-[#4B5563] font-medium mt-1">
-          Track your company application status and manage your submission here.
-        </p>
-      </div>
-
-      {/* Application Status Card */}
-      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl overflow-hidden">
-        <div className="px-8 py-5 border-b border-[#F3F4F6]">
-          <h3 className="text-base font-extrabold text-[#1F2937] flex items-center gap-2">
-            <span className="w-2 h-5 bg-[#00A651] rounded-full" />
-            Application Status
-          </h3>
+        {/* Page Header */}
+        <div className="text-center mb-10">
+          <h2 className="text-4xl font-extrabold tracking-tight text-white drop-shadow">Welcome to EXORA</h2>
+          <p className="text-sm text-white/80 font-medium mt-1">
+            Track your company application status and manage your submission here.
+          </p>
         </div>
 
-        <div className="p-8">
+        <div className="grid md:grid-cols-2 gap-8 items-stretch">
+          {/* Application Status Card */}
+          <div className="bg-white/95 backdrop-blur-xl border border-white/60 shadow-xl rounded-[2rem] p-6 sm:p-10 hover:shadow-2xl transition-all duration-300 flex flex-col h-full">
+            <h3 className="text-base font-extrabold text-[#1F2937] flex items-center gap-2 mb-6">
+              <span className="w-2 h-5 bg-[#00A651] rounded-full" />
+              Application Status
+            </h3>
+            
+            <div className="flex-1 flex flex-col justify-center">
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
               <div className="animate-spin h-10 w-10 rounded-full border-b-4 border-[#00A651]" />
@@ -153,23 +163,23 @@ export default function GuestDashboardPage() {
 
                   {/* Company info preview */}
                   {(appData.companyName || appData.businessSector) && (
-                    <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <div className="mt-5 flex flex-col gap-2">
                       {appData.companyName && (
                         <div className="bg-white/60 rounded-xl px-4 py-3 border border-white/80">
                           <p className="text-[9px] font-black uppercase tracking-widest text-[#9CA3AF]">Company</p>
-                          <p className="text-sm font-extrabold text-[#1F2937] mt-0.5 truncate">{appData.companyName}</p>
+                          <p className="text-sm font-extrabold text-[#1F2937] mt-0.5 whitespace-normal break-words">{appData.companyName}</p>
                         </div>
                       )}
                       {appData.businessSector && (
                         <div className="bg-white/60 rounded-xl px-4 py-3 border border-white/80">
                           <p className="text-[9px] font-black uppercase tracking-widest text-[#9CA3AF]">Sector</p>
-                          <p className="text-sm font-extrabold text-[#1F2937] mt-0.5 truncate">{appData.businessSector}</p>
+                          <p className="text-sm font-extrabold text-[#1F2937] mt-0.5 whitespace-normal break-words">{appData.businessSector}</p>
                         </div>
                       )}
                       {appData.country && (
                         <div className="bg-white/60 rounded-xl px-4 py-3 border border-white/80">
                           <p className="text-[9px] font-black uppercase tracking-widest text-[#9CA3AF]">Country</p>
-                          <p className="text-sm font-extrabold text-[#1F2937] mt-0.5 truncate">{appData.country}</p>
+                          <p className="text-sm font-extrabold text-[#1F2937] mt-0.5 whitespace-normal break-words">{appData.country}</p>
                         </div>
                       )}
                     </div>
@@ -178,16 +188,16 @@ export default function GuestDashboardPage() {
               </div>
             </div>
           ) : null}
-        </div>
-      </div>
+            </div>
+          </div>
 
       {/* Quick Actions */}
-      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-8">
-        <h3 className="text-base font-extrabold text-[#1F2937] flex items-center gap-2 mb-5">
+      <div className="bg-white/95 backdrop-blur-xl border border-white/60 shadow-xl rounded-[2rem] p-6 sm:p-10 hover:shadow-2xl transition-all duration-300 flex flex-col h-full">
+        <h3 className="text-base font-extrabold text-[#1F2937] flex items-center gap-2 mb-6">
           <span className="w-2 h-5 bg-[#00A651] rounded-full" />
           Quick Actions
         </h3>
-        <div className="grid gap-3">
+        <div className="grid gap-3 flex-1 content-start">
           <Link
             href="/guest-company-application"
             className="flex items-center justify-between p-4 rounded-2xl border border-[#E8E3D9] bg-[#F9FAFB] hover:bg-white hover:shadow-md hover:border-[#00A651]/40 transition-all group"
@@ -204,8 +214,8 @@ export default function GuestDashboardPage() {
                   {!appData
                     ? "Register your company to get started"
                     : status === "revision_requested"
-                    ? "Revisions required — click to resubmit"
-                    : "Update your company application details"}
+                      ? "Revisions required — click to resubmit"
+                      : "Update your company application details"}
                 </p>
               </div>
             </div>
@@ -231,11 +241,11 @@ export default function GuestDashboardPage() {
           {status === "pending" && (
             <button
               onClick={() => refetch()}
-              className="flex items-center justify-between p-4 rounded-2xl border border-[#E8E3D9] bg-[#F9FAFB] hover:bg-white hover:shadow-md transition-all group cursor-pointer text-left"
+              className="flex items-center justify-between p-4 rounded-2xl border border-[#E8E3D9] bg-[#F9FAFB] hover:bg-white hover:shadow-md hover:border-[#00A651]/40 transition-all group cursor-pointer text-left"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center">
-                  <Clock className="w-4 h-4 text-amber-500" />
+                <div className="w-9 h-9 rounded-xl bg-[#EBF8F2] flex items-center justify-center">
+                  <Clock className="w-4 h-4 text-[#00A651]" />
                 </div>
                 <div>
                   <p className="text-sm font-extrabold text-[#1F2937]">Refresh Status</p>
@@ -256,22 +266,24 @@ export default function GuestDashboardPage() {
                 }
                 window.location.href = "/own-dashboard";
               }}
-              className="flex items-center justify-between p-4 rounded-2xl border border-emerald-200 bg-emerald-50 hover:bg-white hover:shadow-md transition-all group cursor-pointer text-left"
+              className="flex items-center justify-between p-4 rounded-2xl border border-[#E8E3D9] bg-[#F9FAFB] hover:bg-white hover:shadow-md hover:border-[#00A651]/40 transition-all group cursor-pointer text-left"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center">
-                  <CheckCircle className="w-4 h-4 text-emerald-600" />
+                <div className="w-9 h-9 rounded-xl bg-[#EBF8F2] flex items-center justify-center">
+                  <CheckCircle className="w-4 h-4 text-[#00A651]" />
                 </div>
                 <div>
-                  <p className="text-sm font-extrabold text-emerald-800">Go to Owner Dashboard</p>
-                  <p className="text-xs text-emerald-600 font-medium">Your application is approved — access your dashboard</p>
+                  <p className="text-sm font-extrabold text-[#1F2937]">Go to Owner Dashboard</p>
+                  <p className="text-xs text-[#9CA3AF] font-medium">Your application is approved — access your dashboard</p>
                 </div>
               </div>
-              <ArrowRight className="w-4 h-4 text-emerald-400 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all" />
+              <ArrowRight className="w-4 h-4 text-[#9CA3AF] group-hover:text-[#00A651] group-hover:translate-x-0.5 transition-all" />
             </button>
           )}
         </div>
       </div>
+      </div>
+    </div>
     </div>
   );
 }

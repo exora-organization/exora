@@ -150,7 +150,7 @@ export default function ProfilePage() {
             </div>
 
             <div className="flex gap-4 p-5 rounded-2xl bg-[#FAF8F3]/50 border border-[#E8E3D9] hover:shadow-md transition-all">
-              <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 shrink-0">
+              <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-green-600 shrink-0">
                 <Shield className="w-6 h-6" />
               </div>
               <div>

@@ -69,10 +69,10 @@ export default function ExportCaseDetailPage() {
     { href: "costing", title: "1. Costing", desc: "Input direct and indirect costs to calculate total expenses.", icon: "solar:calculator-bold-duotone", color: "text-[#00A651]", bg: "bg-[#EBF8F2]", grad: "from-emerald-50" },
     { href: "pricing", title: "2. Pricing & Incoterms", desc: "Select Incoterms and calculate your export pricing strategy.", icon: "solar:tag-price-bold-duotone", color: "text-blue-500", bg: "bg-blue-50", grad: "from-blue-50" },
     { href: "financial", title: "3. Financial Analysis", desc: "Review profitability margins and break-even points.", icon: "solar:graph-up-bold-duotone", color: "text-amber-500", bg: "bg-amber-50", grad: "from-amber-50" },
-    { href: "scenario", title: "4. Scenario Analysis", desc: "Simulate what-if financial scenarios for the export.", icon: "solar:map-point-wave-bold-duotone", color: "text-purple-500", bg: "bg-purple-50", grad: "from-purple-50" },
+    { href: "scenario", title: "4. Scenario Analysis", desc: "Simulate what-if financial scenarios for the export.", icon: "solar:map-point-wave-bold-duotone", color: "text-green-500", bg: "bg-green-50", grad: "from-green-50" },
     { href: "risk", title: "5. Risk Assessment", desc: "Evaluate market, operational, and financial risks.", icon: "solar:shield-warning-bold-duotone", color: "text-rose-500", bg: "bg-rose-50", grad: "from-rose-50" },
     { href: "feasibility", title: "6. Feasibility Score", desc: "View the overall quantitative feasibility score.", icon: "solar:shield-check-bold-duotone", color: "text-emerald-600", bg: "bg-emerald-50", grad: "from-emerald-50" },
-    { href: "advisor", title: "7. AI Recommendation", desc: "Get strategic AI advice based on your case data.", icon: "solar:magic-stick-3-bold-duotone", color: "text-indigo-500", bg: "bg-indigo-50", grad: "from-indigo-50" },
+    { href: "advisor", title: "7. AI Recommendation", desc: "Get strategic AI advice based on your case data.", icon: "solar:magic-stick-3-bold-duotone", color: "text-emerald-500", bg: "bg-emerald-50", grad: "from-emerald-50" },
     { href: "documents", title: "8. Document Generation", desc: "Generate and download essential export documents.", icon: "solar:document-text-bold-duotone", color: "text-cyan-500", bg: "bg-cyan-50", grad: "from-cyan-50" },
   ];
 

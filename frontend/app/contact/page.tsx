@@ -160,7 +160,7 @@ export default function ContactPage() {
                 </p>
               </div>
 
-              <div className="flex flex-col justify-between flex-1 mt-8 lg:mt-12 py-4">
+              <div className="flex flex-col gap-8 mt-8 lg:mt-12 py-4">
                 <div className="flex items-start space-x-5">
                   <div className="w-14 h-14 rounded-xl bg-[#EBF8F2] text-[#00A651] flex items-center justify-center shrink-0">
                     <Icon icon="solar:letter-bold-duotone" className="w-7 h-7" />

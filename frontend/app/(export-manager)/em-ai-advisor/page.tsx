@@ -228,8 +228,8 @@ export default function AiAdvisorPage() {
               Platform-wide RAG telemetry, query latency statistics, index compliance rates, and debugging drill-down.
             </p>
           </div>
-          <Button onClick={() => refetchHealth()} variant="outline" className="border-gray-300 text-gray-700 bg-white">
-            <Icon icon="solar:restart-bold-duotone" className="w-4 h-4 mr-2" /> Refetch Metrics
+          <Button onClick={() => refetchHealth()} className="bg-[#00A651] hover:bg-[#008A43] text-white shadow-lg hover:shadow-xl transition-all font-bold px-6">
+            <Icon icon="solar:restart-bold-duotone" className="w-5 h-5 mr-2" /> Refetch Metrics
           </Button>
         </div>
 
@@ -274,8 +274,8 @@ export default function AiAdvisorPage() {
           <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 transition-all hover:-translate-y-1 hover:shadow-2xl flex flex-col justify-between group">
             <div>
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                  <Icon icon="solar:cpu-bold-duotone" className="w-6 h-6 text-indigo-600" />
+                <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                  <Icon icon="solar:cpu-bold-duotone" className="w-6 h-6 text-emerald-600" />
                 </div>
                 <p className="text-[11px] font-bold text-[#9CA3AF] uppercase tracking-widest">LLM Success</p>
               </div>
@@ -412,26 +412,35 @@ export default function AiAdvisorPage() {
         </div>
 
         {/* System Activity & Anomaly Console Logs */}
-        <div className="bg-slate-950 text-emerald-400 font-mono text-xs rounded-3xl p-6 md:p-8 shadow-2xl border border-slate-900 relative overflow-hidden">
-          <div className="absolute top-3 right-4 flex space-x-1">
-            <div className="w-3 h-3 rounded-full bg-red-500"></div>
-            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-            <div className="w-3 h-3 rounded-full bg-green-500"></div>
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-8 transition-all hover:shadow-2xl overflow-hidden">
+          <div className="flex items-center justify-between mb-4 border-b border-gray-100 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[#EBF8F2] flex items-center justify-center shrink-0">
+                <Icon icon="solar:clipboard-list-bold-duotone" className="w-5 h-5 text-[#00A651]" />
+              </div>
+              <div>
+                <h3 className="text-lg font-black text-[#1F2937]">RAG Diagnostic Logs & Anomalies</h3>
+                <p className="text-xs text-gray-500 font-medium">Real-time system telemetry and error reporting</p>
+              </div>
+            </div>
+            <div className="flex gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></span>
+            </div>
           </div>
-          <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 border-b border-gray-800 pb-2">RAG Diagnostic logs & Anomalies</h4>
-          <div className="space-y-2.5 max-h-[220px] overflow-y-auto pr-2 select-text">
+          
+          <div className="space-y-3 max-h-[250px] overflow-y-auto pr-2 select-text font-mono text-xs">
             {health?.anomalyLogs?.map((log, i) => (
-              <p key={i} className="leading-relaxed">
-                <span className="text-gray-500">[{new Date(log.timestamp).toLocaleTimeString()}]</span>{" "}
-                <span className={`font-black ${log.severity === "ERROR"
-                    ? "text-red-500"
+              <div key={i} className="flex gap-3 p-3 rounded-xl bg-gray-50/80 border border-gray-100/50 hover:bg-gray-100/80 transition-colors">
+                <span className="text-gray-400 shrink-0 w-24">[{new Date(log.timestamp).toLocaleTimeString()}]</span>
+                <span className={`font-bold shrink-0 w-16 ${log.severity === "ERROR"
+                    ? "text-red-600"
                     : log.severity === "WARN"
-                      ? "text-yellow-500"
-                      : "text-blue-500"
-                  }`}>[{log.severity}]</span>{" "}
-                <span className="text-sky-400">[{log.module}]</span>{" "}
-                <span className="text-slate-200">{log.message}</span>
-              </p>
+                      ? "text-amber-600"
+                      : "text-emerald-600"
+                  }`}>[{log.severity}]</span>
+                <span className="text-[#00A651] font-bold shrink-0">[{log.module}]</span>
+                <span className="text-[#4B5563] break-words">{log.message}</span>
+              </div>
             ))}
           </div>
         </div>
@@ -679,8 +688,8 @@ export default function AiAdvisorPage() {
           <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 transition-all hover:-translate-y-1 hover:shadow-2xl flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                  <Icon icon="solar:box-bold-duotone" className="w-6 h-6 text-purple-600" />
+                <div className="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                  <Icon icon="solar:box-bold-duotone" className="w-6 h-6 text-green-600" />
                 </div>
                 <p className="text-[11px] font-bold text-[#9CA3AF] uppercase tracking-widest">Active Products</p>
               </div>
@@ -790,7 +799,7 @@ export default function AiAdvisorPage() {
                 <Button
                   onClick={() => handleGeneratePDF("cost-breakdown")}
                   disabled={isGeneratingPdf || !selectedCaseId}
-                  className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl h-12 px-6 font-bold"
+                  className="bg-green-600 hover:bg-green-700 text-white rounded-xl h-12 px-6 font-bold"
                 >
                   <Icon icon="solar:eye-bold-duotone" className="w-4 h-4 mr-2" /> Generate & Preview Cost Breakdown
                 </Button>

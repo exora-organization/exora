@@ -137,11 +137,11 @@ export function FinancialAnalysis({ caseId, backUrl }: FinancialAnalysisProps) {
               </div>
               <div>
                 <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Profit Margin (%)</p>
-                <p className="text-2xl font-extrabold text-indigo-700">{(analysis.profitMarginPct || 0).toFixed(2)}%</p>
+                <p className="text-2xl font-extrabold text-emerald-700">{(analysis.profitMarginPct || 0).toFixed(2)}%</p>
               </div>
               <div>
                 <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Return on Investment (ROI)</p>
-                <p className="text-2xl font-extrabold text-purple-700">{(analysis.roiPct || 0).toFixed(2)}%</p>
+                <p className="text-2xl font-extrabold text-green-700">{(analysis.roiPct || 0).toFixed(2)}%</p>
               </div>
               <div className="col-span-2">
                 <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Break Even Point (Quantity)</p>
@@ -169,10 +169,10 @@ export function FinancialAnalysis({ caseId, backUrl }: FinancialAnalysisProps) {
           </div>
 
           {profile?.role === "finance_staff" && (
-            <div className="bg-purple-50/90 backdrop-blur-xl border border-purple-200 shadow-xl rounded-3xl overflow-hidden hover:-translate-y-1 transition-transform">
-              <div className="bg-purple-100/50 backdrop-blur-sm border-b border-purple-200 px-6 py-5">
-                <h3 className="text-xl font-extrabold text-purple-900 flex items-center gap-2">
-                  <ShieldAlert className="w-5 h-5 text-purple-600" />
+            <div className="bg-green-50/90 backdrop-blur-xl border border-green-200 shadow-xl rounded-3xl overflow-hidden hover:-translate-y-1 transition-transform">
+              <div className="bg-green-100/50 backdrop-blur-sm border-b border-green-200 px-6 py-5">
+                <h3 className="text-xl font-extrabold text-green-900 flex items-center gap-2">
+                  <ShieldAlert className="w-5 h-5 text-green-600" />
                   Finance AI Advisor Panel
                 </h3>
               </div>
@@ -216,12 +216,12 @@ export function FinancialAnalysis({ caseId, backUrl }: FinancialAnalysisProps) {
                 </div>
 
                 {/* Report Download */}
-                <div className="pt-4 border-t border-purple-200/50 flex justify-between items-center">
+                <div className="pt-4 border-t border-green-200/50 flex justify-between items-center">
                   <span className="text-[10px] text-[#9CA3AF] font-bold uppercase tracking-widest">Report Authorization</span>
                   <Button 
                     onClick={handleDownloadCostBreakdown} 
                     disabled={isGeneratingPdf} 
-                    className="bg-purple-600 hover:bg-purple-700 text-white rounded-full text-[13px] h-12 px-6 font-bold shadow-md hover:shadow-lg transition-all"
+                    className="bg-green-600 hover:bg-green-700 text-white rounded-full text-[13px] h-12 px-6 font-bold shadow-md hover:shadow-lg transition-all"
                   >
                     <Download className="w-4 h-4 mr-2" />
                     {isGeneratingPdf ? "Generating..." : "Generate & Preview Cost Breakdown"}

@@ -4,11 +4,13 @@ import * as React from "react";
 import { Icon } from "@iconify/react";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { apiAdmin } from "../../../lib/api/admin";
 import { Button } from "../../../components/ui/button";
 
 export default function AdminDashboardPage() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data: monitoringData, isLoading: isMonitoringLoading } = useQuery({
@@ -76,7 +78,17 @@ export default function AdminDashboardPage() {
             id="admin-search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search applications & activity..." 
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                const q = searchQuery.toLowerCase().trim();
+                if (q.includes("company") || q.includes("approval")) router.push("/admin-company-approvals");
+                else if (q.includes("user")) router.push("/admin-users");
+                else if (q.includes("monitor") || q.includes("system")) router.push("/admin-system-monitoring");
+                else if (q.includes("audit") || q.includes("log")) router.push("/admin-audit-logs");
+                else if (q.includes("ai") || q.includes("advisor")) router.push("/admin-ai-advisor");
+              }
+            }}
+            placeholder="Search applications, users, logs..." 
             className="w-full pl-4 pr-10 py-3 rounded-2xl border border-white/60 shadow-md focus:outline-none focus:ring-2 focus:ring-[#00A651] bg-white/90 backdrop-blur-md text-sm font-medium"
           />
           <Icon icon="solar:magnifer-bold-duotone" className="absolute right-4 top-3.5 h-4 w-4 text-[#9CA3AF]" />
@@ -161,8 +173,8 @@ export default function AdminDashboardPage() {
         <Link href="/em-export-case" className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-5 relative group transition-all hover:-translate-y-1 hover:shadow-2xl cursor-pointer">
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-[10px] font-bold text-[#4B5563] uppercase tracking-widest mt-1">Total Export Cases</h3>
-            <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
-              <Icon icon="solar:box-bold-duotone" className="w-4 h-4 text-purple-500" />
+            <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
+              <Icon icon="solar:box-bold-duotone" className="w-4 h-4 text-green-500" />
             </div>
           </div>
           <div className="flex items-baseline gap-1 mb-2">
@@ -171,7 +183,7 @@ export default function AdminDashboardPage() {
             </div>
           </div>
           <div className="flex items-center text-xs font-semibold text-[#4B5563]">
-            <span className="w-2 h-2 rounded-full bg-purple-500 mr-2 shrink-0"></span>
+            <span className="w-2 h-2 rounded-full bg-green-500 mr-2 shrink-0"></span>
             System export cases
           </div>
         </Link>
@@ -195,7 +207,7 @@ export default function AdminDashboardPage() {
 
           <div className="p-5 rounded-2xl border border-gray-150 bg-slate-50/50 flex flex-col justify-between">
             <div className="text-xs font-bold text-[#4B5563] uppercase tracking-wider">Export Cases Created</div>
-            <div className="text-3xl font-extrabold text-purple-600 mt-2">
+            <div className="text-3xl font-extrabold text-green-600 mt-2">
               {isMonitoringLoading ? "--" : (stats?.userActivityStats?.casesCreatedLast7Days ?? 0)}
             </div>
             <span className="text-[11px] font-bold text-slate-400 mt-1">New export management folders initialized</span>
@@ -237,7 +249,7 @@ export default function AdminDashboardPage() {
             <span className="font-bold text-sm text-[#4B5563]">System Monitoring</span>
           </Link>
           <Link href="/admin-audit-logs" className="flex items-center gap-4 p-5 bg-white/90 backdrop-blur-md rounded-3xl shadow-xl border border-white/60 hover:shadow-2xl hover:-translate-y-1 transition-all group">
-            <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-500 group-hover:scale-110 transition-transform">
+            <div className="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center text-green-500 group-hover:scale-110 transition-transform">
               <Icon icon="solar:document-text-bold-duotone" className="w-6 h-6" />
             </div>
             <span className="font-bold text-sm text-[#4B5563]">Audit Logs</span>

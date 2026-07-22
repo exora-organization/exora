@@ -92,41 +92,41 @@ export function CompanyApplicationForm({ initialData, onSuccess, isRevision = fa
     <div className="w-full">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="companyName" className="text-xs font-bold text-gray-700 tracking-widest uppercase">Company Name</Label>
+          <Label htmlFor="companyName" className="text-xs font-black text-gray-800 tracking-widest uppercase ml-4">Company Name</Label>
           <Input
             id="companyName"
             placeholder="e.g. PT Jaya Abadi"
-            className="px-4 h-12 bg-[#eef3f7] border-transparent focus:bg-white text-gray-900 placeholder:text-gray-400 text-base rounded-lg"
+            className="w-full px-6 py-4 h-14 rounded-full border-2 border-[#CDEBE0] focus:outline-none focus:ring-4 focus:ring-[#00A651]/20 focus:border-[#00A651] transition-all bg-[#EBF8F2] hover:bg-[#E3F4EC] hover:border-[#00A651]/40 hover:shadow-md shadow-sm text-[#1F2937] placeholder:text-[#80988E]"
             {...register("companyName")}
           />
           {errors.companyName && (
-            <p className="text-sm text-red-500">{errors.companyName.message}</p>
+            <p className="text-sm text-red-500 font-bold ml-4">{errors.companyName.message}</p>
           )}
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="businessSector" className="text-xs font-bold text-gray-700 tracking-widest uppercase">Business Sector</Label>
+          <Label htmlFor="businessSector" className="text-xs font-black text-gray-800 tracking-widest uppercase ml-4">Business Sector</Label>
           <Input
             id="businessSector"
             placeholder="e.g. Agriculture, Manufacturing"
-            className="px-4 h-12 bg-[#eef3f7] border-transparent focus:bg-white text-gray-900 placeholder:text-gray-400 text-base rounded-lg"
+            className="w-full px-6 py-4 h-14 rounded-full border-2 border-[#CDEBE0] focus:outline-none focus:ring-4 focus:ring-[#00A651]/20 focus:border-[#00A651] transition-all bg-[#EBF8F2] hover:bg-[#E3F4EC] hover:border-[#00A651]/40 hover:shadow-md shadow-sm text-[#1F2937] placeholder:text-[#80988E]"
             {...register("businessSector")}
           />
           {errors.businessSector && (
-            <p className="text-sm text-red-500">{errors.businessSector.message}</p>
+            <p className="text-sm text-red-500 font-bold ml-4">{errors.businessSector.message}</p>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="country" className="text-xs font-bold text-gray-700 tracking-widest uppercase">Country</Label>
+          <Label htmlFor="country" className="text-xs font-black text-gray-800 tracking-widest uppercase ml-4">Country</Label>
           <Input
             id="country"
             placeholder="e.g. Indonesia"
-            className="px-4 h-12 bg-[#eef3f7] border-transparent focus:bg-white text-gray-900 placeholder:text-gray-400 text-base rounded-lg"
+            className="w-full px-6 py-4 h-14 rounded-full border-2 border-[#CDEBE0] focus:outline-none focus:ring-4 focus:ring-[#00A651]/20 focus:border-[#00A651] transition-all bg-[#EBF8F2] hover:bg-[#E3F4EC] hover:border-[#00A651]/40 hover:shadow-md shadow-sm text-[#1F2937] placeholder:text-[#80988E]"
             {...register("country")}
           />
           {errors.country && (
-            <p className="text-sm text-red-500">{errors.country.message}</p>
+            <p className="text-sm text-red-500 font-bold ml-4">{errors.country.message}</p>
           )}
         </div>
         

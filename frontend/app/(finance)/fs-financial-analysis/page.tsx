@@ -124,7 +124,7 @@ function FinancialCaseRow({ c }: { c: any }) {
               </div>
               <div className="bg-white/80 p-5 rounded-2xl border border-white shadow-sm hover:shadow-md transition-shadow">
                 <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-2 flex items-center gap-2">
-                  <Icon icon="solar:pie-chart-2-bold-duotone" className="w-4 h-4 text-purple-500" /> Profit Margin
+                  <Icon icon="solar:pie-chart-2-bold-duotone" className="w-4 h-4 text-green-500" /> Profit Margin
                 </p>
                 <p className={`text-xl font-black ${analysis.profitMarginPct < 15 ? 'text-amber-600' : 'text-emerald-700'}`}>
                   {analysis.profitMarginPct.toFixed(2)}%

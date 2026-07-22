@@ -48,7 +48,7 @@ export default function BlogPage() {
 
   return (
     <div className="flex flex-col font-sans bg-[#EBF8F2] min-h-screen selection:bg-[#00A651]/20">
-      
+
       <PublicNavbar />
 
       {/* ================= HERO SECTION ================= */}
@@ -85,7 +85,7 @@ export default function BlogPage() {
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
-              
+
               <div className="p-7 flex flex-col flex-1 border-t-4 border-[#00A651]">
                 <div className="flex items-center space-x-4 mb-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider">
                   <div className="flex items-center text-[#00A651] bg-[#EBF8F2] px-2 py-1 rounded-md">
@@ -97,19 +97,16 @@ export default function BlogPage() {
                     {article.readTime}
                   </div>
                 </div>
-                
+
                 <h3 className="text-xl font-bold text-[#1F2937] mb-3 group-hover:text-[#00A651] transition-colors leading-snug">
                   {article.title}
                 </h3>
-                
+
                 <p className="text-[#6B7280] text-sm leading-relaxed mb-6 flex-1">
                   {article.desc}
                 </p>
-                
-                <div className="pt-4 mt-auto border-t border-[#D1EDE4] flex items-center text-[#00A651] font-bold text-sm cursor-pointer hover:text-[#008F44] transition-colors">
-                  Read Article
-                  <Icon icon="solar:arrow-right-bold-duotone" className="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" />
-                </div>
+
+
               </div>
             </motion.div>
           ))}

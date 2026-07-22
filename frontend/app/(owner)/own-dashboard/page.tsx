@@ -127,8 +127,8 @@ export default function OwnerDashboardPage() {
 
         <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 transition-all hover:shadow-2xl group flex flex-col justify-between">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <Icon icon="solar:shield-check-bold-duotone" className="w-6 h-6 text-indigo-500" />
+            <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Icon icon="solar:shield-check-bold-duotone" className="w-6 h-6 text-emerald-500" />
             </div>
             <p className="text-[11px] font-bold text-[#9CA3AF] uppercase tracking-widest">Feasibility Distribution</p>
           </div>
@@ -155,8 +155,8 @@ export default function OwnerDashboardPage() {
         <Link href="/own-team-management" className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 transition-all hover:-translate-y-1 hover:shadow-2xl group flex flex-col cursor-pointer">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Icon icon="solar:users-group-rounded-bold-duotone" className="w-6 h-6 text-purple-500" />
+              <div className="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Icon icon="solar:users-group-rounded-bold-duotone" className="w-6 h-6 text-green-500" />
               </div>
               <p className="text-[11px] font-bold text-[#9CA3AF] uppercase tracking-widest">Team</p>
             </div>
@@ -231,21 +231,21 @@ export default function OwnerDashboardPage() {
 
         {/* AI Advisor — Portfolio Feasibility (generate + view) */}
         <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-8 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-indigo-50 to-transparent rounded-bl-full opacity-50 -z-10" />
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-emerald-50 to-transparent rounded-bl-full opacity-50 -z-10" />
           <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
             <h3 className="text-2xl font-extrabold text-[#1F2937] flex items-center gap-3">
-              <span className="w-3 h-8 bg-indigo-600 rounded-full inline-block" />
-              <Icon icon="solar:lightbulb-bold-duotone" className="w-6 h-6 text-indigo-500" />
+              <span className="w-3 h-8 bg-emerald-600 rounded-full inline-block" />
+              <Icon icon="solar:lightbulb-bold-duotone" className="w-6 h-6 text-emerald-500" />
               AI Advisor Portfolio Feasibility
             </h3>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest px-3 py-1.5 bg-indigo-50 rounded-xl border border-indigo-100">
+              <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest px-3 py-1.5 bg-emerald-50 rounded-xl border border-emerald-100">
                 Generate + View
               </span>
               <button
                 onClick={() => { setIsGenerating(true); generateMutation.mutate(); }}
                 disabled={generateMutation.isPending || isGenerating}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-xs font-bold transition-all hover:-translate-y-0.5"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white text-xs font-bold transition-all hover:-translate-y-0.5"
               >
                 {generateMutation.isPending || isGenerating ? (
                   <><Icon icon="solar:refresh-circle-bold-duotone" className="w-3.5 h-3.5 animate-spin" /> Generating...</>
@@ -262,13 +262,13 @@ export default function OwnerDashboardPage() {
             </div>
           ) : recommendation ? (
             <div className="space-y-4">
-              <div className="flex gap-4 p-5 rounded-2xl bg-indigo-50/40 border border-indigo-100 shadow-sm flex-col">
+              <div className="flex gap-4 p-5 rounded-2xl bg-emerald-50/40 border border-emerald-100 shadow-sm flex-col">
                 <div className="flex items-center justify-between flex-wrap gap-2">
-                  <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider flex items-center gap-1.5">
+                  <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider flex items-center gap-1.5">
                     <Icon icon="solar:lightbulb-bold-duotone" className="w-4 h-4" /> Portfolio Feasibility Guidance
                   </span>
                   <div className="flex items-center gap-3">
-                    <span className="px-2 py-1 rounded-lg text-[10px] font-extrabold bg-indigo-100 text-indigo-700 uppercase tracking-widest">
+                    <span className="px-2 py-1 rounded-lg text-[10px] font-extrabold bg-emerald-100 text-emerald-700 uppercase tracking-widest">
                       Confidence: {recommendation.confidence}
                     </span>
                     <span className="text-[10px] text-[#9CA3AF] font-medium flex items-center gap-1">
@@ -277,12 +277,12 @@ export default function OwnerDashboardPage() {
                     </span>
                   </div>
                 </div>
-                <div className="prose prose-sm max-w-none text-indigo-950 font-semibold leading-relaxed">
+                <div className="prose prose-sm max-w-none text-emerald-950 font-semibold leading-relaxed">
                   <ReactMarkdown>{recommendation.answer}</ReactMarkdown>
                 </div>
               </div>
               <div className="flex justify-end">
-                <Link href="/own-ai-advisor" className="text-xs font-bold text-indigo-600 hover:underline flex items-center gap-1">
+                <Link href="/own-ai-advisor" className="text-xs font-bold text-emerald-600 hover:underline flex items-center gap-1">
                   Full AI Advisor <Icon icon="solar:alt-arrow-right-bold-duotone" className="w-3 h-3" />
                 </Link>
               </div>
@@ -311,8 +311,8 @@ export default function OwnerDashboardPage() {
             {recommendation ? (
               <div className="space-y-3">
                 <div className="flex items-center gap-4 p-4 rounded-2xl bg-[#F9FAFB] border border-[#E8E3D9]">
-                  <div className="w-9 h-9 rounded-xl bg-indigo-100 flex items-center justify-center shrink-0">
-                    <Icon icon="solar:lightbulb-bold-duotone" className="w-4 h-4 text-indigo-600" />
+                  <div className="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
+                    <Icon icon="solar:lightbulb-bold-duotone" className="w-4 h-4 text-emerald-600" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-[#1F2937]">Portfolio Feasibility Analysis</p>
@@ -330,7 +330,7 @@ export default function OwnerDashboardPage() {
               </div>
             )}
             <div className="mt-4 flex justify-end">
-              <Link href="/em-ai-advisor" className="text-xs font-bold text-[#00A651] hover:underline flex items-center gap-1">
+              <Link href="/own-ai-advisor" className="text-xs font-bold text-[#00A651] hover:underline flex items-center gap-1">
                 Open full AI Advisor <Icon icon="solar:alt-arrow-right-bold-duotone" className="w-3 h-3" />
               </Link>
             </div>

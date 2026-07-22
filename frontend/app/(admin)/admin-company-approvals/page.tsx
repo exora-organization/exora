@@ -92,8 +92,8 @@ export default function CompanyApprovalsPage() {
           <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">Company Approvals</h2>
           <p className="text-[#4B5563] mt-2 font-medium">Review and manage registration requests from export companies.</p>
         </div>
-        <Button onClick={() => refetch()} variant="outline" className="border-[#00A651] text-[#00A651] hover:bg-[#EBF8F2] rounded-xl font-bold h-10 px-6 self-start sm:self-auto">
-          Refresh
+        <Button onClick={() => refetch()} className="bg-[#00A651] hover:bg-[#008A43] text-white shadow-lg hover:shadow-xl transition-all rounded-xl font-bold h-10 px-6 self-start sm:self-auto">
+          <Icon icon="solar:refresh-bold-duotone" className="w-5 h-5 mr-2" /> Refresh
         </Button>
       </div>
 

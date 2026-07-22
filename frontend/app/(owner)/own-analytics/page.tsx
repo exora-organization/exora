@@ -93,8 +93,8 @@ export default function OwnerAnalyticsPage() {
             value: fmtPct(stats?.estGrossMargin),
           },
           {
-            icon: <Icon icon="solar:chart-square-bold-duotone" className="w-6 h-6 text-purple-500" />,
-            bg: "bg-purple-50",
+            icon: <Icon icon="solar:chart-square-bold-duotone" className="w-6 h-6 text-green-500" />,
+            bg: "bg-green-50",
             label: "Total Freight Cost",
             value: fmtIDR(stats?.totalFreightCost),
           },
@@ -180,7 +180,7 @@ export default function OwnerAnalyticsPage() {
       {stats?.recentCases && stats.recentCases.length > 0 && (
         <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl transition-all hover:shadow-2xl p-6">
           <div className="flex items-center gap-3 mb-6">
-            <span className="w-1 h-6 bg-purple-500 rounded-full inline-block" />
+            <span className="w-1 h-6 bg-green-500 rounded-full inline-block" />
             <h3 className="text-lg font-extrabold text-[#1F2937]">Recent Case Activity</h3>
           </div>
           <div className="space-y-3">

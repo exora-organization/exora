@@ -142,7 +142,7 @@ function LoginForm() {
 
   return (
     <div className="w-full">
-      <div className="group bg-[#E6F4F1] p-8 sm:p-10 pt-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
+      <div className="group bg-white/95 backdrop-blur-xl border border-white/60 p-8 sm:p-10 pt-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#EBF8F2] to-transparent rounded-bl-full opacity-50 -z-10 group-hover:scale-150 transition-transform duration-700"></div>
         <div className="flex items-center justify-center space-x-3 mb-6 text-center">
           <div className="relative w-10 h-10 flex items-center justify-center shrink-0">
@@ -167,7 +167,7 @@ function LoginForm() {
                 id="email"
                 type="email"
                 placeholder="Enter Email"
-                className="pl-10 h-12 bg-white border border-[#D1EDE4] focus:border-[#00A651] focus:ring-1 focus:ring-[#00A651] shadow-sm text-[#1F2937] placeholder:text-[#9CA3AF] text-base rounded-lg"
+                className="pl-10 h-12 bg-[#EBF8F2] border-2 border-[#CDEBE0] focus:outline-none focus:border-[#00A651] focus:ring-4 focus:ring-[#00A651]/20 hover:bg-[#E3F4EC] hover:border-[#00A651]/40 shadow-sm text-[#1F2937] placeholder:text-[#80988E] text-base rounded-lg transition-all"
                 {...register("email")}
               />
             </div>
@@ -189,7 +189,7 @@ function LoginForm() {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter Password"
-                className="pl-10 pr-10 h-12 bg-white border border-[#D1EDE4] focus:border-[#00A651] focus:ring-1 focus:ring-[#00A651] shadow-sm text-[#1F2937] placeholder:text-[#9CA3AF] text-base rounded-lg"
+                className="pl-10 pr-10 h-12 bg-[#EBF8F2] border-2 border-[#CDEBE0] focus:outline-none focus:border-[#00A651] focus:ring-4 focus:ring-[#00A651]/20 hover:bg-[#E3F4EC] hover:border-[#00A651]/40 shadow-sm text-[#1F2937] placeholder:text-[#80988E] text-base rounded-lg transition-all"
                 {...register("password")}
               />
               <button

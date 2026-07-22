@@ -174,13 +174,13 @@ export default function ExportFeasibilityReportPage() {
                 </div>
               </div>
             ) : recommendation ? (
-              <div className="p-6 bg-indigo-50/80 backdrop-blur-sm border border-indigo-200 rounded-2xl shadow-inner">
+              <div className="p-6 bg-emerald-50/80 backdrop-blur-sm border border-emerald-200 rounded-2xl shadow-inner">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
-                    <Icon icon="solar:check-circle-bold-duotone" className="w-5 h-5 text-indigo-600" />
+                  <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
+                    <Icon icon="solar:check-circle-bold-duotone" className="w-5 h-5 text-emerald-600" />
                   </div>
                   <div>
-                    <span className="text-xs font-bold text-indigo-700 uppercase tracking-wider block">
+                    <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider block">
                       Confidence: {recommendation.confidence}
                     </span>
                     <span className="text-[10px] text-[#9CA3AF] font-bold uppercase tracking-widest block">
@@ -188,7 +188,7 @@ export default function ExportFeasibilityReportPage() {
                     </span>
                   </div>
                 </div>
-                <p className="text-sm text-indigo-950 font-semibold leading-relaxed p-4 bg-white/60 rounded-xl border border-indigo-100/50">
+                <p className="text-sm text-emerald-950 font-semibold leading-relaxed p-4 bg-white/60 rounded-xl border border-emerald-100/50">
                   {recommendation.answer}
                 </p>
               </div>

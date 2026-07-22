@@ -82,7 +82,7 @@ export default function FeasibilityScorePage() {
             {/* Profitability (50%) */}
             <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 hover:-translate-y-1 transition-transform flex flex-col h-full">
               <div className="pb-4">
-                <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">Weight: 50%</span>
+                <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Weight: 50%</span>
                 <h3 className="text-xl font-extrabold text-[#1F2937] mt-1">Profitability Index</h3>
               </div>
               <div className="flex-1 flex flex-col justify-between space-y-4">
@@ -103,7 +103,7 @@ export default function FeasibilityScorePage() {
             {/* Country Risk (30%) */}
             <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 hover:-translate-y-1 transition-transform flex flex-col h-full">
               <div className="pb-4">
-                <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">Weight: 30%</span>
+                <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Weight: 30%</span>
                 <h3 className="text-xl font-extrabold text-[#1F2937] mt-1">Country Trade Risk</h3>
               </div>
               <div className="flex-1 flex flex-col justify-between space-y-4">
@@ -124,7 +124,7 @@ export default function FeasibilityScorePage() {
             {/* Payment Term Safety (20%) */}
             <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 hover:-translate-y-1 transition-transform flex flex-col h-full">
               <div className="pb-4">
-                <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">Weight: 20%</span>
+                <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Weight: 20%</span>
                 <h3 className="text-xl font-extrabold text-[#1F2937] mt-1">Payment Safety</h3>
               </div>
               <div className="flex-1 flex flex-col justify-between space-y-4">

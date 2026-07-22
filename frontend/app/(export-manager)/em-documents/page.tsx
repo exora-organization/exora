@@ -8,7 +8,7 @@ import { useState, useMemo } from "react";
 
 const DOCS = [
   { icon: <Icon icon="solar:document-text-bold-duotone" className="w-6 h-6 text-blue-500" />, label: "Quotation" },
-  { icon: <Icon icon="solar:document-text-bold-duotone" className="w-6 h-6 text-indigo-500" />, label: "Proforma Invoice" },
+  { icon: <Icon icon="solar:document-text-bold-duotone" className="w-6 h-6 text-emerald-500" />, label: "Proforma Invoice" },
 ];
 
 export default function EMDocumentsPage() {
