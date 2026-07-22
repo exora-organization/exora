@@ -48,7 +48,7 @@ export default function EMDocumentsPage() {
       <div>
         <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">Documents</h2>
         <p className="text-sm text-[#4B5563] font-medium mt-2">
-          Generate Quotation and Proforma Invoice PDFs per case — downloadable in 3 clicks (FR-020, FR-021, NFR-010).
+          Generate Quotation and Proforma Invoice PDFs per case downloadable in 3 clicks.
         </p>
       </div>
 

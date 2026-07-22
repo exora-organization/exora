@@ -58,7 +58,7 @@ export default function FinanceDashboardPage() {
       <div>
         <h2 className="text-4xl font-extrabold tracking-tight">Finance Dashboard</h2>
         <p className="text-sm text-[#4B5563] font-medium mt-1">
-          Costing and profitability working oversight for Finance Staff (FR-008, FR-010)
+          Costing and profitability working oversight for Finance Staff
         </p>
       </div>
       
@@ -86,7 +86,7 @@ export default function FinanceDashboardPage() {
         ))}
       </div>
 
-      {/* Validation Warnings (FR-010) */}
+      {/* Validation Warnings */}
       {incompleteCostingInPricing.length > 0 && (
         <div className="bg-white/90 backdrop-blur-xl border border-rose-200 shadow-xl rounded-3xl p-8 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-rose-50 to-transparent rounded-bl-full opacity-60 -z-10"></div>
@@ -96,7 +96,7 @@ export default function FinanceDashboardPage() {
             Incomplete Costing validation Alerts
           </h3>
           <p className="text-xs text-[#9CA3AF] font-bold uppercase tracking-widest mb-6">
-            Drafting progressing to pricing without complete costing details (FR-010)
+            Drafting progressing to pricing without complete costing details
           </p>
           <div className="space-y-3">
             {incompleteCostingInPricing.map((c) => (
@@ -156,7 +156,7 @@ export default function FinanceDashboardPage() {
             <span className="w-2 h-6 bg-amber-500 rounded-full inline-block"></span>
             Profitability below Target
           </h3>
-          <p className="text-xs text-[#9CA3AF] font-bold uppercase tracking-widest mb-6">Cases performing below the 15.0% margin target (FR-013)</p>
+          <p className="text-xs text-[#9CA3AF] font-bold uppercase tracking-widest mb-6">Cases performing below the 15.0% margin target</p>
           
           <div className="space-y-4 max-h-[400px] overflow-y-auto pr-1">
             {lowMarginCases.length === 0 ? (

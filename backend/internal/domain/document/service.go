@@ -150,25 +150,31 @@ func (s *Service) saveDocument(ctx context.Context, caseID, companyID, docType s
 
 func renderQuotation(ec *exportcase.ExportCase, cd *costing.CostData, pr *pricing.PricingResult) []byte {
 	var buf bytes.Buffer
-	buf.WriteString("EXORA — QUOTATION\n")
-	buf.WriteString(fmt.Sprintf("Case: %s | Product: %s | Destination: %s\n", ec.Name, ec.Product, ec.DestinationCountry))
-	buf.WriteString(fmt.Sprintf("Incoterm: %s\n", pr.Incoterm))
-	buf.WriteString(fmt.Sprintf("Selling Price (IDR): %.2f\n", pr.SellingPriceIDR))
-	buf.WriteString(fmt.Sprintf("Selling Price (USD): %.2f\n", pr.SellingPriceUSD))
-	buf.WriteString(fmt.Sprintf("Exchange Rate: %.0f IDR/USD\n", cd.ExchangeRate))
-	buf.WriteString(fmt.Sprintf("Quantity: %.0f units\n", cd.Quantity))
-	buf.WriteString(fmt.Sprintf("Payment Term: %s\n", cd.PaymentTerm))
+	buf.WriteString("EXORA — QUOTATION\n\n")
+	buf.WriteString(fmt.Sprintf("Case: %s | Product: %s | Destination: %s\n\n", ec.Name, ec.Product, ec.DestinationCountry))
+	buf.WriteString("=== QUOTATION DETAILS ===\n")
+	buf.WriteString(fmt.Sprintf("Incoterm:                 %s\n", pr.Incoterm))
+	buf.WriteString(fmt.Sprintf("Exchange Rate:            %.0f IDR/USD\n", cd.ExchangeRate))
+	buf.WriteString(fmt.Sprintf("Payment Term:             %s\n", cd.PaymentTerm))
+	buf.WriteString(fmt.Sprintf("Quantity:                 %.0f units\n", cd.Quantity))
+	buf.WriteString(fmt.Sprintf("──────────────────────────────────────\n"))
+	buf.WriteString(fmt.Sprintf("Selling Price (IDR):      %.2f\n", pr.SellingPriceIDR))
+	buf.WriteString(fmt.Sprintf("Selling Price (USD):      %.2f\n", pr.SellingPriceUSD))
 	return buf.Bytes()
 }
 
 func renderProforma(ec *exportcase.ExportCase, cd *costing.CostData, pr *pricing.PricingResult) []byte {
 	var buf bytes.Buffer
-	buf.WriteString("EXORA — PROFORMA INVOICE\n")
-	buf.WriteString(fmt.Sprintf("Case: %s | Product: %s\n", ec.Name, ec.Product))
-	buf.WriteString(fmt.Sprintf("Destination: %s | Incoterm: %s\n", ec.DestinationCountry, pr.Incoterm))
-	buf.WriteString(fmt.Sprintf("Unit Price (IDR): %.2f | Unit Price (USD): %.4f\n", pr.SellingPriceIDR, pr.SellingPriceUSD))
-	buf.WriteString(fmt.Sprintf("Quantity: %.0f | Total Value (USD): %.2f\n", cd.Quantity, pr.SellingPriceUSD*cd.Quantity))
-	buf.WriteString(fmt.Sprintf("Payment Term: %s\n", cd.PaymentTerm))
+	buf.WriteString("EXORA — PROFORMA INVOICE\n\n")
+	buf.WriteString(fmt.Sprintf("Case: %s | Product: %s | Destination: %s\n\n", ec.Name, ec.Product, ec.DestinationCountry))
+	buf.WriteString("=== INVOICE DETAILS ===\n")
+	buf.WriteString(fmt.Sprintf("Incoterm:                 %s\n", pr.Incoterm))
+	buf.WriteString(fmt.Sprintf("Payment Term:             %s\n", cd.PaymentTerm))
+	buf.WriteString(fmt.Sprintf("Quantity:                 %.0f units\n", cd.Quantity))
+	buf.WriteString(fmt.Sprintf("Unit Price (IDR):         %.2f\n", pr.SellingPriceIDR))
+	buf.WriteString(fmt.Sprintf("Unit Price (USD):         %.4f\n", pr.SellingPriceUSD))
+	buf.WriteString(fmt.Sprintf("──────────────────────────────────────\n"))
+	buf.WriteString(fmt.Sprintf("Total Value (USD):        %.2f\n", pr.SellingPriceUSD*cd.Quantity))
 	return buf.Bytes()
 }
 

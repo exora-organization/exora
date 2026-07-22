@@ -23,7 +23,7 @@ const feasLabel = (score?: number | null) => {
   return { label: "Low", color: "text-rose-700", bg: "bg-rose-100" };
 };
 
-// Per-case pending action checker — fetches costing data lazily
+// Per-case pending action checker fetches costing data lazily
 function CaseRow({ c }: { c: ExportCaseListItem }) {
   const { data: costData } = useQuery({
     queryKey: ["cost-data", c.caseId],

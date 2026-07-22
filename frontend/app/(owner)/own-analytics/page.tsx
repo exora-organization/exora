@@ -151,7 +151,7 @@ export default function OwnerAnalyticsPage() {
             <div className="flex items-center justify-center h-24 text-[#9CA3AF] text-sm font-bold">No risk data available</div>
           )}
           <p className="text-[10px] text-[#9CA3AF] font-bold uppercase tracking-widest border-t border-[#F3F4F6] pt-3">
-            Country · payment term · profitability risk (FR-015)
+            Country · payment term · profitability risk
           </p>
         </div>
       </div>

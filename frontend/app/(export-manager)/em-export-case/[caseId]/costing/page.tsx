@@ -62,14 +62,14 @@ export default function EMCostBreakdownDetailPage() {
         </div>
         <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 border border-blue-200 rounded-xl text-xs font-bold text-blue-700">
           <Icon icon="solar:shield-check-bold-duotone" className="w-4 h-4 text-blue-500" />
-          Read-only · US-031
+          Read-only
         </div>
       </div>
 
       {/* Read-only notice */}
       <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 rounded-2xl text-sm text-blue-800 font-semibold">
         <Icon icon="solar:shield-check-bold-duotone" className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
-        Cost data is entered and managed by Finance Staff. Export Managers have read-only access to view cost components (US-031).
+        Cost data is entered and managed by Finance Staff. Export Managers have read-only access to view cost components.
       </div>
 
       {costMissing ? (
@@ -87,7 +87,7 @@ export default function EMCostBreakdownDetailPage() {
         <div className="bg-white/90 backdrop-blur-xl rounded-3xl border border-white/60 shadow-xl overflow-hidden">
           <div className="bg-white/50 backdrop-blur-sm border-b border-white/60 px-6 py-4">
             <p className="text-xs font-bold text-[#9CA3AF] uppercase tracking-widest">
-              Cost Components — Incoterm: {cost?.paymentTerm}
+              Cost Components Incoterm: {cost?.paymentTerm}
             </p>
           </div>
           <div className="divide-y divide-[#F3F4F6]">

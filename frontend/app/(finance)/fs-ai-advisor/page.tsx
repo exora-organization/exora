@@ -70,7 +70,7 @@ export default function FinanceAiAdvisorPage() {
       <div>
         <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">AI Advisor</h2>
         <p className="text-sm text-[#4B5563] font-medium mt-2">
-          Review profitability warnings, financial risk narratives, and payment terms security (FR-009a)
+          Review profitability warnings, financial risk narratives, and payment terms security
         </p>
       </div>
 
@@ -157,7 +157,7 @@ export default function FinanceAiAdvisorPage() {
               
               <div className="pt-2 text-sm text-gray-700 leading-relaxed font-medium bg-[#F9FAFB] p-4 rounded-2xl border border-[#E5E7EB]">
                 <p className="mb-3">
-                  Payment term parameters hold a <strong className="text-[#1F2937] font-black">20% risk factor weight</strong> in general feasibility indices (FR-015).
+                  Payment term parameters hold a <strong className="text-[#1F2937] font-black">20% risk factor weight</strong> in general feasibility indices.
                 </p>
                 <p>
                   Current case uses simulated trade configurations. Securing payments via Irrevocable Letters of Credit (L/C) minimizes buyer default compared to open accounts.

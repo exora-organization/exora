@@ -58,7 +58,7 @@ export default function OwnerDashboardPage() {
     return { high, moderate, low, total };
   }, [cases]);
 
-  // FR-016: Cases with Low feasibility that need attention
+  // Cases with Low feasibility that need attention
   const lowFeasibilityCases = useMemo(() =>
     cases.filter((c) => c.feasibilityScore != null && c.feasibilityScore * 10 < 60)
       .sort((a, b) => (a.feasibilityScore ?? 0) - (b.feasibilityScore ?? 0))
@@ -186,7 +186,7 @@ export default function OwnerDashboardPage() {
         </Link>
       </div>
 
-      {/* FR-016: Low Feasibility Quick-Links */}
+      {/* Low Feasibility Quick-Links */}
       {lowFeasibilityCases.length > 0 && (
         <div className="bg-white/90 backdrop-blur-xl border border-rose-200 shadow-xl rounded-3xl p-8 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-rose-50 to-transparent rounded-bl-full opacity-60 -z-10" />
@@ -196,7 +196,7 @@ export default function OwnerDashboardPage() {
             Cases Needing Attention
           </h3>
           <p className="text-xs text-[#9CA3AF] font-bold uppercase tracking-widest mb-6">
-            Low feasibility (&lt;60%) — FR-016
+            Low feasibility (&lt;60%)
           </p>
           <div className="space-y-3">
             {lowFeasibilityCases.map((c) => (
@@ -229,18 +229,18 @@ export default function OwnerDashboardPage() {
       {/* 2-Column Layout for Main Content */}
       <div className="grid gap-6 lg:grid-cols-2 items-start">
 
-        {/* AI Advisor — Portfolio Feasibility (generate + view, FR-009a) */}
+        {/* AI Advisor — Portfolio Feasibility (generate + view) */}
         <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-8 relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-indigo-50 to-transparent rounded-bl-full opacity-50 -z-10" />
           <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
             <h3 className="text-2xl font-extrabold text-[#1F2937] flex items-center gap-3">
               <span className="w-3 h-8 bg-indigo-600 rounded-full inline-block" />
               <Icon icon="solar:lightbulb-bold-duotone" className="w-6 h-6 text-indigo-500" />
-              AI Advisor — Portfolio Feasibility
+              AI Advisor Portfolio Feasibility
             </h3>
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest px-3 py-1.5 bg-indigo-50 rounded-xl border border-indigo-100">
-                FR-009a · generate + view
+                Generate + View
               </span>
               <button
                 onClick={() => { setIsGenerating(true); generateMutation.mutate(); }}
@@ -298,7 +298,7 @@ export default function OwnerDashboardPage() {
 
         {/* Right Column */}
         <div className="space-y-6 flex flex-col h-full">
-          {/* Recent AI Advisor Activity Feed — FR-009a */}
+          {/* Recent AI Advisor Activity Feed */}
           <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-8 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-[#EBF8F2] to-transparent rounded-bl-full opacity-50 -z-10" />
             <h3 className="text-2xl font-extrabold text-[#1F2937] mb-2 flex items-center gap-3">
@@ -306,7 +306,7 @@ export default function OwnerDashboardPage() {
               Recent AI Advisor Activity
             </h3>
             <p className="text-xs text-[#9CA3AF] font-bold uppercase tracking-widest mb-6">
-              Who generated what, and when — FR-009a
+              Who generated what, and when
             </p>
             {recommendation ? (
               <div className="space-y-3">

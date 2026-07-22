@@ -261,7 +261,7 @@ function RegisterForm() {
               {...register("terms")}
             />
             <Label htmlFor="terms" className="text-xs text-[#4B5563] font-medium cursor-pointer">
-              I agree to the <span className="text-blue-600 hover:underline">Terms of Service</span> and <span className="text-blue-600 hover:underline">Privacy Policy</span>.
+              I agree to the <Link href="/terms-of-service" className="text-blue-600 hover:underline" target="_blank">Terms of Service</Link> and <Link href="/privacy-policy" className="text-blue-600 hover:underline" target="_blank">Privacy Policy</Link>.
             </Label>
           </div>
           {errors.terms && (

@@ -61,7 +61,7 @@ export default function FinanceExportCasesPage() {
       <div>
         <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">Export Cases (View Only)</h2>
         <p className="text-sm text-[#4B5563] font-medium mt-2">
-          Review general export case registry parameters (FR-007)
+          Review general export case registry parameters
         </p>
       </div>
 
@@ -71,7 +71,7 @@ export default function FinanceExportCasesPage() {
         <div>
           <p className="font-extrabold text-lg mb-1">Metadata-Only Access Restricted</p>
           <p className="text-sm text-[#92400E] font-medium leading-relaxed">
-            In compliance with FR-007, Finance Staff may only view case metadata. Detailed costing sheets and financial simulations are restricted to cases assigned to you under your Costing Configuration dashboard.
+            Finance Staff may only view case metadata. Detailed costing sheets and financial simulations are restricted to cases assigned to you under your Costing Configuration dashboard.
           </p>
         </div>
       </div>

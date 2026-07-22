@@ -40,7 +40,7 @@ export default function EMScenarioPage() {
       <div>
         <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">Scenario Analysis</h2>
         <p className="text-sm text-[#4B5563] font-medium mt-2">
-          Compare ≥2 Incoterm scenarios side-by-side with different exchange rates, margins, and payment terms (FR-014, US-021/022).
+          Compare ≥2 Incoterm scenarios side-by-side with different exchange rates, margins, and payment terms.
         </p>
       </div>
 

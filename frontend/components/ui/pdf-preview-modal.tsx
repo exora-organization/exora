@@ -134,11 +134,11 @@ export function PdfPreviewModal({
     >
       {/* Modal panel */}
       <div
-        className="relative flex flex-col bg-white rounded-3xl shadow-2xl overflow-hidden"
+        className="relative flex flex-col bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/60 overflow-hidden"
         style={{ width: "min(900px, 95vw)", height: "min(780px, 90vh)" }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E8E3D9] bg-[#FAFAF9] shrink-0">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-[#E8E3D9] bg-white/50 shrink-0">
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-9 h-9 rounded-xl bg-[#EBF8F2] flex items-center justify-center shrink-0">
               <FileText className="w-4 h-4 text-[#00A651]" />
@@ -172,10 +172,10 @@ export function PdfPreviewModal({
             {/* Download */}
             <button
               onClick={handleDownload}
-              className="flex items-center gap-1.5 h-9 px-4 rounded-xl bg-[#00A651] hover:bg-[#008F44] text-white text-xs font-bold transition-all shadow-md shadow-[#00A651]/20 hover:shadow-lg hover:-translate-y-px"
+              className="flex items-center gap-1.5 h-10 px-5 rounded-full bg-[#00A651] hover:bg-[#008F44] text-white text-xs font-bold transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
             >
-              <Download className="w-3.5 h-3.5" />
-              Download
+              <Download className="w-4 h-4" />
+              Download PDF
             </button>
 
             {/* Close */}
@@ -189,7 +189,7 @@ export function PdfPreviewModal({
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-auto bg-[#F5F5F0] p-6">
+        <div className="flex-1 overflow-auto bg-slate-50/80 p-4 sm:p-8">
           {isLoading && (
             <div className="flex flex-col items-center justify-center h-full gap-4">
               <div className="w-16 h-16 rounded-2xl bg-[#EBF8F2] flex items-center justify-center">
@@ -215,24 +215,115 @@ export function PdfPreviewModal({
           )}
 
           {content && !isLoading && (
-            <div className="bg-white rounded-2xl shadow-sm border border-[#E8E3D9] overflow-hidden">
+            <div className="max-w-4xl mx-auto bg-white rounded-md shadow-xl border border-gray-200 overflow-hidden mb-8 transition-all">
               {/* Document header bar */}
-              <div className="px-6 py-3 border-b border-[#E8E3D9] bg-gradient-to-r from-[#EBF8F2] to-[#F0FDF4] flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#00A651]"></div>
-                  <span className="text-[10px] font-bold text-[#00A651] uppercase tracking-widest">EXORA Document</span>
+              <div className="px-8 py-4 border-b border-gray-100 bg-gradient-to-r from-emerald-50 to-white flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                  <span className="text-[11px] font-bold text-emerald-700 uppercase tracking-widest">EXORA Official Document</span>
                 </div>
-                <span className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">
+                <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
                   {new Date().toLocaleDateString("id-ID", { year: "numeric", month: "long", day: "numeric" })}
                 </span>
               </div>
               {/* Content */}
-              <pre
-                className="p-6 text-[#1F2937] font-mono leading-relaxed whitespace-pre-wrap break-words"
+              <div
+                className="p-8 sm:p-14 bg-white min-h-[600px] selection:bg-emerald-100"
                 style={{ fontSize: `${fontSize}px` }}
               >
-                {content}
-              </pre>
+                {content.split('\n').map((line, i) => {
+                  const isMainHeader = line.startsWith('EXORA —') || line.startsWith('EXORA -');
+                  const isSectionHeader = line.startsWith('===');
+                  const isDivider = line.includes('────────');
+
+                  if (isMainHeader) {
+                    return (
+                      <div key={i} className="font-sans font-black text-emerald-800 text-3xl border-b-[4px] border-emerald-500 pb-4 mb-8 tracking-tight">
+                        {line}
+                      </div>
+                    );
+                  }
+                  
+                  if (isSectionHeader) {
+                    return (
+                      <div key={i} className="font-sans font-extrabold text-emerald-700 text-sm mt-10 mb-5 tracking-widest bg-emerald-50 px-4 py-2 rounded-xl inline-block border border-emerald-100">
+                        {line.replace(/=/g, '').trim()}
+                      </div>
+                    );
+                  }
+
+                  if (isDivider) {
+                    return <div key={i} className="h-px bg-gray-200 my-4"></div>;
+                  }
+
+                  // Handle Markdown H2
+                  if (line.startsWith('## ')) {
+                    return (
+                      <div key={i} className="font-sans font-bold text-gray-900 text-lg mt-6 mb-3">
+                        {line.replace(/^##\s*/, '')}
+                      </div>
+                    );
+                  }
+
+                  // Handle Metadata Badges (separated by | )
+                  if (line.includes(' | ')) {
+                    const badges = line.split(' | ');
+                    return (
+                      <div key={i} className="flex flex-wrap gap-2 mb-6 font-sans mt-2">
+                        {badges.map((b, idx) => (
+                          <span key={idx} className="bg-slate-50 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-semibold border border-slate-200 shadow-sm">
+                            {b.trim()}
+                          </span>
+                        ))}
+                      </div>
+                    );
+                  }
+
+                  // Handle Tabular Data (lines with colon and 2+ spaces)
+                  if (line.includes(':') && line.match(/:\s{2,}/)) {
+                    const parts = line.split(/:\s{2,}/);
+                    const label = parts[0].trim();
+                    const value = parts.slice(1).join(': ').trim();
+                    return (
+                      <div key={i} className="flex justify-between items-center py-2.5 border-b border-gray-100 border-dashed font-sans hover:bg-slate-50 px-2 rounded-lg transition-colors">
+                        <span className="text-gray-600 font-medium">{label}</span>
+                        <span className="font-bold text-gray-900">{value}</span>
+                      </div>
+                    );
+                  }
+
+                  // Empty lines
+                  if (!line.trim()) {
+                    return <div key={i} className="h-3"></div>;
+                  }
+
+                  // Handle Markdown Lists
+                  const isNumberedList = /^\d+\.\s/.test(line);
+                  const isBullet = line.startsWith('- ');
+
+                  // Parse bold **text**
+                  const renderBold = (text: string) => {
+                    if (!text.includes('**')) return text;
+                    const parts = text.split('**');
+                    return parts.map((part, idx) => {
+                      if (idx % 2 === 1) {
+                        return <strong key={idx} className="font-bold text-gray-900">{part}</strong>;
+                      }
+                      return <span key={idx}>{part}</span>;
+                    });
+                  };
+
+                  return (
+                    <div 
+                      key={i} 
+                      className={`font-sans text-gray-700 leading-relaxed ${isNumberedList || isBullet ? 'ml-6 mb-3 relative' : 'mb-3'}`}
+                    >
+                      {isBullet && <span className="absolute -left-5 top-0 text-gray-400">•</span>}
+                      {renderBold(line)}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>

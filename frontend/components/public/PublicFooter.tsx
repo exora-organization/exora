@@ -50,8 +50,8 @@ export function PublicFooter() {
             <h4 className="font-bold text-[#1F2937] mb-6">Company</h4>
             <ul className="space-y-4">
               <li><Link href="/about" className="text-[#9CA3AF] hover:text-[#2F6B4F] transition-colors text-sm font-medium">About EXORA</Link></li>
-              <li className="text-[#9CA3AF] hover:text-[#2F6B4F] transition-colors text-sm font-medium cursor-pointer">Privacy Policy</li>
-              <li className="text-[#9CA3AF] hover:text-[#2F6B4F] transition-colors text-sm font-medium cursor-pointer">Terms of Service</li>
+              <li><Link href="/privacy-policy" className="text-[#9CA3AF] hover:text-[#2F6B4F] transition-colors text-sm font-medium cursor-pointer">Privacy Policy</Link></li>
+              <li><Link href="/terms-of-service" className="text-[#9CA3AF] hover:text-[#2F6B4F] transition-colors text-sm font-medium cursor-pointer">Terms of Service</Link></li>
             </ul>
           </div>
 

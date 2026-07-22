@@ -56,7 +56,7 @@ export default function EMPricingPage() {
       <div>
         <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">Pricing & Incoterms</h2>
         <p className="text-sm text-[#4B5563] font-medium mt-2">
-          View EXW / FOB / CFR / CIF selling prices calculated from Finance cost data (FR-011, US-016/017). Read-only.
+          View EXW / FOB / CFR / CIF selling prices calculated from Finance cost data. Read-only.
         </p>
       </div>
 

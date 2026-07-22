@@ -92,7 +92,7 @@ export default function FinanceDocumentsPage() {
             Cost Breakdown Documents
           </h2>
           <p className="text-sm text-[#4B5563] font-medium mt-3">
-            Generate cumulative Incoterm cost breakdowns (EXW, FOB, CFR, CIF) into standard PDF reports (FR-012, FR-023).
+            Generate cumulative Incoterm cost breakdowns (EXW, FOB, CFR, CIF) into standard PDF reports.
           </p>
         </div>
 

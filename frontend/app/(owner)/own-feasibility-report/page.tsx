@@ -110,7 +110,7 @@ export default function ExportFeasibilityReportPage() {
             Export Feasibility Report
           </h2>
           <p className="text-sm text-[#4B5563] font-medium mt-3">
-            Select one export case and generate a PDF report containing metrics, risk scores, feasibility assessment, and AI recommendations. (FR-022)
+            Select one export case and generate a PDF report containing metrics, risk scores, feasibility assessment, and AI recommendations.
           </p>
         </div>
 

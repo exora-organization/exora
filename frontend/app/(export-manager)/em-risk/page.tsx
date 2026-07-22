@@ -63,7 +63,7 @@ export default function EMRiskPage() {
       <div>
         <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">Risk Assessment & Feasibility</h2>
         <p className="text-sm text-[#4B5563] font-medium mt-2">
-          Country risk, payment term risk, profitability risk, and Export Feasibility Score (0–100) per case (FR-015, FR-016).
+          Country risk, payment term risk, profitability risk, and Export Feasibility Score (0–100) per case.
         </p>
       </div>
 

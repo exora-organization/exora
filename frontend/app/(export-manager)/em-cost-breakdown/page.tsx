@@ -106,7 +106,7 @@ export default function EMCostBreakdownPage() {
       <div>
         <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">Cost Breakdown</h2>
         <p className="text-sm text-[#4B5563] font-medium mt-2">
-          View HPP, packaging, certification, freight, and insurance breakdowns per Incoterm — read-only (US-031, FR-012).
+          View HPP, packaging, certification, freight, and insurance breakdowns per Incoterm read-only.
         </p>
       </div>
       
