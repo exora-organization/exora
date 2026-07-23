@@ -123,9 +123,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               })}
             </nav>
 
-            {/* Logout */}
-            <div className="p-6 mt-auto border-t border-[#E8E3D9]">
-              <LogoutButton className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl h-10 font-bold text-xs uppercase tracking-wider bg-red-50 text-red-600 hover:bg-red-500 hover:text-white shadow-sm transition-all" />
+            {/* Profile & Logout */}
+            <div className="p-4 mt-auto border-t border-[#E8E3D9] space-y-2">
+              <Link
+                href="/profile"
+                className={`flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all font-extrabold text-xs ${
+                  pathname === "/profile"
+                    ? "bg-[#00A651] text-white shadow-md shadow-[#00A651]/20"
+                    : "text-[#4B5563] bg-[#FAF8F3] hover:bg-[#EBF8F2] hover:text-[#00A651]"
+                }`}
+              >
+                <Icon icon="solar:user-circle-bold-duotone" className="w-5 h-5" />
+                <span className="tracking-wide">My Profile</span>
+              </Link>
+              <LogoutButton className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-2xl h-11 font-extrabold text-xs uppercase tracking-wider bg-red-50 text-red-600 hover:bg-red-500 hover:text-white shadow-sm transition-all mt-1" />
             </div>
           </aside>
 

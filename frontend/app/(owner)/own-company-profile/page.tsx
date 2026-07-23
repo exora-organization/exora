@@ -85,8 +85,8 @@ export default function CompanyProfilePage() {
       value: company?.country || "—",
     },
     {
-      icon: <Icon icon="solar:hashtag-bold-duotone" className="w-5 h-5 text-purple-600"  />,
-      bg: "bg-purple-50",
+      icon: <Icon icon="solar:hashtag-bold-duotone" className="w-5 h-5 text-[#00A651]"  />,
+      bg: "bg-[#EBF8F2]",
       label: "Company ID",
       value: company?.companyId || companyId || "—",
       mono: true,

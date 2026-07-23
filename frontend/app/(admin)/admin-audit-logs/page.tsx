@@ -804,7 +804,7 @@ export default function AuditLogsPage() {
       case "Delete":
         return { dot: "bg-rose-500 ring-rose-100", badge: "bg-rose-50 text-rose-700 border-rose-200" };
       case "Login":
-        return { dot: "bg-violet-500 ring-violet-100", badge: "bg-violet-50 text-violet-700 border-violet-200" };
+        return { dot: "bg-indigo-500 ring-indigo-100", badge: "bg-indigo-50 text-indigo-700 border-indigo-200" };
       case "Generate Report":
         return { dot: "bg-teal-500 ring-teal-100", badge: "bg-teal-50 text-teal-700 border-teal-200" };
       default:

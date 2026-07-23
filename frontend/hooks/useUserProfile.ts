@@ -28,10 +28,12 @@ export function useUserProfile() {
           queryClient.removeQueries({ queryKey: ["user-profile"] });
         }
 
-        // Set the token cookie for proxy.ts, then re-fetch profile
+        // Set the token cookie for proxy.ts, then re-fetch profile if user changed
         user.getIdToken().then((token) => {
           document.cookie = `firebaseToken=${token}; path=/; max-age=3600; Secure; SameSite=Strict`;
-          queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+          if (uidChanged) {
+            queryClient.invalidateQueries({ queryKey: ["user-profile"] });
+          }
         });
       } else {
         previousUidRef.current = null;
@@ -49,7 +51,7 @@ export function useUserProfile() {
     queryFn: () => apiUsers.getCurrentUser(),
     enabled: !!firebaseUser,
     retry: false,
-    staleTime: 0,
+    staleTime: 5 * 60 * 1000,
   });
 
   const profile = data?.data || null;

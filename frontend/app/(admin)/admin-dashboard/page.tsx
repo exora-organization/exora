@@ -12,16 +12,19 @@ export default function AdminDashboardPage() {
   const { data: monitoringData, isLoading: isMonitoringLoading } = useQuery({
     queryKey: ["admin-monitoring"],
     queryFn: () => apiAdmin.getMonitoring(),
+    staleTime: 60_000,
   });
 
   const { data: applicationsData, isLoading: isApplicationsLoading } = useQuery({
     queryKey: ["admin-applications"],
     queryFn: () => apiAdmin.getCompanyApplications(),
+    staleTime: 60_000,
   });
 
   const { data: auditData, isLoading: isAuditLoading } = useQuery({
     queryKey: ["admin-audit-logs", 50],
     queryFn: () => apiAdmin.getAuditLogs(50),
+    staleTime: 60_000,
   });
 
   const stats = monitoringData?.data;

@@ -33,8 +33,7 @@ export default function CompanyApplicationsPage() {
     queryKey: ["admin-applications"],
     queryFn: () => apiAdmin.getCompanyApplications(),
     enabled: !!firebaseUser && !authLoading,
-    staleTime: 0,
-    refetchInterval: 10000,
+    staleTime: 30_000,
   });
 
   const allApplications = data?.data?.items || [];
