@@ -181,10 +181,10 @@ export default function CompanyApplicationsPage() {
               {/* Status */}
               <div className="flex-1">
                 <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Status</p>
-                <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-wide capitalize ${app.status === "pending" ? "bg-amber-100 text-amber-700" :
+                <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-wide capitalize ${app.status === "pending" ? "bg-blue-100 text-blue-700" :
                   app.status === "approved" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
                   }`}>
-                  <span className={`w-2 h-2 rounded-full ${app.status === "pending" ? "bg-amber-500" :
+                  <span className={`w-2 h-2 rounded-full ${app.status === "pending" ? "bg-blue-500" :
                     app.status === "approved" ? "bg-green-500" : "bg-red-500"
                     }`}></span>
                   {app.status.replace("_", " ")}

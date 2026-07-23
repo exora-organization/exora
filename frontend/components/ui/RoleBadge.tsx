@@ -9,8 +9,8 @@ interface RoleBadgeProps {
 }
 
 const roleConfigs: Record<string, { label: string; bg: string; text: string; border: string }> = {
-  guest: { label: "GUEST", bg: "bg-amber-50", text: "text-amber-800", border: "border-amber-200" },
-  admin: { label: "SYSTEM ADMIN", bg: "bg-purple-50", text: "text-purple-800", border: "border-purple-200" },
+  guest: { label: "GUEST", bg: "bg-slate-100", text: "text-slate-700", border: "border-slate-200" },
+  admin: { label: "SYSTEM ADMIN", bg: "bg-[#EBF8F2]", text: "text-[#00A651]", border: "border-[#00A651]/30" },
   company_owner: { label: "COMPANY OWNER", bg: "bg-[#EBF8F2]", text: "text-[#00A651]", border: "border-[#00A651]/30" },
   export_manager: { label: "EXPORT MANAGER", bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200" },
   finance_staff: { label: "FINANCE STAFF", bg: "bg-emerald-50", text: "text-emerald-800", border: "border-emerald-200" },

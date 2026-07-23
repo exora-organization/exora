@@ -74,19 +74,19 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* PRINCIPLE 1: ACTION-FIRST TOP SECTION */}
-      <div className="bg-amber-50/90 border-2 border-amber-300 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="bg-[#EBF8F2] border-2 border-[#00A651]/40 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-5">
-          <div className="w-14 h-14 rounded-2xl bg-amber-500 text-white flex items-center justify-center shadow-md shrink-0">
+          <div className="w-14 h-14 rounded-2xl bg-[#00A651] text-white flex items-center justify-center shadow-md shrink-0">
             <Icon icon="solar:bell-bing-bold-duotone" className="w-8 h-8 animate-bounce" />
           </div>
           <div>
-            <span className="px-2.5 py-0.5 rounded-md bg-amber-200 text-amber-950 text-[10px] font-black uppercase tracking-wider">
+            <span className="px-2.5 py-0.5 rounded-md bg-[#00A651]/20 text-[#00A651] text-[10px] font-black uppercase tracking-wider">
               Action Required
             </span>
-            <h3 className="text-2xl font-extrabold text-amber-950 mt-1">
+            <h3 className="text-2xl font-extrabold text-[#1F2937] mt-1">
               {isApplicationsLoading ? "..." : allPendingApplications.length} Pending Company Applications
             </h3>
-            <p className="text-xs text-amber-900 font-medium mt-0.5">
+            <p className="text-xs text-[#4B5563] font-medium mt-0.5">
               Tenant verification queue requires admin decision for company account setup.
             </p>
           </div>
@@ -94,7 +94,7 @@ export default function AdminDashboardPage() {
 
         <Link
           href="/admin-company-applications"
-          className="px-6 py-3.5 bg-amber-600 hover:bg-amber-700 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-md hover:shadow-lg transition-all shrink-0 flex items-center gap-2"
+          className="px-6 py-3.5 bg-[#00A651] hover:bg-[#008F44] text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-md hover:shadow-lg transition-all shrink-0 flex items-center gap-2"
         >
           Open Approval Queue <Icon icon="solar:arrow-right-bold-duotone" className="w-4 h-4" />
         </Link>
@@ -134,7 +134,7 @@ export default function AdminDashboardPage() {
         <div className="bg-white rounded-3xl border border-[#E8E3D9] p-5 shadow-sm space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Total System Users</span>
-            <Icon icon="solar:users-group-rounded-bold-duotone" className="w-4 h-4 text-purple-500" />
+            <Icon icon="solar:users-group-rounded-bold-duotone" className="w-4 h-4 text-[#00A651]" />
           </div>
           <p className="text-2xl font-black text-[#1F2937]">
             {isMonitoringLoading ? "--" : stats?.totalUsers ?? 48}
@@ -149,7 +149,7 @@ export default function AdminDashboardPage() {
         <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-4">
           <div className="flex items-center justify-between">
             <h4 className="text-base font-extrabold text-[#1F2937] flex items-center gap-2">
-              <Icon icon="solar:clock-circle-bold-duotone" className="w-5 h-5 text-amber-500" />
+              <Icon icon="solar:clock-circle-bold-duotone" className="w-5 h-5 text-blue-500" />
               Applications Awaiting Verification
             </h4>
             <Link href="/admin-company-applications" className="text-xs font-bold text-[#00A651] hover:underline">
@@ -170,7 +170,7 @@ export default function AdminDashboardPage() {
                     <p className="text-xs text-[#6B7280]">Applicant: {app.applicant?.email || app.companyName}</p>
                   </div>
                   <Link href={`/admin-company-applications`}>
-                    <button className="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl cursor-pointer">
+                    <button className="px-3.5 py-1.5 bg-[#00A651] hover:bg-[#008F44] text-white text-xs font-bold rounded-xl cursor-pointer">
                       Review
                     </button>
                   </Link>

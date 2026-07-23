@@ -48,7 +48,7 @@ export default function ApplicationDetailPage() {
         <div className="ml-auto">
           <Badge variant={application.status === "pending" ? "default" : application.status === "approved" ? "secondary" : "destructive"} 
             className={`text-xs px-4 py-1.5 rounded-full uppercase tracking-widest font-bold shadow-sm ${
-              application.status === "pending" ? "bg-amber-100 text-amber-700 hover:bg-amber-200" :
+              application.status === "pending" ? "bg-blue-100 text-blue-700 hover:bg-blue-200" :
               application.status === "approved" ? "bg-[#EBF8F2] text-[#00A651] hover:bg-[#D1EDE4]" :
               "bg-red-100 text-red-700 hover:bg-red-200"
             }`}>

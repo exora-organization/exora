@@ -109,8 +109,8 @@ export default function GuestLayout({ children }: { children: React.ReactNode })
                     href={item.href}
                     className={`flex items-center gap-3.5 px-4 py-3.5 rounded-2xl transition-all font-extrabold text-xs ${
                       isActive
-                        ? "bg-amber-600 text-white shadow-lg shadow-amber-600/30 -translate-y-0.5"
-                        : "text-[#4B5563] hover:bg-[#FAF8F3] hover:text-amber-600"
+                        ? "bg-[#00A651] text-white shadow-lg shadow-[#00A651]/30 -translate-y-0.5"
+                        : "text-[#4B5563] hover:bg-[#FAF8F3] hover:text-[#00A651]"
                     }`}
                   >
                     <Icon icon={item.icon} className="w-5 h-5" />
@@ -131,7 +131,7 @@ export default function GuestLayout({ children }: { children: React.ReactNode })
             <header className="hidden md:flex items-center justify-between bg-white/70 backdrop-blur-md border-b border-[#E8E3D9] px-8 py-4 sticky top-0 z-20">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-extrabold text-gray-400 uppercase tracking-widest">Scope:</span>
-                <span className="text-xs font-black text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200">TENANT APPLICANT PORTAL</span>
+                <span className="text-xs font-black text-[#00A651] bg-[#EBF8F2] px-2.5 py-1 rounded-lg border border-[#00A651]/20">TENANT APPLICANT PORTAL</span>
               </div>
               <HeaderNotificationCenter />
             </header>

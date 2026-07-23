@@ -63,12 +63,12 @@ export function ConfirmWarningDialog({
       gradient: "from-blue-50"
     },
     warning: {
-      bg: "bg-amber-50/80 border-amber-200",
-      iconBg: "bg-amber-100",
-      text: "text-amber-700",
-      icon: <AlertTriangle className="h-6 w-6 text-amber-600" />,
-      buttonClass: "bg-amber-500 hover:bg-amber-600 text-white focus:ring-amber-500",
-      gradient: "from-amber-50"
+      bg: "bg-yellow-50/80 border-yellow-200",
+      iconBg: "bg-yellow-100",
+      text: "text-yellow-800",
+      icon: <AlertTriangle className="h-6 w-6 text-yellow-700" />,
+      buttonClass: "bg-yellow-600 hover:bg-yellow-700 text-white focus:ring-yellow-600",
+      gradient: "from-yellow-50"
     },
     danger: {
       bg: "bg-red-50/80 border-red-200",

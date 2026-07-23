@@ -246,7 +246,7 @@ export default function TeamManagementPage() {
 
         {teamLoading ? (
           <div className="py-12 flex justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-purple-500"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-[#00A651]"></div>
           </div>
         ) : filteredMembers.length === 0 ? (
           <div className="text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-300 flex flex-col items-center">
