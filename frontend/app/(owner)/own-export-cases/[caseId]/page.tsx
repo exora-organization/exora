@@ -281,7 +281,7 @@ export default function OwnerExportCaseDetailPage() {
       {/* TAB CONTENT: Advisor */}
       {currentTab === "advisor" && (
         <div className="space-y-4">
-          <ViewOnlyBanner ownerRoleName="AI Advisor System" dataTopic="AI Smart Recommendations" />
+          <ViewOnlyBanner ownerRoleName="Export Manager & AI System" dataTopic="AI Smart Recommendations" />
           {!recommendation ? (
             <StageNotReadyState
               currentStage="AI Advisor Recommendations"

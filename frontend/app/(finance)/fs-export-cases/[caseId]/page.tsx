@@ -213,7 +213,7 @@ export default function FinanceExportCaseDetailPage() {
       {/* TAB CONTENT: Advisor */}
       {currentTab === "advisor" && (
         <div className="space-y-4">
-          <ViewOnlyBanner ownerRoleName="AI Advisor System" dataTopic="AI Smart Recommendations" />
+          <ViewOnlyBanner ownerRoleName="Export Manager & AI System" dataTopic="AI Smart Recommendations" />
           {recommendation ? (
             <div className="bg-[#FAF8F3] p-5 rounded-2xl border border-[#E8E3D9] text-xs font-medium leading-relaxed whitespace-pre-line">
               {recommendation.answer}
