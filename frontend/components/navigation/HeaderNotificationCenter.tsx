@@ -1,26 +1,41 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 import { useUserProfile } from "../../hooks/useUserProfile";
-import { notificationStore, WorkflowNotification } from "../../lib/services/notificationStore";
+import { apiExportCase } from "../../lib/api/export-case";
+import {
+  notificationStore,
+  generateNotificationsFromRealCases,
+  WorkflowNotification,
+} from "../../lib/services/notificationStore";
 
 export function HeaderNotificationCenter() {
   const { role } = useUserProfile();
   const [isOpen, setIsOpen] = useState(false);
-  const [notifications, setNotifications] = useState<WorkflowNotification[]>([]);
+  const [userActions, setUserActions] = useState<WorkflowNotification[]>([]);
 
-  const refreshNotifications = () => {
-    setNotifications(notificationStore.getNotifications());
+  // Fetch real export cases from backend API
+  const { data: casesData } = useQuery({
+    queryKey: ["export-cases-notification"],
+    queryFn: () => apiExportCase.list(),
+    staleTime: 10000,
+  });
+
+  const realCases = casesData?.data?.items || [];
+
+  const refreshUserActions = () => {
+    setUserActions(notificationStore.getUserNotifications());
   };
 
   useEffect(() => {
-    refreshNotifications();
+    refreshUserActions();
 
-    const handleUpdate = () => refreshNotifications();
+    const handleUpdate = () => refreshUserActions();
     window.addEventListener("exora_notification_update", handleUpdate);
-    const interval = setInterval(refreshNotifications, 5000);
+    const interval = setInterval(refreshUserActions, 5000);
 
     return () => {
       window.removeEventListener("exora_notification_update", handleUpdate);
@@ -28,19 +43,38 @@ export function HeaderNotificationCenter() {
     };
   }, []);
 
-  const filteredNotifications = notifications.filter(
-    (n) => !role || n.targetRole === role || role === "admin"
-  );
+  // Merge dynamic real-case notifications with user action notifications
+  const allNotifications = useMemo(() => {
+    const dynamicRealNotifs = generateNotificationsFromRealCases(realCases);
+    
+    // Combine and eliminate duplicates by ID
+    const combined = [...userActions, ...dynamicRealNotifs];
+    const uniqueMap = new Map<string, WorkflowNotification>();
+    combined.forEach((n) => {
+      if (!uniqueMap.has(n.id)) {
+        uniqueMap.set(n.id, n);
+      }
+    });
+
+    return Array.from(uniqueMap.values());
+  }, [realCases, userActions]);
+
+  const filteredNotifications = useMemo(() => {
+    return allNotifications.filter(
+      (n) => !role || n.targetRole === role || role === "admin"
+    );
+  }, [allNotifications, role]);
+
   const unreadCount = filteredNotifications.filter((n) => !n.isRead).length;
 
   const handleMarkAllRead = () => {
     notificationStore.markAllAsRead(role || undefined);
-    refreshNotifications();
+    refreshUserActions();
   };
 
   const handleNotificationClick = (n: WorkflowNotification) => {
     notificationStore.markAsRead(n.id);
-    refreshNotifications();
+    refreshUserActions();
     setIsOpen(false);
   };
 
@@ -89,7 +123,7 @@ export function HeaderNotificationCenter() {
             <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
               {filteredNotifications.length === 0 ? (
                 <div className="text-center py-8 text-xs font-bold text-gray-400">
-                  No workflow notifications right now.
+                  No workflow notifications for real export cases right now.
                 </div>
               ) : (
                 filteredNotifications.map((n) => (
