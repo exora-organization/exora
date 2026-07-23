@@ -32,7 +32,7 @@ export function FinancialAnalysis({ caseId, backUrl }: FinancialAnalysisProps) {
   const handleDownloadCostBreakdown = async () => {
     setIsGeneratingPdf(true);
     try {
-      const res = await apiClient<any>(`/own-export-cases/${caseId}/documents/cost-breakdown-report`, {
+      const res = await apiClient<any>(`/export-cases/${caseId}/documents/cost-breakdown-report`, {
         method: "POST",
       });
       if (res.success) {

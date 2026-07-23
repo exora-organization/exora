@@ -9,6 +9,7 @@ import { Icon } from "@iconify/react";
 import { toast } from "sonner";
 import { ExportCaseListItem } from "../../../lib/types/export-case";
 import { PdfPreviewModal } from "../../../components/ui/pdf-preview-modal";
+import { EmptyState } from "../../../components/ui/EmptyState";
 import { auth } from "../../../lib/firebase/client";
 
 export default function ExportFeasibilityReportPage() {
@@ -72,7 +73,7 @@ export default function ExportFeasibilityReportPage() {
     setIsGenerating(true);
     setReportResult(null);
     try {
-      const res = await apiClient<any>(`/own-export-cases/${selectedCaseId}/documents/feasibility-report`, {
+      const res = await apiClient<any>(`/export-cases/${selectedCaseId}/documents/feasibility-report`, {
         method: "POST",
       });
       if (res?.success) {
@@ -126,22 +127,32 @@ export default function ExportFeasibilityReportPage() {
             <span className="flex items-center justify-center w-7 h-7 rounded-full bg-[#00A651] text-white text-xs font-black shadow-md">1</span>
             Select Target Export Case
           </h3>
-          <div className="relative max-w-xl">
-            <select
-              className="w-full appearance-none bg-[#F9FAFB] border border-[#E5E7EB] rounded-2xl px-5 py-4 pr-12 text-sm font-bold outline-none text-[#1F2937] disabled:opacity-60 cursor-pointer focus:ring-2 focus:ring-[#00A651]/20 transition-all shadow-sm"
-              value={selectedCaseId}
-              onChange={(e) => { setSelectedCaseId(e.target.value); setReportResult(null); }}
-              disabled={casesLoading}
-            >
-              <option value="">— Select a case —</option>
-              {cases.map((c) => (
-                <option key={c.caseId} value={c.caseId}>
-                  {c.name} · {c.destinationCountry} · {c.status.replace("_", " ")}
-                </option>
-              ))}
-            </select>
-            <Icon icon="solar:alt-arrow-down-bold-duotone" className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#00A651] pointer-events-none" />
-          </div>
+          {cases.length === 0 ? (
+            <div className="py-6">
+              <EmptyState
+                icon="solar:document-text-bold-duotone"
+                title="No Export Cases Available"
+                description="Your company has no export case data yet to generate an Executive Feasibility Report PDF."
+              />
+            </div>
+          ) : (
+            <div className="relative max-w-xl">
+              <select
+                className="w-full appearance-none bg-[#F9FAFB] border border-[#E5E7EB] rounded-2xl px-5 py-4 pr-12 text-sm font-bold outline-none text-[#1F2937] disabled:opacity-60 cursor-pointer focus:ring-2 focus:ring-[#00A651]/20 transition-all shadow-sm"
+                value={selectedCaseId}
+                onChange={(e) => { setSelectedCaseId(e.target.value); setReportResult(null); }}
+                disabled={casesLoading}
+              >
+                <option value="">— Select a case —</option>
+                {cases.map((c) => (
+                  <option key={c.caseId} value={c.caseId}>
+                    {c.name} · {c.destinationCountry} · {c.status.replace("_", " ")}
+                  </option>
+                ))}
+              </select>
+              <Icon icon="solar:alt-arrow-down-bold-duotone" className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#00A651] pointer-events-none" />
+            </div>
+          )}
           
           {/* Selected case snapshot */}
           {selectedCase && (

@@ -100,8 +100,8 @@ export default function AIAdvisorPage() {
     setIsGeneratingPdf(true);
     try {
       const endpoint = reportType === "quotation"
-        ? `/own-export-cases/${caseId}/documents/quotation`
-        : `/own-export-cases/${caseId}/documents/proforma-invoice`;
+        ? `/export-cases/${caseId}/documents/quotation`
+        : `/export-cases/${caseId}/documents/proforma-invoice`;
 
       const res = await apiClient<any>(endpoint, { method: "POST" });
       if (res.success) {

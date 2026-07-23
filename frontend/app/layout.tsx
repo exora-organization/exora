@@ -16,7 +16,6 @@ export const metadata: Metadata = {
 };
 
 import { QueryProvider } from "@/components/providers/QueryProvider";
-import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
 
 export default function RootLayout({
@@ -26,14 +25,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${inter.className} ${inter.variable} antialiased`}
-      >
+      <body className={`${inter.className} ${inter.variable} antialiased`}>
         <QueryProvider>
-          <ThemeProvider>
-            {children}
-            <Toaster position="top-right" />
-          </ThemeProvider>
+          {children}
+          <Toaster position="top-right" />
         </QueryProvider>
       </body>
     </html>

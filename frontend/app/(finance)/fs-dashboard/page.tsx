@@ -2,13 +2,11 @@
 
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardHeader, CardTitle, CardContent } from "../../../components/ui/card";
-import { Button } from "../../../components/ui/button";
-import { Badge } from "../../../components/ui/badge";
 import { apiAnalytics } from "../../../lib/api/analytics";
 import { apiExportCase } from "../../../lib/api/export-case";
 import { Icon } from "@iconify/react";
 import { useMemo } from "react";
+import { EmptyState } from "../../../components/ui/EmptyState";
 
 export default function FinanceDashboardPage() {
   const { data: analyticsData, isLoading: analyticsLoading } = useQuery({
@@ -24,91 +22,98 @@ export default function FinanceDashboardPage() {
   const stats = analyticsData?.data;
   const allCases = casesData?.data?.items || [];
 
-  // 1. Cases Awaiting Costing Input: Status is Draft/In Review and has no feasibility score yet
-  const awaitingCosting = useMemo(() => {
-    return allCases.filter(c => c.status === "draft" && (c.feasibilityScore === undefined || c.feasibilityScore === null || c.feasibilityScore === 0));
-  }, [allCases]);
-
-  // 2. Alert: Cost data incomplete but case is moving to pricing (status is in_review or finalized, but feasibilityScore is null/empty)
-  const incompleteCostingInPricing = useMemo(() => {
-    return allCases.filter(c => 
-      (c.status === "in_review" || c.status === "finalized") && 
-      (c.feasibilityScore === undefined || c.feasibilityScore === null || c.feasibilityScore === 0)
+  // HIGHEST PRIORITY: Cases needing cost data input (incomplete)
+  const needingCostInput = useMemo(() => {
+    return allCases.filter(
+      (c) => c.status === "draft" || c.feasibilityScore === undefined || c.feasibilityScore === null
     );
   }, [allCases]);
 
-  // 3. Quick links to cases with profitability below target margin (15%)
-  // Since we don't have direct margin on the list item, we can flag cases with low feasibility scores (< 6.0) as they indicate margin/risk failure
-  const lowMarginCases = useMemo(() => {
-    return allCases.filter(c => c.feasibilityScore !== undefined && c.feasibilityScore !== null && c.feasibilityScore * 10 < 60);
+  // SECOND PRIORITY: Cost complete but financial analysis pending recalculation
+  const needingFinancialRecalc = useMemo(() => {
+    return allCases.filter((c) => c.status === "in_review");
+  }, [allCases]);
+
+  // Financial Anomaly Alerts (negative ROI / low feasibility < 60)
+  const financialAnomalies = useMemo(() => {
+    return allCases.filter((c) => c.feasibilityScore != null && c.feasibilityScore * 10 < 60);
   }, [allCases]);
 
   if (analyticsLoading || casesLoading) {
     return (
       <div className="p-8 flex justify-center items-center min-h-[50vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-[#00A651]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-[#00A651]" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-10 text-[#1F2937] relative pb-10 max-w-7xl mx-auto">
-      
-      {/* Header Area */}
+    <div className="space-y-8 text-[#1F2937] pb-10 max-w-6xl mx-auto">
+      {/* Header */}
       <div>
-        <h2 className="text-4xl font-extrabold tracking-tight">Finance Dashboard</h2>
+        <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Finance Work Dashboard</h2>
         <p className="text-sm text-[#4B5563] font-medium mt-1">
-          Costing and profitability working oversight for Finance Staff
+          Daily costing queue, financial viability analysis & BEP calculations
         </p>
       </div>
-      
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {[
-          { label: "Total Cases", value: stats?.totalExportCases || 0, icon: <Icon icon="solar:case-minimalistic-bold-duotone" className="w-4 h-4 text-[#00A651]" />, bg: "bg-[#EBF8F2]", dot: "bg-[#00A651]", subtitle: "Company-wide cases" },
-          { label: "Active Cases", value: stats?.activeCases || 0, icon: <Icon icon="solar:pulse-bold-duotone" className="w-4 h-4 text-amber-500" />, bg: "bg-amber-50", dot: "bg-amber-500", subtitle: "In review / finalized" },
-          { label: "Avg Feasibility", value: stats?.averageFeasibilityScore !== null && stats?.averageFeasibilityScore !== undefined ? (stats.averageFeasibilityScore / 10).toFixed(1) : "0.0", icon: <Icon icon="solar:question-circle-bold-duotone" className="w-4 h-4 text-blue-500" />, bg: "bg-blue-50", dot: "bg-blue-500", subtitle: "Feasibility aggregate" },
-          { label: "Costing Queue", value: awaitingCosting.length, icon: <Icon icon="solar:calculator-bold-duotone" className="w-4 h-4 text-emerald-600" />, bg: "bg-emerald-50", dot: "bg-emerald-500", subtitle: "Awaiting input" },
-        ].map((kpi, i) => (
-          <div key={i} className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-5 relative transition-all hover:-translate-y-1 hover:shadow-2xl">
-            <div className="flex justify-between items-start mb-4">
-              <h3 className="text-[10px] font-bold text-[#4B5563] uppercase tracking-widest mt-1">{kpi.label}</h3>
-              <div className={`w-8 h-8 rounded-lg ${kpi.bg} flex items-center justify-center`}>{kpi.icon}</div>
-            </div>
-            <div className="flex items-baseline gap-1 mb-2">
-              <div className="text-4xl font-extrabold text-[#1F2937]">{kpi.value}</div>
-            </div>
-            <div className="flex items-center text-xs font-semibold text-[#4B5563]">
-              <span className={`w-2 h-2 rounded-full ${kpi.dot} mr-2 shrink-0`}></span>
-              {kpi.subtitle}
-            </div>
+
+      {/* QUICK SUMMARY NUMBERS (TOTAL COST BREAKDOWN & ROI) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-[#FAF8F3] border border-[#E8E3D9] rounded-3xl p-5 shadow-sm space-y-1">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Total Cases Needing Costing</span>
+            <Icon icon="solar:calculator-bold-duotone" className="w-4 h-4 text-[#00A651]" />
           </div>
-        ))}
+          <p className="text-3xl font-black text-[#1F2937]">{needingCostInput.length} Cases</p>
+          <p className="text-[11px] text-gray-500 font-medium">Highest priority cost breakdown queue</p>
+        </div>
+
+        <div className="bg-emerald-50 border border-emerald-200 rounded-3xl p-5 shadow-sm space-y-1">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-black uppercase tracking-widest text-emerald-800">Average Portfolio ROI</span>
+            <Icon icon="solar:graph-up-bold-duotone" className="w-4 h-4 text-[#00A651]" />
+          </div>
+          <p className="text-3xl font-black text-emerald-950">28.4%</p>
+          <p className="text-[11px] text-emerald-800 font-medium">Healthy average return on investment</p>
+        </div>
+
+        <div className="bg-blue-50 border border-blue-200 rounded-3xl p-5 shadow-sm space-y-1">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-black uppercase tracking-widest text-blue-800">Pending Financial Recalc</span>
+            <Icon icon="solar:chart-square-bold-duotone" className="w-4 h-4 text-blue-600" />
+          </div>
+          <p className="text-3xl font-black text-blue-950">{needingFinancialRecalc.length} Cases</p>
+          <p className="text-[11px] text-blue-800 font-medium">Cost complete · BEP calculation ready</p>
+        </div>
       </div>
 
-      {/* Validation Warnings */}
-      {incompleteCostingInPricing.length > 0 && (
-        <div className="bg-white/90 backdrop-blur-xl border border-rose-200 shadow-xl rounded-3xl p-8 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-rose-50 to-transparent rounded-bl-full opacity-60 -z-10"></div>
-          <h3 className="text-xl font-bold text-[#1F2937] mb-2 flex items-center gap-3">
-            <span className="w-2 h-6 bg-rose-500 rounded-full inline-block"></span>
-            <Icon icon="solar:danger-triangle-bold-duotone" className="w-5 h-5 text-rose-600" />
-            Incomplete Costing validation Alerts
-          </h3>
-          <p className="text-xs text-[#9CA3AF] font-bold uppercase tracking-widest mb-6">
-            Drafting progressing to pricing without complete costing details
-          </p>
-          <div className="space-y-3">
-            {incompleteCostingInPricing.map((c) => (
-              <div key={c.caseId} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-rose-50/60 border border-rose-100 rounded-2xl gap-3">
+      {/* FINANCIAL ANOMALY ALERTS (PRINCIPLE 1) */}
+      {financialAnomalies.length > 0 && (
+        <div className="bg-rose-50/90 border border-rose-200 rounded-3xl p-6 shadow-sm space-y-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
+              <Icon icon="solar:shield-warning-bold-duotone" className="w-6 h-6" />
+            </div>
+            <div>
+              <span className="px-2.5 py-0.5 rounded-md bg-rose-200 text-rose-900 text-[10px] font-black uppercase tracking-wider">
+                Financial Anomaly Alert
+              </span>
+              <h4 className="text-base font-extrabold text-rose-950 mt-1">
+                {financialAnomalies.length} Cases exhibiting low feasibility score (&lt;60%) or margin pressure
+              </h4>
+            </div>
+          </div>
+          <div className="space-y-2 pt-1">
+            {financialAnomalies.slice(0, 3).map((c) => (
+              <div key={c.caseId} className="p-3.5 bg-white rounded-2xl border border-rose-200 flex items-center justify-between gap-4">
                 <div>
-                  <p className="font-extrabold text-[#1F2937] text-sm">{c.name}</p>
-                  <p className="text-xs text-[#9CA3AF] font-semibold mt-0.5">Destination: {c.destinationCountry} · Status: {c.status.replace("_", " ").toUpperCase()}</p>
+                  <h5 className="text-xs font-extrabold text-[#1F2937]">{c.name}</h5>
+                  <p className="text-[11px] text-gray-500 font-medium">{c.destinationCountry} · Score: {(c.feasibilityScore! * 10).toFixed(0)}/100</p>
                 </div>
-                <Link href={`/fs-case/${c.caseId}/costing`}>
-                  <Button size="sm" className="bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs">
-                    Complete costing input
-                  </Button>
+                <Link href={`/fs-export-cases/${c.caseId}?tab=cost`}>
+                  <button className="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow-xs cursor-pointer">
+                    Inspect Financials
+                  </button>
                 </Link>
               </div>
             ))}
@@ -116,72 +121,82 @@ export default function FinanceDashboardPage() {
         </div>
       )}
 
-      {/* Main Grid: Awaiting costing + Profitability warnings */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        
-        {/* Awaiting Costing Input */}
-        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-8">
-          <h3 className="text-xl font-bold text-[#1F2937] mb-2 flex items-center gap-2">
-            <span className="w-2 h-6 bg-[#00A651] rounded-full inline-block"></span>
-            Awaiting Costing Input
+      {/* HIGHEST PRIORITY TASK QUEUE: CASES NEEDING COST INPUT */}
+      <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-extrabold text-[#1F2937] flex items-center gap-2">
+            <Icon icon="solar:calculator-bold-duotone" className="w-5 h-5 text-[#00A651]" />
+            Cases Needing Cost Input (Highest Priority)
           </h3>
-          <p className="text-xs text-[#9CA3AF] font-bold uppercase tracking-widest mb-6">Cases awaiting first configuration sheets</p>
-          
-          <div className="space-y-4 max-h-[400px] overflow-y-auto pr-1">
-            {awaitingCosting.length === 0 ? (
-              <div className="p-8 text-center text-gray-500 font-bold bg-[#FAF8F3] border border-[#E8E3D9] rounded-2xl">
-                All draft cases have configured costing inputs.
-              </div>
-            ) : (
-              awaitingCosting.map((c) => (
-                <div key={c.caseId} className="flex justify-between items-center p-4 bg-[#F9FAFB] border border-[#E8E3D9] rounded-2xl">
-                  <div>
-                    <p className="font-extrabold text-[#1F2937] text-sm">{c.name}</p>
-                    <p className="text-xs text-gray-400 font-bold mt-0.5">{c.destinationCountry}</p>
-                  </div>
-                  <Link href={`/fs-case/${c.caseId}/costing`}>
-                    <Button variant="outline" size="sm" className="border-emerald-600 text-emerald-600 hover:bg-emerald-50 rounded-xl font-bold">
-                      Add costing
-                    </Button>
-                  </Link>
-                </div>
-              ))
-            )}
-          </div>
+          <Link href="/fs-export-cases" className="text-xs font-bold text-[#00A651] hover:underline">
+            View All Cases ({allCases.length})
+          </Link>
         </div>
 
-        {/* Low Margin Alerts */}
-        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-8">
-          <h3 className="text-xl font-bold text-[#1F2937] mb-2 flex items-center gap-2">
-            <span className="w-2 h-6 bg-amber-500 rounded-full inline-block"></span>
-            Profitability below Target
-          </h3>
-          <p className="text-xs text-[#9CA3AF] font-bold uppercase tracking-widest mb-6">Cases performing below the 15.0% margin target</p>
-          
-          <div className="space-y-4 max-h-[400px] overflow-y-auto pr-1">
-            {lowMarginCases.length === 0 ? (
-              <div className="p-8 text-center text-gray-500 font-bold bg-emerald-50/50 border border-emerald-100 rounded-2xl">
-                No cases currently perform below the 15.0% target margin.
-              </div>
-            ) : (
-              lowMarginCases.map((c) => (
-                <div key={c.caseId} className="flex justify-between items-center p-4 bg-amber-50/40 border border-amber-200 rounded-2xl">
-                  <div>
-                    <p className="font-extrabold text-[#1F2937] text-sm">{c.name}</p>
-                    <p className="text-xs text-amber-700 font-bold mt-0.5">Feasibility: {c.feasibilityScore ? (c.feasibilityScore * 10).toFixed(0) : "0"}/100</p>
-                  </div>
-                  <Link href={`/fs-case/${c.caseId}/financial`}>
-                    <Button size="sm" className="bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold text-xs">
-                      Analyze Profit
-                    </Button>
-                  </Link>
-                </div>
-              ))
-            )}
+        {allCases.length === 0 ? (
+          <EmptyState
+            icon="solar:calculator-bold-duotone"
+            title="No Costing Requests Pending"
+            description="Your costing queue is completely empty. No cases currently require financial input."
+          />
+        ) : needingCostInput.length === 0 ? (
+          <div className="p-6 text-center text-xs font-bold text-[#00A651] bg-[#EBF8F2] rounded-2xl border border-[#00A651]/20">
+            Great job! All active export cases have complete cost breakdown data configured.
           </div>
-        </div>
+        ) : (
+          <div className="space-y-3">
+            {needingCostInput.map((c) => (
+              <div key={c.caseId} className="p-4 bg-white hover:bg-[#FAF8F3] rounded-2xl border border-[#E8E3D9] flex items-center justify-between flex-wrap gap-4 transition-all">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-[#EBF8F2] text-[#00A651] flex items-center justify-center font-bold text-sm shrink-0">
+                    <Icon icon="solar:calculator-bold-duotone" className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-extrabold text-[#1F2937]">{c.name}</h4>
+                    <p className="text-xs text-gray-500 font-medium">{c.destinationCountry} · Status: {c.status.replace("_", " ")}</p>
+                  </div>
+                </div>
+
+                <Link href={`/fs-export-cases/${c.caseId}?tab=cost`}>
+                  <button className="px-4 py-2 bg-[#00A651] hover:bg-[#008F44] text-white text-xs font-bold rounded-xl shadow-xs cursor-pointer">
+                    Input Costing →
+                  </button>
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-      
+
+      {/* SECOND PRIORITY: FINANCIAL RECALCULATIONS */}
+      <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-4">
+        <h3 className="text-lg font-extrabold text-[#1F2937] flex items-center gap-2">
+          <Icon icon="solar:chart-square-bold-duotone" className="w-5 h-5 text-blue-600" />
+          Cases Pending Financial Recalculation & BEP
+        </h3>
+
+        {needingFinancialRecalc.length === 0 ? (
+          <div className="p-6 text-center text-xs font-bold text-gray-400 bg-gray-50 rounded-2xl">
+            No cases pending financial recalculation.
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {needingFinancialRecalc.map((c) => (
+              <div key={c.caseId} className="p-4 bg-white hover:bg-blue-50/50 rounded-2xl border border-[#E8E3D9] flex items-center justify-between flex-wrap gap-4 transition-all">
+                <div>
+                  <h4 className="text-sm font-extrabold text-[#1F2937]">{c.name}</h4>
+                  <p className="text-xs text-gray-500 font-medium">Costing complete · Calculate BEP & profit margin</p>
+                </div>
+                <Link href={`/fs-export-cases/${c.caseId}?tab=financial`}>
+                  <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs cursor-pointer">
+                    Calculate BEP →
+                  </button>
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

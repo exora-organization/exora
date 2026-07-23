@@ -5,14 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import { apiExportCase } from "../../../lib/api/export-case";
 import { useState, useMemo } from "react";
 import Link from "next/link";
-
 import { ExportCaseListItem } from "../../../lib/types/export-case";
-
-const statusColors: Record<string, string> = {
-  draft: "bg-gray-100 text-gray-700",
-  in_review: "bg-amber-100 text-amber-800",
-  finalized: "bg-emerald-100 text-emerald-800",
-};
+import { EmptyState } from "../../../components/ui/EmptyState";
 
 const feasibilityLabel = (score?: number) => {
   if (score === undefined || score === null) return { label: "No Score", color: "text-gray-400", bg: "bg-gray-50" };
@@ -53,17 +47,17 @@ export default function OwnerExportCasesPage() {
       <div>
         <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Export Cases</h2>
         <p className="text-sm text-[#6B7280] mt-1 font-medium">
-          Company-wide export cases read-only oversight view
+          Company-wide export cases executive read-only oversight view
         </p>
       </div>
 
       {/* Filters */}
-      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl transition-all hover:shadow-2xl p-4 flex flex-wrap gap-3 items-center">
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl transition-all p-4 flex flex-wrap gap-3 items-center">
         <div className="flex items-center gap-2 flex-1 min-w-[200px] bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2">
           <Icon icon="solar:magnifer-linear" className="w-4 h-4 text-gray-400 shrink-0" />
           <input
             className="bg-transparent text-sm w-full outline-none font-medium placeholder:text-gray-400"
-            placeholder="Search by name or country..."
+            placeholder="Search by case name or country..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -95,11 +89,18 @@ export default function OwnerExportCasesPage() {
           {filtered.length} of {cases.length} cases
         </div>
       </div>
+
       {/* List */}
       {isLoading ? (
         <div className="flex justify-center py-20">
           <div className="animate-spin h-10 w-10 rounded-full border-b-4 border-[#00A651]" />
         </div>
+      ) : cases.length === 0 ? (
+        <EmptyState
+          icon="solar:case-minimalistic-bold-duotone"
+          title="No Export Cases Yet"
+          description="Your company has no export cases initialized yet. Your Export Manager can create new export cases."
+        />
       ) : filtered.length === 0 ? (
         <div className="flex justify-center py-12 text-[#9CA3AF] font-bold">
           No cases match your filters.
@@ -154,14 +155,14 @@ export default function OwnerExportCasesPage() {
                 <div className="flex-1 hidden md:block">
                   <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Created</p>
                   <p className="text-xs font-bold text-[#4B5563]">
-                    {new Date(c.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}
+                    {new Date(c.createdAt).toLocaleDateString("en-US", { day: "2-digit", month: "short", year: "numeric" })}
                   </p>
                 </div>
 
-                {/* Actions */}
+                {/* Actions Button */}
                 <div className="flex items-center md:ml-4 shrink-0">
                   <Link href={`/own-export-cases/${c.caseId}`} className="inline-block">
-                    <button className="bg-[#00A651] hover:bg-[#008F44] text-white font-bold rounded-xl px-5 py-2.5 text-[13px] shadow-md shadow-[#00A651]/20">
+                    <button className="bg-[#00A651] hover:bg-[#008F44] text-white font-bold rounded-xl px-5 py-2.5 text-[13px] shadow-md shadow-[#00A651]/20 cursor-pointer">
                       View Detail
                     </button>
                   </Link>

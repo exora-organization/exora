@@ -9,8 +9,16 @@ import { ProtectedRoute } from "../../components/auth/ProtectedRoute";
 import { RoleGuard } from "../../components/auth/RoleGuard";
 import { useUserProfile } from "../../hooks/useUserProfile";
 import { LogoutButton } from "../../components/ui/logout-button";
+import { HeaderNotificationCenter } from "../../components/navigation/HeaderNotificationCenter";
+import { RoleBadge } from "../../components/ui/RoleBadge";
 import logoImg from "../../public/logo.png";
 import { Icon } from "@iconify/react";
+
+const NAV_ITEMS = [
+  { name: "Dashboard", href: "/em-dashboard", icon: "solar:widget-bold-duotone" },
+  { name: "Export Cases", href: "/em-export-case", icon: "solar:case-minimalistic-bold-duotone" },
+  { name: "My Documents", href: "/em-documents", icon: "solar:document-text-bold-duotone" },
+];
 
 export default function ExportManagerLayout({ children }: { children: React.ReactNode }) {
   const { role, profile } = useUserProfile();
@@ -18,57 +26,29 @@ export default function ExportManagerLayout({ children }: { children: React.Reac
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
-  // Redirect if role is not export manager or admin
   useEffect(() => {
-    if (role && role !== "export_manager" && role !== "admin") {
-      if (role === "company_owner") router.push("/own-dashboard");
+    if (role && role !== "export_manager") {
+      if (role === "admin") router.push("/admin-dashboard");
+      else if (role === "company_owner") router.push("/own-dashboard");
       else if (role === "finance_staff") router.push("/fs-dashboard");
       else if (role === "guest") router.push("/guest-dashboard");
     }
   }, [role, router]);
 
-  // Close sidebar drawer when route changes
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);
 
-  // Default: Export Manager nav
-  let navItems = [
-    { name: "Dashboard", href: "/em-dashboard", icon: "solar:widget-bold-duotone" },
-    { name: "Export Cases", href: "/em-export-case", icon: "solar:case-minimalistic-bold-duotone" },
-    { name: "Pricing & Incoterms", href: "/em-pricing", icon: "solar:calculator-bold-duotone" },
-    { name: "Cost Breakdown", href: "/em-cost-breakdown", icon: "solar:chart-square-bold-duotone" },
-    { name: "Scenario Analysis", href: "/em-scenario", icon: "solar:pulse-bold-duotone" },
-    { name: "Risk & Feasibility", href: "/em-risk", icon: "solar:shield-check-bold-duotone" },
-    { name: "AI Advisor", href: "/em-ai-advisor", icon: "solar:lightbulb-bold-duotone" },
-    { name: "Documents", href: "/em-documents", icon: "solar:document-bold-duotone" },
-  ];
-  let portalTitle = "Export Manager";
-  let divisionName = "Export Division";
-
-  if (role === "admin") {
-    navItems = [
-      { name: "Dashboard", href: "/admin-dashboard", icon: "solar:widget-bold-duotone" },
-      { name: "Company Approvals", href: "/admin-company-approvals", icon: "solar:buildings-bold-duotone" },
-      { name: "User Management", href: "/admin-users", icon: "solar:users-group-rounded-bold-duotone" },
-      { name: "System Monitoring", href: "/admin-system-monitoring", icon: "solar:pulse-bold-duotone" },
-      { name: "Audit Logs", href: "/admin-audit-logs", icon: "solar:document-text-bold-duotone" },
-      { name: "AI Advisor", href: "/admin-ai-advisor", icon: "solar:lightbulb-bold-duotone" },
-    ];
-    portalTitle = "Admin Portal";
-    divisionName = "System Admin";
-  }
-
-  const isRedirecting = role && role !== "export_manager" && role !== "admin";
+  const isRedirecting = role && role !== "export_manager";
 
   return (
     <ProtectedRoute>
       {isRedirecting ? (
         <div className="h-screen w-screen flex items-center justify-center bg-[#FAF8F3]" />
       ) : (
-        <RoleGuard allowedRoles={["export_manager", "admin"]}>
-          <div className="h-screen overflow-hidden flex flex-col md:flex-row bg-[#EBF8F2] md:bg-gradient-to-br from-[#EBF8F2] to-[#EBF8F2]">
-          
+        <RoleGuard allowedRoles={["export_manager"]}>
+          <div className="h-screen overflow-hidden flex flex-col md:flex-row bg-[#FAF8F3] transition-colors">
+
           {/* Mobile Header */}
           <header className="md:hidden flex items-center justify-between bg-white border-b border-[#E8E3D9] px-6 py-4 sticky top-0 z-20 w-full">
             <div className="flex items-center gap-2">
@@ -77,93 +57,88 @@ export default function ExportManagerLayout({ children }: { children: React.Reac
               </div>
               <h1 className="text-2xl font-extrabold tracking-tight text-[#1F2937]">EXORA</h1>
             </div>
-            <button 
-              onClick={() => setIsOpen(!isOpen)}
-              className="p-2 text-gray-600 hover:text-gray-900 transition-colors focus:outline-none cursor-pointer"
-            >
-              {isOpen ? <Icon icon="solar:close-circle-bold-duotone" className="w-6 h-6" /> : <Icon icon="solar:hamburger-menu-bold-duotone" className="w-6 h-6" />}
-            </button>
+            <div className="flex items-center gap-3">
+              <HeaderNotificationCenter />
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="p-2 text-gray-600 hover:text-gray-900 transition-colors focus:outline-none cursor-pointer"
+              >
+                {isOpen ? <Icon icon="solar:close-circle-bold-duotone" className="w-6 h-6" /> : <Icon icon="solar:box-bold-duotone" className="w-6 h-6" />}
+              </button>
+            </div>
           </header>
 
-          {/* Mobile Overlay Backdrop */}
+          {/* Mobile Overlay */}
           {isOpen && (
-            <div 
-              className="md:hidden fixed inset-0 bg-black/30 backdrop-blur-xs z-20 transition-opacity duration-200"
+            <div
+              className="md:hidden fixed inset-0 bg-black/40 backdrop-blur-xs z-20 transition-opacity"
               onClick={() => setIsOpen(false)}
             />
           )}
 
           {/* Sidebar */}
           <aside className={`
-            fixed md:static inset-y-0 left-0 w-64 bg-white h-screen md:h-auto flex flex-col shadow-sm border-r border-[#D1EDE4] z-30
+            fixed md:static inset-y-0 left-0 w-64 bg-white h-screen md:h-auto flex flex-col shadow-sm border-r border-[#E8E3D9] z-30
             transition-transform duration-200 ease-in-out md:translate-x-0
             ${isOpen ? "translate-x-0" : "-translate-x-full"}
           `}>
-            {/* Logo Area */}
-            <div className="p-6 pb-4 flex items-start justify-between">
-              <div className="flex items-center gap-3">
-                <div className="relative w-16 h-16 flex items-center justify-center shrink-0">
+            {/* Logo Area & Role Badge */}
+            <div className="p-6 pb-4 border-b border-[#E8E3D9]">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="relative w-12 h-12 flex items-center justify-center shrink-0">
                   <Image src={logoImg} alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
                 <div className="flex flex-col justify-center">
-                  <h1 className="text-3xl font-extrabold tracking-tight text-[#1F2937] leading-none">EXORA</h1>
-                  <p className="text-[11px] font-bold text-[#9CA3AF] uppercase tracking-widest mt-1 hidden md:block">{portalTitle}</p>
+                  <h1 className="text-2xl font-extrabold tracking-tight text-[#1F2937] leading-none">EXORA</h1>
+                  <div className="mt-1.5">
+                    <RoleBadge role="export_manager" size="sm" />
+                  </div>
                 </div>
               </div>
-              <button 
-                onClick={() => setIsOpen(false)} 
-                className="md:hidden p-1 text-gray-400 hover:text-gray-600 cursor-pointer self-start mt-1"
-              >
-                <Icon icon="solar:close-circle-bold-duotone" className="w-5 h-5" />
-              </button>
+              <p className="text-xs font-bold text-[#4B5563] truncate">
+                {profile?.displayName || "Export Manager"}
+              </p>
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 px-4 py-2 space-y-1">
-              {navItems.map((item) => {
-                const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
-                
+            <nav className="flex-1 px-4 py-4 space-y-1">
+              {NAV_ITEMS.map((item) => {
+                const isActive = pathname === item.href;
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center gap-4 px-5 py-4 rounded-2xl transition-all font-extrabold text-sm ${isActive
+                    className={`flex items-center gap-3.5 px-4 py-3.5 rounded-2xl transition-all font-extrabold text-xs ${
+                      isActive
                         ? "bg-[#00A651] text-white shadow-lg shadow-[#00A651]/30 -translate-y-0.5"
-                        : "text-[#4B5563] hover:bg-white hover:shadow-md hover:text-[#00A651] hover:-translate-y-0.5"
-                      }`}
+                        : "text-[#4B5563] hover:bg-[#FAF8F3] hover:text-[#00A651]"
+                    }`}
                   >
                     <Icon icon={item.icon} className="w-5 h-5" />
-                    <span className="tracking-wide uppercase text-[11px]">{item.name}</span>
+                    <span className="tracking-wide">{item.name}</span>
                   </Link>
                 );
               })}
             </nav>
 
-            {/* Bottom Profile Area */}
-            <div className="p-6 mt-auto border-t border-white/40 bg-white/30 backdrop-blur-sm">
-              {/* User Info */}
-              <Link href="/profile" className="flex items-center gap-4 px-4 py-3 mb-4 rounded-2xl transition-all hover:bg-white hover:shadow-md group cursor-pointer">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#00A651] to-[#008F44] overflow-hidden flex-shrink-0 shadow-md group-hover:scale-105 transition-transform">
-                  <div className="w-full h-full flex items-center justify-center text-white font-extrabold text-lg">
-                    {profile?.displayName?.charAt(0) || "E"}
-                  </div>
-                </div>
-                <div className="flex flex-col overflow-hidden">
-                  <span className="text-sm font-extrabold text-[#1F2937] truncate group-hover:text-[#00A651] transition-colors">{profile?.displayName || "Export Manager"}</span>
-                  <span className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest truncate mt-0.5">{divisionName}</span>
-                </div>
-              </Link>
-
-              {/* Logout */}
-              <div className="w-full">
-                <LogoutButton />
-              </div>
+            {/* Logout */}
+            <div className="p-6 mt-auto border-t border-[#E8E3D9]">
+              <LogoutButton className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl h-10 font-bold text-xs uppercase tracking-wider bg-red-50 text-red-600 hover:bg-red-500 hover:text-white shadow-sm transition-all" />
             </div>
           </aside>
 
-          {/* Main Content Area */}
-          <main className="flex-1 p-6 md:p-10 overflow-y-auto w-full max-w-full">
-            {children}
+          {/* Main Workspace */}
+          <main className="flex-1 overflow-y-auto w-full max-w-full">
+            <header className="hidden md:flex items-center justify-between bg-white/70 backdrop-blur-md border-b border-[#E8E3D9] px-8 py-4 sticky top-0 z-20">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-extrabold text-gray-400 uppercase tracking-widest">Scope:</span>
+                <span className="text-xs font-black text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">OPERATIONAL WORKSPACE</span>
+              </div>
+              <HeaderNotificationCenter />
+            </header>
+            <div className="p-6 md:p-10 text-[#1F2937]">
+              {children}
+            </div>
           </main>
         </div>
       </RoleGuard>

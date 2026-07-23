@@ -121,7 +121,7 @@ export default function AiAdvisorPage() {
     if (!debugCaseId.trim()) return;
     setIsDebugLoading(true);
     try {
-      const res = await apiClient<any>(`/own-export-cases/${debugCaseId.trim()}/advisor/recommendations`, {
+      const res = await apiClient<any>(`/export-cases/${debugCaseId.trim()}/advisor/recommendations`, {
         method: "GET",
       });
       setDebugResult(res.data?.recommendation || { answer: "No active recommendation found." });
@@ -141,13 +141,13 @@ export default function AiAdvisorPage() {
     try {
       let endpoint = "";
       if (reportType === "feasibility") {
-        endpoint = `/own-export-cases/${selectedCaseId}/documents/feasibility-report`;
+        endpoint = `/export-cases/${selectedCaseId}/documents/feasibility-report`;
       } else if (reportType === "quotation") {
-        endpoint = `/own-export-cases/${selectedCaseId}/documents/quotation`;
+        endpoint = `/export-cases/${selectedCaseId}/documents/quotation`;
       } else if (reportType === "proforma") {
-        endpoint = `/own-export-cases/${selectedCaseId}/documents/proforma-invoice`;
+        endpoint = `/export-cases/${selectedCaseId}/documents/proforma-invoice`;
       } else if (reportType === "cost-breakdown") {
-        endpoint = `/own-export-cases/${selectedCaseId}/documents/cost-breakdown-report`;
+        endpoint = `/export-cases/${selectedCaseId}/documents/cost-breakdown-report`;
       }
 
       const res = await apiClient<any>(endpoint, { method: "POST" });

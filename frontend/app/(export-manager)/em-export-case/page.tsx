@@ -8,6 +8,7 @@ import { useUserProfile } from "../../../hooks/useUserProfile";
 import { useState, useMemo } from "react";
 import { Icon } from "@iconify/react";
 import { ExportCaseListItem } from "../../../lib/types/export-case";
+import { EmptyState } from "../../../components/ui/EmptyState";
 
 const STATUS_TABS = [
   { label: "All", value: "all" },
@@ -24,12 +25,6 @@ const SORT_OPTIONS = [
   { label: "Highest Feasibility", value: "feas_desc" },
   { label: "Lowest Feasibility", value: "feas_asc" },
 ] as const;
-
-const statusColors: Record<string, string> = {
-  draft: "bg-gray-100 text-gray-700",
-  in_review: "bg-amber-100 text-amber-800",
-  finalized: "bg-emerald-100 text-emerald-800",
-};
 
 const feasibilityLabel = (score?: number) => {
   if (score === undefined || score === null)
@@ -59,7 +54,6 @@ export default function ExportCaseListPage() {
   const filtered = useMemo(() => {
     let arr = [...cases];
 
-    // Search
     if (search.trim()) {
       const q = search.toLowerCase();
       arr = arr.filter(
@@ -69,10 +63,8 @@ export default function ExportCaseListPage() {
       );
     }
 
-    // Status
     if (statusFilter !== "all") arr = arr.filter((c) => c.status === statusFilter);
 
-    // Feasibility
     if (feasibilityFilter !== "all") {
       arr = arr.filter((c) => {
         const { label } = feasibilityLabel(c.feasibilityScore);
@@ -80,10 +72,9 @@ export default function ExportCaseListPage() {
       });
     }
 
-    // Sort
     arr.sort((a, b) => {
       if (sortBy === "newest") return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      if (sortBy === "oldest") return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      if (sortBy === "oldest") return new Date(a.createdAt).getTime() - new Date(a.createdAt).getTime();
       if (sortBy === "name_asc") return a.name.localeCompare(b.name);
       if (sortBy === "name_desc") return b.name.localeCompare(a.name);
       if (sortBy === "feas_desc") return ((b.feasibilityScore ?? -1) - (a.feasibilityScore ?? -1));
@@ -106,29 +97,42 @@ export default function ExportCaseListPage() {
     return (
       <div className="p-8 text-center space-y-4">
         <p className="text-red-500 font-bold">Failed to load export cases.</p>
-        <Button onClick={() => refetch()} variant="outline">Retry</Button>
+        <Button onClick={() => refetch()} variant="outline" className="rounded-xl font-bold">
+          Retry
+        </Button>
       </div>
     );
   }
 
   return (
-    <div className="space-y-10 max-w-7xl mx-auto pb-10">
+    <div className="space-y-8 max-w-7xl mx-auto pb-10">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
         <div>
           <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">Export Cases</h2>
           <p className="text-[#4B5563] mt-2 font-medium">
-            {canCreate ? "Manage your company's export plans and monitor progress." : "Review your company's export plans (read-only)."}
+            {canCreate ? "Manage your company's export plans and monitor execution progress." : "Review your company's export plans."}
           </p>
         </div>
         {canCreate && (
           <Link href="/em-export-case/new">
-            <Button className="bg-[#00A651] hover:bg-[#008F44] text-white font-bold rounded-xl flex items-center gap-2 px-5 py-6">
-              <Icon icon="solar:add-circle-bold-duotone" className="w-5 h-5" /> New Case
+            <Button className="bg-[#00A651] hover:bg-[#008F44] text-white font-bold rounded-2xl flex items-center gap-2 px-6 py-6 shadow-md hover:shadow-lg transition-all">
+              <Icon icon="solar:add-circle-bold-duotone" className="w-5 h-5" />
+              New Case
             </Button>
           </Link>
         )}
       </div>
+
+      {/* Action Required Badge */}
+      {cases.filter((c) => c.status === "in_review" || c.status === "draft").length > 0 && (
+        <div className="flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-2xl text-xs font-extrabold text-amber-900 shadow-sm">
+          <Icon icon="solar:bell-bold-duotone" className="w-5 h-5 text-amber-600 shrink-0" />
+          <span>
+            Action Required: You have {cases.filter((c) => c.status === "in_review" || c.status === "draft").length} export cases requiring Pricing or Risk Assessment simulation.
+          </span>
+        </div>
+      )}
 
       {/* Search & Sort Bar */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
@@ -136,7 +140,7 @@ export default function ExportCaseListPage() {
           <input 
             type="text" 
             placeholder="Search by case name or country..." 
-            className="w-full pl-4 pr-10 py-3 rounded-2xl border border-white/60 shadow-md focus:outline-none focus:ring-2 focus:ring-[#00A651] bg-white/90 backdrop-blur-md text-sm font-medium"
+            className="w-full pl-4 pr-10 py-3 rounded-2xl border border-white/60 shadow-md focus:outline-none focus:ring-2 focus:ring-[#00A651] bg-white/90 text-sm font-medium"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -149,7 +153,7 @@ export default function ExportCaseListPage() {
             <select
               value={feasibilityFilter}
               onChange={(e) => setFeasibilityFilter(e.target.value)}
-              className="px-4 py-3 rounded-2xl border border-white/60 shadow-md bg-white/90 backdrop-blur-md text-sm font-bold text-[#1F2937] focus:outline-none focus:ring-2 focus:ring-[#00A651] cursor-pointer"
+              className="px-4 py-3 rounded-2xl border border-white/60 shadow-md bg-white/90 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#00A651] cursor-pointer"
             >
               <option value="all">All Feasibility</option>
               <option value="high">High</option>
@@ -163,7 +167,7 @@ export default function ExportCaseListPage() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-4 py-3 rounded-2xl border border-white/60 shadow-md bg-white/90 backdrop-blur-md text-sm font-bold text-[#1F2937] focus:outline-none focus:ring-2 focus:ring-[#00A651] cursor-pointer"
+              className="px-4 py-3 rounded-2xl border border-white/60 shadow-md bg-white/90 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#00A651] cursor-pointer"
             >
               {SORT_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
@@ -173,33 +177,16 @@ export default function ExportCaseListPage() {
         </div>
       </div>
 
-      {/* Status Filter Tabs */}
-      <div className="flex flex-wrap gap-3">
-        {STATUS_TABS.map((tab) => {
-          const count = tab.value === "all" ? cases.length : cases.filter((c) => c.status === tab.value).length;
-          return (
-            <button
-              key={tab.value}
-              onClick={() => setStatusFilter(tab.value)}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all border shadow-sm backdrop-blur-md ${
-                statusFilter === tab.value
-                  ? "bg-[#00A651] border-[#00A651] text-white"
-                  : "bg-white/60 border-white/60 text-[#6B7280] hover:bg-white"
-              }`}
-            >
-              {tab.label}
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
-                statusFilter === tab.value ? "bg-white/20 text-white" : "bg-gray-200 text-gray-600"
-              }`}>
-                {count}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
       <div className="space-y-4">
-        {filtered.length === 0 ? (
+        {cases.length === 0 ? (
+          <EmptyState
+            icon="solar:case-minimalistic-bold-duotone"
+            title="No Export Cases Yet"
+            description="No export cases have been created. Click 'New Case' to initialize your first export plan."
+            actionLabel="New Case"
+            actionHref="/em-export-case/new"
+          />
+        ) : filtered.length === 0 ? (
           <div className="flex justify-center py-12 text-[#9CA3AF] font-bold">
             No cases match your filters.
           </div>
@@ -247,21 +234,13 @@ export default function ExportCaseListPage() {
                     )}
                   </span>
                 </div>
-                
-                {/* Created Date */}
-                <div className="flex-1 hidden md:block">
-                  <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Created</p>
-                  <p className="text-xs font-bold text-[#4B5563]">
-                    {new Date(c.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}
-                  </p>
-                </div>
 
-                {/* Actions */}
-                <div className="flex items-center md:ml-4">
+                {/* Actions Button */}
+                <div className="flex items-center md:ml-4 shrink-0">
                   <Link href={`/em-export-case/${c.caseId}`} className="inline-block">
-                    <Button className="bg-[#00A651] hover:bg-[#008F44] text-white font-bold rounded-xl px-5 shadow-md shadow-[#00A651]/20">
+                    <button className="bg-[#00A651] hover:bg-[#008F44] text-white font-bold rounded-xl px-5 py-2.5 text-[13px] shadow-md shadow-[#00A651]/20 cursor-pointer">
                       View Detail
-                    </Button>
+                    </button>
                   </Link>
                 </div>
 
