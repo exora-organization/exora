@@ -109,11 +109,11 @@ func New(deps Dependencies, h Handlers) http.Handler {
 
 					// User management
 					r.With(middleware.RequireRoles("company_owner")).Post("/users/invite", h.User.Invite)
-					r.With(middleware.RequireRoles("admin")).Get("/users", h.User.List)
-					r.With(middleware.RequireRoles("admin")).Get("/users/{userId}", h.User.Get)
-					r.With(middleware.RequireRoles("admin")).Patch("/users/{userId}", h.User.Update)
-					r.With(middleware.RequireRoles("admin")).Delete("/users/{userId}", h.User.Delete)
-					r.With(middleware.RequireRoles("admin")).Patch("/users/{userId}/role", h.User.ChangeRole)
+					r.With(middleware.RequireRoles("company_owner", "admin")).Get("/users", h.User.List)
+					r.With(middleware.RequireRoles("company_owner", "admin")).Get("/users/{userId}", h.User.Get)
+					r.With(middleware.RequireRoles("company_owner", "admin")).Patch("/users/{userId}", h.User.Update)
+					r.With(middleware.RequireRoles("company_owner", "admin")).Delete("/users/{userId}", h.User.Delete)
+					r.With(middleware.RequireRoles("company_owner", "admin")).Patch("/users/{userId}/role", h.User.ChangeRole)
 
 					// Invitations
 					r.With(middleware.RequireRoles("company_owner")).Get("/invitations", h.Invitation.List)

@@ -10,11 +10,11 @@ interface ProfileHeaderProps {
 }
 
 const roleColors: Record<UserRole, string> = {
-  admin: "bg-red-100 text-red-800 border-red-200",
-  company_owner: "bg-blue-100 text-blue-800 border-blue-200",
-  export_manager: "bg-green-100 text-green-800 border-green-200",
-  finance_staff: "bg-green-100 text-green-800 border-green-200",
-  guest: "bg-gray-100 text-gray-800 border-gray-200",
+  admin: "bg-[#EBF8F2] text-[#00A651] border-[#00A651]/30",
+  company_owner: "bg-[#EBF8F2] text-[#00A651] border-[#00A651]/30",
+  export_manager: "bg-blue-100 text-blue-800 border-blue-200",
+  finance_staff: "bg-emerald-100 text-emerald-800 border-emerald-200",
+  guest: "bg-slate-100 text-slate-700 border-slate-200",
 };
 
 export function ProfileHeader({ displayName, email, role }: ProfileHeaderProps) {

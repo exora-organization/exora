@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { apiExportCase } from "../../../lib/api/export-case";
 import { Icon } from "@iconify/react";
 import { useState, useMemo } from "react";
+import Link from "next/link";
+import { EmptyState } from "../../../components/ui/EmptyState";
 
 const SORT_OPTIONS = [
   { label: "Newest First", value: "newest" },
@@ -35,7 +37,7 @@ export default function FinanceExportCasesPage() {
     if (statusFilter !== "all") arr = arr.filter((c) => c.status === statusFilter);
     arr.sort((a, b) => {
       if (sortBy === "newest") return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      if (sortBy === "oldest") return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      if (sortBy === "oldest") return new Date(a.createdAt).getTime() - new Date(a.createdAt).getTime();
       if (sortBy === "name_asc") return a.name.localeCompare(b.name);
       if (sortBy === "name_desc") return b.name.localeCompare(a.name);
       return 0;
@@ -51,7 +53,9 @@ export default function FinanceExportCasesPage() {
     return (
       <div className="p-8 text-center bg-red-50 text-red-600 rounded-3xl font-bold max-w-lg mx-auto mt-10 shadow-xl">
         <p>Failed to load export cases.</p>
-        <button onClick={() => refetch()} className="mt-4 rounded-full bg-red-600 text-white px-6 py-2 shadow-md hover:bg-red-700 transition-all">Retry</button>
+        <button onClick={() => refetch()} className="mt-4 rounded-full bg-red-600 text-white px-6 py-2 shadow-md hover:bg-red-700 transition-all cursor-pointer">
+          Retry
+        </button>
       </div>
     );
   }
@@ -59,25 +63,22 @@ export default function FinanceExportCasesPage() {
   return (
     <div className="space-y-8 max-w-6xl mx-auto pb-12">
       <div>
-        <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">Export Cases (View Only)</h2>
+        <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">Export Cases (Finance Workspace)</h2>
         <p className="text-sm text-[#4B5563] font-medium mt-2">
-          Review general export case registry parameters
+          Manage export costing components and financial viability analysis
         </p>
       </div>
 
-      {/* Info notice */}
-      <div className="flex items-start gap-4 p-6 bg-amber-50/80 backdrop-blur-md border border-amber-200 rounded-3xl shadow-sm text-sm text-[#78350F] font-semibold">
-        <Icon icon="solar:info-circle-bold-duotone" className="w-6 h-6 text-amber-600 shrink-0 mt-0.5" />
-        <div>
-          <p className="font-extrabold text-lg mb-1">Metadata-Only Access Restricted</p>
-          <p className="text-sm text-[#92400E] font-medium leading-relaxed">
-            Finance Staff may only view case metadata. Detailed costing sheets and financial simulations are restricted to cases assigned to you under your Costing Configuration dashboard.
-          </p>
+      {/* Action Required Badge */}
+      {cases.length > 0 && (
+        <div className="flex items-center gap-2 p-4 bg-[#EBF8F2] border border-[#00A651]/30 rounded-2xl text-xs font-extrabold text-[#00A651] shadow-sm">
+          <Icon icon="solar:bell-bold-duotone" className="w-4 h-4 text-[#00A651] shrink-0" />
+          <span>Finance Action: Select a case below to input export costing details and calculate BEP/ROI.</span>
         </div>
-      </div>
+      )}
 
       {/* Search & Sort Bar */}
-      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl transition-all hover:shadow-2xl p-4 flex flex-wrap gap-3 items-center">
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl transition-all p-4 flex flex-wrap gap-3 items-center">
         <div className="flex items-center gap-2 flex-1 min-w-[200px] bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2">
           <Icon icon="solar:magnifer-linear" className="w-4 h-4 text-gray-400 shrink-0" />
           <input
@@ -118,7 +119,13 @@ export default function FinanceExportCasesPage() {
       </div>
 
       <div className="space-y-4">
-        {filtered.length === 0 ? (
+        {cases.length === 0 ? (
+          <EmptyState
+            icon="solar:calculator-bold-duotone"
+            title="No Export Cases Yet"
+            description="No export cases exist requiring costing input."
+          />
+        ) : filtered.length === 0 ? (
           <div className="flex justify-center py-12 text-[#9CA3AF] font-bold">No cases match your filters.</div>
         ) : filtered.map(c => (
           <div key={c.caseId} className="flex flex-col md:flex-row items-center justify-between p-6 rounded-3xl bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl hover:-translate-y-1 hover:shadow-2xl transition-all gap-6">
@@ -155,15 +162,17 @@ export default function FinanceExportCasesPage() {
             <div className="flex-1">
               <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Created</p>
               <p className="text-xs font-bold text-[#4B5563]">
-                {new Date(c.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}
+                {new Date(c.createdAt).toLocaleDateString("en-US", { day: "2-digit", month: "short", year: "numeric" })}
               </p>
             </div>
 
-            {/* View Only Tag */}
+            {/* Actions Button */}
             <div className="flex items-center md:ml-4 shrink-0">
-              <span className="flex items-center gap-1.5 text-xs font-bold text-gray-500 bg-gray-100 border border-gray-200 px-3 py-1.5 rounded-full">
-                <Icon icon="solar:eye-bold-duotone" className="w-4 h-4" /> View Only
-              </span>
+              <Link href={`/fs-export-cases/${c.caseId}?tab=cost`}>
+                <button className="bg-[#00A651] hover:bg-[#008F44] text-white font-bold rounded-xl px-5 py-2.5 text-[13px] shadow-md shadow-[#00A651]/20 cursor-pointer">
+                  Input Costing
+                </button>
+              </Link>
             </div>
 
           </div>

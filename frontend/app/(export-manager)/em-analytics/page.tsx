@@ -101,8 +101,8 @@ export default function AnalyticsDashboardPage() {
         <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 transition-all hover:-translate-y-1 hover:shadow-2xl group flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Icon icon="solar:target-bold-duotone" className="w-6 h-6 text-green-500" />
+              <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Icon icon="solar:target-bold-duotone" className="w-6 h-6 text-indigo-500" />
               </div>
               <p className="text-[11px] font-bold text-[#9CA3AF] uppercase tracking-widest">Avg Feasibility Score</p>
             </div>

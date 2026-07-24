@@ -5,6 +5,7 @@ import Link from "next/link";
 import { apiExportCase } from "../../../lib/api/export-case";
 import { Icon } from "@iconify/react";
 import { useState, useMemo } from "react";
+import { EmptyState } from "../../../components/ui/EmptyState";
 
 const DOCS = [
   { icon: <Icon icon="solar:document-text-bold-duotone" className="w-6 h-6 text-blue-500" />, label: "Quotation" },
@@ -104,60 +105,70 @@ export default function EMDocumentsPage() {
         </div>
 
         <div className="space-y-4">
-          {filtered.length === 0 ? (
-            <div className="flex justify-center py-12 text-[#9CA3AF] font-bold">
-              No cases match your search.
+          {cases.length === 0 ? (
+            <EmptyState
+              icon="solar:document-bold-duotone"
+              title="No Commercial Documents Available"
+              description="No export cases exist. Initialize a new export case first to issue Quotations and Proforma Invoices."
+              actionLabel="New Case"
+              actionHref="/em-export-case/new"
+            />
+          ) : filtered.length === 0 ? (
+            <div className="text-center py-12 text-[#9CA3AF] font-bold">
+              No cases match your filters.
             </div>
-          ) : filtered.map(c => (
-            <div key={c.caseId} className="flex flex-col md:flex-row items-center justify-between p-6 rounded-3xl bg-white/50 backdrop-blur-md border border-white/60 shadow-md hover:-translate-y-1 hover:shadow-xl transition-all gap-6">
-              
-              {/* Case Info */}
-              <div className="flex-[2] min-w-[200px] flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-[#EBF8F2] flex items-center justify-center shrink-0">
-                  <Icon icon="solar:document-bold-duotone" className="w-6 h-6 text-[#00A651]" />
+          ) : (
+            filtered.map((c) => (
+              <div key={c.caseId} className="flex flex-col md:flex-row items-center justify-between p-6 rounded-3xl bg-white/50 backdrop-blur-md border border-white/60 shadow-md hover:-translate-y-1 hover:shadow-xl transition-all gap-6">
+                
+                {/* Case Info */}
+                <div className="flex-[2] min-w-[200px] flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-[#EBF8F2] flex items-center justify-center shrink-0">
+                    <Icon icon="solar:document-bold-duotone" className="w-6 h-6 text-[#00A651]" />
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-extrabold text-[#1F2937]">{c.name}</h4>
+                    <p className="text-sm font-semibold text-[#4B5563] mt-1">{c.destinationCountry}</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-xl font-extrabold text-[#1F2937]">{c.name}</h4>
-                  <p className="text-sm font-semibold text-[#4B5563] mt-1">{c.destinationCountry}</p>
+
+                {/* Status */}
+                <div className="flex-1">
+                  <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Status</p>
+                  <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-wide capitalize ${
+                    c.status === "finalized" ? "bg-emerald-100 text-emerald-700" :
+                    c.status === "in_review" ? "bg-amber-100 text-amber-700" :
+                    "bg-gray-100 text-gray-700"
+                  }`}>
+                    <span className={`w-2 h-2 rounded-full ${
+                      c.status === "finalized" ? "bg-emerald-500" :
+                      c.status === "in_review" ? "bg-amber-500" :
+                      "bg-gray-500"
+                    }`}></span>
+                    {c.status.replace("_", " ")}
+                  </span>
                 </div>
-              </div>
+                
+                {/* Created Date */}
+                <div className="flex-1 hidden md:block">
+                  <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Created</p>
+                  <p className="text-xs font-bold text-[#4B5563]">
+                    {new Date(c.createdAt).toLocaleDateString("en-US", { day: "2-digit", month: "short", year: "numeric" })}
+                  </p>
+                </div>
 
-              {/* Status */}
-              <div className="flex-1">
-                <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Status</p>
-                <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-wide capitalize ${
-                  c.status === "finalized" ? "bg-emerald-100 text-emerald-700" :
-                  c.status === "in_review" ? "bg-amber-100 text-amber-700" :
-                  "bg-gray-100 text-gray-700"
-                }`}>
-                  <span className={`w-2 h-2 rounded-full ${
-                    c.status === "finalized" ? "bg-emerald-500" :
-                    c.status === "in_review" ? "bg-amber-500" :
-                    "bg-gray-500"
-                  }`}></span>
-                  {c.status.replace("_", " ")}
-                </span>
-              </div>
-              
-              {/* Created Date */}
-              <div className="flex-1 hidden md:block">
-                <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Created</p>
-                <p className="text-xs font-bold text-[#4B5563]">
-                  {new Date(c.createdAt).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" })}
-                </p>
-              </div>
+                {/* Actions */}
+                <div className="flex items-center md:ml-4 shrink-0">
+                  <Link href={`/em-export-case/${c.caseId}?tab=documents`} className="inline-block">
+                    <button className="bg-[#00A651] hover:bg-[#008F44] text-white font-bold rounded-xl px-5 py-2.5 text-[13px] shadow-md shadow-[#00A651]/20 transition-all cursor-pointer">
+                      Generate / Download
+                    </button>
+                  </Link>
+                </div>
 
-              {/* Actions */}
-              <div className="flex items-center md:ml-4 shrink-0">
-                <Link href={`/em-export-case/${c.caseId}/documents`} className="inline-block">
-                  <button className="bg-[#00A651] hover:bg-[#008F44] text-white font-bold rounded-xl px-5 py-2.5 text-[13px] shadow-md shadow-[#00A651]/20 transition-all">
-                    Generate / Download
-                  </button>
-                </Link>
               </div>
-
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </div>

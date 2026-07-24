@@ -156,7 +156,7 @@ function LoginForm() {
           <p className="text-sm text-[#9CA3AF]">Please log in to your account.</p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" suppressHydrationWarning>
           <div className="space-y-2">
             <Label htmlFor="email" className="text-xs font-bold text-[#4B5563] tracking-widest uppercase">Corporate Email Address</Label>
             <div className="relative">
@@ -169,6 +169,7 @@ function LoginForm() {
                 placeholder="Enter Email"
                 className="pl-10 h-12 bg-[#EBF8F2] border-2 border-[#CDEBE0] focus:outline-none focus:border-[#00A651] focus:ring-4 focus:ring-[#00A651]/20 hover:bg-[#E3F4EC] hover:border-[#00A651]/40 shadow-sm text-[#1F2937] placeholder:text-[#80988E] text-base rounded-lg transition-all"
                 {...register("email")}
+                suppressHydrationWarning
               />
             </div>
             {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
@@ -191,11 +192,13 @@ function LoginForm() {
                 placeholder="Enter Password"
                 className="pl-10 pr-10 h-12 bg-[#EBF8F2] border-2 border-[#CDEBE0] focus:outline-none focus:border-[#00A651] focus:ring-4 focus:ring-[#00A651]/20 hover:bg-[#E3F4EC] hover:border-[#00A651]/40 shadow-sm text-[#1F2937] placeholder:text-[#80988E] text-base rounded-lg transition-all"
                 {...register("password")}
+                suppressHydrationWarning
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#9CA3AF] hover:text-[#4B5563] focus:outline-none"
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#9CA3AF] hover:text-[#4B5563] focus:outline-none cursor-pointer"
+                suppressHydrationWarning
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -222,8 +225,9 @@ function LoginForm() {
 
           <Button
             type="submit"
-            className="w-full h-14 bg-[#00A651] hover:bg-[#008F44] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center space-x-2 transition-all duration-300 mt-4"
+            className="w-full h-14 bg-[#00A651] hover:bg-[#008F44] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center space-x-2 transition-all duration-300 mt-4 cursor-pointer"
             disabled={isLoading || !recaptchaToken}
+            suppressHydrationWarning
           >
             <span>{isLoading ? "SIGNING IN..." : "LOG IN TO FEASIBILITY SUITE"}</span>
             {!isLoading && <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />}

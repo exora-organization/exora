@@ -29,7 +29,7 @@ export function ApprovalActions({ companyId }: ApprovalActionsProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-applications"] });
       setApproveOpen(false);
-      router.push("/admin-company-approvals");
+      router.push("/admin-company-applications");
     }
   });
 
@@ -38,7 +38,7 @@ export function ApprovalActions({ companyId }: ApprovalActionsProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-applications"] });
       setRejectOpen(false);
-      router.push("/admin-company-approvals");
+      router.push("/admin-company-applications");
     }
   });
 
@@ -47,7 +47,7 @@ export function ApprovalActions({ companyId }: ApprovalActionsProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-applications"] });
       setRevisionOpen(false);
-      router.push("/admin-company-approvals");
+      router.push("/admin-company-applications");
     }
   });
 
@@ -63,7 +63,7 @@ export function ApprovalActions({ companyId }: ApprovalActionsProps) {
       <Button 
         variant="outline" 
         onClick={() => setRevisionOpen(true)}
-        className="border-2 border-amber-500 text-amber-600 hover:bg-amber-50 px-6 py-6 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 font-bold uppercase tracking-widest transition-all cursor-pointer"
+        className="border-2 border-blue-500 text-blue-600 hover:bg-blue-50 px-6 py-6 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 font-bold uppercase tracking-widest transition-all cursor-pointer"
       >
         Request Revision
       </Button>
@@ -126,8 +126,8 @@ export function ApprovalActions({ companyId }: ApprovalActionsProps) {
       <Dialog open={revisionOpen} onOpenChange={setRevisionOpen}>
         <DialogContent className="border border-[#E8E3D9] shadow-lg rounded-2xl p-6 bg-white max-w-md w-full animate-in fade-in-50 zoom-in-95">
           <DialogHeader className="flex flex-col gap-3">
-            <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 p-3 rounded-xl w-full">
-              <HelpCircle className="h-5 w-5 text-amber-600" />
+            <div className="flex items-center gap-3 bg-blue-50 border border-blue-200 p-3 rounded-xl w-full">
+              <HelpCircle className="h-5 w-5 text-blue-600" />
               <DialogTitle className="text-lg font-bold text-gray-900 font-sans tracking-tight">
                 Request Revision
               </DialogTitle>
@@ -148,7 +148,7 @@ export function ApprovalActions({ companyId }: ApprovalActionsProps) {
             <Button 
               onClick={() => revisionMutation.mutate(notes.trim())}
               disabled={revisionMutation.isPending || notes.trim().length < 5}
-              className="font-bold text-white bg-amber-600 hover:bg-amber-700 hover:text-white"
+              className="font-bold text-white bg-blue-600 hover:bg-blue-700 hover:text-white"
             >
               {revisionMutation.isPending ? "Sending..." : "Send Request"}
             </Button>

@@ -206,7 +206,8 @@ function RegisterForm() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 flex items-center pr-2.5 text-[#9CA3AF] hover:text-[#4B5563] focus:outline-none"
+                className="absolute inset-y-0 right-0 flex items-center pr-2.5 text-[#9CA3AF] hover:text-[#4B5563] focus:outline-none cursor-pointer"
+                suppressHydrationWarning
               >
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>

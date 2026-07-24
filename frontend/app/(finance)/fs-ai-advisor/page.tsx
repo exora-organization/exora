@@ -106,9 +106,9 @@ export default function FinanceAiAdvisorPage() {
             
             {/* Profitability Guidance */}
             <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 hover:-translate-y-1 transition-all hover:shadow-2xl">
-              <h3 className="text-lg font-bold text-green-950 flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
-                  <Icon icon="solar:graph-up-bold-duotone" className="w-5 h-5 text-green-600" />
+              <h3 className="text-lg font-bold text-[#1F2937] flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-[#EBF8F2] flex items-center justify-center">
+                  <Icon icon="solar:graph-up-bold-duotone" className="w-5 h-5 text-[#00A651]" />
                 </div>
                 Profitability Guidance
               </h3>
