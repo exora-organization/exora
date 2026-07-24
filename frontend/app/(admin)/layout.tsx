@@ -112,8 +112,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     href={item.href}
                     className={`flex items-center gap-3.5 px-4 py-3.5 rounded-2xl transition-all font-extrabold text-xs ${
                       isActive
-                        ? "bg-purple-600 text-white shadow-lg shadow-purple-600/30 -translate-y-0.5"
-                        : "text-[#4B5563] hover:bg-[#FAF8F3] hover:text-purple-600"
+                        ? "bg-[#00A651] text-white shadow-lg shadow-[#00A651]/30 -translate-y-0.5"
+                        : "text-[#4B5563] hover:bg-[#FAF8F3] hover:text-[#00A651]"
                     }`}
                   >
                     <Icon icon={item.icon} className="w-5 h-5" />
@@ -123,9 +123,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               })}
             </nav>
 
-            {/* Logout */}
-            <div className="p-6 mt-auto border-t border-[#E8E3D9]">
-              <LogoutButton className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl h-10 font-bold text-xs uppercase tracking-wider bg-red-50 text-red-600 hover:bg-red-500 hover:text-white shadow-sm transition-all" />
+            {/* Profile & Logout */}
+            <div className="p-4 mt-auto border-t border-[#E8E3D9] space-y-2">
+              <Link
+                href="/profile"
+                className={`flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all font-extrabold text-xs ${
+                  pathname === "/profile"
+                    ? "bg-[#00A651] text-white shadow-md shadow-[#00A651]/20"
+                    : "text-[#4B5563] bg-[#FAF8F3] hover:bg-[#EBF8F2] hover:text-[#00A651]"
+                }`}
+              >
+                <Icon icon="solar:user-circle-bold-duotone" className="w-5 h-5" />
+                <span className="tracking-wide">My Profile</span>
+              </Link>
+              <LogoutButton className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-2xl h-11 font-extrabold text-xs uppercase tracking-wider bg-red-50 text-red-600 hover:bg-red-500 hover:text-white shadow-sm transition-all mt-1" />
             </div>
           </aside>
 
@@ -134,7 +145,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <header className="hidden md:flex items-center justify-between bg-white/70 backdrop-blur-md border-b border-[#E8E3D9] px-8 py-4 sticky top-0 z-20">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-extrabold text-gray-400 uppercase tracking-widest">Scope:</span>
-                <span className="text-xs font-black text-purple-600 bg-purple-50 px-2.5 py-1 rounded-lg border border-purple-200">SYSTEM MANAGEMENT WORKSPACE</span>
+                <span className="text-xs font-black text-[#00A651] bg-[#EBF8F2] px-2.5 py-1 rounded-lg border border-[#00A651]/20">SYSTEM MANAGEMENT WORKSPACE</span>
               </div>
               <HeaderNotificationCenter />
             </header>

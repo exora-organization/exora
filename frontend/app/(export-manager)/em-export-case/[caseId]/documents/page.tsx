@@ -296,7 +296,7 @@ export default function DocumentGenerationPage() {
           {role === "company_owner" && (
             <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 hover:-translate-y-1 transition-transform flex flex-col justify-between h-full">
               <div>
-                <h3 className="text-xl font-extrabold text-[#1F2937] flex items-center gap-2 mb-2"><Icon icon="solar:document-text-bold-duotone" className="h-6 w-6 text-purple-500" /> Export Feasibility Report</h3>
+                <h3 className="text-xl font-extrabold text-[#1F2937] flex items-center gap-2 mb-2"><Icon icon="solar:document-text-bold-duotone" className="h-6 w-6 text-[#00A651]" /> Export Feasibility Report</h3>
                 <p className="text-[#6B7280] font-medium text-sm mb-6">Comprehensive risk and feasibility report.</p>
               </div>
               <Button onClick={() => generateFeasibilityMut.mutate()} disabled={generateFeasibilityMut.isPending} className="w-full h-12 rounded-full bg-[#00A651] hover:bg-[#008F44] text-white font-bold text-[13px] shadow-md hover:shadow-lg transition-all">

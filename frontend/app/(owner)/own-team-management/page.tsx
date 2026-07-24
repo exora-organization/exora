@@ -207,14 +207,14 @@ export default function TeamManagementPage() {
       </div>
 
       <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-8 md:p-10 relative overflow-hidden group">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-purple-50 to-transparent rounded-bl-full opacity-50 -z-10 group-hover:scale-110 transition-transform duration-700"></div>
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-[#EBF8F2] to-transparent rounded-bl-full opacity-50 -z-10 group-hover:scale-110 transition-transform duration-700"></div>
         
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <h3 className="text-2xl font-extrabold text-[#1F2937] flex items-center gap-3">
-            <span className="w-3 h-8 bg-purple-500 rounded-full inline-block"></span>
+            <span className="w-3 h-8 bg-[#00A651] rounded-full inline-block"></span>
             Active Team Members
           </h3>
-          <div className="text-[11px] font-black uppercase tracking-widest px-4 py-2 bg-purple-50 text-purple-600 rounded-xl border border-purple-100 shrink-0">
+          <div className="text-[11px] font-black uppercase tracking-widest px-4 py-2 bg-[#EBF8F2] text-[#00A651] rounded-xl border border-[#00A651]/20 shrink-0">
             {filteredMembers.length} of {teamMembers.length} Members
           </div>
         </div>
@@ -246,7 +246,7 @@ export default function TeamManagementPage() {
 
         {teamLoading ? (
           <div className="py-12 flex justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-purple-500"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-[#00A651]"></div>
           </div>
         ) : filteredMembers.length === 0 ? (
           <div className="text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-300 flex flex-col items-center">

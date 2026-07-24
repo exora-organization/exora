@@ -41,7 +41,7 @@ export default function SystemMonitoringPage() {
             <span className="text-sm font-bold text-[#00A651]">Active</span>
           </div>
           <div className="flex items-center text-sm font-semibold text-[#4B5563]">
-            <span className="w-2 h-2 rounded-full bg-orange-500 mr-2 shrink-0"></span>
+            <span className="w-2 h-2 rounded-full bg-blue-500 mr-2 shrink-0"></span>
             {stats?.pendingApprovals || 0} pending approval
           </div>
         </div>

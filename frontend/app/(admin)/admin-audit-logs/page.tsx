@@ -800,11 +800,11 @@ export default function AuditLogsPage() {
       case "Approve":
         return { dot: "bg-emerald-500 ring-emerald-100", badge: "bg-emerald-50 text-emerald-700 border-emerald-200" };
       case "Update":
-        return { dot: "bg-amber-500 ring-amber-100", badge: "bg-amber-50 text-amber-700 border-amber-200" };
+        return { dot: "bg-blue-500 ring-blue-100", badge: "bg-blue-50 text-blue-700 border-blue-200" };
       case "Delete":
         return { dot: "bg-rose-500 ring-rose-100", badge: "bg-rose-50 text-rose-700 border-rose-200" };
       case "Login":
-        return { dot: "bg-violet-500 ring-violet-100", badge: "bg-violet-50 text-violet-700 border-violet-200" };
+        return { dot: "bg-indigo-500 ring-indigo-100", badge: "bg-indigo-50 text-indigo-700 border-indigo-200" };
       case "Generate Report":
         return { dot: "bg-teal-500 ring-teal-100", badge: "bg-teal-50 text-teal-700 border-teal-200" };
       default:
@@ -817,9 +817,9 @@ export default function AuditLogsPage() {
       case "Critical":
         return "bg-rose-100 text-rose-800 border-rose-200 font-extrabold";
       case "High":
-        return "bg-orange-100 text-orange-850 border-orange-200 font-extrabold";
+        return "bg-indigo-100 text-indigo-800 border-indigo-200 font-extrabold";
       case "Medium":
-        return "bg-amber-100 text-amber-800 border-amber-200 font-extrabold";
+        return "bg-sky-100 text-sky-800 border-sky-200 font-extrabold";
       case "Low":
         return "bg-blue-100 text-blue-800 border-blue-200 font-semibold";
       default:
@@ -985,12 +985,12 @@ export default function AuditLogsPage() {
 
         <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-lg rounded-3xl p-6 hover:shadow-xl transition-all">
           <div className="flex justify-between items-start">
-            <span className="text-[10px] font-extrabold text-amber-600 uppercase tracking-wider">Configuration Updates</span>
-            <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500 shrink-0">
+            <span className="text-[10px] font-extrabold text-blue-600 uppercase tracking-wider">Configuration Updates</span>
+            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-500 shrink-0">
               <Icon icon="solar:settings-bold-duotone" className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-3xl font-extrabold text-amber-700 mt-4">{stats.updates}</div>
+          <div className="text-3xl font-extrabold text-blue-700 mt-4">{stats.updates}</div>
           <span className="text-[10px] font-bold text-slate-400 block mt-1">Export cases & cost configs</span>
         </div>
 

@@ -679,8 +679,8 @@ export default function AiAdvisorPage() {
           <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 transition-all hover:-translate-y-1 hover:shadow-2xl flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                  <Icon icon="solar:box-bold-duotone" className="w-6 h-6 text-purple-600" />
+                <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                  <Icon icon="solar:box-bold-duotone" className="w-6 h-6 text-indigo-600" />
                 </div>
                 <p className="text-[11px] font-bold text-[#9CA3AF] uppercase tracking-widest">Active Products</p>
               </div>
@@ -790,7 +790,7 @@ export default function AiAdvisorPage() {
                 <Button
                   onClick={() => handleGeneratePDF("cost-breakdown")}
                   disabled={isGeneratingPdf || !selectedCaseId}
-                  className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl h-12 px-6 font-bold"
+                  className="bg-[#00A651] hover:bg-[#008F44] text-white rounded-xl h-12 px-6 font-bold"
                 >
                   <Icon icon="solar:eye-bold-duotone" className="w-4 h-4 mr-2" /> Generate & Preview Cost Breakdown
                 </Button>

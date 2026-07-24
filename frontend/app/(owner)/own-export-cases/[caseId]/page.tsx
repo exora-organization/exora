@@ -132,7 +132,7 @@ export default function OwnerExportCaseDetailPage() {
             {[
               { icon: <Icon icon="solar:box-bold-duotone" className="w-5 h-5 text-blue-500" />, bg: "bg-blue-50", label: "Product", value: ec.product || "—" },
               { icon: <Icon icon="solar:map-point-bold-duotone" className="w-5 h-5 text-emerald-600" />, bg: "bg-emerald-50", label: "Destination", value: ec.destinationCountry },
-              { icon: <Icon icon="solar:calendar-bold-duotone" className="w-5 h-5 text-purple-500" />, bg: "bg-purple-50", label: "Created", value: new Date(ec.createdAt).toLocaleDateString("en-US", { day: "2-digit", month: "short", year: "numeric" }) },
+              { icon: <Icon icon="solar:calendar-bold-duotone" className="w-5 h-5 text-emerald-600" />, bg: "bg-emerald-50", label: "Created", value: new Date(ec.createdAt).toLocaleDateString("en-US", { day: "2-digit", month: "short", year: "numeric" }) },
               {
                 icon: <Icon icon="solar:shield-check-bold-duotone" className={`w-5 h-5 ${feasColor}`} />,
                 bg: "bg-gray-50",
