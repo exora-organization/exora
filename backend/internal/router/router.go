@@ -106,6 +106,7 @@ func New(deps Dependencies, h Handlers) http.Handler {
 					r.With(middleware.RequireRoles("guest", "company_owner")).Get("/companies/application-status", h.Company.ApplicationStatus)
 					r.With(middleware.RequireRoles("company_owner", "admin")).Get("/companies/{companyId}", h.Company.Get)
 					r.With(middleware.RequireRoles("company_owner", "admin")).Post("/companies/{companyId}/change-request", h.Company.ChangeRequest)
+					r.With(middleware.RequireRoles("company_owner", "admin")).Get("/companies/{companyId}/change-request", h.Company.GetChangeRequest)
 
 					// User management
 					r.With(middleware.RequireRoles("company_owner")).Post("/users/invite", h.User.Invite)
@@ -130,10 +131,14 @@ func New(deps Dependencies, h Handlers) http.Handler {
 						r.Post("/company-applications/{companyId}/approve", h.Admin.Approve)
 						r.Post("/company-applications/{companyId}/reject", h.Admin.Reject)
 						r.Post("/company-applications/{companyId}/request-revision", h.Admin.RequestRevision)
+						r.Get("/company-change-requests", h.Admin.ListChangeRequests)
+						r.Post("/company-change-requests/{requestId}/approve", h.Admin.ApproveChangeRequest)
+						r.Post("/company-change-requests/{requestId}/reject", h.Admin.RejectChangeRequest)
 						r.Get("/monitoring", h.Admin.Monitoring)
 						r.Get("/audit-logs", h.Admin.ListAuditLogs)
 						r.Get("/advisor/health", h.Advisor.GetSystemHealth)
 					})
+
 
 					// Analytics (dashboard statistics)
 					r.Route("/analytics", func(r chi.Router) {

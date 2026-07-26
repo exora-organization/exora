@@ -93,3 +93,35 @@ func (h *Handler) ListAuditLogs(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusOK, map[string]any{"auditLogs": logs})
 }
 
+func (h *Handler) ListChangeRequests(w http.ResponseWriter, r *http.Request) {
+	list, err := h.service.ListChangeRequests(r.Context())
+	if err != nil {
+		response.Error(w, err)
+		return
+	}
+	response.JSON(w, http.StatusOK, map[string]any{"items": list})
+}
+
+func (h *Handler) ApproveChangeRequest(w http.ResponseWriter, r *http.Request) {
+	requestID := r.PathValue("requestId")
+	data, err := h.service.ApproveChangeRequest(r.Context(), requestID)
+	if err != nil {
+		response.Error(w, err)
+		return
+	}
+	response.JSON(w, http.StatusOK, data)
+}
+
+func (h *Handler) RejectChangeRequest(w http.ResponseWriter, r *http.Request) {
+	requestID := r.PathValue("requestId")
+	var req company.RejectRequest
+	_ = json.NewDecoder(r.Body).Decode(&req)
+	data, err := h.service.RejectChangeRequest(r.Context(), requestID, req.Reason)
+	if err != nil {
+		response.Error(w, err)
+		return
+	}
+	response.JSON(w, http.StatusOK, data)
+}
+
+

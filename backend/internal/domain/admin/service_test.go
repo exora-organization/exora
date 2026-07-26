@@ -59,6 +59,14 @@ func (s *stubCompanyRepo) CountByStatus(ctx context.Context, status string) (int
 	return 0, nil
 }
 func (s *stubCompanyRepo) CountAll(ctx context.Context) (int, error) { return 0, nil }
+func (s *stubCompanyRepo) CreateChangeRequest(ctx context.Context, req *company.ProfileChangeRequest) error { return nil }
+func (s *stubCompanyRepo) GetPendingChangeRequestByCompanyID(ctx context.Context, companyID string) (*company.ProfileChangeRequest, error) { return nil, errors.New("not found") }
+func (s *stubCompanyRepo) GetLatestChangeRequestByCompanyID(ctx context.Context, companyID string) (*company.ProfileChangeRequest, error) { return nil, errors.New("not found") }
+func (s *stubCompanyRepo) GetChangeRequestByID(ctx context.Context, id string) (*company.ProfileChangeRequest, error) { return nil, errors.New("not found") }
+
+func (s *stubCompanyRepo) ListPendingChangeRequests(ctx context.Context) ([]*company.ProfileChangeRequest, error) { return nil, nil }
+func (s *stubCompanyRepo) UpdateChangeRequest(ctx context.Context, req *company.ProfileChangeRequest) error { return nil }
+
 
 type stubUserRepo struct {
 	usr *user.User
