@@ -168,7 +168,8 @@ export default function CompanyProfilePage() {
         <div>
           <h2 className="text-4xl font-extrabold tracking-tight">Company Profile</h2>
           <p className="text-sm text-[#4B5563] font-medium mt-1">
-            View-only · Submit a change request for Admin review to update company profile details.
+            Company Profile Overview · Request updates for Admin approval.
+
           </p>
         </div>
         <div className="flex items-center gap-2 bg-white px-4 py-2.5 rounded-2xl shadow-sm border border-[#E8E3D9]">
@@ -296,7 +297,8 @@ export default function CompanyProfilePage() {
       {/* Read-Only Info Notice */}
       <div className="flex items-center gap-3 p-4 bg-blue-50 border border-blue-200 rounded-2xl text-sm text-blue-800 font-semibold">
         <Icon icon="solar:shield-check-bold-duotone" className="w-5 h-5 text-blue-500 shrink-0" />
-        Company profile fields are protected. Submit a change request below to update details.
+        Official company profile records. Submit a change request to modify details.
+
       </div>
 
       {/* Profile Fields */}

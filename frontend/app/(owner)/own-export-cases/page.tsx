@@ -47,7 +47,8 @@ export default function OwnerExportCasesPage() {
       <div>
         <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Export Cases</h2>
         <p className="text-sm text-[#6B7280] mt-1 font-medium">
-          Company-wide export cases executive read-only oversight view
+          Executive Overview · Track company-wide export cases and progress.
+
         </p>
       </div>
 

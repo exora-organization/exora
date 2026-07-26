@@ -15,13 +15,14 @@ export function ViewOnlyBanner({ ownerRoleName, dataTopic }: ViewOnlyBannerProps
       </div>
       <div className="flex-1">
         <div className="flex items-center gap-2 mb-0.5">
-          <span className="px-2 py-0.5 rounded-md bg-blue-600 text-white text-[10px] font-black uppercase tracking-wider">
-            View-Only Mode
+          <span className="px-2.5 py-0.5 rounded-lg bg-blue-600 text-white text-[10px] font-black uppercase tracking-wider">
+            Executive Review
           </span>
         </div>
         <p className="leading-relaxed font-medium">
-          You are viewing {dataTopic} in read-only mode. Input and modification is managed by <strong className="text-blue-900 font-extrabold">{ownerRoleName}</strong>.
+          You have full executive review access for {dataTopic}. Input & updates are managed by <strong className="text-blue-900 font-extrabold">{ownerRoleName}</strong>.
         </p>
+
       </div>
     </div>
   );

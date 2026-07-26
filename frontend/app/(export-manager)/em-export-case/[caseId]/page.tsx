@@ -233,7 +233,8 @@ export default function ExportCaseDetailPage() {
             />
           ) : (
             <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-4">
-              <h4 className="text-base font-extrabold text-[#1F2937]">Cost Data (View-Only Mode)</h4>
+              <h4 className="text-base font-extrabold text-[#1F2937]">Cost Data (Managed by Finance Staff)</h4>
+
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-xs font-bold">
                 <div className="p-4 bg-gray-50 rounded-2xl">
                   <p className="text-[10px] text-gray-400 uppercase">HPP / Production</p>
