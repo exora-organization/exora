@@ -75,9 +75,9 @@ export default function ServicesPage() {
       {/* ================= SHOWCASE SECTIONS (TIMELINE) ================= */}
       <section className="py-24 px-6 lg:px-20 max-w-6xl mx-auto w-full relative">
         {/* Center Vertical Line */}
-        <div className="absolute left-1/2 top-32 bottom-32 w-[2px] bg-gradient-to-b from-transparent via-[#00A651]/30 to-transparent hidden md:block transform -translate-x-1/2" />
+        <div className="absolute left-1/2 top-32 bottom-32 w-[2px] bg-gradient-to-b from-transparent via-[#00A651]/30 to-transparent block transform -translate-x-1/2" />
 
-        <div className="space-y-20 md:space-y-32">
+        <div className="space-y-12 md:space-y-32">
           {showcases.map((showcase, idx) => (
             <motion.div
               key={idx}
@@ -85,77 +85,37 @@ export default function ServicesPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.6 }}
-              className="relative flex flex-col md:flex-row items-center w-full"
+              className="relative flex flex-row items-center w-full"
             >
-              {showcase.imageLeft ? (
-                <>
-                  {/* Left Side: Icon */}
-                  <div className="w-full md:w-1/2 pr-0 md:pr-16 flex justify-center md:justify-end mb-8 md:mb-0">
-                    <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border-2 border-[#00A651] flex items-center justify-center bg-white shadow-md">
-                      <Icon icon={showcase.icon as string} className="w-10 h-10 md:w-14 md:h-14 text-[#00A651]" />
-                    </div>
+                {/* Icon Container */}
+                <div className={`w-1/2 flex ${showcase.imageLeft ? 'justify-end pr-4 md:pr-16 order-1' : 'justify-start pl-4 md:pl-16 order-3'}`}>
+                  <div className="w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 rounded-full border-2 border-[#00A651] flex items-center justify-center bg-white shadow-md">
+                    <Icon icon={showcase.icon as string} className="w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 text-[#00A651]" />
                   </div>
+                </div>
 
-                  {/* Center Node (Number) */}
-                  <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 items-center justify-center w-10 h-10 rounded-full bg-[#00A651] text-white font-bold text-lg border-4 border-white z-10 shadow-sm">
-                    {idx + 1}
-                  </div>
+                {/* Center Node (Number) */}
+                <div className="flex absolute left-1/2 transform -translate-x-1/2 items-center justify-center w-6 h-6 md:w-10 md:h-10 rounded-full bg-[#00A651] text-white font-bold text-xs md:text-lg border-2 md:border-4 border-white z-10 shadow-sm order-2">
+                  {idx + 1}
+                </div>
 
-                  {/* Right Side: Text */}
-                  <div className="w-full md:w-1/2 pl-0 md:pl-16 text-center md:text-left">
-                    <div className="md:hidden flex items-center justify-center w-10 h-10 rounded-full bg-[#00A651] text-white font-bold text-lg mx-auto mb-4">
-                      {idx + 1}
-                    </div>
-                    <h3 className="text-xl md:text-2xl font-extrabold text-[#111827] mb-3">{showcase.title}</h3>
-                    <p className="text-[#4B5563] text-[15px] md:text-base leading-relaxed">
-                      {showcase.desc}
-                    </p>
-                    <ul className="mt-4 space-y-2 text-left md:text-left inline-block">
+                {/* Text Container */}
+                <div className={`w-1/2 ${showcase.imageLeft ? 'text-left pl-4 md:pl-16 order-3' : 'text-right pr-4 md:pr-16 order-1'}`}>
+                  <h3 className="text-[13px] sm:text-xl md:text-2xl font-extrabold text-[#111827] mb-1 md:mb-3">{showcase.title}</h3>
+                  <p className="text-[#4B5563] text-[9px] sm:text-[15px] md:text-base leading-snug md:leading-relaxed">
+                    {showcase.desc}
+                  </p>
+                  <div className={`flex w-full ${showcase.imageLeft ? 'justify-start' : 'justify-end'}`}>
+                    <ul className="mt-2 md:mt-4 space-y-1 md:space-y-2 text-left inline-block">
                       {showcase.items.map((item, i) => (
-                        <li key={i} className="flex items-start text-[#4B5563] text-sm font-medium">
-                          <Icon icon="solar:check-circle-linear" className="w-4 h-4 text-[#00A651] shrink-0 mr-2 mt-0.5" />
-                          {item}
+                        <li key={i} className="flex items-start text-[#4B5563] text-[8px] sm:text-sm font-medium text-left">
+                          <Icon icon="solar:check-circle-linear" className="w-3 h-3 md:w-4 md:h-4 text-[#00A651] shrink-0 mr-1 md:mr-2 mt-0.5" />
+                          <span>{item}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
-                </>
-              ) : (
-                <>
-                  {/* Left Side: Text */}
-                  <div className="w-full md:w-1/2 pr-0 md:pr-16 text-center md:text-right mb-8 md:mb-0">
-                    <div className="md:hidden flex items-center justify-center w-10 h-10 rounded-full bg-[#00A651] text-white font-bold text-lg mx-auto mb-4">
-                      {idx + 1}
-                    </div>
-                    <h3 className="text-xl md:text-2xl font-extrabold text-[#111827] mb-3">{showcase.title}</h3>
-                    <p className="text-[#4B5563] text-[15px] md:text-base leading-relaxed">
-                      {showcase.desc}
-                    </p>
-                    <div className="flex md:justify-end w-full">
-                      <ul className="mt-4 space-y-2 text-left inline-block">
-                        {showcase.items.map((item, i) => (
-                          <li key={i} className="flex items-start text-[#4B5563] text-sm font-medium text-left">
-                            <Icon icon="solar:check-circle-linear" className="w-4 h-4 text-[#00A651] shrink-0 mr-2 mt-0.5" />
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-
-                  {/* Center Node (Number) */}
-                  <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 items-center justify-center w-10 h-10 rounded-full bg-[#00A651] text-white font-bold text-lg border-4 border-white z-10 shadow-sm">
-                    {idx + 1}
-                  </div>
-
-                  {/* Right Side: Icon */}
-                  <div className="w-full md:w-1/2 pl-0 md:pl-16 flex justify-center md:justify-start">
-                    <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border-2 border-[#00A651] flex items-center justify-center bg-white shadow-md">
-                      <Icon icon={showcase.icon as string} className="w-10 h-10 md:w-14 md:h-14 text-[#00A651]" />
-                    </div>
-                  </div>
-                </>
-              )}
+                </div>
             </motion.div>
           ))}
         </div>

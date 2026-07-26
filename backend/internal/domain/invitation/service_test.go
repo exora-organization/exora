@@ -2,6 +2,7 @@ package invitation
 
 import (
 	"context"
+	"errors"
 	"testing"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/exora/backend/internal/domain/company"
 	"github.com/exora/backend/internal/domain/user"
 )
+
 
 type stubInvitationRepo struct {
 	inv *Invitation
@@ -63,6 +65,14 @@ func (s *stubCompanyRepo) List(context.Context, string, int, string) ([]*company
 }
 func (s *stubCompanyRepo) CountByStatus(context.Context, string) (int, error) { return 0, nil }
 func (s *stubCompanyRepo) CountAll(context.Context) (int, error)              { return 0, nil }
+func (s *stubCompanyRepo) CreateChangeRequest(context.Context, *company.ProfileChangeRequest) error { return nil }
+func (s *stubCompanyRepo) GetPendingChangeRequestByCompanyID(context.Context, string) (*company.ProfileChangeRequest, error) { return nil, errors.New("not found") }
+func (s *stubCompanyRepo) GetLatestChangeRequestByCompanyID(context.Context, string) (*company.ProfileChangeRequest, error) { return nil, errors.New("not found") }
+func (s *stubCompanyRepo) GetChangeRequestByID(context.Context, string) (*company.ProfileChangeRequest, error) { return nil, errors.New("not found") }
+
+func (s *stubCompanyRepo) ListPendingChangeRequests(context.Context) ([]*company.ProfileChangeRequest, error) { return nil, nil }
+func (s *stubCompanyRepo) UpdateChangeRequest(context.Context, *company.ProfileChangeRequest) error { return nil }
+
 
 func TestLoadValidInvitationRejectsExpiredToken(t *testing.T) {
 	repo := &stubInvitationRepo{inv: &Invitation{ID: "i1", CompanyID: "c1", Email: "guest@example.com", Role: user.RoleExportManager, Token: "abc", Status: StatusPending, ExpiresAt: time.Now().Add(-time.Hour)}}

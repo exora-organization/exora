@@ -1,6 +1,7 @@
 import { apiClient } from "./client";
 import { ApiResponse, PaginatedResponse } from "../types/api";
 import { AdminCompanyApplication, RejectRequestPayload, RevisionRequestPayload, MonitoringStats, AuditLogResponse } from "../types/admin";
+import { ProfileChangeResponse } from "../types/company";
 
 export const apiAdmin = {
   getCompanyApplications: async (): Promise<ApiResponse<PaginatedResponse<AdminCompanyApplication>>> => {
@@ -28,6 +29,25 @@ export const apiAdmin = {
       body: JSON.stringify(payload),
     });
   },
+
+  getCompanyChangeRequests: async (): Promise<ApiResponse<{ items: ProfileChangeResponse[] }>> => {
+    return apiClient<ApiResponse<{ items: ProfileChangeResponse[] }>>("/admin/company-change-requests", {
+      method: "GET",
+    });
+  },
+
+  approveChangeRequest: async (requestId: string): Promise<ApiResponse<ProfileChangeResponse>> => {
+    return apiClient<ApiResponse<ProfileChangeResponse>>(`/admin/company-change-requests/${requestId}/approve`, {
+      method: "POST",
+    });
+  },
+
+  rejectChangeRequest: async (requestId: string, reason: string): Promise<ApiResponse<ProfileChangeResponse>> => {
+    return apiClient<ApiResponse<ProfileChangeResponse>>(`/admin/company-change-requests/${requestId}/reject`, {
+      method: "POST",
+      body: JSON.stringify({ reason }),
+    });
+  },
   
   getMonitoring: async (): Promise<ApiResponse<MonitoringStats>> => {
     return apiClient<ApiResponse<MonitoringStats>>(`/admin/monitoring`, {
@@ -41,3 +61,4 @@ export const apiAdmin = {
     });
   },
 };
+

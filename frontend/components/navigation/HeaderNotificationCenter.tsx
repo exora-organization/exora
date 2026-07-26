@@ -1,21 +1,26 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useUserProfile } from "../../hooks/useUserProfile";
 import { apiExportCase } from "../../lib/api/export-case";
+import { apiAdmin } from "../../lib/api/admin";
+import { apiCompany } from "../../lib/api/company";
+
 import {
   notificationStore,
   generateNotificationsFromRealCases,
+  generateChangeRequestNotifications,
   WorkflowNotification,
 } from "../../lib/services/notificationStore";
 
 export function HeaderNotificationCenter() {
-  const { role } = useUserProfile();
+  const { role, companyId } = useUserProfile();
   const [isOpen, setIsOpen] = useState(false);
   const [userActions, setUserActions] = useState<WorkflowNotification[]>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Fetch real export cases from backend API
   const { data: casesData } = useQuery({
@@ -24,7 +29,25 @@ export function HeaderNotificationCenter() {
     staleTime: 10000,
   });
 
+  // Fetch pending change requests for Admin
+  const { data: adminChangeReqsData } = useQuery({
+    queryKey: ["admin-change-requests-notification"],
+    queryFn: () => apiAdmin.getCompanyChangeRequests(),
+    enabled: role === "admin",
+    staleTime: 10000,
+  });
+
+  // Fetch pending change request for Company Owner
+  const { data: ownerChangeReqData } = useQuery({
+    queryKey: ["owner-change-request-notification", companyId],
+    queryFn: () => apiCompany.getPendingChangeRequest(companyId as string),
+    enabled: role === "company_owner" && !!companyId,
+    staleTime: 10000,
+  });
+
   const realCases = casesData?.data?.items || [];
+  const adminPendingReqs = adminChangeReqsData?.data?.items || [];
+  const ownerReq = ownerChangeReqData?.data;
 
   const refreshUserActions = () => {
     setUserActions(notificationStore.getUserNotifications());
@@ -43,12 +66,32 @@ export function HeaderNotificationCenter() {
     };
   }, []);
 
-  // Merge dynamic real-case notifications with user action notifications
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent | TouchEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleOutsideClick);
+      document.addEventListener("touchstart", handleOutsideClick);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("touchstart", handleOutsideClick);
+    };
+  }, [isOpen]);
+
+
+  // Merge dynamic real-case & change request notifications with user action notifications
   const allNotifications = useMemo(() => {
     const dynamicRealNotifs = generateNotificationsFromRealCases(realCases);
+    const dynamicCRNotifs = generateChangeRequestNotifications(adminPendingReqs, ownerReq);
     
     // Combine and eliminate duplicates by ID
-    const combined = [...userActions, ...dynamicRealNotifs];
+    const combined = [...userActions, ...dynamicCRNotifs, ...dynamicRealNotifs];
     const uniqueMap = new Map<string, WorkflowNotification>();
     combined.forEach((n) => {
       if (!uniqueMap.has(n.id)) {
@@ -57,7 +100,7 @@ export function HeaderNotificationCenter() {
     });
 
     return Array.from(uniqueMap.values());
-  }, [realCases, userActions]);
+  }, [realCases, adminPendingReqs, ownerReq, userActions]);
 
   const filteredNotifications = useMemo(() => {
     return allNotifications.filter(
@@ -67,8 +110,10 @@ export function HeaderNotificationCenter() {
 
   const unreadCount = filteredNotifications.filter((n) => !n.isRead).length;
 
-  const handleMarkAllRead = () => {
-    notificationStore.markAllAsRead(role || undefined);
+  const handleMarkAllRead = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const targetNotifIds = filteredNotifications.map((n) => n.id);
+    notificationStore.markAllAsRead(role || undefined, targetNotifIds);
     refreshUserActions();
   };
 
@@ -79,6 +124,8 @@ export function HeaderNotificationCenter() {
   };
 
   const getCaseHref = (n: WorkflowNotification) => {
+    if (n.targetTab === "company_profile") return "/own-company-profile";
+    if (n.targetTab === "change_requests") return "/admin-company-applications";
     if (n.targetRole === "admin") return "/admin-company-applications";
     if (n.targetRole === "guest") return "/guest-dashboard";
     if (role === "export_manager") return `/em-export-case/${n.caseId}?tab=${n.targetTab}`;
@@ -87,7 +134,7 @@ export function HeaderNotificationCenter() {
   };
 
   return (
-    <div className="relative">
+    <div className="relative" ref={containerRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2.5 rounded-2xl bg-white border border-[#E8E3D9] hover:border-[#00A651]/40 text-[#4B5563] hover:text-[#00A651] shadow-sm transition-all cursor-pointer focus:outline-none"
@@ -102,55 +149,53 @@ export function HeaderNotificationCenter() {
       </button>
 
       {isOpen && (
-        <>
-          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-white border border-[#E8E3D9] shadow-2xl rounded-3xl p-5 z-50 animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between pb-3 border-b border-[#E8E3D9] mb-3">
-              <div className="flex items-center gap-2">
-                <Icon icon="solar:bell-bold-duotone" className="w-5 h-5 text-[#00A651]" />
-                <h4 className="text-base font-extrabold text-[#1F2937]">Workflow Notifications</h4>
-              </div>
-              {unreadCount > 0 && (
-                <button
-                  onClick={handleMarkAllRead}
-                  className="text-xs font-bold text-[#00A651] hover:underline cursor-pointer"
-                >
-                  Mark all read
-                </button>
-              )}
+        <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-white border border-[#E8E3D9] shadow-2xl rounded-3xl p-5 z-50 animate-in fade-in zoom-in-95 duration-200">
+          <div className="flex items-center justify-between pb-3 border-b border-[#E8E3D9] mb-3">
+            <div className="flex items-center gap-2">
+              <Icon icon="solar:bell-bold-duotone" className="w-5 h-5 text-[#00A651]" />
+              <h4 className="text-base font-extrabold text-[#1F2937]">Workflow Notifications</h4>
             </div>
-
-            <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
-              {filteredNotifications.length === 0 ? (
-                <div className="text-center py-8 text-xs font-bold text-gray-400">
-                  No workflow notifications for real export cases right now.
-                </div>
-              ) : (
-                filteredNotifications.map((n) => (
-                  <Link
-                    key={n.id}
-                    href={getCaseHref(n)}
-                    onClick={() => handleNotificationClick(n)}
-                    className={`block p-3.5 rounded-2xl border transition-all ${
-                      n.isRead
-                        ? "bg-[#FAF8F3]/50 border-[#E8E3D9] text-[#6B7280]"
-                        : "bg-[#EBF8F2]/60 border-[#00A651]/30 text-[#1F2937] font-semibold shadow-xs"
-                    } hover:border-[#00A651] hover:shadow-md`}
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-[10px] font-black uppercase tracking-wider text-[#00A651] truncate max-w-[200px]">
-                        {n.caseName}
-                      </span>
-                      <span className="text-[10px] font-medium text-gray-400">{n.timestamp}</span>
-                    </div>
-                    <p className="text-xs leading-snug font-medium text-[#374151]">{n.message}</p>
-                  </Link>
-                ))
-              )}
-            </div>
+            {unreadCount > 0 && (
+              <button
+                onClick={handleMarkAllRead}
+                className="text-xs font-bold text-[#00A651] hover:underline cursor-pointer py-1 px-2.5 rounded-lg hover:bg-[#EBF8F2] transition-all"
+              >
+                Mark all read
+              </button>
+            )}
           </div>
-        </>
+
+          <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
+            {filteredNotifications.length === 0 ? (
+              <div className="text-center py-8 text-xs font-bold text-gray-400">
+                No workflow notifications right now.
+              </div>
+            ) : (
+              filteredNotifications.map((n) => (
+                <Link
+                  key={n.id}
+                  href={getCaseHref(n)}
+                  onClick={() => handleNotificationClick(n)}
+                  className={`block p-3.5 rounded-2xl border transition-all ${
+                    n.isRead
+                      ? "bg-[#FAF8F3]/50 border-[#E8E3D9] text-[#6B7280]"
+                      : "bg-[#EBF8F2]/60 border-[#00A651]/30 text-[#1F2937] font-semibold shadow-xs"
+                  } hover:border-[#00A651] hover:shadow-md`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-[#00A651] truncate max-w-[200px]">
+                      {n.caseName}
+                    </span>
+                    <span className="text-[10px] font-medium text-gray-400">{n.timestamp}</span>
+                  </div>
+                  <p className="text-xs leading-snug font-medium text-[#374151]">{n.message}</p>
+                </Link>
+              ))
+            )}
+          </div>
+        </div>
       )}
     </div>
   );
+
 }

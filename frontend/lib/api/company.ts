@@ -1,6 +1,6 @@
 import { apiClient } from "./client";
 import { ApiResponse } from "../types/api";
-import { CompanyApplicationRequest, CompanyApplicationResponse } from "../types/company";
+import { CompanyApplicationRequest, CompanyApplicationResponse, ProfileChangePayload, ProfileChangeResponse } from "../types/company";
 
 export const apiCompany = {
   apply: async (data: CompanyApplicationRequest): Promise<ApiResponse<CompanyApplicationResponse>> => {
@@ -21,4 +21,18 @@ export const apiCompany = {
       method: "GET",
     });
   },
+
+  requestChange: async (companyId: string, data: ProfileChangePayload): Promise<ApiResponse<ProfileChangeResponse>> => {
+    return apiClient<ApiResponse<ProfileChangeResponse>>(`/companies/${companyId}/change-request`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  },
+
+  getPendingChangeRequest: async (companyId: string): Promise<ApiResponse<ProfileChangeResponse>> => {
+    return apiClient<ApiResponse<ProfileChangeResponse>>(`/companies/${companyId}/change-request`, {
+      method: "GET",
+    });
+  },
 };
+

@@ -8,16 +8,17 @@ export interface SubNavTab {
   label: string;
   icon: string;
   isReadOnly?: boolean;
+  ownerRoleBadge?: string;
 }
 
 const ALL_TABS: Record<string, SubNavTab> = {
   overview: { id: "overview", label: "Overview", icon: "solar:widget-bold-duotone" },
-  cost: { id: "cost", label: "Cost", icon: "solar:calculator-bold-duotone" },
-  pricing: { id: "pricing", label: "Pricing", icon: "solar:tag-price-bold-duotone" },
-  scenario: { id: "scenario", label: "Scenario", icon: "solar:map-point-wave-bold-duotone" },
-  financial: { id: "financial", label: "Financial Analysis", icon: "solar:chart-square-bold-duotone" },
-  risk: { id: "risk", label: "Risk Assessment", icon: "solar:shield-check-bold-duotone" },
-  advisor: { id: "advisor", label: "AI Advisor", icon: "solar:lightbulb-bold-duotone" },
+  cost: { id: "cost", label: "Cost", icon: "solar:calculator-bold-duotone", ownerRoleBadge: "Finance" },
+  pricing: { id: "pricing", label: "Pricing", icon: "solar:tag-price-bold-duotone", ownerRoleBadge: "Export Mgr" },
+  scenario: { id: "scenario", label: "Scenario", icon: "solar:map-point-wave-bold-duotone", ownerRoleBadge: "Export Mgr" },
+  financial: { id: "financial", label: "Financial Analysis", icon: "solar:chart-square-bold-duotone", ownerRoleBadge: "Finance" },
+  risk: { id: "risk", label: "Risk Assessment", icon: "solar:shield-check-bold-duotone", ownerRoleBadge: "Export Mgr" },
+  advisor: { id: "advisor", label: "AI Advisor", icon: "solar:lightbulb-bold-duotone", ownerRoleBadge: "AI Advisor" },
   documents: { id: "documents", label: "Documents", icon: "solar:document-text-bold-duotone" },
 };
 
@@ -82,14 +83,14 @@ export function CaseSubNav({ activeTab, onTabChange }: CaseSubNavProps) {
             >
               <Icon icon={tab.icon} className="w-4 h-4 shrink-0" />
               <span>{tab.label}</span>
-              {tab.isReadOnly && (
+              {tab.isReadOnly && tab.ownerRoleBadge && (
                 <span
-                  className={`text-[9px] px-1.5 py-0.5 rounded-md uppercase font-black tracking-wider ${
-                    isActive ? "bg-white/20 text-white" : "bg-gray-100 text-gray-500"
+                  className={`text-[9px] px-2 py-0.5 rounded-lg uppercase font-black tracking-wider ${
+                    isActive ? "bg-white/20 text-white" : "bg-blue-50 text-blue-700 border border-blue-200/60"
                   }`}
-                  title="View-Only Mode"
+                  title={`Managed by ${tab.ownerRoleBadge}`}
                 >
-                  View Only
+                  {tab.ownerRoleBadge}
                 </span>
               )}
             </button>
@@ -99,3 +100,4 @@ export function CaseSubNav({ activeTab, onTabChange }: CaseSubNavProps) {
     </div>
   );
 }
+

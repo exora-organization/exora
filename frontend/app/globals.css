@@ -129,3 +129,23 @@
     @apply font-sans;
   }
 }
+
+/* Global pointer cursor for clickable elements - FORCED OVERRIDE */
+button, 
+[role="button"], 
+input[type="submit"], 
+input[type="button"], 
+input[type="reset"],
+a {
+  cursor: pointer !important;
+}
+
+/* Disabled state cursor - FORCED OVERRIDE */
+button:disabled,
+[role="button"]:disabled,
+input[type="submit"]:disabled, 
+input[type="button"]:disabled, 
+input[type="reset"]:disabled {
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
+}

@@ -187,3 +187,109 @@ func ToStatusResponse(c *Company) ApplicationStatusResponse {
 	}
 	return resp
 }
+
+const changeRequestCollection = "company_change_requests"
+
+func (r *FirestoreRepository) CreateChangeRequest(ctx context.Context, req *ProfileChangeRequest) error {
+	req.RequestedAt = time.Now().UTC()
+	req.Status = StatusPending
+	ref, _, err := r.client.Collection(changeRequestCollection).Add(ctx, req)
+	if err != nil {
+		return err
+	}
+	req.ID = ref.ID
+	return nil
+}
+
+func (r *FirestoreRepository) GetPendingChangeRequestByCompanyID(ctx context.Context, companyID string) (*ProfileChangeRequest, error) {
+	iter := r.client.Collection(changeRequestCollection).
+		Where("companyId", "==", companyID).
+		Where("status", "==", StatusPending).
+		Limit(1).
+		Documents(ctx)
+	doc, err := iter.Next()
+	if err != nil {
+		return nil, apperror.ErrNotFound
+	}
+	var cr ProfileChangeRequest
+	if err := doc.DataTo(&cr); err != nil {
+		return nil, err
+	}
+	cr.ID = doc.Ref.ID
+	return &cr, nil
+}
+
+func (r *FirestoreRepository) GetLatestChangeRequestByCompanyID(ctx context.Context, companyID string) (*ProfileChangeRequest, error) {
+	iter := r.client.Collection(changeRequestCollection).
+		Where("companyId", "==", companyID).
+		Documents(ctx)
+	var list []*ProfileChangeRequest
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		var cr ProfileChangeRequest
+		if err := doc.DataTo(&cr); err != nil {
+			continue
+		}
+		cr.ID = doc.Ref.ID
+		list = append(list, &cr)
+	}
+	if len(list) == 0 {
+		return nil, apperror.ErrNotFound
+	}
+	sort.Slice(list, func(i, j int) bool {
+		return list[i].RequestedAt.After(list[j].RequestedAt)
+	})
+	return list[0], nil
+}
+
+
+func (r *FirestoreRepository) GetChangeRequestByID(ctx context.Context, id string) (*ProfileChangeRequest, error) {
+	doc, err := r.client.Collection(changeRequestCollection).Doc(id).Get(ctx)
+	if err != nil {
+		return nil, apperror.ErrNotFound
+	}
+	var cr ProfileChangeRequest
+	if err := doc.DataTo(&cr); err != nil {
+		return nil, err
+	}
+	cr.ID = doc.Ref.ID
+	return &cr, nil
+}
+
+func (r *FirestoreRepository) ListPendingChangeRequests(ctx context.Context) ([]*ProfileChangeRequest, error) {
+	iter := r.client.Collection(changeRequestCollection).Where("status", "==", StatusPending).Documents(ctx)
+	var list []*ProfileChangeRequest
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		var cr ProfileChangeRequest
+		if err := doc.DataTo(&cr); err != nil {
+			// Log data mapping issue if any
+			continue
+		}
+		cr.ID = doc.Ref.ID
+		list = append(list, &cr)
+	}
+	sort.Slice(list, func(i, j int) bool {
+		return list[i].RequestedAt.After(list[j].RequestedAt)
+	})
+	return list, nil
+}
+
+
+func (r *FirestoreRepository) UpdateChangeRequest(ctx context.Context, req *ProfileChangeRequest) error {
+	_, err := r.client.Collection(changeRequestCollection).Doc(req.ID).Set(ctx, req)
+	return err
+}
+

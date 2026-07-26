@@ -7,6 +7,7 @@ import { apiCompany } from "../../../lib/api/company";
 import { CompanyApplicationForm } from "../../../components/forms/CompanyApplicationForm";
 import { Button } from "../../../components/ui/button";
 import logoImg from "../../../public/logo.png";
+import heroBg from "../../../public/dashboard-bg.png";
 
 export default function ApplicationStatusPage() {
   const router = useRouter();
@@ -17,8 +18,16 @@ export default function ApplicationStatusPage() {
   });
 
   const Wrapper = ({ children }: { children: React.ReactNode }) => (
-    <div className="w-full">
-      <div className="group bg-white/95 backdrop-blur-xl border border-white/60 p-6 sm:p-10 rounded-[2rem] shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
+    <div className="-m-6 md:-m-10 p-6 md:p-10 relative min-h-screen flex items-center justify-center">
+      {/* Full Bleed Background layer */}
+      <div
+        className="absolute inset-0 z-0 bg-cover bg-center pointer-events-none"
+        style={{
+          backgroundImage: `linear-gradient(rgba(12, 30, 28, 0.72), rgba(12, 30, 28, 0.60)), url(${heroBg.src})`,
+        }}
+      />
+
+      <div className="group bg-white/95 backdrop-blur-xl border border-white/60 p-6 sm:p-10 rounded-[2rem] shadow-xl hover:shadow-2xl transition-all duration-300 relative z-10 w-full max-w-xl my-8">
         <div className="flex items-center justify-center space-x-3 mb-8 text-center relative z-10">
           <div className="relative w-10 h-10 flex items-center justify-center shrink-0">
             <Image src={logoImg} alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
@@ -104,7 +113,7 @@ export default function ApplicationStatusPage() {
             <h2 className="text-2xl font-bold text-[#1F2937] mb-1 tracking-tight">Application Pending</h2>
             <p className="text-sm text-[#9CA3AF] mb-8">Your application is currently under review by our admin team.</p>
 
-            <div className="p-4 bg-[#F5F8F6] text-[#4B5563] rounded-xl mb-6 text-sm">
+            <div className="p-4 bg-[#EBF8F2] border border-[#00A651]/30 text-[#1F2937] rounded-xl mb-6 text-sm font-bold shadow-sm">
               <p>We will notify you once your application has been processed.</p>
             </div>
 

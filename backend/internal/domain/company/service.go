@@ -106,12 +106,82 @@ func (s *Service) GetCompanyDetail(ctx context.Context, id string) (*CompanyDeta
 	return &resp, nil
 }
 
-func (s *Service) RequestChange(ctx context.Context, companyID string) error {
+func (s *Service) RequestChange(ctx context.Context, companyID string, req ProfileChangePayload) (*ProfileChangeResponse, error) {
+	if err := validator.Validate(req); err != nil {
+		return nil, apperror.ErrValidation
+	}
+
+	u, ok := actor.FromContext(ctx)
+	if !ok {
+		return nil, apperror.ErrUnauthenticated
+	}
+
 	c, err := s.repo.GetByID(ctx, companyID)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	c.Status = StatusPending
-	c.UpdatedAt = time.Now().UTC()
-	return s.repo.Update(ctx, c)
+
+	if u.Role != "admin" && u.CompanyID != companyID && c.ApplicantUserID != u.ID {
+		return nil, apperror.ErrForbidden
+	}
+
+	// Check if a pending change request already exists
+	if existing, err := s.repo.GetPendingChangeRequestByCompanyID(ctx, companyID); err == nil && existing != nil {
+		return nil, apperror.New("CONFLICT", "a change request is already pending review", 409)
+	}
+
+	// Ensure at least one field is modified
+	if req.CompanyName == c.CompanyName && req.BusinessSector == c.BusinessSector && req.Country == c.Country {
+		return nil, apperror.New("BAD_REQUEST", "no changes detected; please modify at least one field before submitting", 400)
+	}
+
+
+	cr := &ProfileChangeRequest{
+		CompanyID:       companyID,
+		ApplicantUserID: u.ID,
+		Before: CompanyData{
+			CompanyName:    c.CompanyName,
+			BusinessSector: c.BusinessSector,
+			Country:        c.Country,
+		},
+		After: CompanyData{
+			CompanyName:    req.CompanyName,
+			BusinessSector: req.BusinessSector,
+			Country:        req.Country,
+		},
+		Reason: req.Reason,
+	}
+
+	if err := s.repo.CreateChangeRequest(ctx, cr); err != nil {
+		return nil, err
+	}
+
+	resp := ToProfileChangeResponse(cr)
+	return &resp, nil
 }
+
+func (s *Service) GetPendingChangeRequest(ctx context.Context, companyID string) (*ProfileChangeResponse, error) {
+	u, ok := actor.FromContext(ctx)
+	if !ok {
+		return nil, apperror.ErrUnauthenticated
+	}
+
+	c, err := s.repo.GetByID(ctx, companyID)
+	if err != nil {
+		return nil, err
+	}
+
+	if u.Role != "admin" && u.CompanyID != companyID && c.ApplicantUserID != u.ID {
+		return nil, apperror.ErrForbidden
+	}
+
+	cr, err := s.repo.GetLatestChangeRequestByCompanyID(ctx, companyID)
+	if err != nil {
+		return nil, apperror.ErrNotFound
+	}
+
+
+	resp := ToProfileChangeResponse(cr)
+	return &resp, nil
+}
+

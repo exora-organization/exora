@@ -1,19 +1,29 @@
 "use client";
 
 import { Icon } from "@iconify/react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUserProfile } from "../../../hooks/useUserProfile";
 import { apiOwner } from "../../../lib/api/owner";
-import { apiClient } from "../../../lib/api/client";
+import { apiCompany } from "../../../lib/api/company";
 import { Button } from "../../../components/ui/button";
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { ProfileChangePayload } from "../../../lib/types/company";
+import { notificationStore } from "../../../lib/services/notificationStore";
 
 export default function CompanyProfilePage() {
   const { companyId, loading: profileLoading } = useUserProfile();
-  const [requestSent, setRequestSent] = useState(false);
-  const [isSending, setIsSending] = useState(false);
+  const queryClient = useQueryClient();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [dismissedId, setDismissedId] = useState<string | null>(null);
+  const [formData, setFormData] = useState<ProfileChangePayload>({
+    companyName: "",
+    businessSector: "",
+    country: "",
+    reason: "",
+  });
+
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["company", companyId],
@@ -21,22 +31,68 @@ export default function CompanyProfilePage() {
     enabled: !!companyId,
   });
 
-  const handleRequestChange = async () => {
-    setIsSending(true);
-    try {
-      // Fire a notification/request to Admin — endpoint may be a simple POST
-      // to a change-request log. Falls back to toast if not implemented yet.
-      await apiClient<any>(`/companies/${companyId}/change-request`, { method: "POST" });
-      setRequestSent(true);
-      toast.success("Change request sent to Admin.");
-    } catch {
-      // Even if endpoint is not ready, show confirmation (per Section 21 spec intent)
-      setRequestSent(true);
-      toast.success("Change request submitted. An Admin will review your request.");
-    } finally {
-      setIsSending(false);
+  const { data: pendingReqData, refetch: refetchPendingReq } = useQuery({
+    queryKey: ["pending-change-request", companyId],
+    queryFn: () => apiCompany.getPendingChangeRequest(companyId as string),
+    enabled: !!companyId,
+  });
+
+  const company = data?.data;
+  const pendingChange = pendingReqData?.data;
+
+  useEffect(() => {
+    if (company) {
+      setFormData({
+        companyName: company.companyName || "",
+        businessSector: company.businessSector || "",
+        country: company.country || "",
+        reason: "",
+      });
     }
+  }, [company]);
+
+
+  const requestMutation = useMutation({
+    mutationFn: (payload: ProfileChangePayload) =>
+      apiCompany.requestChange(companyId as string, payload),
+    onSuccess: () => {
+      toast.success("Profile change request submitted to Admin.");
+      notificationStore.addNotification({
+        caseId: companyId as string,
+        caseName: formData.companyName,
+        message: `Company profile change request for '${formData.companyName}' submitted to Admin.`,
+        targetRole: "admin",
+        targetTab: "change_requests",
+      });
+      setIsModalOpen(false);
+      refetchPendingReq();
+      queryClient.invalidateQueries({ queryKey: ["pending-change-request", companyId] });
+      queryClient.invalidateQueries({ queryKey: ["admin-change-requests-notification"] });
+    },
+    onError: (err: any) => {
+      toast.error(err?.message || "Failed to submit change request.");
+    },
+  });
+
+
+  const hasChanged =
+    formData.companyName.trim() !== (company?.companyName || "").trim() ||
+    formData.businessSector.trim() !== (company?.businessSector || "").trim() ||
+    formData.country.trim() !== (company?.country || "").trim();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.companyName.trim() || !formData.businessSector.trim() || !formData.country.trim()) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+    if (!hasChanged) {
+      toast.error("No changes detected. Please modify at least one field before submitting.");
+      return;
+    }
+    requestMutation.mutate(formData);
   };
+
 
   if (profileLoading || isLoading) {
     return (
@@ -63,42 +119,40 @@ export default function CompanyProfilePage() {
     );
   }
 
-  const company = data?.data;
-
   const fields = [
     {
-      icon: <Icon icon="solar:buildings-bold-duotone" className="w-5 h-5 text-blue-600"  />,
+      icon: <Icon icon="solar:buildings-bold-duotone" className="w-5 h-5 text-blue-600" />,
       bg: "bg-blue-50",
       label: "Company Name",
       value: company?.companyName || "—",
     },
     {
-      icon: <Icon icon="solar:case-bold-duotone" className="w-5 h-5 text-amber-600"  />,
+      icon: <Icon icon="solar:case-bold-duotone" className="w-5 h-5 text-amber-600" />,
       bg: "bg-amber-50",
       label: "Business Sector",
       value: company?.businessSector || "—",
     },
     {
-      icon: <Icon icon="solar:map-point-bold-duotone" className="w-5 h-5 text-[#00A651]"  />,
+      icon: <Icon icon="solar:map-point-bold-duotone" className="w-5 h-5 text-[#00A651]" />,
       bg: "bg-emerald-50",
       label: "Country",
       value: company?.country || "—",
     },
     {
-      icon: <Icon icon="solar:hashtag-bold-duotone" className="w-5 h-5 text-[#00A651]"  />,
+      icon: <Icon icon="solar:hashtag-bold-duotone" className="w-5 h-5 text-[#00A651]" />,
       bg: "bg-[#EBF8F2]",
       label: "Company ID",
       value: company?.companyId || companyId || "—",
       mono: true,
     },
     {
-      icon: <Icon icon="solar:shield-check-bold-duotone" className="w-5 h-5 text-indigo-600"  />,
+      icon: <Icon icon="solar:shield-check-bold-duotone" className="w-5 h-5 text-indigo-600" />,
       bg: "bg-indigo-50",
       label: "Status",
       value: company?.status?.replace("_", " ").toUpperCase() || "ACTIVE",
     },
     {
-      icon: <Icon icon="solar:calendar-bold-duotone" className="w-5 h-5 text-rose-500"  />,
+      icon: <Icon icon="solar:calendar-bold-duotone" className="w-5 h-5 text-rose-500" />,
       bg: "bg-rose-50",
       label: "Approved",
       value: company?.approvedAt
@@ -114,20 +168,137 @@ export default function CompanyProfilePage() {
         <div>
           <h2 className="text-4xl font-extrabold tracking-tight">Company Profile</h2>
           <p className="text-sm text-[#4B5563] font-medium mt-1">
-            View-only · To update details, submit a change request to Admin (Section 21, Resolved v3.1)
+            Company Profile Overview · Request updates for Admin approval.
+
           </p>
         </div>
         <div className="flex items-center gap-2 bg-white px-4 py-2.5 rounded-2xl shadow-sm border border-[#E8E3D9]">
-          <span className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-lg ${company?.status === "active" ? "bg-[#EBF8F2] text-[#00A651]" : "bg-amber-50 text-amber-600"}`}>
+          <span className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-lg ${company?.status === "active" || company?.status === "approved" ? "bg-[#EBF8F2] text-[#00A651]" : "bg-amber-50 text-amber-600"}`}>
             {company?.status?.replace("_", " ") || "ACTIVE"}
           </span>
         </div>
       </div>
 
+      {/* Pending Change Request Alert */}
+      {pendingChange && pendingChange.status === "pending" && (
+        <div className="p-6 bg-amber-50 border-2 border-amber-200 rounded-3xl shadow-sm space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div className="flex items-center gap-3 text-amber-900 font-extrabold text-lg">
+              <Icon icon="solar:clock-circle-bold-duotone" className="w-6 h-6 text-amber-600 animate-pulse" />
+              Pending Profile Change Request
+            </div>
+            <span className="px-3 py-1 bg-amber-200 text-amber-900 text-xs font-black uppercase tracking-widest rounded-full">
+              Pending Admin Approval
+            </span>
+          </div>
+          <p className="text-xs text-amber-800 font-medium">
+            Requested on {new Date(pendingChange.requestedAt).toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+            <div className="bg-white/80 p-3.5 rounded-2xl border border-amber-100">
+              <span className="text-[10px] font-bold text-amber-700 uppercase tracking-widest block mb-1">Company Name</span>
+              <div className="text-xs text-slate-400 line-through">{pendingChange.before?.companyName}</div>
+              <div className="text-sm font-black text-amber-950 flex items-center gap-1.5 mt-0.5">
+                <Icon icon="solar:arrow-right-bold" className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                {pendingChange.after?.companyName}
+              </div>
+            </div>
+
+            <div className="bg-white/80 p-3.5 rounded-2xl border border-amber-100">
+              <span className="text-[10px] font-bold text-amber-700 uppercase tracking-widest block mb-1">Business Sector</span>
+              <div className="text-xs text-slate-400 line-through">{pendingChange.before?.businessSector}</div>
+              <div className="text-sm font-black text-amber-950 flex items-center gap-1.5 mt-0.5">
+                <Icon icon="solar:arrow-right-bold" className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                {pendingChange.after?.businessSector}
+              </div>
+            </div>
+
+            <div className="bg-white/80 p-3.5 rounded-2xl border border-amber-100">
+              <span className="text-[10px] font-bold text-amber-700 uppercase tracking-widest block mb-1">Country</span>
+              <div className="text-xs text-slate-400 line-through">{pendingChange.before?.country}</div>
+              <div className="text-sm font-black text-amber-950 flex items-center gap-1.5 mt-0.5">
+                <Icon icon="solar:arrow-right-bold" className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                {pendingChange.after?.country}
+              </div>
+            </div>
+          </div>
+
+          {pendingChange.reason && (
+            <div className="text-xs text-amber-900 bg-amber-100/60 p-3 rounded-xl border border-amber-200/50">
+              <span className="font-bold">Reason provided:</span> "{pendingChange.reason}"
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Approved Change Request Alert */}
+      {pendingChange && pendingChange.status === "approved" && dismissedId !== pendingChange.id && (
+        <div className="p-6 bg-[#EBF8F2] border-2 border-[#00A651]/30 rounded-3xl shadow-sm space-y-3 relative">
+          <div className="flex items-center justify-between flex-wrap gap-3 pr-8">
+            <div className="flex items-center gap-3 text-[#00A651] font-extrabold text-lg">
+              <Icon icon="solar:check-circle-bold-duotone" className="w-6 h-6 text-[#00A651]" />
+              Profile Change Request Approved
+            </div>
+            <span className="px-3 py-1 bg-[#00A651] text-white text-xs font-black uppercase tracking-widest rounded-full">
+              Approved by Admin
+            </span>
+          </div>
+          <button
+            onClick={() => setDismissedId(pendingChange.id)}
+            className="absolute top-5 right-5 p-1.5 rounded-full text-[#00A651]/60 hover:text-[#00A651] hover:bg-[#00A651]/10 transition-colors"
+            title="Dismiss Notice"
+          >
+            <Icon icon="solar:close-circle-bold" className="w-5 h-5" />
+          </button>
+          <p className="text-sm text-slate-700 font-medium leading-relaxed">
+            Your recent profile change request has been reviewed and approved by Admin. Your company details have been automatically updated.
+          </p>
+          {pendingChange.processedAt && (
+            <p className="text-xs text-[#00A651] font-bold">
+              Approved on {new Date(pendingChange.processedAt).toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Rejected Change Request Alert */}
+      {pendingChange && pendingChange.status === "rejected" && dismissedId !== pendingChange.id && (
+        <div className="p-6 bg-red-50 border-2 border-red-200 rounded-3xl shadow-sm space-y-3 relative">
+          <div className="flex items-center justify-between flex-wrap gap-3 pr-8">
+            <div className="flex items-center gap-3 text-red-700 font-extrabold text-lg">
+              <Icon icon="solar:close-circle-bold-duotone" className="w-6 h-6 text-red-600" />
+              Profile Change Request Rejected
+            </div>
+            <span className="px-3 py-1 bg-red-200 text-red-900 text-xs font-black uppercase tracking-widest rounded-full">
+              Rejected by Admin
+            </span>
+          </div>
+          <button
+            onClick={() => setDismissedId(pendingChange.id)}
+            className="absolute top-5 right-5 p-1.5 rounded-full text-red-400 hover:text-red-700 hover:bg-red-200/50 transition-colors"
+            title="Dismiss Notice"
+          >
+            <Icon icon="solar:close-circle-bold" className="w-5 h-5" />
+          </button>
+          <p className="text-sm text-red-900 font-medium">
+            Your previous request to update company details was not approved. Your profile information remains unchanged.
+          </p>
+          {pendingChange.rejectReason && (
+            <div className="p-3.5 bg-red-100/80 border border-red-200 rounded-2xl text-xs text-red-900 font-semibold">
+              <span className="font-extrabold uppercase tracking-wider block text-[10px] text-red-700 mb-1">Rejection Reason:</span>
+              "{pendingChange.rejectReason}"
+            </div>
+          )}
+        </div>
+      )}
+
+
       {/* Read-Only Info Notice */}
       <div className="flex items-center gap-3 p-4 bg-blue-50 border border-blue-200 rounded-2xl text-sm text-blue-800 font-semibold">
-        <Icon icon="solar:shield-check-bold-duotone" className="w-5 h-5 text-blue-500 shrink-0"  />
-        Company profile fields are read-only. Only Admin can approve changes. Use the "Request Change" button below to submit a change request.
+        <Icon icon="solar:shield-check-bold-duotone" className="w-5 h-5 text-blue-500 shrink-0" />
+        Official company profile records. Submit a change request to modify details.
+
       </div>
 
       {/* Profile Fields */}
@@ -159,34 +330,135 @@ export default function CompanyProfilePage() {
         <div className="flex items-start justify-between gap-5 flex-wrap">
           <div className="flex-1">
             <h3 className="text-xl font-extrabold text-[#1F2937] mb-2 flex items-center gap-2">
-              <Icon icon="solar:plain-2-bold-duotone" className="w-5 h-5 text-[#00A651]"  />
+              <Icon icon="solar:pen-new-square-bold-duotone" className="w-5 h-5 text-[#00A651]" />
               Request Profile Change
             </h3>
             <p className="text-sm text-[#6B7280] font-medium leading-relaxed">
-              If you need to update your company name, business sector, or country, submit a change request. An Admin will review and approve the changes directly.
+              Submit requested updates for company name, business sector, or country. An Admin will review the before/after comparison and apply the changes.
             </p>
-            {(requestSent || company?.status === "pending") && (
-              <div className="mt-4 flex items-center gap-2 text-sm font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3">
-                <Icon icon="solar:check-circle-bold-duotone" className="w-4 h-4 shrink-0"  />
-                Change request submitted. Status: <span className="uppercase tracking-wider">Pending Admin Review</span>
-              </div>
-            )}
           </div>
           <Button
-            onClick={handleRequestChange}
-            disabled={isSending || requestSent || company?.status === "pending"}
+            onClick={() => setIsModalOpen(true)}
+            disabled={!!pendingChange && pendingChange.status === "pending"}
             className="rounded-2xl bg-[#00A651] hover:bg-[#008F44] text-white font-extrabold h-12 px-8 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all disabled:opacity-60 shrink-0"
           >
-            {isSending ? (
-              <><Icon icon="solar:refresh-circle-linear" className="w-4 h-4 mr-2 animate-spin"  /> Sending...</>
-            ) : (requestSent || company?.status === "pending") ? (
-              <><Icon icon="solar:check-circle-bold-duotone" className="w-4 h-4 mr-2"  /> Request Sent</>
-            ) : (
-              <><Icon icon="solar:plain-2-bold-duotone" className="w-4 h-4 mr-2"  /> Request Change</>
-            )}
+            <Icon icon="solar:pen-new-square-bold-duotone" className="w-4 h-4 mr-2" />
+            {pendingChange && pendingChange.status === "pending" ? "Request Pending" : "Request Profile Change"}
           </Button>
         </div>
       </div>
+
+      {/* Request Change Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl shadow-2xl border border-white/80 max-w-lg w-full p-6 sm:p-8 space-y-6 relative overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-[#EBF8F2] text-[#00A651] flex items-center justify-center font-bold">
+                  <Icon icon="solar:pen-new-square-bold-duotone" className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-extrabold text-[#1F2937]">Request Profile Change</h3>
+                  <p className="text-xs text-slate-500 font-medium">Submit new company details for Admin approval</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center transition-colors"
+              >
+                <Icon icon="solar:close-circle-bold" className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                  Company Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.companyName}
+                  onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+                  placeholder="e.g. PT Export Jaya Mandiri"
+                  required
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#00A651] focus:ring-2 focus:ring-[#00A651]/20 font-semibold text-sm transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                  Business Sector <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.businessSector}
+                  onChange={(e) => setFormData({ ...formData, businessSector: e.target.value })}
+                  placeholder="e.g. Agricultural Products, Fisheries"
+                  required
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#00A651] focus:ring-2 focus:ring-[#00A651]/20 font-semibold text-sm transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                  Country <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.country}
+                  onChange={(e) => setFormData({ ...formData, country: e.target.value })}
+                  placeholder="e.g. Indonesia"
+                  required
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#00A651] focus:ring-2 focus:ring-[#00A651]/20 font-semibold text-sm transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                  Reason for Change (Optional)
+                </label>
+                <textarea
+                  value={formData.reason}
+                  onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
+                  placeholder="Briefly explain why this profile update is needed..."
+                  rows={3}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-[#00A651] focus:ring-2 focus:ring-[#00A651]/20 font-semibold text-sm transition-all resize-none"
+                />
+              </div>
+
+              {!hasChanged && (
+                <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs font-bold flex items-center gap-2">
+                  <Icon icon="solar:danger-circle-bold-duotone" className="w-4 h-4 text-amber-600 shrink-0" />
+                  No changes detected. Modify at least one field to submit a change request.
+                </div>
+              )}
+
+              <div className="pt-2 flex gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsModalOpen(false)}
+                  className="flex-1 h-12 rounded-xl border-slate-200 font-bold hover:bg-slate-50"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={requestMutation.isPending || !hasChanged}
+                  className="flex-1 h-12 rounded-xl bg-[#00A651] hover:bg-[#008F44] text-white font-extrabold shadow-md hover:shadow-lg transition-all disabled:opacity-50"
+                >
+                  {requestMutation.isPending ? (
+                    <><Icon icon="solar:refresh-circle-linear" className="w-4 h-4 mr-2 animate-spin" /> Submitting...</>
+                  ) : (
+                    "Submit Change Request"
+                  )}
+                </Button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

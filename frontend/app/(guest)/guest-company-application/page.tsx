@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import logoImg from "../../../public/logo.png";
+import heroBg from "../../../public/dashboard-bg.png";
 import { CompanyApplicationForm } from "../../../components/forms/CompanyApplicationForm";
 
 export default function CompanyApplicationPage() {
@@ -13,8 +14,16 @@ export default function CompanyApplicationPage() {
   };
 
   return (
-    <div className="w-full">
-      <div className="group bg-white/95 backdrop-blur-xl border border-white/60 p-6 sm:p-10 rounded-[2rem] shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
+    <div className="-m-6 md:-m-10 p-6 md:p-10 relative min-h-screen flex items-center justify-center">
+      {/* Full Bleed Background layer */}
+      <div
+        className="absolute inset-0 z-0 bg-cover bg-center pointer-events-none"
+        style={{
+          backgroundImage: `linear-gradient(rgba(12, 30, 28, 0.72), rgba(12, 30, 28, 0.60)), url(${heroBg.src})`,
+        }}
+      />
+
+      <div className="group bg-white/95 backdrop-blur-xl border border-white/60 p-6 sm:p-10 rounded-[2rem] shadow-xl hover:shadow-2xl transition-all duration-300 relative z-10 w-full max-w-xl my-8">
         
         <div className="flex items-center justify-center space-x-3 mb-6 text-center relative z-10">
           <div className="relative w-10 h-10 flex items-center justify-center shrink-0">
@@ -23,7 +32,7 @@ export default function CompanyApplicationPage() {
           <h1 className="font-extrabold text-[#1a2b3c] tracking-tight text-2xl leading-tight">EXORA</h1>
         </div>
 
-        <div className="mb-8 relative z-10">
+        <div className="mb-8 relative z-10 text-center">
           <h2 className="text-2xl font-bold text-[#1F2937] mb-1 tracking-tight">Register Company</h2>
           <p className="text-sm text-[#9CA3AF]">Provide your details to get started with EXORA.</p>
         </div>

@@ -153,3 +153,70 @@ func (s *Service) ListAuditLogs(ctx context.Context, limit int) ([]AuditLog, err
 	return s.repo.ListAuditLogs(ctx, limit)
 }
 
+func (s *Service) ListChangeRequests(ctx context.Context) ([]company.ProfileChangeResponse, error) {
+	list, err := s.companies.ListPendingChangeRequests(ctx)
+	if err != nil {
+		return nil, err
+	}
+	resps := make([]company.ProfileChangeResponse, 0, len(list))
+	for _, cr := range list {
+		resps = append(resps, company.ToProfileChangeResponse(cr))
+	}
+	return resps, nil
+}
+
+func (s *Service) ApproveChangeRequest(ctx context.Context, requestID string) (*company.ProfileChangeResponse, error) {
+	cr, err := s.companies.GetChangeRequestByID(ctx, requestID)
+	if err != nil {
+		return nil, err
+	}
+	if cr.Status != company.StatusPending {
+		return nil, apperror.New("UNPROCESSABLE", "change request is not pending", 422)
+	}
+
+	c, err := s.companies.GetByID(ctx, cr.CompanyID)
+	if err != nil {
+		return nil, err
+	}
+
+	c.CompanyName = cr.After.CompanyName
+	c.BusinessSector = cr.After.BusinessSector
+	c.Country = cr.After.Country
+	c.UpdatedAt = time.Now().UTC()
+	if err := s.companies.Update(ctx, c); err != nil {
+		return nil, err
+	}
+
+	now := time.Now().UTC()
+	cr.Status = company.StatusApproved
+	cr.ProcessedAt = &now
+	if err := s.companies.UpdateChangeRequest(ctx, cr); err != nil {
+		return nil, err
+	}
+
+	resp := company.ToProfileChangeResponse(cr)
+	return &resp, nil
+}
+
+func (s *Service) RejectChangeRequest(ctx context.Context, requestID string, reason string) (*company.ProfileChangeResponse, error) {
+	cr, err := s.companies.GetChangeRequestByID(ctx, requestID)
+	if err != nil {
+		return nil, err
+	}
+	if cr.Status != company.StatusPending {
+		return nil, apperror.New("UNPROCESSABLE", "change request is not pending", 422)
+	}
+
+	now := time.Now().UTC()
+	cr.Status = company.StatusRejected
+	cr.RejectReason = strings.TrimSpace(reason)
+	cr.ProcessedAt = &now
+	if err := s.companies.UpdateChangeRequest(ctx, cr); err != nil {
+		return nil, err
+	}
+
+	resp := company.ToProfileChangeResponse(cr)
+	return &resp, nil
+}
+
+

@@ -117,3 +117,62 @@ func ToCompanyDetailResponse(c *Company) CompanyDetailResponse {
 	}
 	return resp
 }
+
+type CompanyData struct {
+	CompanyName    string `json:"companyName" firestore:"companyName"`
+	BusinessSector string `json:"businessSector" firestore:"businessSector"`
+	Country        string `json:"country" firestore:"country"`
+}
+
+type ProfileChangeRequest struct {
+	ID              string     `json:"id" firestore:"-"`
+	CompanyID       string     `json:"companyId" firestore:"companyId"`
+	ApplicantUserID string     `json:"applicantUserId" firestore:"applicantUserId"`
+	Before          CompanyData `json:"before" firestore:"before"`
+	After           CompanyData `json:"after" firestore:"after"`
+	Reason          string     `json:"reason,omitempty" firestore:"reason,omitempty"`
+	Status          string     `json:"status" firestore:"status"` // pending, approved, rejected
+	RejectReason    string     `json:"rejectReason,omitempty" firestore:"rejectReason,omitempty"`
+	RequestedAt     time.Time  `json:"requestedAt" firestore:"requestedAt"`
+	ProcessedAt     *time.Time `json:"processedAt,omitempty" firestore:"processedAt,omitempty"`
+}
+
+type ProfileChangePayload struct {
+	CompanyName    string `json:"companyName" validate:"required,min=2,max=200"`
+	BusinessSector string `json:"businessSector" validate:"required,min=2,max=100"`
+	Country        string `json:"country" validate:"required,min=2,max=100"`
+	Reason         string `json:"reason,omitempty" validate:"max=500"`
+}
+
+type ProfileChangeResponse struct {
+	ID              string      `json:"id"`
+	CompanyID       string      `json:"companyId"`
+	ApplicantUserID string      `json:"applicantUserId"`
+	Before          CompanyData `json:"before"`
+	After           CompanyData `json:"after"`
+	Reason          string      `json:"reason,omitempty"`
+	Status          string      `json:"status"`
+	RejectReason    string      `json:"rejectReason,omitempty"`
+	RequestedAt     string      `json:"requestedAt"`
+	ProcessedAt     *string     `json:"processedAt,omitempty"`
+}
+
+func ToProfileChangeResponse(req *ProfileChangeRequest) ProfileChangeResponse {
+	resp := ProfileChangeResponse{
+		ID:              req.ID,
+		CompanyID:       req.CompanyID,
+		ApplicantUserID: req.ApplicantUserID,
+		Before:          req.Before,
+		After:           req.After,
+		Reason:          req.Reason,
+		Status:          req.Status,
+		RejectReason:    req.RejectReason,
+		RequestedAt:     req.RequestedAt.UTC().Format(time.RFC3339),
+	}
+	if req.ProcessedAt != nil {
+		s := req.ProcessedAt.UTC().Format(time.RFC3339)
+		resp.ProcessedAt = &s
+	}
+	return resp
+}
+

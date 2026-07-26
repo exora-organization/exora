@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/exora/backend/internal/actor"
 	"github.com/exora/backend/internal/apperror"
 	"github.com/exora/backend/pkg/response"
 )
+
 
 type Handler struct {
 	service *Service
@@ -59,25 +59,35 @@ func (h *Handler) ChangeRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	u, ok := actor.FromContext(r.Context())
-	if !ok {
-		response.Error(w, apperror.ErrUnauthenticated)
+	var req ProfileChangePayload
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		response.Error(w, apperror.ErrValidation)
 		return
 	}
 
-	// Ensure only the company owner (or admin) may request a change
-	if u.Role != "company_owner" && u.Role != "admin" {
-		response.Error(w, apperror.ErrForbidden)
-		return
-	}
-
-	if err := h.service.RequestChange(r.Context(), companyID); err != nil {
+	data, err := h.service.RequestChange(r.Context(), companyID, req)
+	if err != nil {
 		response.Error(w, err)
 		return
 	}
 
-	response.JSON(w, http.StatusOK, map[string]string{
-		"status":  "pending_review",
-		"message": "Change request submitted. An Admin will review and apply your updates.",
-	})
+	response.JSON(w, http.StatusOK, data)
 }
+
+// GetChangeRequest handles GET /companies/{companyId}/change-request.
+func (h *Handler) GetChangeRequest(w http.ResponseWriter, r *http.Request) {
+	companyID := r.PathValue("companyId")
+	if companyID == "" {
+		response.Error(w, apperror.ErrValidation)
+		return
+	}
+
+	data, err := h.service.GetPendingChangeRequest(r.Context(), companyID)
+	if err != nil {
+		response.Error(w, err)
+		return
+	}
+
+	response.JSON(w, http.StatusOK, data)
+}
+
