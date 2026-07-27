@@ -53,7 +53,12 @@ func (s *Service) GenerateQuotation(ctx context.Context, caseID, companyID strin
 		return nil, err
 	}
 	content := renderQuotation(ec, cd, pr)
-	return s.saveDocument(ctx, caseID, companyID, TypeQuotation, content)
+	res, err := s.saveDocument(ctx, caseID, companyID, TypeQuotation, content)
+	if err == nil {
+		ec.Status = exportcase.StatusFinalized
+		_ = s.caseRepo.Update(ctx, ec)
+	}
+	return res, err
 }
 
 // GenerateProforma generates SRS FR-021: Proforma Invoice.
@@ -64,7 +69,12 @@ func (s *Service) GenerateProforma(ctx context.Context, caseID, companyID string
 		return nil, err
 	}
 	content := renderProforma(ec, cd, pr)
-	return s.saveDocument(ctx, caseID, companyID, TypeProformaInvoice, content)
+	res, err := s.saveDocument(ctx, caseID, companyID, TypeProformaInvoice, content)
+	if err == nil {
+		ec.Status = exportcase.StatusFinalized
+		_ = s.caseRepo.Update(ctx, ec)
+	}
+	return res, err
 }
 
 // GenerateCostBreakdown generates SRS FR-022: Cost Breakdown Report.

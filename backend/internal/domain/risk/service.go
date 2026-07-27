@@ -85,6 +85,14 @@ func (s *Service) GetAssessment(ctx context.Context, caseID, companyID string) (
 	// Persist (upsert — overwrite on recalculate)
 	_ = s.repo.Upsert(ctx, assessment)
 
+	// Sync calculated feasibility score to ExportCase document so Overview displays it.
+	// Auto-advance case status from "draft" to "in_review" when risk assessment is calculated.
+	ec.FeasibilityScore = &feasibility
+	if ec.Status == exportcase.StatusDraft {
+		ec.Status = exportcase.StatusInReview
+	}
+	_ = s.caseRepo.Update(ctx, ec)
+
 	return assessment, nil
 }
 
