@@ -64,6 +64,37 @@ func (h *Handler) CreateRecommendation(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusOK, map[string]any{"caseId": caseID, "recommendation": rec})
 }
 
+// Chat handles POST /v1/export-cases/{caseId}/advisor/chat.
+func (h *Handler) Chat(w http.ResponseWriter, r *http.Request) {
+	caseID := r.PathValue("caseId")
+	ec, err := h.cases.GetByID(r.Context(), caseID)
+	if err != nil {
+		response.Error(w, err)
+		return
+	}
+
+	var req GenerateRequest
+	_ = json.NewDecoder(r.Body).Decode(&req)
+
+	u, ok := actor.FromContext(r.Context())
+	if !ok {
+		response.Error(w, apperror.ErrUnauthenticated)
+		return
+	}
+	companyID := ec.CompanyID
+	if u.Role == "admin" && companyID == "" {
+		companyID = u.CompanyID
+	}
+
+	rec, err := h.service.Chat(r.Context(), caseID, companyID, req)
+	if err != nil {
+		response.Error(w, err)
+		return
+	}
+	response.JSON(w, http.StatusOK, map[string]any{"caseId": caseID, "recommendation": rec})
+}
+
+
 // GetRecommendation handles GET /v1/export-cases/{caseId}/advisor/recommendations (SRS FR-018).
 func (h *Handler) GetRecommendation(w http.ResponseWriter, r *http.Request) {
 	caseID := r.PathValue("caseId")

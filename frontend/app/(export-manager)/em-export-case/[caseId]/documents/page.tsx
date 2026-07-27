@@ -80,7 +80,8 @@ export default function DocumentGenerationPage() {
         type: "advisor",
         title: "AI Advisor Analysis Missing",
         description: "You must consult the AI Advisor and generate strategic recommendations before generating the feasibility report.",
-        link: `/em-export-case/${caseId}/advisor`,
+        link: `/em-export-case/${caseId}?tab=advisor`,
+
         linkLabel: "Consult AI Advisor",
       };
     }

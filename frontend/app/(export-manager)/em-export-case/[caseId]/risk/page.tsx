@@ -56,17 +56,7 @@ export default function RiskAssessmentPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto pb-12">
-      <div className="mb-5 flex justify-between items-center">
-        <Link href={`/em-export-case/${caseId}`} className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00A651] hover:bg-[#008F44] text-white text-[13px] font-bold rounded-full shadow-md hover:shadow-lg transition-all">
-          <Icon icon="solar:arrow-left-bold-duotone" className="w-4 h-4" /> Back to Case
-        </Link>
-      </div>
-
-      <div>
-        <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Risk Assessment</h2>
-        <p className="text-[#6B7280] mt-1 font-medium">Review the comprehensive risk analysis generated from your financial models.</p>
-      </div>
+    <div className="space-y-6 pt-2 pb-8">
 
       {exportCase && (
         <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6">
@@ -194,7 +184,8 @@ export default function RiskAssessmentPage() {
           </div>
 
           <div className="flex justify-end pt-4">
-            <Button onClick={() => router.push(`/em-export-case/${caseId}/advisor`)} className="bg-[#00A651] hover:bg-[#008F44] text-white rounded-full px-8 h-12 text-[13px] font-bold shadow-md hover:shadow-lg transition-all group">
+            <Button onClick={() => router.push(`/em-export-case/${caseId}?tab=advisor`)} className="bg-[#00A651] hover:bg-[#008F44] text-white rounded-full px-8 h-12 text-[13px] font-bold shadow-md hover:shadow-lg transition-all group">
+
               Continue to AI Advisor <Icon icon="solar:arrow-right-bold-duotone" className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>

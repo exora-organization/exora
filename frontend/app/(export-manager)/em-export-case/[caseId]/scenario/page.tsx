@@ -2,14 +2,15 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
 import { Icon } from "@iconify/react";
-import { apiScenario } from "../../../../../lib/api/scenario";
+import { apiScenario, UpdateScenarioRequest } from "../../../../../lib/api/scenario";
 import { Button } from "../../../../../components/ui/button";
 import { Badge } from "../../../../../components/ui/badge";
 import { Alert, AlertTitle, AlertDescription } from "../../../../../components/ui/alert";
 import { CreateScenarioRequest } from "../../../../../lib/types/scenario";
+import { toast } from "sonner";
 
 export default function ScenarioAnalysisPage() {
   const params = useParams();
@@ -23,13 +24,27 @@ export default function ScenarioAnalysisPage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  // Edit state
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editIncoterm, setEditIncoterm] = useState<"EXW" | "FOB" | "CFR" | "CIF">("EXW");
+  const [editMargin, setEditMargin] = useState("");
+  const [editNotes, setEditNotes] = useState("");
+
   // Fetch all scenarios
-  const { data: scenariosData, isLoading, error } = useQuery({
+  const { data: scenariosData, isLoading } = useQuery({
     queryKey: ["scenarios", caseId],
     queryFn: () => apiScenario.list(caseId),
   });
 
   const scenarios = scenariosData?.data?.scenarios || [];
+
+  // Auto-select all scenarios for comparison matrix on initial load
+  useEffect(() => {
+    if (scenarios.length > 0 && selectedIds.length === 0) {
+      setSelectedIds(scenarios.map((s) => s.scenarioId));
+    }
+  }, [scenarios]);
 
   // Create scenario mutation
   const createMutation = useMutation({
@@ -40,9 +55,37 @@ export default function ScenarioAnalysisPage() {
       setNotes("");
       setErrorMsg(null);
       queryClient.invalidateQueries({ queryKey: ["scenarios", caseId] });
+      toast.success("Simulation scenario created.");
     },
     onError: (err: any) => {
       setErrorMsg(err.message || "Failed to create scenario.");
+    },
+  });
+
+  // Update mutation
+  const updateMutation = useMutation({
+    mutationFn: ({ scenarioId, data }: { scenarioId: string; data: UpdateScenarioRequest }) =>
+      apiScenario.update(caseId, scenarioId, data),
+    onSuccess: () => {
+      setEditingId(null);
+      queryClient.invalidateQueries({ queryKey: ["scenarios", caseId] });
+      toast.success("Scenario updated and recalculated.");
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Failed to update scenario.");
+    },
+  });
+
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: (scenarioId: string) => apiScenario.delete(caseId, scenarioId),
+    onSuccess: (_, scenarioId) => {
+      setSelectedIds((prev) => prev.filter((id) => id !== scenarioId));
+      queryClient.invalidateQueries({ queryKey: ["scenarios", caseId] });
+      toast.success("Scenario deleted.");
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Failed to delete scenario.");
     },
   });
 
@@ -63,6 +106,26 @@ export default function ScenarioAnalysisPage() {
     createMutation.mutate(payload);
   };
 
+  const startEdit = (sc: any) => {
+    setEditingId(sc.scenarioId);
+    setEditName(sc.name);
+    setEditIncoterm(sc.incoterm);
+    setEditMargin(sc.targetMarginOverride ? String(sc.targetMarginOverride) : "");
+    setEditNotes(sc.notes || "");
+  };
+
+  const handleUpdate = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingId || !editName.trim()) return;
+    const data: UpdateScenarioRequest = {
+      name: editName,
+      incoterm: editIncoterm,
+      notes: editNotes || undefined,
+    };
+    if (editMargin.trim()) data.targetMarginOverride = Number(editMargin);
+    updateMutation.mutate({ scenarioId: editingId, data });
+  };
+
   const handleToggleSelect = (id: string) => {
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
@@ -73,17 +136,7 @@ export default function ScenarioAnalysisPage() {
   const comparisonScenarios = scenarios.filter((s) => selectedIds.includes(s.scenarioId));
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto pb-12">
-      <div className="mb-5 flex justify-between items-center">
-        <Link href={`/em-export-case/${caseId}`} className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00A651] hover:bg-[#008F44] text-white text-[13px] font-bold rounded-full shadow-md hover:shadow-lg transition-all">
-          <Icon icon="solar:arrow-left-bold-duotone" className="w-4 h-4" /> Back to Case
-        </Link>
-      </div>
-
-      <div>
-        <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Scenario Analysis</h2>
-        <p className="text-[#6B7280] font-medium mt-1">Simulate financial outcomes based on varying market conditions and Incoterms.</p>
-      </div>
+    <div className="space-y-6 pt-2 pb-8">
 
       {errorMsg && (
         <Alert variant="destructive">
@@ -180,32 +233,98 @@ export default function ScenarioAnalysisPage() {
               ) : (
                 <div className="space-y-3">
                   {scenarios.map((sc) => (
-                    <div
-                      key={sc.scenarioId}
-                      className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${
-                        selectedIds.includes(sc.scenarioId)
-                          ? "bg-emerald-50/50 border-emerald-200"
-                          : "bg-white border-gray-100 hover:border-gray-200 hover:bg-gray-50/50"
-                      }`}
-                    >
-                      <div className="flex items-center gap-4">
-                        <input
-                          type="checkbox"
-                          checked={selectedIds.includes(sc.scenarioId)}
-                          onChange={() => handleToggleSelect(sc.scenarioId)}
-                          className="h-5 w-5 rounded-md border-gray-300 text-[#00A651] focus:ring-[#00A651]"
-                        />
-                        <div>
-                          <p className="font-extrabold text-[#1F2937] text-sm">{sc.name}</p>
-                          <p className="text-[11px] font-bold text-[#9CA3AF] uppercase tracking-widest mt-1">Created: {new Date(sc.createdAt).toLocaleString()}</p>
+                    <div key={sc.scenarioId} className="rounded-2xl border border-gray-100 overflow-hidden">
+                      {/* Normal view */}
+                      {editingId !== sc.scenarioId ? (
+                        <div className={`flex items-center justify-between p-4 transition-all ${
+                          selectedIds.includes(sc.scenarioId)
+                            ? "bg-emerald-50/50 border-emerald-200"
+                            : "bg-white hover:bg-gray-50/50"
+                        }`}>
+                          <div className="flex items-center gap-3">
+                            <input
+                              type="checkbox"
+                              checked={selectedIds.includes(sc.scenarioId)}
+                              onChange={() => handleToggleSelect(sc.scenarioId)}
+                              className="h-5 w-5 rounded-md border-gray-300 text-[#00A651] focus:ring-[#00A651]"
+                            />
+                            <div>
+                              <p className="font-extrabold text-[#1F2937] text-sm">{sc.name}</p>
+                              <p className="text-[11px] font-bold text-[#9CA3AF] uppercase tracking-widest mt-0.5">
+                                {new Date(sc.createdAt).toLocaleString()}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Badge className="bg-slate-100 text-slate-700 border-none rounded-full px-3 uppercase font-bold">{sc.incoterm}</Badge>
+                            <span className="font-extrabold text-blue-700 text-base min-w-[80px] text-right">
+                              ${sc.sellingPriceUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </span>
+                            <button
+                              onClick={() => startEdit(sc)}
+                              className="p-2 rounded-xl text-gray-400 hover:text-[#00A651] hover:bg-emerald-50 transition-all"
+                              title="Edit scenario"
+                            >
+                              <Icon icon="solar:pen-bold-duotone" className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => deleteMutation.mutate(sc.scenarioId)}
+                              disabled={deleteMutation.isPending}
+                              className="p-2 rounded-xl text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all"
+                              title="Delete scenario"
+                            >
+                              <Icon icon="solar:trash-bin-trash-bold-duotone" className="w-4 h-4" />
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <Badge className="bg-slate-100 text-slate-700 hover:bg-slate-200 border-none rounded-full px-3 uppercase font-bold">{sc.incoterm}</Badge>
-                        <span className="font-extrabold text-blue-700 text-lg">
-                          ${sc.sellingPriceUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                        </span>
-                      </div>
+                      ) : (
+                        /* Inline edit form */
+                        <form onSubmit={handleUpdate} className="p-4 bg-emerald-50/40 space-y-3">
+                          <p className="text-[10px] font-bold text-emerald-700 uppercase tracking-widest">Editing Scenario</p>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="col-span-2">
+                              <input
+                                type="text"
+                                required
+                                value={editName}
+                                onChange={(e) => setEditName(e.target.value)}
+                                placeholder="Scenario name"
+                                className="flex h-10 w-full rounded-xl border border-[#E5E7EB] bg-white px-4 text-sm font-bold text-[#1F2937] focus:outline-none focus:ring-2 focus:ring-[#00A651]"
+                              />
+                            </div>
+                            <div>
+                              <select
+                                value={editIncoterm}
+                                onChange={(e) => setEditIncoterm(e.target.value as any)}
+                                className="appearance-none flex h-10 w-full rounded-xl border border-[#E5E7EB] bg-white px-3 text-sm font-bold text-[#1F2937] focus:outline-none focus:ring-2 focus:ring-[#00A651]"
+                              >
+                                <option value="EXW">EXW</option>
+                                <option value="FOB">FOB</option>
+                                <option value="CFR">CFR</option>
+                                <option value="CIF">CIF</option>
+                              </select>
+                            </div>
+                            <div>
+                              <input
+                                type="number"
+                                step="0.1"
+                                placeholder="Margin override %"
+                                value={editMargin}
+                                onChange={(e) => setEditMargin(e.target.value)}
+                                className="flex h-10 w-full rounded-xl border border-[#E5E7EB] bg-white px-4 text-sm font-bold text-[#1F2937] focus:outline-none focus:ring-2 focus:ring-[#00A651]"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex gap-2 pt-1">
+                            <Button type="submit" disabled={updateMutation.isPending} className="h-9 rounded-xl bg-[#00A651] hover:bg-[#008F44] text-white font-bold text-xs px-5">
+                              {updateMutation.isPending ? "Saving..." : "Save & Recalculate"}
+                            </Button>
+                            <Button type="button" variant="outline" onClick={() => setEditingId(null)} className="h-9 rounded-xl text-xs font-bold">
+                              Cancel
+                            </Button>
+                          </div>
+                        </form>
+                      )}
                     </div>
                   ))}
                 </div>

@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { Icon } from "@iconify/react";
 import { apiFinancial } from "../../lib/api/financial";
+import { apiPricing } from "../../lib/api/pricing";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "../ui/card";
 import { Alert, AlertTitle, AlertDescription } from "../ui/alert";
@@ -17,10 +18,11 @@ import { PdfPreviewModal } from "../ui/pdf-preview-modal";
 
 interface FinancialAnalysisProps {
   caseId: string;
-  backUrl: string;
+  backUrl?: string;
+  hideBackButton?: boolean;
 }
 
-export function FinancialAnalysis({ caseId, backUrl }: FinancialAnalysisProps) {
+export function FinancialAnalysis({ caseId, backUrl, hideBackButton }: FinancialAnalysisProps) {
   const queryClient = useQueryClient();
   const { profile } = useUserProfile();
   
@@ -53,9 +55,28 @@ export function FinancialAnalysis({ caseId, backUrl }: FinancialAnalysisProps) {
 
   const canRecalculate = profile?.role === "finance_staff" || profile?.role === "admin" || profile?.role === "export_manager";
 
+  // Fetch the active pricing incoterm to use as auto-calculate seed
+  const { data: pricingData } = useQuery({
+    queryKey: ["pricing", caseId],
+    queryFn: () => apiPricing.getPricing(caseId),
+    retry: false,
+  });
+  const activeIncoterm = pricingData?.data?.pricing?.incoterm;
+
+  // Sync selectedIncoterm with the active pricing incoterm when it loads
+  // so manual recalculate defaults to same incoterm
+  const [incotermSynced, setIncotermSynced] = useState(false);
+  if (activeIncoterm && !incotermSynced) {
+    setSelectedIncoterm(activeIncoterm as any);
+    setIncotermSynced(true);
+  }
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["financial-analysis", caseId],
-    queryFn: () => apiFinancial.getAnalysis(caseId),
+    // Pass active incoterm so the backend can auto-calculate if no stored analysis exists
+    queryFn: () => apiFinancial.getAnalysis(caseId, activeIncoterm),
+    enabled: activeIncoterm !== undefined, // wait until we know the incoterm
+    retry: false,
   });
 
   const mutation = useMutation({
@@ -69,29 +90,32 @@ export function FinancialAnalysis({ caseId, backUrl }: FinancialAnalysisProps) {
     }
   });
 
-  if (isLoading) {
+  // Also show loading while we're waiting for pricing incoterm
+  if (isLoading || pricingData === undefined) {
     return <div className="p-8 flex justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div></div>;
   }
 
   if (error) {
+    const errMsg = (error as any)?.message || "";
     return (
-      <div className="space-y-6 max-w-5xl mx-auto pb-12">
-        <div className="mb-5 flex justify-between items-center">
-          <Link href={backUrl} className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00A651] hover:bg-[#008F44] text-white text-[13px] font-bold rounded-full shadow-md hover:shadow-lg transition-all">
-            <Icon icon="solar:arrow-left-bold-duotone" className="w-4 h-4" /> Back to Case
-          </Link>
+      <div className="flex flex-col items-center gap-4 p-10 bg-white/90 backdrop-blur-xl border border-red-200 shadow-xl rounded-3xl text-center relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-red-100 rounded-bl-full opacity-50 -z-10" />
+        <Icon icon="solar:danger-triangle-bold-duotone" className="w-12 h-12 text-red-500" />
+        <div>
+          <p className="text-lg font-extrabold text-red-900 mb-1">Calculation Error</p>
+          <p className="text-sm text-red-700 font-semibold max-w-xl mx-auto">
+            {errMsg || "An error occurred while computing financial metrics. Please try recalculating below."}
+          </p>
         </div>
-
-        <div className="flex flex-col items-center gap-4 p-10 bg-white/90 backdrop-blur-xl border border-red-200 shadow-xl rounded-3xl text-center relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-red-100 rounded-bl-full opacity-50 -z-10" />
-          <Icon icon="solar:danger-triangle-bold-duotone" className="w-12 h-12 text-red-500" />
-          <div>
-            <p className="text-lg font-extrabold text-red-900 mb-1">Analysis Unavailable</p>
-            <p className="text-sm text-red-700 font-semibold max-w-xl mx-auto">
-              The financial analysis could not be loaded. Please ensure that the Cost Data and Pricing modules have been completed first before viewing financial metrics.
-            </p>
-          </div>
-        </div>
+        {canRecalculate && (
+          <Button
+            onClick={() => mutation.mutate()}
+            disabled={mutation.isPending}
+            className="mt-2 bg-[#00A651] hover:bg-[#008F44] text-white font-bold rounded-full px-8 h-11 shadow-md"
+          >
+            {mutation.isPending ? "Calculating..." : "Retry Calculation"}
+          </Button>
+        )}
       </div>
     );
   }
@@ -110,17 +134,21 @@ export function FinancialAnalysis({ caseId, backUrl }: FinancialAnalysisProps) {
         documentId={previewModal.documentId}
         filename={previewModal.filename}
       />
-    <div className="space-y-6 max-w-5xl mx-auto pb-12">
-      <div className="mb-5 flex justify-between items-center">
-        <Link href={backUrl} className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00A651] hover:bg-[#008F44] text-white text-[13px] font-bold rounded-full shadow-md hover:shadow-lg transition-all">
-          <Icon icon="solar:arrow-left-bold-duotone" className="w-4 h-4" /> Back to Case
-        </Link>
-      </div>
+    <div className="space-y-6 pt-2 pb-8">
+      {!hideBackButton && backUrl && (
+        <div className="mb-5 flex justify-between items-center">
+          <Link href={backUrl} className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00A651] hover:bg-[#008F44] text-white text-[13px] font-bold rounded-full shadow-md hover:shadow-lg transition-all">
+            <Icon icon="solar:arrow-left-bold-duotone" className="w-4 h-4" /> Back to Case
+          </Link>
+        </div>
+      )}
 
-      <div>
-        <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Financial Analysis</h2>
-        <p className="text-[#6B7280] mt-1 font-medium">Review profitability margins and break-even points generated by the system.</p>
-      </div>
+      {!hideBackButton && (
+        <div>
+          <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Financial Analysis</h2>
+          <p className="text-[#6B7280] mt-1 font-medium">Review profitability margins and break-even points generated by the system.</p>
+        </div>
+      )}
 
       <div className="grid md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-6">

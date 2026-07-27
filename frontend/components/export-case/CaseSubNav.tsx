@@ -18,7 +18,7 @@ const ALL_TABS: Record<string, SubNavTab> = {
   scenario: { id: "scenario", label: "Scenario", icon: "solar:map-point-wave-bold-duotone", ownerRoleBadge: "Export Mgr" },
   financial: { id: "financial", label: "Financial Analysis", icon: "solar:chart-square-bold-duotone", ownerRoleBadge: "Finance" },
   risk: { id: "risk", label: "Risk Assessment", icon: "solar:shield-check-bold-duotone", ownerRoleBadge: "Export Mgr" },
-  advisor: { id: "advisor", label: "AI Advisor", icon: "solar:lightbulb-bold-duotone", ownerRoleBadge: "AI Advisor" },
+  advisor: { id: "advisor", label: "AI Advisor", icon: "solar:lightbulb-bold-duotone" },
   documents: { id: "documents", label: "Documents", icon: "solar:document-text-bold-duotone" },
 };
 
@@ -28,9 +28,10 @@ export function getTabsForRole(role?: string): SubNavTab[] {
       ALL_TABS.overview,
       { ...ALL_TABS.cost, isReadOnly: true },
       { ...ALL_TABS.pricing, isReadOnly: true },
+      { ...ALL_TABS.scenario, isReadOnly: true },
       { ...ALL_TABS.financial, isReadOnly: true },
       { ...ALL_TABS.risk, isReadOnly: true },
-      { ...ALL_TABS.advisor, isReadOnly: true },
+      ALL_TABS.advisor,
       ALL_TABS.documents,
     ];
   }
@@ -40,6 +41,7 @@ export function getTabsForRole(role?: string): SubNavTab[] {
       { ...ALL_TABS.cost, isReadOnly: true },
       ALL_TABS.pricing,
       ALL_TABS.scenario,
+      ALL_TABS.financial,
       ALL_TABS.risk,
       ALL_TABS.advisor,
       ALL_TABS.documents,
@@ -49,12 +51,26 @@ export function getTabsForRole(role?: string): SubNavTab[] {
     return [
       ALL_TABS.overview,
       ALL_TABS.cost,
+      { ...ALL_TABS.pricing, isReadOnly: true },
+      { ...ALL_TABS.scenario, isReadOnly: true },
       ALL_TABS.financial,
-      { ...ALL_TABS.advisor, isReadOnly: true },
+      { ...ALL_TABS.risk, isReadOnly: true },
+      ALL_TABS.advisor,
       ALL_TABS.documents,
     ];
   }
-  return [ALL_TABS.overview];
+
+  // Admin / Default
+  return [
+    ALL_TABS.overview,
+    ALL_TABS.cost,
+    ALL_TABS.pricing,
+    ALL_TABS.scenario,
+    ALL_TABS.financial,
+    ALL_TABS.risk,
+    ALL_TABS.advisor,
+    ALL_TABS.documents,
+  ];
 }
 
 interface CaseSubNavProps {

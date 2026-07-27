@@ -114,3 +114,44 @@ func toListItem(s *Scenario) ScenarioListItem {
 		CreatedAt:       s.CreatedAt.UTC().Format("2006-01-02T15:04:05Z"),
 	}
 }
+
+// Update handles PATCH /v1/export-cases/{caseId}/scenarios/{scenarioId}.
+func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
+	caseID := r.PathValue("caseId")
+	scenarioID := r.PathValue("scenarioId")
+
+	if _, err := h.cases.GetByID(r.Context(), caseID); err != nil {
+		response.Error(w, err)
+		return
+	}
+
+	var req UpdateScenarioRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		response.Error(w, apperror.ErrValidation)
+		return
+	}
+
+	sc, err := h.service.Update(r.Context(), caseID, scenarioID, req)
+	if err != nil {
+		response.Error(w, err)
+		return
+	}
+	response.JSON(w, http.StatusOK, map[string]any{"caseId": caseID, "scenario": toListItem(sc)})
+}
+
+// Delete handles DELETE /v1/export-cases/{caseId}/scenarios/{scenarioId}.
+func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
+	caseID := r.PathValue("caseId")
+	scenarioID := r.PathValue("scenarioId")
+
+	if _, err := h.cases.GetByID(r.Context(), caseID); err != nil {
+		response.Error(w, err)
+		return
+	}
+
+	if err := h.service.Delete(r.Context(), scenarioID); err != nil {
+		response.Error(w, err)
+		return
+	}
+	response.JSON(w, http.StatusOK, map[string]any{"caseId": caseID, "scenarioId": scenarioID, "deleted": true})
+}

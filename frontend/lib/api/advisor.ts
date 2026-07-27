@@ -16,6 +16,14 @@ export const apiAdvisor = {
     });
   },
 
+  sendChat: async (caseId: string, question: string): Promise<ApiResponse<AdvisorRecommendationResponse>> => {
+    return apiClient<ApiResponse<AdvisorRecommendationResponse>>(`/export-cases/${caseId}/advisor/chat`, {
+      method: "POST",
+      body: JSON.stringify({ question }),
+    });
+  },
+
+
   getGlobalRecommendation: async (): Promise<ApiResponse<AdvisorRecommendationResponse>> => {
     return apiClient<ApiResponse<AdvisorRecommendationResponse>>(`/advisor/recommendations`, {
       method: "GET",

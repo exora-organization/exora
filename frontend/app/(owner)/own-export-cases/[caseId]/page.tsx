@@ -13,7 +13,11 @@ import { CaseSubNav } from "../../../../components/export-case/CaseSubNav";
 import { CaseProgressStepper } from "../../../../components/export-case/CaseProgressStepper";
 import { ViewOnlyBanner } from "../../../../components/export-case/ViewOnlyBanner";
 import { StageNotReadyState } from "../../../../components/export-case/StageNotReadyState";
+import { CostingReadOnlyView } from "../../../../components/export-case/CostingReadOnlyView";
+import { FinancialAnalysis } from "../../../../components/export-case/FinancialAnalysis";
+import { AIAdvisorWorkspace } from "../../../../components/export-case/AIAdvisorWorkspace";
 import Link from "next/link";
+
 
 const statusConfig: Record<string, { bg: string; text: string; border: string; label: string; icon: string }> = {
   draft: { bg: "bg-gray-800", text: "text-white", border: "border-gray-900", label: "Draft", icon: "solar:pen-new-square-bold-duotone" },
@@ -164,23 +168,7 @@ export default function OwnerExportCaseDetailPage() {
               responsibleRole="Finance Staff"
             />
           ) : (
-            <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-4">
-              <h4 className="text-base font-extrabold text-[#1F2937]">Cost Breakdown Components</h4>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-xs font-bold">
-                <div className="p-4 bg-gray-50 rounded-2xl">
-                  <p className="text-[10px] text-gray-400 uppercase">Production / HPP</p>
-                  <p className="text-sm font-black text-[#1F2937]">Rp {costing.hpp?.toLocaleString("id-ID") || 0}</p>
-                </div>
-                <div className="p-4 bg-gray-50 rounded-2xl">
-                  <p className="text-[10px] text-gray-400 uppercase">Packaging & Bundling</p>
-                  <p className="text-sm font-black text-[#1F2937]">Rp {costing.packaging?.toLocaleString("id-ID") || 0}</p>
-                </div>
-                <div className="p-4 bg-gray-50 rounded-2xl">
-                  <p className="text-[10px] text-gray-400 uppercase">Freight & Logistics</p>
-                  <p className="text-sm font-black text-[#1F2937]">Rp {costing.freight?.toLocaleString("id-ID") || 0}</p>
-                </div>
-              </div>
-            </div>
+            <CostingReadOnlyView cost={costing} />
           )}
         </div>
       )}
@@ -218,37 +206,24 @@ export default function OwnerExportCaseDetailPage() {
         </div>
       )}
 
-      {/* TAB CONTENT: Financial Analysis */}
-      {currentTab === "financial" && (
+      {/* TAB CONTENT: Scenario */}
+      {currentTab === "scenario" && (
         <div className="space-y-4">
-          <ViewOnlyBanner ownerRoleName="Finance Staff" dataTopic="Financial Projections & BEP" />
-          {!financial ? (
-            <StageNotReadyState
-              currentStage="Financial Analysis"
-              prerequisiteStage="Pricing Simulation"
-              responsibleRole="Finance Staff"
-            />
-          ) : (
-            <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-4">
-              <h4 className="text-base font-extrabold text-[#1F2937]">Financial Projections & BEP</h4>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-bold">
-                <div className="p-4 bg-gray-50 rounded-2xl">
-                  <p className="text-[10px] text-gray-400 uppercase">Revenue (IDR)</p>
-                  <p className="text-sm font-black text-[#1F2937]">Rp {financial.revenueIDR?.toLocaleString("id-ID") || "—"}</p>
-                </div>
-                <div className="p-4 bg-gray-50 rounded-2xl">
-                  <p className="text-[10px] text-gray-400 uppercase">Projected ROI</p>
-                  <p className="text-sm font-black text-emerald-600">{financial.roiPct || 0}%</p>
-                </div>
-                <div className="p-4 bg-gray-50 rounded-2xl">
-                  <p className="text-[10px] text-gray-400 uppercase">Break-Even Point</p>
-                  <p className="text-sm font-black text-[#1F2937]">{financial.breakEvenQty || 0} Units</p>
-                </div>
-              </div>
-            </div>
-          )}
+          <ViewOnlyBanner ownerRoleName="Export Manager" dataTopic="Transaction Scenario Simulation" />
+          <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-3">
+            <h4 className="text-base font-extrabold text-[#1F2937]">Transaction Scenarios (Managed by Export Manager)</h4>
+            <p className="text-xs text-[#6B7280]">
+              Export Manager simulates alternative market conditions, Incoterm variations, and margin overrides for this case.
+            </p>
+          </div>
         </div>
       )}
+
+      {/* TAB CONTENT: Financial Analysis */}
+      {currentTab === "financial" && (
+        <FinancialAnalysis caseId={caseId} hideBackButton />
+      )}
+
 
       {/* TAB CONTENT: Risk */}
       {currentTab === "risk" && (
@@ -263,14 +238,22 @@ export default function OwnerExportCaseDetailPage() {
           ) : (
             <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-4">
               <h4 className="text-base font-extrabold text-[#1F2937]">Risk Assessment Results</h4>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-xs font-bold">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-bold">
                 <div className="p-4 bg-gray-50 rounded-2xl">
-                  <p className="text-[10px] text-gray-400 uppercase">Country Risk</p>
+                  <p className="text-[10px] text-gray-400 uppercase">Country Risk Level</p>
                   <p className="text-sm font-black text-[#1F2937]">{risk.countryRiskLevel || "Low"}</p>
                 </div>
-                <div className="p-4 bg-gray-50 rounded-2xl">
-                  <p className="text-[10px] text-gray-400 uppercase">Feasibility Score</p>
-                  <p className="text-sm font-black text-emerald-600">{risk.feasibilityScore || 83.5} / 100</p>
+                <div className="p-4 bg-blue-50 rounded-2xl">
+                  <p className="text-[10px] text-blue-600 uppercase">Payment Method Score</p>
+                  <p className="text-sm font-black text-blue-900">{risk.paymentTermScore || 100} / 100</p>
+                </div>
+                <div className="p-4 bg-purple-50 rounded-2xl">
+                  <p className="text-[10px] text-purple-600 uppercase">Profitability Score</p>
+                  <p className="text-sm font-black text-purple-900">{risk.profitabilityScore ? risk.profitabilityScore.toFixed(0) : "—"} / 100</p>
+                </div>
+                <div className="p-4 bg-emerald-50 rounded-2xl">
+                  <p className="text-[10px] text-emerald-600 uppercase">Overall Feasibility</p>
+                  <p className="text-sm font-black text-emerald-700">{risk.feasibilityScore ? risk.feasibilityScore.toFixed(1) : "—"} / 100 ({risk.feasibilityClass || "High"})</p>
                 </div>
               </div>
             </div>
@@ -280,27 +263,9 @@ export default function OwnerExportCaseDetailPage() {
 
       {/* TAB CONTENT: Advisor */}
       {currentTab === "advisor" && (
-        <div className="space-y-4">
-          <ViewOnlyBanner ownerRoleName="Export Manager & AI System" dataTopic="AI Smart Recommendations" />
-          {!recommendation ? (
-            <StageNotReadyState
-              currentStage="AI Advisor Recommendations"
-              prerequisiteStage="Transaction Data Synthesis"
-              responsibleRole="AI System / Export Manager"
-            />
-          ) : (
-            <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-4">
-              <h4 className="text-base font-extrabold text-[#1F2937] flex items-center gap-2">
-                <Icon icon="solar:lightbulb-bold-duotone" className="w-5 h-5 text-amber-500" />
-                AI Advisor Strategic Recommendations
-              </h4>
-              <p className="text-xs font-medium text-[#4B5563] leading-relaxed whitespace-pre-line bg-[#FAF8F3] p-4 rounded-2xl border border-[#E8E3D9]">
-                {recommendation.answer || "AI Recommendation active."}
-              </p>
-            </div>
-          )}
-        </div>
+        <AIAdvisorWorkspace caseId={caseId} />
       )}
+
 
       {/* TAB CONTENT: Documents */}
       {currentTab === "documents" && (
