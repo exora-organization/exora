@@ -68,6 +68,7 @@ type ApplicationStatusResponse struct {
 	Country        *string `json:"country"`
 	Status         string  `json:"status"`
 	SubmittedAt    *string `json:"submittedAt"`
+	UpdatedAt      *string `json:"updatedAt"`
 	ApprovedAt     *string `json:"approvedAt"`
 	RevisionNotes  *string `json:"revisionNotes"`
 	RejectReason   *string `json:"rejectReason"`

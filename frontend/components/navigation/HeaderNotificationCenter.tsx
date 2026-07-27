@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { useUserProfile } from "../../hooks/useUserProfile";
 import { apiExportCase } from "../../lib/api/export-case";
@@ -13,13 +14,16 @@ import {
   notificationStore,
   generateNotificationsFromRealCases,
   generateChangeRequestNotifications,
+  generateGuestApplicationNotifications,
   WorkflowNotification,
 } from "../../lib/services/notificationStore";
 
 export function HeaderNotificationCenter() {
   const { role, companyId } = useUserProfile();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [userActions, setUserActions] = useState<WorkflowNotification[]>([]);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Fetch real export cases from backend API
@@ -27,6 +31,7 @@ export function HeaderNotificationCenter() {
     queryKey: ["export-cases-notification"],
     queryFn: () => apiExportCase.list(),
     staleTime: 10000,
+    refetchInterval: 5000,
   });
 
   // Fetch pending change requests for Admin
@@ -35,6 +40,7 @@ export function HeaderNotificationCenter() {
     queryFn: () => apiAdmin.getCompanyChangeRequests(),
     enabled: role === "admin",
     staleTime: 10000,
+    refetchInterval: 5000,
   });
 
   // Fetch pending change request for Company Owner
@@ -43,14 +49,26 @@ export function HeaderNotificationCenter() {
     queryFn: () => apiCompany.getPendingChangeRequest(companyId as string),
     enabled: role === "company_owner" && !!companyId,
     staleTime: 10000,
+    refetchInterval: 5000,
+  });
+
+  // Fetch guest application status
+  const { data: guestAppStatusData } = useQuery({
+    queryKey: ["guest-application-status-notification"],
+    queryFn: () => apiCompany.getApplicationStatus(),
+    enabled: role === "guest",
+    staleTime: 10000,
+    refetchInterval: 5000,
   });
 
   const realCases = casesData?.data?.items || [];
   const adminPendingReqs = adminChangeReqsData?.data?.items || [];
   const ownerReq = ownerChangeReqData?.data;
+  const guestAppStatus = guestAppStatusData?.data?.status;
 
   const refreshUserActions = () => {
     setUserActions(notificationStore.getUserNotifications());
+    setRefreshTrigger(prev => prev + 1);
   };
 
   useEffect(() => {
@@ -89,9 +107,10 @@ export function HeaderNotificationCenter() {
   const allNotifications = useMemo(() => {
     const dynamicRealNotifs = generateNotificationsFromRealCases(realCases);
     const dynamicCRNotifs = generateChangeRequestNotifications(adminPendingReqs, ownerReq);
+    const dynamicGuestNotifs = generateGuestApplicationNotifications(guestAppStatusData?.data);
     
     // Combine and eliminate duplicates by ID
-    const combined = [...userActions, ...dynamicCRNotifs, ...dynamicRealNotifs];
+    const combined = [...userActions, ...dynamicCRNotifs, ...dynamicRealNotifs, ...dynamicGuestNotifs];
     const uniqueMap = new Map<string, WorkflowNotification>();
     combined.forEach((n) => {
       if (!uniqueMap.has(n.id)) {
@@ -100,7 +119,7 @@ export function HeaderNotificationCenter() {
     });
 
     return Array.from(uniqueMap.values());
-  }, [realCases, adminPendingReqs, ownerReq, userActions]);
+  }, [realCases, adminPendingReqs, ownerReq, guestAppStatusData?.data, userActions, refreshTrigger]);
 
   const filteredNotifications = useMemo(() => {
     return allNotifications.filter(
@@ -121,6 +140,10 @@ export function HeaderNotificationCenter() {
     notificationStore.markAsRead(n.id);
     refreshUserActions();
     setIsOpen(false);
+    const href = getCaseHref(n);
+    if (href) {
+      router.push(href);
+    }
   };
 
   const getCaseHref = (n: WorkflowNotification) => {
@@ -131,6 +154,38 @@ export function HeaderNotificationCenter() {
     if (role === "export_manager") return `/em-export-case/${n.caseId}?tab=${n.targetTab}`;
     if (role === "finance_staff") return `/fs-export-cases/${n.caseId}?tab=${n.targetTab}`;
     return `/own-export-cases/${n.caseId}?tab=${n.targetTab}`;
+  };
+
+  const getNotificationStyles = (n: WorkflowNotification) => {
+    if (n.isRead) {
+      return {
+        card: "bg-[#FAF8F3]/50 border-[#E8E3D9] text-[#6B7280] hover:border-gray-300 hover:shadow-sm",
+        label: "text-gray-400",
+      };
+    }
+    switch (n.variant) {
+      case "blue":
+        return {
+          card: "bg-blue-50/60 border-blue-500/30 text-[#1F2937] font-semibold shadow-xs hover:border-blue-500 hover:shadow-md",
+          label: "text-blue-600",
+        };
+      case "error":
+        return {
+          card: "bg-red-50/60 border-red-500/30 text-[#1F2937] font-semibold shadow-xs hover:border-red-500 hover:shadow-md",
+          label: "text-red-600",
+        };
+      case "warning":
+        return {
+          card: "bg-orange-50/60 border-orange-500/30 text-[#1F2937] font-semibold shadow-xs hover:border-orange-500 hover:shadow-md",
+          label: "text-orange-600",
+        };
+      case "success":
+      default:
+        return {
+          card: "bg-[#EBF8F2]/60 border-[#00A651]/30 text-[#1F2937] font-semibold shadow-xs hover:border-[#00A651] hover:shadow-md",
+          label: "text-[#00A651]",
+        };
+    }
   };
 
   return (
@@ -171,26 +226,24 @@ export function HeaderNotificationCenter() {
                 No workflow notifications right now.
               </div>
             ) : (
-              filteredNotifications.map((n) => (
-                <Link
-                  key={n.id}
-                  href={getCaseHref(n)}
-                  onClick={() => handleNotificationClick(n)}
-                  className={`block p-3.5 rounded-2xl border transition-all ${
-                    n.isRead
-                      ? "bg-[#FAF8F3]/50 border-[#E8E3D9] text-[#6B7280]"
-                      : "bg-[#EBF8F2]/60 border-[#00A651]/30 text-[#1F2937] font-semibold shadow-xs"
-                  } hover:border-[#00A651] hover:shadow-md`}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-[#00A651] truncate max-w-[200px]">
-                      {n.caseName}
-                    </span>
-                    <span className="text-[10px] font-medium text-gray-400">{n.timestamp}</span>
+              filteredNotifications.map((n) => {
+                const styles = getNotificationStyles(n);
+                return (
+                  <div
+                    key={n.id}
+                    onClick={() => handleNotificationClick(n)}
+                    className={`block p-3.5 rounded-2xl border transition-all cursor-pointer ${styles.card}`}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className={`text-[10px] font-black uppercase tracking-wider truncate max-w-[200px] ${styles.label}`}>
+                        {n.caseName}
+                      </span>
+                      <span className="text-[10px] font-medium text-gray-400">{n.timestamp}</span>
+                    </div>
+                    <p className="text-xs leading-snug font-medium text-[#374151]">{n.message}</p>
                   </div>
-                  <p className="text-xs leading-snug font-medium text-[#374151]">{n.message}</p>
-                </Link>
-              ))
+                );
+              })
             )}
           </div>
         </div>

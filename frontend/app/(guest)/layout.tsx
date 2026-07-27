@@ -59,7 +59,7 @@ export default function GuestLayout({ children }: { children: React.ReactNode })
         <div className="h-screen w-screen flex items-center justify-center bg-[#FAF8F3]" />
       ) : (
         <RoleGuard allowedRoles={["guest"]}>
-          <div className="h-screen overflow-hidden flex flex-col md:flex-row bg-[#FAF8F3] transition-colors">
+          <div className="h-screen overflow-hidden flex flex-col md:flex-row bg-[#F0FDF4] transition-colors">
 
           {/* Mobile Header */}
           <header className="md:hidden flex items-center justify-between bg-white border-b border-[#E8E3D9] px-6 py-4 sticky top-0 z-20 w-full">
@@ -102,14 +102,11 @@ export default function GuestLayout({ children }: { children: React.ReactNode })
                 </div>
                 <div className="flex flex-col justify-center">
                   <h1 className="text-2xl font-extrabold tracking-tight text-[#1F2937] leading-none">EXORA</h1>
-                  <div className="mt-1.5">
-                    <RoleBadge role="guest" size="sm" />
-                  </div>
+                  <p className="mt-1 text-[13px] font-bold text-[#4B5563]">
+                    Guest User
+                  </p>
                 </div>
               </div>
-              <p className="text-xs font-bold text-[#4B5563] truncate">
-                {profile?.displayName || "Guest Applicant"}
-              </p>
             </div>
 
             {/* Navigation */}
@@ -170,15 +167,13 @@ export default function GuestLayout({ children }: { children: React.ReactNode })
           </aside>
 
           {/* Main Workspace */}
-          <main className="flex-1 overflow-y-auto w-full max-w-full">
-            <header className="hidden md:flex items-center justify-between bg-white/70 backdrop-blur-md border-b border-[#E8E3D9] px-8 py-4 sticky top-0 z-20">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-extrabold text-gray-400 uppercase tracking-widest">Scope:</span>
-                <span className="text-xs font-black text-[#00A651] bg-[#EBF8F2] px-2.5 py-1 rounded-lg border border-[#00A651]/20">TENANT APPLICANT PORTAL</span>
+          <main className="flex-1 overflow-y-auto w-full max-w-full relative">
+            <header className="hidden md:flex absolute top-0 right-0 items-center justify-end px-8 py-6 z-50 pointer-events-none w-full">
+              <div className="pointer-events-auto">
+                <HeaderNotificationCenter />
               </div>
-              <HeaderNotificationCenter />
             </header>
-            <div className="p-6 md:p-10 text-[#1F2937]">
+            <div className="p-6 md:p-10 text-[#1F2937] min-h-screen">
               {children}
             </div>
           </main>

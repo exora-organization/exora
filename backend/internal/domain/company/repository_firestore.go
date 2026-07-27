@@ -178,6 +178,10 @@ func ToStatusResponse(c *Company) ApplicationStatusResponse {
 	resp.Country = &country
 	resp.Status = c.Status
 	resp.SubmittedAt = &submitted
+	if !c.UpdatedAt.IsZero() {
+		u := c.UpdatedAt.UTC().Format(time.RFC3339)
+		resp.UpdatedAt = &u
+	}
 	if c.ApprovedAt != nil {
 		s := c.ApprovedAt.UTC().Format(time.RFC3339)
 		resp.ApprovedAt = &s

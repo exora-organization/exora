@@ -92,14 +92,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </div>
                 <div className="flex flex-col justify-center">
                   <h1 className="text-2xl font-extrabold tracking-tight text-[#1F2937] leading-none">EXORA</h1>
-                  <div className="mt-1.5">
-                    <RoleBadge role="admin" size="sm" />
-                  </div>
+                  <p className="mt-1 text-[13px] font-bold text-[#4B5563]">
+                    System Administrator
+                  </p>
                 </div>
               </div>
-              <p className="text-xs font-bold text-[#4B5563] truncate">
-                {profile?.displayName || "System Admin"}
-              </p>
             </div>
 
             {/* Navigation */}

@@ -12,6 +12,7 @@ export interface WorkflowNotification {
   targetTab: string;
   timestamp: string;
   isRead: boolean;
+  variant?: "default" | "success" | "warning" | "error" | "blue";
 }
 
 const STORAGE_KEY = "exora_workflow_user_notifications_v2";
@@ -165,6 +166,60 @@ export function generateChangeRequestNotifications(
     }
   }
 
+  return dynamicNotifs;
+}
+
+export function generateGuestApplicationNotifications(appData: any): WorkflowNotification[] {
+  if (!appData) return [];
+  const { status, updatedAt } = appData;
+  if (!status || status === "none" || status === "pending") return [];
+  
+  const dynamicNotifs: WorkflowNotification[] = [];
+  const readIds = getReadIdsSet();
+  const formattedDate = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  // Use a fallback for ID uniqueness if updatedAt is missing
+  const uniqueSuffix = updatedAt ? new Date(updatedAt).getTime() : Date.now();
+
+  if (status === "approved") {
+    const id = `guest-app-approved-${uniqueSuffix}`;
+    dynamicNotifs.push({
+      id,
+      caseId: "status",
+      caseName: "Application Approved",
+      message: "Congratulations! Your company verification is complete. You can now access your full Company Owner workspace.",
+      targetRole: "guest",
+      targetTab: "status",
+      timestamp: formattedDate,
+      isRead: readIds.has(id),
+      variant: "blue",
+    });
+  } else if (status === "rejected") {
+    const id = `guest-app-rejected-${uniqueSuffix}`;
+    dynamicNotifs.push({
+      id,
+      caseId: "status",
+      caseName: "Application Rejected",
+      message: "Your application did not pass verification. Please review the admin notes and resubmit.",
+      targetRole: "guest",
+      targetTab: "status",
+      timestamp: formattedDate,
+      isRead: readIds.has(id),
+      variant: "error",
+    });
+  } else if (status === "revision_requested") {
+    const id = `guest-app-revision-${uniqueSuffix}`;
+    dynamicNotifs.push({
+      id,
+      caseId: "status",
+      caseName: "Revision Required",
+      message: "The System Admin requires additional documentation before approving your company account setup.",
+      targetRole: "guest",
+      targetTab: "status",
+      timestamp: formattedDate,
+      isRead: readIds.has(id),
+      variant: "warning",
+    });
+  }
   return dynamicNotifs;
 }
 
