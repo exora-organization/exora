@@ -119,12 +119,31 @@ export function CompanyApplicationForm({ initialData, onSuccess, isRevision = fa
 
         <div className="space-y-2">
           <Label htmlFor="country" className="text-xs font-black text-gray-800 tracking-widest uppercase ml-4">Country</Label>
-          <Input
-            id="country"
-            placeholder="e.g. Indonesia"
-            className="w-full px-6 py-4 h-14 rounded-full border-2 border-[#CDEBE0] focus:outline-none focus:ring-4 focus:ring-[#00A651]/20 focus:border-[#00A651] transition-all bg-[#EBF8F2] hover:bg-[#E3F4EC] hover:border-[#00A651]/40 hover:shadow-md shadow-sm text-[#1F2937] placeholder:text-[#80988E]"
-            {...register("country")}
-          />
+          <div className="relative">
+            <select
+              id="country"
+              className="w-full px-6 py-4 h-14 rounded-full border-2 border-[#CDEBE0] focus:outline-none focus:ring-4 focus:ring-[#00A651]/20 focus:border-[#00A651] transition-all bg-[#EBF8F2] hover:bg-[#E3F4EC] hover:border-[#00A651]/40 hover:shadow-md shadow-sm text-[#1F2937] appearance-none cursor-pointer"
+              {...register("country")}
+            >
+              <option value="" disabled hidden>Select Country</option>
+              <option value="Singapore">Singapore</option>
+              <option value="Malaysia">Malaysia</option>
+              <option value="Thailand">Thailand</option>
+              <option value="Vietnam">Vietnam</option>
+              <option value="China">China</option>
+              <option value="India">India</option>
+              <option value="Japan">Japan</option>
+              <option value="South Korea">South Korea</option>
+              <option value="United States">United States</option>
+              <option value="United Arab Emirates (UAE)">United Arab Emirates (UAE)</option>
+            </select>
+            {/* Custom dropdown arrow */}
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-6">
+              <svg className="h-4 w-4 text-[#80988E]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+          </div>
           {errors.country && (
             <p className="text-sm text-red-500 font-bold ml-4">{errors.country.message}</p>
           )}

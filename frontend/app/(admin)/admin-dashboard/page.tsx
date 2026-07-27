@@ -4,10 +4,22 @@ import { Icon } from "@iconify/react";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { apiAdmin } from "../../../lib/api/admin";
 
+const QUICK_LINKS = [
+  { name: "Company Applications Queue", href: "/admin-company-applications", icon: "solar:buildings-bold-duotone", keywords: ["company", "application", "queue", "pending", "verification", "approve", "reject", "review"] },
+  { name: "Company Change Requests", href: "/admin-company-approvals", icon: "solar:document-add-bold-duotone", keywords: ["company", "approval", "approved", "rejected", "revision", "change"] },
+  { name: "System Monitoring", href: "/admin-system-monitoring", icon: "solar:chart-square-bold-duotone", keywords: ["system", "monitoring", "health", "uptime", "stats", "server"] },
+  { name: "User Management", href: "/admin-users", icon: "solar:users-group-rounded-bold-duotone", keywords: ["user", "users", "management", "roles", "admin"] },
+  { name: "Audit Logs & Anomalies", href: "/admin-audit-logs", icon: "solar:shield-warning-bold-duotone", keywords: ["audit", "log", "logs", "security", "anomalies", "activity", "error"] },
+  { name: "AI Advisor Settings", href: "/admin-ai-advisor", icon: "solar:cpu-bolt-bold-duotone", keywords: ["ai", "advisor", "settings", "bot", "assistant"] },
+];
+
 export default function AdminDashboardPage() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const { data: monitoringData, isLoading: isMonitoringLoading } = useQuery({
     queryKey: ["admin-monitoring"],
@@ -53,6 +65,25 @@ export default function AdminDashboardPage() {
     });
   }, [allLogs]);
 
+  const filteredQuickLinks = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return [];
+    return QUICK_LINKS.filter((link) => 
+      link.name.toLowerCase().includes(q) || 
+      link.keywords.some(k => k.includes(q))
+    ).slice(0, 4);
+  }, [searchQuery]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && searchQuery.trim()) {
+      if (filteredQuickLinks.length > 0) {
+        router.push(filteredQuickLinks[0].href);
+      } else if (filteredPending.length > 0) {
+        router.push(`/admin-company-applications/${filteredPending[0].companyId}`);
+      }
+    }
+  };
+
   return (
     <div className="space-y-8 text-[#1F2937] pb-10 max-w-7xl mx-auto">
       {/* Header */}
@@ -69,10 +100,53 @@ export default function AdminDashboardPage() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search queue & audit log..."
+            onFocus={() => setIsSearchFocused(true)}
+            onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+            onKeyDown={handleKeyDown}
+            placeholder="Search apps, users, logs..."
             className="w-full pl-4 pr-10 py-2.5 rounded-2xl border border-[#E8E3D9] shadow-xs focus:outline-none focus:ring-2 focus:ring-[#00A651] bg-white text-xs font-semibold"
           />
           <Icon icon="solar:magnifer-bold-duotone" className="absolute right-3.5 top-3 h-4 w-4 text-gray-400" />
+          
+          {/* Global Search Dropdown */}
+          {isSearchFocused && searchQuery.trim() && (filteredQuickLinks.length > 0 || filteredPending.length > 0) && (
+            <div className="absolute top-full mt-2 w-full bg-white border border-[#E8E3D9] rounded-2xl shadow-xl overflow-hidden z-50">
+              {filteredQuickLinks.length > 0 && (
+                <div className="p-2">
+                  <p className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-gray-400">Quick Links</p>
+                  {filteredQuickLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#EBF8F2] transition-colors group"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center group-hover:bg-[#00A651]/10 group-hover:text-[#00A651] text-gray-400 transition-colors">
+                        <Icon icon={link.icon} className="w-4 h-4" />
+                      </div>
+                      <span className="text-xs font-bold text-[#1F2937] group-hover:text-[#00A651] transition-colors">{link.name}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+              {filteredPending.length > 0 && (
+                <div className="p-2 border-t border-[#E8E3D9]">
+                  <p className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-gray-400">Pending Companies</p>
+                  {filteredPending.map((app) => (
+                    <Link
+                      key={app.companyId}
+                      href={`/admin-company-applications/${app.companyId}`}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-amber-50 transition-colors group"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center group-hover:bg-amber-100 group-hover:text-amber-600 text-gray-400 transition-colors">
+                        <Icon icon="solar:buildings-bold-duotone" className="w-4 h-4" />
+                      </div>
+                      <span className="text-xs font-bold text-[#1F2937] group-hover:text-amber-700 transition-colors">{app.companyName}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -177,7 +251,7 @@ export default function AdminDashboardPage() {
                         : app.applicant?.displayName || app.applicant?.email || app.companyName}
                     </p>
                   </div>
-                  <Link href={`/admin-company-applications`}>
+                  <Link href={`/admin-company-applications/${app.companyId}`}>
                     <button className="px-3.5 py-1.5 bg-[#00A651] hover:bg-[#008F44] text-white text-xs font-bold rounded-xl cursor-pointer">
                       Review
                     </button>
