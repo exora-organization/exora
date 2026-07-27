@@ -12,7 +12,7 @@ export function PublicFooter() {
           <div className="lg:col-span-1 space-y-6">
             <div className="flex items-center space-x-2">
               <div className="relative w-8 h-8 flex items-center justify-center shrink-0">
-                <Image src={logoImg} loading="eager" alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                <Image src={logoImg} priority alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               </div>
               <Link href="/" className="font-extrabold text-[#1F2937] tracking-tight text-xl">EXORA</Link>
             </div>
