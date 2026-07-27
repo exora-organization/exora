@@ -51,8 +51,7 @@ sleep 2
 # Clear cached build artifacts to avoid stale-lock conflicts
 rm -rf .next
 
-npm cache clean --force
-npm ci --legacy-peer-deps
+npm install --legacy-peer-deps
 npm run build
 
 echo ""
