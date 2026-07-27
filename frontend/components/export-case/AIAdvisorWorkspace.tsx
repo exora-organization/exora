@@ -26,68 +26,68 @@ interface ChatMessage {
 
 const markdownComponents = {
   h1: ({ children }: any) => (
-    <h1 className="text-xl font-black text-[#1F2937] border-b border-gray-100 pb-3 mb-4 flex items-center gap-2">
-      <Icon icon="solar:stars-minimalistic-bold-duotone" className="w-6 h-6 text-amber-500" />
+    <h1 className="text-xl font-extrabold text-[#1F2937] border-b border-gray-100 pb-3 mb-5 flex items-center gap-2 tracking-tight">
+      <Icon icon="solar:stars-minimalistic-bold-duotone" className="w-6 h-6 text-amber-500 shrink-0" />
       {children}
     </h1>
   ),
   h2: ({ children }: any) => (
-    <h2 className="text-lg font-extrabold text-[#1F2937] border-b border-gray-100 pb-2 mb-3 flex items-center gap-2">
-      <Icon icon="solar:shield-check-bold-duotone" className="w-5 h-5 text-[#00A651]" />
+    <h2 className="text-base font-extrabold text-[#1F2937] border-b border-slate-100 pb-2 mt-6 mb-3 flex items-center gap-2">
+      <Icon icon="solar:shield-check-bold-duotone" className="w-5 h-5 text-[#00A651] shrink-0" />
       {children}
     </h2>
   ),
   h3: ({ children }: any) => (
-    <h3 className="text-xs font-extrabold uppercase tracking-wider text-[#4B5563] mt-5 mb-2 flex items-center gap-2">
+    <h3 className="text-xs font-black uppercase tracking-wider text-[#00A651] mt-6 mb-2.5 flex items-center gap-2">
       <span className="w-2 h-2 rounded-full bg-[#00A651]" />
       {children}
     </h3>
   ),
   p: ({ children }: any) => (
-    <p className="text-xs text-[#4B5563] leading-relaxed my-1.5 font-medium">
+    <p className="text-xs text-[#4B5563] leading-relaxed my-2 font-medium">
       {children}
     </p>
   ),
   ul: ({ children }: any) => (
-    <ul className="space-y-1.5 my-2 pl-1">
+    <ul className="space-y-2 my-3 pl-1">
       {children}
     </ul>
   ),
   li: ({ children }: any) => (
-    <li className="text-xs text-[#374151] font-medium flex items-start gap-2">
-      <span className="text-[#00A651] font-bold shrink-0 mt-0.5">•</span>
-      <span>{children}</span>
+    <li className="text-xs text-[#374151] font-semibold flex items-start gap-2.5 bg-gray-50/70 p-2.5 rounded-xl border border-gray-100/80">
+      <Icon icon="solar:check-read-bold-duotone" className="w-4 h-4 text-[#00A651] shrink-0 mt-0.5" />
+      <span className="flex-1">{children}</span>
     </li>
   ),
   strong: ({ children }: any) => {
     const str = String(children);
     if (str === "Proceed") {
       return (
-        <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-emerald-500 text-white font-extrabold text-xs rounded-full uppercase tracking-wider shadow-xs">
-          <Icon icon="solar:check-circle-bold" className="w-4 h-4" /> Proceed
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 border border-emerald-300 text-emerald-800 font-extrabold text-xs rounded-xl uppercase tracking-wider">
+          <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-emerald-600" /> Proceed
         </span>
       );
     }
     if (str === "Review Required" || str === "Proceed with Caution") {
       return (
-        <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-amber-500 text-white font-extrabold text-xs rounded-full uppercase tracking-wider shadow-xs">
-          <Icon icon="solar:danger-triangle-bold" className="w-4 h-4" /> {str}
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 border border-amber-300 text-amber-900 font-extrabold text-xs rounded-xl uppercase tracking-wider">
+          <Icon icon="solar:danger-triangle-bold" className="w-4 h-4 text-amber-600" /> {str}
         </span>
       );
     }
     if (str === "Not Recommended") {
       return (
-        <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-red-600 text-white font-extrabold text-xs rounded-full uppercase tracking-wider shadow-xs">
-          <Icon icon="solar:close-circle-bold" className="w-4 h-4" /> Not Recommended
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-rose-100 border border-rose-300 text-rose-900 font-extrabold text-xs rounded-xl uppercase tracking-wider">
+          <Icon icon="solar:close-circle-bold" className="w-4 h-4 text-rose-600" /> Not Recommended
         </span>
       );
     }
     return <strong className="font-extrabold text-[#1F2937]">{children}</strong>;
   },
-  hr: () => <hr className="my-5 border-slate-100" />,
+  hr: () => <hr className="my-6 border-slate-100" />,
   em: ({ children }: any) => (
-    <em className="block p-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-[11px] text-slate-500 font-medium not-italic mt-4">
-      <Icon icon="solar:info-circle-bold-duotone" className="w-3.5 h-3.5 inline mr-1.5 text-slate-400" />
+    <em className="block p-4 bg-emerald-50/50 border border-emerald-200/80 rounded-2xl text-xs text-emerald-900 font-medium not-italic mt-6 shadow-2xs">
+      <Icon icon="solar:info-circle-bold-duotone" className="w-4 h-4 inline mr-2 text-[#00A651] align-text-bottom" />
       {children}
     </em>
   ),

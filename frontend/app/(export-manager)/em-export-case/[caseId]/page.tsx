@@ -26,6 +26,9 @@ import { Button } from "../../../../components/ui/button";
 import { toast } from "sonner";
 import { useUserProfile } from "../../../../hooks/useUserProfile";
 
+import { PdfPreviewModal } from "../../../../components/ui/pdf-preview-modal";
+import { downloadDocument } from "../../../../lib/utils/pdf-downloader";
+
 export default function ExportCaseDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -37,6 +40,11 @@ export default function ExportCaseDetailPage() {
 
   const [confirmRegenerateOpen, setConfirmRegenerateOpen] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [previewModal, setPreviewModal] = useState<{ open: boolean; documentId: string; filename: string }>({
+    open: false,
+    documentId: "",
+    filename: "",
+  });
 
   const canDelete = profile?.role === "export_manager" || profile?.role === "admin";
 
@@ -119,6 +127,10 @@ export default function ExportCaseDetailPage() {
       
       if (res?.success) {
         toast.success(`${type.toUpperCase()} PDF document generated successfully!`);
+        const doc = res.data;
+        if (doc?.documentId && doc?.filename) {
+          setTimeout(() => setPreviewModal({ open: true, documentId: doc.documentId, filename: doc.filename }), 300);
+        }
         if (exportCase) {
           notificationStore.addNotification({
             caseId,
@@ -309,6 +321,12 @@ export default function ExportCaseDetailPage() {
           </div>
         </div>
       )}
+      <PdfPreviewModal
+        open={previewModal.open}
+        onClose={() => setPreviewModal((s) => ({ ...s, open: false }))}
+        documentId={previewModal.documentId}
+        filename={previewModal.filename}
+      />
     </div>
   );
 }

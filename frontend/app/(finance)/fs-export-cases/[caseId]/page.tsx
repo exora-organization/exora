@@ -29,14 +29,21 @@ import { toast } from "sonner";
 
 
 
-export default function FinanceExportCaseDetailPage() {
+import { PdfPreviewModal } from "../../../../components/ui/pdf-preview-modal";
+import { downloadDocument } from "../../../../lib/utils/pdf-downloader";
 
+export default function FinanceExportCaseDetailPage() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
   const caseId = params.caseId as string;
   const currentTab = searchParams.get("tab") || "overview";
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [previewModal, setPreviewModal] = useState<{ open: boolean; documentId: string; filename: string }>({
+    open: false,
+    documentId: "",
+    filename: "",
+  });
 
   const handleTabChange = (tabId: string) => {
     router.push(`/fs-export-cases/${caseId}?tab=${tabId}`);
@@ -89,6 +96,10 @@ export default function FinanceExportCaseDetailPage() {
       const res = await apiDocuments.generateCostBreakdown(caseId);
       if (res?.success) {
         toast.success("Cost Breakdown Report (PDF) generated successfully!");
+        const doc = res.data;
+        if (doc?.documentId && doc?.filename) {
+          setTimeout(() => setPreviewModal({ open: true, documentId: doc.documentId, filename: doc.filename }), 300);
+        }
         if (exportCase) {
           notificationStore.addNotification({
             caseId,
@@ -325,6 +336,12 @@ export default function FinanceExportCaseDetailPage() {
           </Button>
         </div>
       )}
+      <PdfPreviewModal
+        open={previewModal.open}
+        onClose={() => setPreviewModal((s) => ({ ...s, open: false }))}
+        documentId={previewModal.documentId}
+        filename={previewModal.filename}
+      />
     </div>
   );
 }
