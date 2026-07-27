@@ -11,7 +11,7 @@ import Script from "next/script";
 import { LogIn, Eye, EyeOff, ArrowRight, User, Mail, Lock } from "lucide-react";
 import logoImg from "../../../public/logo.png";
 
-import { signUp } from "../../../lib/firebase/auth";
+import { signUp, getFirebaseAuthErrorMessage } from "../../../lib/firebase/auth";
 import { apiAuth } from "../../../lib/api/auth";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
@@ -130,7 +130,7 @@ function RegisterForm() {
         : "/verify-email";
       router.push(verifyUrl);
     } catch (err: any) {
-      setError(err.message || "Failed to register. Please try again.");
+      setError(getFirebaseAuthErrorMessage(err));
     } finally {
       setIsLoading(false);
     }
