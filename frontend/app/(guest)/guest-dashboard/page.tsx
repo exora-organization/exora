@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { apiCompany } from "../../../lib/api/company";
 import { Icon } from "@iconify/react";
+import { toast } from "sonner";
 
 type ApplicationStatus = "none" | "pending" | "approved" | "rejected" | "revision_requested";
 
@@ -79,11 +80,22 @@ const TIMELINE_STEPS = [
 ];
 
 export default function GuestDashboardPage() {
-  const { data, isLoading, refetch } = useQuery({
+  const { data, isLoading, isRefetching, refetch } = useQuery({
     queryKey: ["application-status"],
     queryFn: () => apiCompany.getApplicationStatus(),
     retry: false,
   });
+
+  const handleReloadStatus = async () => {
+    try {
+      const res = await refetch();
+      if (res.isSuccess) {
+        toast.success("Application status refreshed successfully!");
+      }
+    } catch {
+      toast.error("Failed to refresh application status.");
+    }
+  };
 
   const appData = data?.data;
   const status = appData?.status as ApplicationStatus | undefined;
@@ -93,11 +105,21 @@ export default function GuestDashboardPage() {
   return (
     <div className="space-y-8 max-w-4xl mx-auto pb-12">
       {/* Header */}
-      <div>
-        <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Registration Status Tracker</h2>
-        <p className="text-sm text-[#4B5563] font-medium mt-1">
-          Monitor your company verification progress step-by-step
-        </p>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <div>
+          <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Registration Status Tracker</h2>
+          <p className="text-sm text-[#4B5563] font-medium mt-1">
+            Monitor your company verification progress step-by-step
+          </p>
+        </div>
+        <button
+          onClick={handleReloadStatus}
+          disabled={isRefetching}
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#00A651] text-[#00A651] hover:bg-[#EBF8F2] active:scale-95 text-xs font-bold transition-all shadow-xs disabled:opacity-50 cursor-pointer self-start sm:self-auto"
+        >
+          <Icon icon="solar:restart-bold-duotone" className={`w-4 h-4 ${isRefetching ? "animate-spin" : ""}`} />
+          {isRefetching ? "Reloading..." : "Reload Status"}
+        </button>
       </div>
 
       {isLoading ? (
