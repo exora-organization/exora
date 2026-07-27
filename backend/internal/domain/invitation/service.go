@@ -42,10 +42,16 @@ func (s *Service) createInvitation(ctx context.Context, email, role string) (*In
 
 	email = strings.ToLower(strings.TrimSpace(email))
 
-	// BUG-018: Prevent inviting an email that is already an active team member
-	if existing, err := s.users.GetByEmail(ctx, email); err == nil {
+	// Prevent inviting a user who is already registered as an active member of any company
+	if existing, err := s.users.GetByEmail(ctx, email); err == nil && existing.Status != user.StatusDeleted {
 		if existing.CompanyID == u.CompanyID {
-			return nil, apperror.New("CONFLICT", "this email address already belongs to an active team member", 409)
+			return nil, apperror.New("CONFLICT", "Email ini sudah terdaftar sebagai anggota tim di perusahaan Anda.", 409)
+		}
+		if existing.CompanyID != "" {
+			return nil, apperror.New("CONFLICT", "Pengguna ini sudah terdaftar di perusahaan lain. Pengguna harus keluar atau dipindahkan terlebih dahulu.", 409)
+		}
+		if existing.Role == user.RoleAdmin {
+			return nil, apperror.New("CONFLICT", "Akun Administrator sistem tidak dapat diundang ke dalam tim perusahaan.", 409)
 		}
 	}
 
@@ -160,6 +166,18 @@ func (s *Service) Accept(ctx context.Context, token string) (*AcceptResponse, er
 			CompanyID:        u.CompanyID,
 			InvitationStatus: StatusAccepted,
 		}, nil
+	}
+
+	// Prevent any user who already belongs to another company from accepting this invitation
+	if existing.CompanyID != "" && existing.CompanyID != inv.CompanyID {
+		if existing.Role == user.RoleCompanyOwner {
+			return nil, apperror.New("CONFLICT", "Sebagai Pemilik Perusahaan (Company Owner), Anda tidak dapat bergabung ke perusahaan lain sebelum mengalihkan kepemilikan.", 409)
+		}
+		return nil, apperror.New("CONFLICT", "Anda sudah terdaftar sebagai anggota tim di perusahaan lain. Harap hubungi administrator perusahaan Anda sebelum bergabung.", 409)
+	}
+
+	if existing.Role == user.RoleAdmin {
+		return nil, apperror.New("CONFLICT", "Akun Administrator sistem tidak dapat bergabung ke dalam tim perusahaan.", 409)
 	}
 
 	existing.Role = inv.Role
