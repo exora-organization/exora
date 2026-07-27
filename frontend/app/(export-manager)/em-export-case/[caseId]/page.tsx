@@ -17,7 +17,11 @@ import { CaseProgressStepper } from "../../../../components/export-case/CaseProg
 import { ViewOnlyBanner } from "../../../../components/export-case/ViewOnlyBanner";
 import { StageNotReadyState } from "../../../../components/export-case/StageNotReadyState";
 import { ConfirmRegenerateModal } from "../../../../components/export-case/ConfirmRegenerateModal";
+import { AIAdvisorWorkspace } from "../../../../components/export-case/AIAdvisorWorkspace";
+import { CostingReadOnlyView } from "../../../../components/export-case/CostingReadOnlyView";
+import { FinancialAnalysis } from "../../../../components/export-case/FinancialAnalysis";
 import { notificationStore } from "../../../../lib/services/notificationStore";
+
 import { Button } from "../../../../components/ui/button";
 import { toast } from "sonner";
 import { useUserProfile } from "../../../../hooks/useUserProfile";
@@ -39,6 +43,7 @@ export default function ExportCaseDetailPage() {
   const handleTabChange = (tabId: string) => {
     router.push(`/em-export-case/${caseId}?tab=${tabId}`);
   };
+
 
   const { data: caseData, isLoading } = useQuery({
     queryKey: ["export-case", caseId],
@@ -160,36 +165,7 @@ export default function ExportCaseDetailPage() {
   const feasColor = feasPct == null ? "text-gray-400" : feasPct >= 80 ? "text-emerald-700" : feasPct >= 60 ? "text-amber-700" : "text-rose-700";
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto pb-12">
-      {/* Back Button */}
-      <Link href="/em-export-case" className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00A651] hover:bg-[#008F44] text-white text-xs font-bold rounded-xl shadow-md shadow-[#00A651]/20 transition-all">
-        <Icon icon="solar:arrow-left-bold-duotone" className="w-4 h-4" /> Back to Export Cases
-      </Link>
-
-      {/* Header */}
-      <div className="flex items-start justify-between gap-4 flex-wrap">
-        <div>
-          <h2 className="text-3xl font-extrabold text-[#1F2937]">{exportCase.name}</h2>
-          <p className="text-xs text-[#6B7280] mt-1 font-medium">Export Manager Workspace · EXORA Tenant Pro</p>
-        </div>
-        {canDelete && (
-          <Button
-            onClick={() => {
-              if (confirm("Are you sure you want to permanently delete this export case?")) {
-                deleteMutation.mutate();
-              }
-            }}
-            variant="destructive"
-            className="rounded-xl font-bold text-xs h-9 px-4"
-          >
-            <Icon icon="solar:trash-bin-trash-bold-duotone" className="w-4 h-4 mr-1.5" />
-            Delete Case
-          </Button>
-        )}
-      </div>
-
-      {/* Case Sub Navigation Tabs */}
-      <CaseSubNav activeTab={currentTab} onTabChange={handleTabChange} />
+    <div className="space-y-6">
 
       {/* TAB CONTENT: Overview */}
       {currentTab === "overview" && (
@@ -232,24 +208,7 @@ export default function ExportCaseDetailPage() {
               responsibleRole="Finance Staff"
             />
           ) : (
-            <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-4">
-              <h4 className="text-base font-extrabold text-[#1F2937]">Cost Data (Managed by Finance Staff)</h4>
-
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-xs font-bold">
-                <div className="p-4 bg-gray-50 rounded-2xl">
-                  <p className="text-[10px] text-gray-400 uppercase">HPP / Production</p>
-                  <p className="text-sm font-black text-[#1F2937]">Rp {costing.hpp?.toLocaleString("id-ID") || 0}</p>
-                </div>
-                <div className="p-4 bg-gray-50 rounded-2xl">
-                  <p className="text-[10px] text-gray-400 uppercase">Packaging & Bundling</p>
-                  <p className="text-sm font-black text-[#1F2937]">Rp {costing.packaging?.toLocaleString("id-ID") || 0}</p>
-                </div>
-                <div className="p-4 bg-gray-50 rounded-2xl">
-                  <p className="text-[10px] text-gray-400 uppercase">Freight & Logistics</p>
-                  <p className="text-sm font-black text-[#1F2937]">Rp {costing.freight?.toLocaleString("id-ID") || 0}</p>
-                </div>
-              </div>
-            </div>
+            <CostingReadOnlyView cost={costing} />
           )}
         </div>
       )}
@@ -268,7 +227,7 @@ export default function ExportCaseDetailPage() {
             <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-5">
               <div className="flex items-center justify-between">
                 <h4 className="text-lg font-extrabold text-[#1F2937]">Pricing Engine & Incoterms Execution</h4>
-                <Link href={`/em-pricing`} className="px-4 py-2 bg-[#00A651] text-white text-xs font-bold rounded-xl shadow-md">
+                <Link href={`/em-export-case/${caseId}/pricing`} className="px-4 py-2 bg-[#00A651] text-white text-xs font-bold rounded-xl shadow-md">
                   Open Pricing Calculator
                 </Link>
               </div>
@@ -286,7 +245,7 @@ export default function ExportCaseDetailPage() {
           <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-5">
             <div className="flex items-center justify-between">
               <h4 className="text-lg font-extrabold text-[#1F2937]">Transaction Scenario Simulation</h4>
-              <Link href={`/em-scenario`} className="px-4 py-2 bg-[#00A651] text-white text-xs font-bold rounded-xl shadow-md">
+              <Link href={`/em-export-case/${caseId}/scenario`} className="px-4 py-2 bg-[#00A651] text-white text-xs font-bold rounded-xl shadow-md">
                 Open Scenario Simulation
               </Link>
             </div>
@@ -297,13 +256,18 @@ export default function ExportCaseDetailPage() {
         </div>
       )}
 
+      {/* TAB CONTENT: Financial Analysis */}
+      {currentTab === "financial" && (
+        <FinancialAnalysis caseId={caseId} hideBackButton />
+      )}
+
       {/* TAB CONTENT: Risk */}
       {currentTab === "risk" && (
         <div className="space-y-4">
           <div className="bg-[#FFFFFF] rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-5">
             <div className="flex items-center justify-between">
               <h4 className="text-lg font-extrabold text-[#1F2937]">Country & Payment Risk Assessment</h4>
-              <Link href={`/em-risk`} className="px-4 py-2 bg-[#00A651] text-white text-xs font-bold rounded-xl shadow-md">
+              <Link href={`/em-export-case/${caseId}/risk`} className="px-4 py-2 bg-[#00A651] text-white text-xs font-bold rounded-xl shadow-md">
                 Manage Risk Assessment
               </Link>
             </div>
@@ -316,37 +280,9 @@ export default function ExportCaseDetailPage() {
 
       {/* TAB CONTENT: Advisor */}
       {currentTab === "advisor" && (
-        <div className="space-y-4">
-          <ConfirmRegenerateModal
-            open={confirmRegenerateOpen}
-            onClose={() => setConfirmRegenerateOpen(false)}
-            onConfirm={() => regenerateAdvisorMutation.mutate()}
-            isPending={regenerateAdvisorMutation.isPending}
-          />
-          <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-5">
-            <div className="flex items-center justify-between">
-              <h4 className="text-lg font-extrabold text-[#1F2937] flex items-center gap-2">
-                <Icon icon="solar:lightbulb-bold-duotone" className="w-5 h-5 text-amber-500" />
-                AI Export Advisor
-              </h4>
-              <Button
-                onClick={() => setConfirmRegenerateOpen(true)}
-                className="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs h-9 px-4 rounded-xl shadow-md"
-              >
-                <Icon icon="solar:refresh-circle-linear" className="w-4 h-4 mr-1.5" />
-                Regenerate AI Analysis
-              </Button>
-            </div>
-            {recommendation ? (
-              <div className="bg-[#FAF8F3] p-5 rounded-2xl border border-[#E8E3D9] text-xs font-medium leading-relaxed whitespace-pre-line">
-                {recommendation.answer}
-              </div>
-            ) : (
-              <p className="text-xs text-gray-400 italic">No AI analysis generated yet. Click 'Regenerate AI Analysis' to start.</p>
-            )}
-          </div>
-        </div>
+        <AIAdvisorWorkspace caseId={caseId} />
       )}
+
 
       {/* TAB CONTENT: Documents */}
       {currentTab === "documents" && (

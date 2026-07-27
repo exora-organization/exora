@@ -8,9 +8,11 @@ export default function FinancialAnalysisPage() {
   const caseId = params.caseId as string;
   
   return (
-    <FinancialAnalysis 
-      caseId={caseId} 
-      backUrl={`/em-export-case/${caseId}`} 
-    />
+    <div className="pt-2 pb-8">
+      <FinancialAnalysis 
+        caseId={caseId} 
+        hideBackButton={true}
+      />
+    </div>
   );
 }

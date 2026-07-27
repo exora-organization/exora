@@ -171,16 +171,20 @@ func New(deps Dependencies, h Handlers) http.Handler {
 							r.With(middleware.RequireRoles("export_manager")).Post("/pricing/calculate", h.Pricing.Calculate)
 							r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff")).Get("/pricing", h.Pricing.Get)
 
-							r.With(middleware.RequireRoles("finance_staff", "company_owner", "admin")).Get("/financial-analysis", h.Financial.GetAnalysis)
-							r.With(middleware.RequireRoles("finance_staff")).Post("/financial-analysis/recalculate", h.Financial.Recalculate)
+							r.With(middleware.RequireRoles("finance_staff", "export_manager", "company_owner", "admin")).Get("/financial-analysis", h.Financial.GetAnalysis)
+							r.With(middleware.RequireRoles("finance_staff", "export_manager", "admin")).Post("/financial-analysis/recalculate", h.Financial.Recalculate)
 
 							r.With(middleware.RequireRoles("export_manager")).Post("/scenarios", h.Scenario.Create)
+							r.With(middleware.RequireRoles("export_manager")).Patch("/scenarios/{scenarioId}", h.Scenario.Update)
+							r.With(middleware.RequireRoles("export_manager")).Delete("/scenarios/{scenarioId}", h.Scenario.Delete)
 							r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff")).Get("/scenarios/compare", h.Scenario.Compare)
 
-							r.With(middleware.RequireRoles("company_owner", "export_manager")).Get("/risk-assessment", h.Risk.GetAssessment)
+							r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/risk-assessment", h.Risk.GetAssessment)
 
 							r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Post("/advisor/recommendations", h.Advisor.CreateRecommendation)
+							r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Post("/advisor/chat", h.Advisor.Chat)
 							r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff", "admin")).Get("/advisor/recommendations", h.Advisor.GetRecommendation)
+
 
 							r.With(middleware.RequireRoles("export_manager")).Post("/documents/quotation", h.Document.GenerateQuotation)
 							r.With(middleware.RequireRoles("export_manager")).Post("/documents/proforma-invoice", h.Document.GenerateProforma)

@@ -73,17 +73,7 @@ export default function PricingPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto pb-12">
-      <div className="mb-5 flex justify-between items-center">
-        <Link href={`/em-export-case/${caseId}`} className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00A651] hover:bg-[#008F44] text-white text-[13px] font-bold rounded-full shadow-md hover:shadow-lg transition-all">
-          <Icon icon="solar:arrow-left-bold-duotone" className="w-4 h-4" /> Back to Case
-        </Link>
-      </div>
-
-      <div>
-        <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Pricing Configuration</h2>
-        <p className="text-sm text-[#6B7280] font-medium mt-1">Calculate authoritative export prices using the EXORA pricing engine.</p>
-      </div>
+    <div className="space-y-6 pt-2 pb-8">
 
       {exportCase && (
         <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6">
