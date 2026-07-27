@@ -45,10 +45,9 @@ func (s *Service) GetResult(ctx context.Context, caseID string) (*PricingResult,
 	return s.repo.GetByCaseID(ctx, caseID)
 }
 
-// applyIncotermFormula implements SRS §5.1 cumulative Incoterm cost formulas.
-// TC-BIZ-001: EXW HPP=1M, Pkg=50k, Cert=100k → EXW Cost=1.15M, Price=1.38M (margin=20%)
+// applyIncotermFormula implements cumulative Incoterm cost formulas.
 func applyIncotermFormula(caseID, companyID, incoterm string, cd *costing.CostData) *PricingResult {
-	// SRS §5.1 cumulative formulas (all in IDR)
+	// Cumulative formulas (all in IDR)
 	exwCost := cd.HPP + cd.Packaging + cd.Certification
 	fobCost := exwCost + cd.Transportation
 	cfrCost := fobCost + cd.Freight

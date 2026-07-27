@@ -14,7 +14,7 @@ import (
 )
 
 // Service handles document generation.
-// Each document type has specific prerequisite data requirements (SRS §7).
+// Each document type has specific prerequisite data requirements.
 type Service struct {
 	repo        Repository
 	costingRepo costing.Repository

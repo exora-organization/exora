@@ -11,7 +11,7 @@ type FinancialAnalysis struct {
 	Quantity        float64   `json:"quantity" firestore:"quantity"`
 	SellingPriceIDR float64   `json:"sellingPriceIDR" firestore:"sellingPriceIDR"`
 	TotalCostIDR    float64   `json:"totalCostIDR" firestore:"totalCostIDR"`
-	// SRS §5.2 metrics
+	// Core metrics
 	RevenueIDR      float64   `json:"revenueIDR" firestore:"revenueIDR"`
 	GrossProfitIDR  float64   `json:"grossProfitIDR" firestore:"grossProfitIDR"`
 	ProfitMarginPct float64   `json:"profitMarginPct" firestore:"profitMarginPct"`

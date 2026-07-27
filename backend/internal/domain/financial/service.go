@@ -42,7 +42,7 @@ func (s *Service) Recalculate(ctx context.Context, caseID, companyID string, req
 	sellingPriceIDR := totalCostIDR * (1 + cd.TargetMargin/100)
 	qty := cd.Quantity
 
-	// SRS §5.2 formulas
+	// Financial formulas
 	revenueIDR := sellingPriceIDR * qty
 	grossProfitIDR := revenueIDR - (totalCostIDR * qty)
 	profitMarginPct := 0.0
