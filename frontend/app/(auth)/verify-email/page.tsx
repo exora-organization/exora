@@ -79,8 +79,13 @@ function VerifyEmailForm() {
         await sendEmailVerification(user);
         setResendMessage("Verification email resent. Please check your inbox.");
       } catch (error: any) {
-        console.error("Error resending email:", error);
-        setResendMessage("Failed to resend email. Please try again later.");
+        if (error.code === "auth/too-many-requests") {
+          console.warn("Too many requests for email verification.");
+          setResendMessage("Too many requests. Please wait a moment before trying again.");
+        } else {
+          console.error("Error resending email:", error);
+          setResendMessage("Failed to resend email. Please try again later.");
+        }
       } finally {
         setIsResending(false);
       }
