@@ -185,6 +185,9 @@ func ToStatusResponse(c *Company) ApplicationStatusResponse {
 	if c.RevisionNotes != "" {
 		resp.RevisionNotes = &c.RevisionNotes
 	}
+	if c.RejectReason != "" {
+		resp.RejectReason = &c.RejectReason
+	}
 	return resp
 }
 

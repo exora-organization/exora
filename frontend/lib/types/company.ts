@@ -13,6 +13,7 @@ export interface CompanyApplicationResponse {
   country: string;
   status: ApplicationStatus;
   revisionNotes?: string;
+  rejectReason?: string;
   submittedAt: string;
   updatedAt: string;
 }

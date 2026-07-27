@@ -170,7 +170,7 @@ export default function GuestDashboardPage() {
               <div className="p-4 bg-white rounded-2xl border border-amber-300 space-y-2">
                 <p className="text-[10px] font-black uppercase tracking-widest text-amber-800">Admin Notes / Rejection Reason</p>
                 <p className="text-xs font-semibold text-[#1F2937]">
-                  {appData.revisionNotes || "Please verify your company legal documents and resubmit."}
+                  {(status === "rejected" ? appData.rejectReason : appData.revisionNotes) || "Please verify your company legal documents and resubmit."}
                 </p>
                 <div className="pt-2">
                   <Link

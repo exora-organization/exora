@@ -70,6 +70,7 @@ type ApplicationStatusResponse struct {
 	SubmittedAt    *string `json:"submittedAt"`
 	ApprovedAt     *string `json:"approvedAt"`
 	RevisionNotes  *string `json:"revisionNotes"`
+	RejectReason   *string `json:"rejectReason"`
 }
 
 type ApproveResponse struct {

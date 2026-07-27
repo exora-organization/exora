@@ -13,9 +13,9 @@ import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 
 const applicationSchema = z.object({
-  companyName: z.string().min(2, "Company name must be at least 2 characters"),
-  businessSector: z.string().min(2, "Business sector is required"),
-  country: z.string().min(2, "Country is required"),
+  companyName: z.string().trim().min(2, "Company name must be at least 2 characters"),
+  businessSector: z.string().trim().min(2, "Business sector is required"),
+  country: z.string().trim().min(2, "Country is required"),
 });
 
 type ApplicationFormValues = z.infer<typeof applicationSchema>;
@@ -74,10 +74,10 @@ export function CompanyApplicationForm({ initialData, onSuccess, isRevision = fa
       };
 
       await apiCompany.apply(payload);
-      
+
       // Invalidate query cache to fetch the new pending status
       await queryClient.invalidateQueries({ queryKey: ["application-status"] });
-      
+
       if (onSuccess) {
         onSuccess();
       }
@@ -103,7 +103,7 @@ export function CompanyApplicationForm({ initialData, onSuccess, isRevision = fa
             <p className="text-sm text-red-500 font-bold ml-4">{errors.companyName.message}</p>
           )}
         </div>
-        
+
         <div className="space-y-2">
           <Label htmlFor="businessSector" className="text-xs font-black text-gray-800 tracking-widest uppercase ml-4">Business Sector</Label>
           <Input
@@ -129,17 +129,17 @@ export function CompanyApplicationForm({ initialData, onSuccess, isRevision = fa
             <p className="text-sm text-red-500 font-bold ml-4">{errors.country.message}</p>
           )}
         </div>
-        
+
         {error && (
           <div className="p-3 text-sm bg-red-50 text-red-500 rounded-lg">
             {error}
           </div>
         )}
-        
+
         <div className="pt-2">
-          <Button 
-            type="submit" 
-            className="w-full h-12 bg-gradient-to-r from-[#0a9b5c] to-[#08824d] hover:from-[#08824d] hover:to-[#06683e] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300" 
+          <Button
+            type="submit"
+            className="w-full h-12 bg-gradient-to-r from-[#0a9b5c] to-[#08824d] hover:from-[#08824d] hover:to-[#06683e] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
             disabled={isSubmitting}
           >
             {isSubmitting ? "SUBMITTING..." : (isRevision ? "RESUBMIT APPLICATION" : "SUBMIT APPLICATION")}
