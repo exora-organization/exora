@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -37,9 +38,21 @@ func (m *AuthMiddleware) RequireProfile(next http.Handler) http.Handler {
 				}
 			}
 			if err != nil {
-				// failed both UID and email lookup
-				apperror.Write(w, apperror.ErrUnauthenticated)
-				return
+				// failed both UID and email lookup -> Auto-create missing profile
+				log.Printf("[AUTH DEBUG] RequireProfile failed for UID %s, auto-creating missing profile...", claims.UID)
+				newProfile := &user.User{
+					FirebaseUID: claims.UID,
+					Email:       claims.Email,
+					DisplayName: strings.Split(claims.Email, "@")[0],
+					Role:        user.RoleGuest,
+					Status:      user.StatusActive,
+				}
+				if errCreate := m.users.Create(r.Context(), newProfile); errCreate != nil {
+					log.Printf("[AUTH DEBUG] Failed to auto-create profile for UID %s: %v", claims.UID, errCreate)
+					apperror.Write(w, apperror.ErrUnauthenticated)
+					return
+				}
+				profile = newProfile
 			}
 		}
 		if profile.Status == user.StatusDisabled || profile.Status == user.StatusDeleted {

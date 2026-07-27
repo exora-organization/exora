@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"log"
 	"net/http"
 	"strings"
 
@@ -21,12 +22,14 @@ func (m *FirebaseMiddleware) VerifyToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token, err := extractBearerToken(r)
 		if err != nil {
+			log.Printf("[AUTH DEBUG] extractBearerToken error on %s %s: %v", r.Method, r.URL.Path, err)
 			apperror.Write(w, err)
 			return
 		}
 
 		verified, err := m.firebase.VerifyIDToken(r.Context(), token)
 		if err != nil {
+			log.Printf("[AUTH DEBUG] VerifyIDToken error on %s %s: %v", r.Method, r.URL.Path, err)
 			apperror.Write(w, apperror.ErrUnauthenticated)
 			return
 		}

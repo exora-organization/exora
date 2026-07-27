@@ -29,8 +29,8 @@ bin/
 serviceAccountKey.json
 backend/serviceAccountKey.json
 
-# Backup / UTAMA env copies
-*[UTAMA]*
+# Backup / UTAMA env copies (use *UTAMA* not *[UTAMA]* - brackets are char class in gitignore)
+*UTAMA*
 *.env copy
 .env*.local
 
