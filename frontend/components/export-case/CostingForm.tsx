@@ -117,9 +117,11 @@ export function CostingForm({ caseId, initialData }: CostingFormProps) {
           {mutation.isSuccess && warnings.length === 0 && (
             <Alert className="border-green-500 bg-green-50 text-green-900">
               <AlertTitle>Success</AlertTitle>
-              <AlertDescription>Cost data saved successfully. You can now proceed to pricing.</AlertDescription>
+              <AlertDescription>Export costing data saved successfully. Export Manager has been notified to configure pricing strategy so Financial Viability Analysis can be calculated.</AlertDescription>
             </Alert>
           )}
+
+
 
           <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
             <div className="space-y-5">
@@ -208,19 +210,13 @@ export function CostingForm({ caseId, initialData }: CostingFormProps) {
             Back to Case
           </Button>
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
-            {mutation.isSuccess && (
-              <Button type="button" variant="secondary" onClick={() => router.push(
-                isFinanceStaff ? `/finance-case/${caseId}/financial` : `/export-case/${caseId}/pricing`
-              )}>
-                Continue to Pricing
-              </Button>
-            )}
             {!isReadOnly && (
               <Button type="submit" disabled={mutation.isPending} className="bg-[#00A651] hover:bg-[#008F44] text-white px-10 py-4 rounded-full font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all w-full sm:w-auto h-auto">
                 {mutation.isPending ? "Saving..." : "Save Cost Data"}
               </Button>
             )}
           </div>
+
         </CardFooter>
       </form>
     </Card>
