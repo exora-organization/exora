@@ -1,8 +1,8 @@
 #!/bin/bash
+
 set -e
 
 APP_DIR="/var/www/exoratech-sandbox/app"
-
 LOG_DIR="/var/log/deploys"
 LOG_FILE="$LOG_DIR/exora-sandbox.log"
 
@@ -28,7 +28,7 @@ echo ""
 echo "Fetching latest source..."
 git fetch origin
 git checkout "$REF"
-git pull origin "$REF"
+git reset --hard "origin/$REF"
 
 echo ""
 echo "Building Backend..."
@@ -43,15 +43,14 @@ echo "Building Frontend..."
 
 cd ../frontend
 
-# Kill any stale next build process from a previous failed deploy
-echo "Cleaning up stale build processes..."
+echo "Cleaning up old build..."
 pkill -f "next build" || true
-sleep 2
+rm -rf .next node_modules
 
-# Clear cached build artifacts to avoid stale-lock conflicts
-rm -rf .next
+echo "Installing dependencies..."
+npm install
 
-npm install --legacy-peer-deps
+echo "Building Next.js..."
 npm run build
 
 echo ""
@@ -67,7 +66,6 @@ sleep 3
 
 echo ""
 echo "Checking Backend..."
-
 if curl -sf http://127.0.0.1:8080 >/dev/null; then
     echo "Backend OK"
 else
@@ -76,7 +74,6 @@ fi
 
 echo ""
 echo "Checking Frontend..."
-
 if curl -sf http://127.0.0.1:3000 >/dev/null; then
     echo "Frontend OK"
 else

@@ -43,16 +43,16 @@ echo "Building Frontend..."
 
 cd ../frontend
 
-# Kill any stale next build process from a previous failed deploy
-echo "Cleaning up stale build processes..."
+echo "Cleaning up old build..."
 pkill -f "next build" || true
-sleep 2
+rm -rf .next node_modules
 
-# Clear cached build artifacts to avoid stale-lock conflicts
-rm -rf .next
+echo "Installing dependencies..."
+npm install
 
-npm install --legacy-peer-deps
+echo "Building Next.js..."
 npm run build
+
 
 echo ""
 echo "Restarting Backend..."
