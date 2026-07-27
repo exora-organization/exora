@@ -29,6 +29,16 @@ bin/
 serviceAccountKey.json
 backend/serviceAccountKey.json
 
+# Backup / UTAMA env copies
+*[UTAMA]*
+*.env copy
+.env*.local
+
+# Debug/Seed scripts (one-off tools, not for production)
+backend/cmd/seeduser/
+backend/cmd/checkusers/
+backend/cmd/fixrole/
+
 # Go Dependencies
 vendor/
 
