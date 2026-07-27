@@ -25,6 +25,12 @@ type Service struct {
 	costingRepo costing.Repository
 	pricingRepo pricing.Repository
 	caseRepo    exportcase.Repository
+	riskRepo    riskRepository
+}
+
+// riskRepository is the minimal interface needed to load risk data into advisor context.
+type riskRepository interface {
+	GetByCaseID(ctx context.Context, caseID string) (interface{ GetFields() (float64, float64, float64, string, string) }, error)
 }
 
 func NewService(
@@ -58,21 +64,20 @@ func (s *Service) Generate(ctx context.Context, caseID, companyID string, req Ge
 	ec, _ := s.caseRepo.GetByID(ctx, caseID)
 	pr, _ := s.pricingRepo.GetByCaseID(ctx, caseID)
 
-	// Build context summary from case data
+	// Build rich context from all available case data
 	contextSummary := buildContextSummary(ec, cd, pr)
 
-	// For Official Report generation, query is empty so buildPrompt produces the 8-Point Enterprise Report
 	userRole := ""
 	if u, ok := actor.FromContext(ctx); ok {
 		userRole = u.Role
 	}
 
-	snippets, _ := s.kb.Search("export feasibility Incoterm payment risk", 5)
+	snippets, _ := s.kb.Search("export feasibility Incoterm payment risk country", 6)
 	kbContext := s.kb.BuildContext(snippets)
 	prompt := s.buildPrompt(contextSummary, kbContext, "", userRole)
 
-	// Call Gemini with 10-second SLA (NFR-003)
-	timeoutCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	// 20-second SLA — Gemini needs time for complex structured responses
+	timeoutCtx, cancel := context.WithTimeout(ctx, 20*time.Second)
 	defer cancel()
 
 	answer, err := s.gemini.Generate(timeoutCtx, prompt)
@@ -117,11 +122,13 @@ func (s *Service) Chat(ctx context.Context, caseID, companyID string, req Genera
 		userRole = u.Role
 	}
 
-	snippets, _ := s.kb.Search(query, 5)
+	// Use a broader search query that combines user question with export domain terms
+	searchQuery := query + " export feasibility payment incoterm risk"
+	snippets, _ := s.kb.Search(searchQuery, 6)
 	kbContext := s.kb.BuildContext(snippets)
 	prompt := s.buildPrompt(contextSummary, kbContext, query, userRole)
 
-	timeoutCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	timeoutCtx, cancel := context.WithTimeout(ctx, 20*time.Second)
 	defer cancel()
 
 	answer, err := s.gemini.Generate(timeoutCtx, prompt)
@@ -304,20 +311,54 @@ func (s *Service) GetGlobal(ctx context.Context, companyID string) (*AdvisorReco
 }
 
 func buildContextSummary(ec *exportcase.ExportCase, cd *costing.CostData, pr *pricing.PricingResult) string {
-	parts := []string{}
+	var sb strings.Builder
+
 	if ec != nil {
-		parts = append(parts, fmt.Sprintf("Export Case: %s | Product: %s | Destination: %s | Status: %s",
-			ec.Name, ec.Product, ec.DestinationCountry, ec.Status))
+		sb.WriteString(fmt.Sprintf("[EXPORT CASE]\n"))
+		sb.WriteString(fmt.Sprintf("  Case Name       : %s\n", ec.Name))
+		sb.WriteString(fmt.Sprintf("  Product         : %s\n", ec.Product))
+		sb.WriteString(fmt.Sprintf("  Destination     : %s\n", ec.DestinationCountry))
+		sb.WriteString(fmt.Sprintf("  Status          : %s\n", ec.Status))
+		if ec.FeasibilityScore != nil {
+			sb.WriteString(fmt.Sprintf("  Feasibility Score: %.1f / 100\n", *ec.FeasibilityScore))
+		}
 	}
+
 	if cd != nil {
-		parts = append(parts, fmt.Sprintf("Cost Data: HPP=%.0f IDR, Packaging=%.0f, Transportation=%.0f, Freight=%.0f, Insurance=%.0f | TargetMargin=%.1f%% | PaymentTerm=%s | ExchangeRate=%.0f",
-			cd.HPP, cd.Packaging, cd.Transportation, cd.Freight, cd.Insurance, cd.TargetMargin, cd.PaymentTerm, cd.ExchangeRate))
+		totalCostIDR := cd.HPP + cd.Packaging + cd.Certification + cd.Transportation + cd.Freight + cd.Insurance
+		sb.WriteString(fmt.Sprintf("\n[COST DATA]\n"))
+		sb.WriteString(fmt.Sprintf("  HPP (COGS)      : IDR %.0f\n", cd.HPP))
+		sb.WriteString(fmt.Sprintf("  Packaging       : IDR %.0f\n", cd.Packaging))
+		sb.WriteString(fmt.Sprintf("  Certification   : IDR %.0f\n", cd.Certification))
+		sb.WriteString(fmt.Sprintf("  Transportation  : IDR %.0f\n", cd.Transportation))
+		sb.WriteString(fmt.Sprintf("  Freight         : IDR %.0f\n", cd.Freight))
+		sb.WriteString(fmt.Sprintf("  Insurance       : IDR %.0f\n", cd.Insurance))
+		sb.WriteString(fmt.Sprintf("  TOTAL COST      : IDR %.0f\n", totalCostIDR))
+		sb.WriteString(fmt.Sprintf("  Quantity        : %.0f units\n", cd.Quantity))
+		if cd.Quantity > 0 {
+			sb.WriteString(fmt.Sprintf("  Cost per Unit   : IDR %.0f\n", totalCostIDR/cd.Quantity))
+		}
+		sb.WriteString(fmt.Sprintf("  Target Margin   : %.1f%%\n", cd.TargetMargin))
+		sb.WriteString(fmt.Sprintf("  Payment Term    : %s\n", cd.PaymentTerm))
+		sb.WriteString(fmt.Sprintf("  Exchange Rate   : IDR %.0f / USD\n", cd.ExchangeRate))
 	}
+
 	if pr != nil {
-		parts = append(parts, fmt.Sprintf("Pricing Result: Incoterm=%s | SellingPriceIDR=%.0f | SellingPriceUSD=%.2f | ActualMargin=%.1f%%",
-			pr.Incoterm, pr.SellingPriceIDR, pr.SellingPriceUSD, pr.ActualMarginPct))
+		sb.WriteString(fmt.Sprintf("\n[PRICING RESULT]\n"))
+		sb.WriteString(fmt.Sprintf("  Incoterm        : %s\n", pr.Incoterm))
+		sb.WriteString(fmt.Sprintf("  Selling Price   : IDR %.0f (USD %.2f)\n", pr.SellingPriceIDR, pr.SellingPriceUSD))
+		sb.WriteString(fmt.Sprintf("  Actual Margin   : %.1f%%\n", pr.ActualMarginPct))
+		if cd != nil {
+			marginGap := pr.ActualMarginPct - cd.TargetMargin
+			if marginGap >= 0 {
+				sb.WriteString(fmt.Sprintf("  Margin vs Target: +%.1f%% (above target)\n", marginGap))
+			} else {
+				sb.WriteString(fmt.Sprintf("  Margin vs Target: %.1f%% (BELOW target — review required)\n", marginGap))
+			}
+		}
 	}
-	return strings.Join(parts, "\n")
+
+	return sb.String()
 }
 
 
@@ -325,86 +366,94 @@ func buildContextSummary(ec *exportcase.ExportCase, cd *costing.CostData, pr *pr
 func (s *Service) buildPrompt(contextSummary, kbContext, question, userRole string) string {
 	isChat := question != "" && (len(question) > 3 || strings.Contains(strings.ToLower(question), "?"))
 
-
 	if isChat {
-		return fmt.Sprintf(`You are EXORA AI Trade Assistant, a helpful and expert export consultant.
-=== EXPORT CASE CONTEXT ===
+		return fmt.Sprintf(`You are EXORA AI Trade Assistant, an expert export consultant grounded strictly in verifiable data.
+
+=== ANTI-HALLUCINATION RULES (MANDATORY) ===
+- ONLY use numbers, percentages, prices, and facts that appear VERBATIM in the [EXPORT CASE DATA] below.
+- DO NOT invent, estimate, or assume any value not present in the data.
+- If specific data is missing (e.g., no risk score provided), say "this data is not yet available" instead of making up a number.
+- DO NOT reference products, countries, companies, or trade agreements not mentioned in the data.
+
+=== EXPORT CASE DATA ===
 %s
 
 === CURATED KNOWLEDGE BASE ===
 %s
 
-=== USER CHAT QUESTION ===
+=== USER QUESTION ===
 %s
 
-CRITICAL CHATBOT INSTRUCTIONS:
-- Answer the user's question directly, clearly, and concisely in 2-4 friendly conversational paragraphs or bullet points.
-- DO NOT use report headers, DO NOT use decision badges (Proceed/Review Required), and DO NOT append corporate disclaimers.
-- Base your advice strictly on EXORA's export case data and curated knowledge base.
+=== RESPONSE INSTRUCTIONS ===
+Answer the user's question directly in 2-4 conversational paragraphs or bullet points.
+Base every claim on the export case data or knowledge base above.
+DO NOT use report headers, decision badges, or corporate disclaimers.
+If the question cannot be answered from the available data, say so clearly.
 `, contextSummary, kbContext, question)
 	}
 
-	// REPORT MODE: ISO 27001 ISMS & International Trade Standard Enterprise Report Template
-	rolePersona := "Executive & Executive Board Export Governance"
+	// REPORT MODE
+	rolePersona := "Executive & Board Export Governance"
 	if userRole == "finance_staff" {
 		rolePersona = "Financial Risk Assessment & Trade Governance"
 	} else if userRole == "export_manager" {
 		rolePersona = "Supply Chain Operations & International Trade Compliance"
 	}
 
-	return fmt.Sprintf(`You are EXORA, an executive International Trade Advisor & ISMS Governance Analyst.
-Role Persona Focus: %s
+	return fmt.Sprintf(`You are EXORA, an executive International Trade Advisor generating an official feasibility report.
+Role Persona: %s
 
-=== EXPORT CASE CONTEXT ===
+=== ANTI-HALLUCINATION RULES (MANDATORY) ===
+- Base the ENTIRE report ONLY on the [EXPORT CASE DATA] section below. Do not invent numbers.
+- Every percentage, price, incoterm, and score you mention MUST come directly from the data below.
+- If any data point is missing, write "[data not provided]" — never fabricate a substitute.
+- The Executive Decision (Proceed / Review Required / Not Recommended) must be derived from:
+  • actual margin vs target margin comparison from the data
+  • payment term risk level from the data  
+  • destination country feasibility from the data
+  DO NOT default to "Proceed" unless the data genuinely supports it.
+
+=== EXPORT CASE DATA ===
 %s
 
 === CURATED KNOWLEDGE BASE ===
 %s
 
-CRITICAL INSTRUCTIONS FOR EXECUTIVE REPORT GENERATION:
-- Write in a natural, authoritative, human executive tone (ISO 27001 ISMS risk assessment & international trade standards).
-- Avoid robotic AI tropes, repetitive system dumps, or "AI Case Data Evaluated" meta-descriptions.
-- Incorporate ISO 27001 Information Security Management System (ISMS) principles (risk assessment, security & data integrity controls, compliance verification, and continual improvement).
-- You MUST structure the response according to the following professional 8-point executive format:
+=== OUTPUT FORMAT ===
+Write a professional 8-section executive report in this exact structure:
 
-# Executive Feasibility & Security Assessment Report
+# Executive Feasibility & Risk Assessment Report
 
 ### Executive Decision
-**Proceed** *(Must be exactly one of: Proceed, Review Required, or Not Recommended)*
+[Write exactly one of: Proceed / Review Required / Not Recommended — derived from the data above]
 
 ### Governance Confidence Level
-**High (91%%)** *(Must be High, Medium, or Low)*
+[Write High / Medium / Low based on data completeness and margin achievement]
 
 ### Executive Summary
-A concise, authoritative high-level narrative evaluating commercial viability, Incoterms, profit margins, and compliance alignment.
+[2-3 sentences: reference actual product name, destination country, actual margin %%, and target margin %% from the data. Be specific.]
 
 ### Key Findings
-- **Recommended Incoterm**: FOB
-- **Suggested Payment**: Letter of Credit (L/C)
-- **Destination Country Risk**: Low
-- **Financial Viability**: Viable (Net Profit Margin aligned with target)
+- Incoterm: [value from data]
+- Payment Term: [value from data]
+- Destination Country: [value from data]
+- Actual Margin: [value from data] vs Target: [value from data]
+- Feasibility Score: [value from data if available]
 
-### Strategic Risk Assessment & ISO 27001 Controls
-- **Data Integrity & Document Controls (ISO 27001 A.12)**: Ensure digital commercial documents, SKA certificates, and L/C records are protected against unauthorized modification and encrypted during transmission.
-- **Supply Chain & Operational Continuity**: Evaluate counterparty credibility, transit liability boundaries, and currency fluctuation exposure under ISO risk evaluation frameworks.
-- **Regulatory & Trade Compliance**: Validate import tariffs, labeling standards, and customs entry protocols for the destination market.
+### Strategic Risk Assessment
+[Identify 2-3 specific risks based on the actual cost structure, payment term, and country in the data. Reference specific numbers.]
 
 ### Analytical Justification
-A thorough, analytical explanation connecting cost structure, payment security, and market conditions without generic AI filler.
+[Explain WHY the decision was made using the actual margin gap, payment security, and country risk. Use the specific numbers from the data.]
 
-### Continual Improvement & Action Plan
-- Establish encrypted communication channels for buyer transaction verification.
-- Review tariff schedules and Form E / SKA origin certificates.
-- Validate buyer import licensing and banking credentials under ISO 27001 ISMS supplier review protocols.
+### Action Plan
+[3-5 concrete next steps specific to the product and destination in the data.]
 
-### Audit & Governance References
-✓ International Incoterms 2020 Framework
-✓ ISO 27001:2022 Information Security Management Standards
-✓ Global Country Risk & Sanction Guidelines
-✓ International Chamber of Commerce (ICC) Trade Finance Regulations
+### References
+[List knowledge base sources used]
 
 ---
-*Governance Note: This report provides executive-level decision support adhering to international trade practices and ISO 27001 risk evaluation frameworks.*
+*This report is based on EXORA export case data. Final business decisions remain the responsibility of the company.*
 `, rolePersona, contextSummary, kbContext)
 }
 
