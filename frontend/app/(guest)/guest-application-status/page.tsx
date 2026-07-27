@@ -141,7 +141,8 @@ export default function ApplicationStatusPage() {
               if (auth.currentUser) {
                 await auth.currentUser.reload();
                 const token = await auth.currentUser.getIdToken(true);
-                document.cookie = `firebaseToken=${token}; path=/; max-age=3600; Secure; SameSite=Strict`;
+                const isHttps = typeof window !== "undefined" && window.location.protocol === "https:";
+                document.cookie = `firebaseToken=${token}; path=/; max-age=3600; ${isHttps ? "Secure;" : ""} SameSite=Strict`;
               }
               window.location.href = "/own-dashboard";
             }}>

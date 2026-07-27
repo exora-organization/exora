@@ -26,7 +26,8 @@ function VerifyEmailForm() {
         await user.reload();
         if (user.emailVerified) {
           const token = await user.getIdToken(true);
-          document.cookie = `firebaseToken=${token}; path=/; max-age=3600; Secure; SameSite=Strict`;
+          const isHttps = typeof window !== "undefined" && window.location.protocol === "https:";
+          document.cookie = `firebaseToken=${token}; path=/; max-age=3600; ${isHttps ? "Secure;" : ""} SameSite=Strict`;
           
           let finalPath = redirectPath;
           try {

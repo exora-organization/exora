@@ -30,7 +30,8 @@ export function useUserProfile() {
 
         // Set the token cookie for proxy.ts, then re-fetch profile if user changed
         user.getIdToken().then((token) => {
-          document.cookie = `firebaseToken=${token}; path=/; max-age=3600; Secure; SameSite=Strict`;
+          const isHttps = typeof window !== "undefined" && window.location.protocol === "https:";
+          document.cookie = `firebaseToken=${token}; path=/; max-age=3600; ${isHttps ? "Secure;" : ""} SameSite=Strict`;
           if (uidChanged) {
             queryClient.invalidateQueries({ queryKey: ["user-profile"] });
           }

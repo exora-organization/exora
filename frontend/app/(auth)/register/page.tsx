@@ -121,7 +121,8 @@ function RegisterForm() {
       const userCredential = await signUp(data.email, data.password);
       
       const token = await userCredential.user.getIdToken();
-      document.cookie = `firebaseToken=${token}; path=/; max-age=3600; Secure; SameSite=Strict`;
+      const isHttps = typeof window !== "undefined" && window.location.protocol === "https:";
+      document.cookie = `firebaseToken=${token}; path=/; max-age=3600; ${isHttps ? "Secure;" : ""} SameSite=Strict`;
       
       await apiAuth.register(data.displayName, recaptchaToken || undefined);
       

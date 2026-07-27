@@ -98,7 +98,8 @@ function LoginForm() {
     try {
       const userCredential = await signIn(data.email, data.password);
       const token = await userCredential.user.getIdToken();
-      document.cookie = `firebaseToken=${token}; path=/; max-age=3600; Secure; SameSite=Strict`;
+      const isHttps = typeof window !== "undefined" && window.location.protocol === "https:";
+      document.cookie = `firebaseToken=${token}; path=/; max-age=3600; ${isHttps ? "Secure;" : ""} SameSite=Strict`;
 
       await apiAuth.login();
       const profileRes = await apiUsers.getCurrentUser();

@@ -84,7 +84,18 @@ func (s *Service) Login(ctx context.Context) (*user.SessionProfile, error) {
 
 	u, err := s.users.GetByFirebaseUID(ctx, claims.UID)
 	if err != nil {
-		return nil, apperror.ErrUnauthenticated
+		// Auto-recovery: If user is authenticated in Firebase but profile is missing in Firestore,
+		// create a guest user profile automatically.
+		u = &user.User{
+			FirebaseUID: claims.UID,
+			Email:       claims.Email,
+			DisplayName: strings.Split(claims.Email, "@")[0],
+			Role:        user.RoleGuest,
+			Status:      user.StatusActive,
+		}
+		if errCreate := s.users.Create(ctx, u); errCreate != nil {
+			return nil, apperror.ErrUnauthenticated
+		}
 	}
 
 	// Auto-accept pending invitation if exists for this email and user is currently guest
