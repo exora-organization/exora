@@ -53,7 +53,7 @@ export function FinancialAnalysis({ caseId, backUrl, hideBackButton }: Financial
     }
   };
 
-  const canRecalculate = profile?.role === "finance_staff" || profile?.role === "admin" || profile?.role === "export_manager";
+  const canRecalculate = profile?.role === "finance_staff" || profile?.role === "admin";
 
   // Fetch the active pricing incoterm to use as auto-calculate seed
   const { data: pricingData } = useQuery({

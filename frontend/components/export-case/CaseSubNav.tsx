@@ -41,7 +41,7 @@ export function getTabsForRole(role?: string): SubNavTab[] {
       { ...ALL_TABS.cost, isReadOnly: true },
       ALL_TABS.pricing,
       ALL_TABS.scenario,
-      ALL_TABS.financial,
+      { ...ALL_TABS.financial, isReadOnly: true },
       ALL_TABS.risk,
       ALL_TABS.advisor,
       ALL_TABS.documents,
