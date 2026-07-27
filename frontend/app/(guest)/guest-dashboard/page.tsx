@@ -174,7 +174,7 @@ export default function GuestDashboardPage() {
                 </p>
                 <div className="pt-2">
                   <Link
-                    href="/guest-company-application"
+                    href="/guest-company-application/revision"
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-sm"
                   >
                     <Icon icon="solar:pen-new-square-bold-duotone" className="w-4 h-4" /> Complete Documents & Resubmit
@@ -221,13 +221,12 @@ export default function GuestDashboardPage() {
                 return (
                   <div
                     key={s.step}
-                    className={`p-4 rounded-2xl border transition-all ${
-                      isDone
+                    className={`p-4 rounded-2xl border transition-all ${isDone
                         ? "bg-[#EBF8F2] border-[#00A651]/40 text-emerald-950"
                         : isCurrent
-                        ? "bg-amber-50 border-amber-300 text-amber-950"
-                        : "bg-gray-50 border-gray-200 text-gray-400"
-                    }`}
+                          ? "bg-amber-50 border-amber-300 text-amber-950"
+                          : "bg-gray-50 border-gray-200 text-gray-400"
+                      }`}
                   >
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-[10px] font-black uppercase tracking-widest">Step 0{s.step}</span>

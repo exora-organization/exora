@@ -178,15 +178,9 @@ export default function ApplicationStatusPage() {
             <p>{appData.revisionNotes || "No notes provided."}</p>
           </div>
 
-          <CompanyApplicationForm
-            isRevision={true}
-            initialData={{
-              companyName: appData.companyName,
-              businessSector: appData.businessSector,
-              country: appData.country,
-            }}
-            onSuccess={() => refetch()}
-          />
+          <PrimaryButton onClick={() => router.push("/guest-company-application/revision")}>
+            GO TO REVISION FORM
+          </PrimaryButton>
         </Wrapper>
       );
 
