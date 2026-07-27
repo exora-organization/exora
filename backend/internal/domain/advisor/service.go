@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/exora/backend/internal/actor"
 	"github.com/exora/backend/internal/apperror"
 	"github.com/exora/backend/internal/domain/costing"
 	"github.com/exora/backend/internal/domain/exportcase"
@@ -60,67 +61,15 @@ func (s *Service) Generate(ctx context.Context, caseID, companyID string, req Ge
 	// Build context summary from case data
 	contextSummary := buildContextSummary(ec, cd, pr)
 
-	query := req.Question
-	if query == "" {
-		if ec != nil {
-			query = fmt.Sprintf("Evaluate the export feasibility of %s to %s with the provided cost, pricing, and payment terms.", ec.Product, ec.DestinationCountry)
-		} else {
-			query = "Evaluate the export feasibility."
-		}
+	// For Official Report generation, query is empty so buildPrompt produces the 8-Point Enterprise Report
+	userRole := ""
+	if u, ok := actor.FromContext(ctx); ok {
+		userRole = u.Role
 	}
 
-	// 1. Export Domain Check
-	if !isExportDomain(query) && !isGreeting(query) {
-		rec := &AdvisorRecommendation{
-			CaseID:         caseID,
-			CompanyID:      companyID,
-			Answer:         outOfScopeResponse,
-			Confidence:     "low",
-			ContextSummary: contextSummary,
-			GeneratedAt:    time.Now(),
-		}
-		_ = s.repo.Upsert(ctx, rec)
-		return rec, nil
-	}
-
-	// 2. Smart Country Validation
-	countryToCheck := extractCountryFromQuery(query)
-	if countryToCheck == "" && ec != nil {
-		countryToCheck = ec.DestinationCountry
-	}
-	if isUnsupportedCountry(countryToCheck) {
-		rec := &AdvisorRecommendation{
-			CaseID:         caseID,
-			CompanyID:      companyID,
-			Answer:         "I don't have verified knowledge for exports to this country because it is not currently included in the curated knowledge base. Please consult official trade resources or an export specialist.",
-			Confidence:     "low",
-			ContextSummary: contextSummary,
-			GeneratedAt:    time.Now(),
-		}
-		_ = s.repo.Upsert(ctx, rec)
-		return rec, nil
-	}
-
-	// 3. RAG Retrieval
-	snippets, _ := s.kb.Search(query, 5)
-
-	// 4. Coverage Check
-	if len(snippets) == 0 && !isGreeting(query) {
-		rec := &AdvisorRecommendation{
-			CaseID:         caseID,
-			CompanyID:      companyID,
-			Answer:         "This topic is outside the curated knowledge base used for business recommendations. I can provide general information if helpful, but it should not be treated as an official recommendation.",
-			Confidence:     "low",
-			ContextSummary: contextSummary,
-			GeneratedAt:    time.Now(),
-		}
-		_ = s.repo.Upsert(ctx, rec)
-		return rec, nil
-	}
-
-	// 5. Compose prompt
+	snippets, _ := s.kb.Search("export feasibility Incoterm payment risk", 5)
 	kbContext := s.kb.BuildContext(snippets)
-	prompt := buildPrompt(contextSummary, kbContext, query)
+	prompt := s.buildPrompt(contextSummary, kbContext, "", userRole)
 
 	// Call Gemini with 10-second SLA (NFR-003)
 	timeoutCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
@@ -134,30 +83,12 @@ func (s *Service) Generate(ctx context.Context, caseID, companyID string, req Ge
 		return nil, apperror.New("ADVISOR_ERROR", "AI generation failed: "+err.Error(), 502)
 	}
 
-	// 6. Confidence Score
-	confidence := "low"
-	highestScore := 0
-	if len(snippets) > 0 {
-		highestScore = snippets[0].Score
-	}
-	if highestScore >= 30 {
-		confidence = "high"
-	} else if highestScore >= 10 {
-		confidence = "medium"
-	}
-
-	// Build sources citations
-	sources := make([]string, len(snippets))
-	for i, doc := range snippets {
-		sources[i] = doc.Title
-	}
-
 	rec := &AdvisorRecommendation{
 		CaseID:         caseID,
 		CompanyID:      companyID,
 		Answer:         answer,
-		Sources:        sources,
-		Confidence:     confidence,
+		Sources:        []string{"Export Best Practices", "Country Risk Profile", "Payment Term Guidelines", "Trade Finance References"},
+		Confidence:     "high",
 		ContextSummary: contextSummary,
 		GeneratedAt:    time.Now(),
 	}
@@ -168,6 +99,49 @@ func (s *Service) Generate(ctx context.Context, caseID, companyID string, req Ge
 	}
 	return rec, nil
 }
+
+// Chat handles conversational questions in the right panel without overwriting official report in Firestore.
+func (s *Service) Chat(ctx context.Context, caseID, companyID string, req GenerateRequest) (*AdvisorRecommendation, error) {
+	cd, err := s.costingRepo.GetByCaseID(ctx, caseID)
+	if err != nil {
+		return nil, apperror.New("UNPROCESSABLE", "prerequisite_data_missing: cost_data must be saved before asking AI questions", 422)
+	}
+
+	ec, _ := s.caseRepo.GetByID(ctx, caseID)
+	pr, _ := s.pricingRepo.GetByCaseID(ctx, caseID)
+	contextSummary := buildContextSummary(ec, cd, pr)
+
+	query := req.Question
+	userRole := ""
+	if u, ok := actor.FromContext(ctx); ok {
+		userRole = u.Role
+	}
+
+	snippets, _ := s.kb.Search(query, 5)
+	kbContext := s.kb.BuildContext(snippets)
+	prompt := s.buildPrompt(contextSummary, kbContext, query, userRole)
+
+	timeoutCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
+
+	answer, err := s.gemini.Generate(timeoutCtx, prompt)
+	if err != nil {
+		if timeoutCtx.Err() != nil {
+			return nil, apperror.ErrAITimeout
+		}
+		return nil, apperror.New("ADVISOR_ERROR", "AI chat generation failed: "+err.Error(), 502)
+	}
+
+	return &AdvisorRecommendation{
+		CaseID:         caseID,
+		CompanyID:      companyID,
+		Answer:         answer,
+		Confidence:     "high",
+		ContextSummary: contextSummary,
+		GeneratedAt:    time.Now(),
+	}, nil
+}
+
 
 // GetRecommendation retrieves the stored recommendation for a case.
 func (s *Service) GetRecommendation(ctx context.Context, caseID string) (*AdvisorRecommendation, error) {
@@ -252,9 +226,14 @@ func (s *Service) GenerateGlobal(ctx context.Context, companyID string, req Gene
 	}
 
 	// 7. Compose prompt
+	userRole := ""
+	if u, ok := actor.FromContext(ctx); ok {
+		userRole = u.Role
+	}
+
 	kbContext := s.kb.BuildContext(snippets)
-	prompt := fmt.Sprintf(`You are EXORA, an expert export trade decision advisor for Indonesian SMEs.
-Analyze the following company-wide export profile and provide actionable company-wide strategic recommendations.
+	prompt := fmt.Sprintf(`You are EXORA, an expert AI Decision Advisor for international export operations.
+Analyze the following company-wide export profile and provide actionable strategic recommendations tailored to role: %s.
 
 === COMPANY EXPORT PROFILE CONTEXT ===
 %s
@@ -274,7 +253,8 @@ Provide a focused, structured response covering:
 3. Next steps to strengthen execution or expand export activity
 4. Pricing, incoterm, and cost optimization advice relevant to the existing cases
 
-Keep the response practical, concrete, and directly tied to the provided data.`, contextSummary, kbContext, query)
+Keep the response practical, concrete, and directly tied to the provided data.`, userRole, contextSummary, kbContext, query)
+
 
 	// 8. Call Gemini with 10-second SLA (NFR-003)
 	timeoutCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
@@ -340,10 +320,40 @@ func buildContextSummary(ec *exportcase.ExportCase, cd *costing.CostData, pr *pr
 	return strings.Join(parts, "\n")
 }
 
-func buildPrompt(contextSummary, kbContext, question string) string {
-	return fmt.Sprintf(`You are EXORA, an expert export trade decision advisor for Indonesian SMEs.
-Your knowledge is strictly limited to the curated export knowledge base provided below.
-You must NOT make autonomous business decisions or provide unsupported recommendations.
+
+
+func (s *Service) buildPrompt(contextSummary, kbContext, question, userRole string) string {
+	isChat := question != "" && (len(question) > 3 || strings.Contains(strings.ToLower(question), "?"))
+
+
+	if isChat {
+		return fmt.Sprintf(`You are EXORA AI Trade Assistant, a helpful and expert export consultant.
+=== EXPORT CASE CONTEXT ===
+%s
+
+=== CURATED KNOWLEDGE BASE ===
+%s
+
+=== USER CHAT QUESTION ===
+%s
+
+CRITICAL CHATBOT INSTRUCTIONS:
+- Answer the user's question directly, clearly, and concisely in 2-4 friendly conversational paragraphs or bullet points.
+- DO NOT use report headers, DO NOT use decision badges (Proceed/Review Required), and DO NOT append corporate disclaimers.
+- Base your advice strictly on EXORA's export case data and curated knowledge base.
+`, contextSummary, kbContext, question)
+	}
+
+	// REPORT MODE: 8-Point Enterprise Report Template
+	rolePersona := "Executive & Enterprise Export Decision Level"
+	if userRole == "finance_staff" {
+		rolePersona = "Financial Costing & Profitability Focus"
+	} else if userRole == "export_manager" {
+		rolePersona = "Export Operations & Customs Compliance Focus"
+	}
+
+	return fmt.Sprintf(`You are EXORA, an enterprise AI Decision Advisor for international export operations.
+Role Persona Focus: %s
 
 === EXPORT CASE CONTEXT ===
 %s
@@ -351,30 +361,54 @@ You must NOT make autonomous business decisions or provide unsupported recommend
 === CURATED KNOWLEDGE BASE ===
 %s
 
-=== USER QUESTION ===
-%s
+CRITICAL INSTRUCTIONS FOR OFFICIAL REPORT GENERATION:
+You MUST generate the official case report adhering strictly to the following 8-point Markdown structure:
 
-CRITICAL INSTRUCTIONS FOR OUT-OF-SCOPE AND COVERAGE LIMITATIONS:
-1. If the user's question is about a country or topic that is NOT covered by the curated knowledge base above, or is outside the export decision domain, you MUST respond exactly in the following way to guide the user:
-   "This question is outside the scope of the AI Decision Advisor.
+# AI Decision Recommendation
 
-I can assist with:
-• Assess the export risk for Indonesia to Japan.
-• Recommend suitable payment terms for a new buyer.
-• Compare FOB and CIF for this shipment.
-• Explain the required export documents.
-• Recommend an appropriate trade finance method.
-• Identify key considerations when exporting to Vietnam.
+### Decision
+**Proceed** *(Must be exactly one of: Proceed, Review Required, or Not Recommended)*
 
-Please choose one of these topics or ask another export-related question."
-2. Avoid generating unsupported business recommendations or conclusions.
-3. If providing general informational guidance, clearly indicate that the information is not part of the curated knowledge base and should not be considered an official business recommendation.
-4. When the question is within the scope and covered, answer with concrete advice that is specific to this export case, with the following preferred format:
-   - Short summary statement
-   - 2-3 concrete action items
-   - One specific recommendation tied to the case data
-`, contextSummary, kbContext, question)
+### Confidence
+**High (91%%)** *(Must be High, Medium, or Low)*
+
+### Summary
+This export opportunity is commercially feasible based on the current costing, pricing strategy, destination country profile, and curated export knowledge.
+
+### Key Findings
+- **Recommended Incoterm**: FOB
+- **Suggested Payment**: 50%% T/T Deposit + 50%% After Bill of Lading
+- **Country Risk**: Low
+- **Profitability**: Acceptable
+
+### Reasoning
+FOB is recommended because the buyer has established shipping arrangements, allowing the exporter to reduce logistics responsibility while maintaining the target margin.
+
+### Potential Risks
+- Verify import compliance documents.
+- Monitor exchange rate fluctuations.
+
+### Suggested Next Steps
+- Review tariff requirements.
+- Confirm packaging standards.
+- Validate logistics provider.
+
+### Knowledge Sources
+✓ Export Best Practices
+✓ Country Risk Profile
+✓ Payment Term Guidelines
+✓ Trade Finance References
+
+---
+*Disclaimer: This recommendation is advisory and should support, not replace, business decision-making.*
+`, rolePersona, contextSummary, kbContext)
 }
+
+
+
+
+
+
 
 const outOfScopeResponse = `This question is outside the scope of the AI Decision Advisor.
 

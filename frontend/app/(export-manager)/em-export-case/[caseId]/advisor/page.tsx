@@ -136,8 +136,16 @@ export default function AIAdvisorPage() {
     advisorLoadError?.toLowerCase().includes("email verification") ||
     (advisorError as any)?.code === "EMAIL_NOT_VERIFIED";
 
+  const placeholderText =
+    role === "finance_staff"
+      ? "Ask a financial question e.g. What happens if freight cost increases by 15%? What is the BEP impact?"
+      : role === "company_owner"
+      ? "Ask an executive question e.g. Should we approve this export case? What are the key strategic risks & margins?"
+      : "Ask an operational question e.g. Is exporting this product to destination country feasible? What Incoterm is best?";
+
   return (
     <>
+
       <PdfPreviewModal
         open={previewModal.open}
         onClose={() => setPreviewModal((s) => ({ ...s, open: false }))}
@@ -245,18 +253,21 @@ export default function AIAdvisorPage() {
       )}
 
       {/* Ask the Advisor Form */}
+
+
       <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl overflow-hidden hover:-translate-y-1 transition-transform">
         <div className="bg-white/50 backdrop-blur-sm border-b border-white/60 px-6 py-5">
-          <h3 className="text-xl font-extrabold text-[#1F2937]">Consult Export Advisor</h3>
+          <h3 className="text-xl font-extrabold text-[#1F2937]">Consult AI Decision Advisor</h3>
         </div>
         <div className="p-6 space-y-4">
           <textarea
             className="flex min-h-[100px] w-full rounded-2xl border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-3 text-sm font-medium text-[#1F2937] transition-all focus:outline-none focus:ring-2 focus:ring-[#00A651] disabled:cursor-not-allowed disabled:opacity-50"
-            placeholder="Optional: Ask a specific question about your export case..."
+            placeholder={placeholderText}
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             disabled={generateMutation.isPending}
           />
+
           <div className="flex justify-end">
             <Button onClick={handleGenerate} disabled={generateMutation.isPending} className="h-12 rounded-full px-8 bg-[#00A651] hover:bg-[#008F44] text-white font-bold text-[13px] shadow-md hover:shadow-lg transition-all">
               {generateMutation.isPending ? "Consulting..." : recommendation ? "Regenerate Analysis" : "Run Advisor Check"}
