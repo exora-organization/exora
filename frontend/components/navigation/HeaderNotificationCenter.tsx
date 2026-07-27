@@ -30,8 +30,8 @@ export function HeaderNotificationCenter() {
   const { data: casesData } = useQuery({
     queryKey: ["export-cases-notification"],
     queryFn: () => apiExportCase.list(),
-    staleTime: 10000,
-    refetchInterval: 5000,
+    staleTime: 30000,
+    refetchInterval: 30000,
   });
 
   // Fetch pending change requests for Admin
@@ -39,8 +39,8 @@ export function HeaderNotificationCenter() {
     queryKey: ["admin-change-requests-notification"],
     queryFn: () => apiAdmin.getCompanyChangeRequests(),
     enabled: role === "admin",
-    staleTime: 10000,
-    refetchInterval: 5000,
+    staleTime: 30000,
+    refetchInterval: 30000,
   });
 
   // Fetch pending change request for Company Owner
@@ -48,8 +48,8 @@ export function HeaderNotificationCenter() {
     queryKey: ["owner-change-request-notification", companyId],
     queryFn: () => apiCompany.getPendingChangeRequest(companyId as string),
     enabled: role === "company_owner" && !!companyId,
-    staleTime: 10000,
-    refetchInterval: 5000,
+    staleTime: 30000,
+    refetchInterval: 30000,
   });
 
   // Fetch guest application status
@@ -57,8 +57,8 @@ export function HeaderNotificationCenter() {
     queryKey: ["guest-application-status-notification"],
     queryFn: () => apiCompany.getApplicationStatus(),
     enabled: role === "guest",
-    staleTime: 10000,
-    refetchInterval: 5000,
+    staleTime: 30000,
+    refetchInterval: 30000,
   });
 
   const realCases = casesData?.data?.items || [];
