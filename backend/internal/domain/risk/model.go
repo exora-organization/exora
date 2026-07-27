@@ -2,29 +2,29 @@ package risk
 
 import "time"
 
-// Country risk levels per SRS §5.3.
+// Country risk levels.
 const (
 	CountryRiskLow    = "Low"
 	CountryRiskMedium = "Medium"
 	CountryRiskHigh   = "High"
 )
 
-// Payment term risk scores per SRS §5.3.
+// Payment term risk scores.
 const (
 	PaymentScoreLC            = 100.0
-	PaymentScoreTT            = 80.0
-	PaymentScoreDocCollection = 60.0
-	PaymentScoreOpenAccount   = 30.0
+	PaymentScoreTT            = 75.0
+	PaymentScoreDocCollection = 50.0
+	PaymentScoreOpenAccount   = 25.0
 )
 
-// Country risk scores per SRS §5.3.
+// Country risk scores.
 const (
 	CountryScoreLow    = 100.0
-	CountryScoreMedium = 70.0
+	CountryScoreMedium = 60.0
 	CountryScoreHigh   = 30.0
 )
 
-// Feasibility classifications per SRS §5.4.
+// Feasibility classifications.
 const (
 	FeasibilityHigh     = "High Feasibility"
 	FeasibilityModerate = "Moderate Feasibility"

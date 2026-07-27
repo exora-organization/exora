@@ -188,7 +188,7 @@ export default function ExportFeasibilityReportPage() {
         {/* Notice */}
         <div className="flex items-start gap-4 p-5 bg-blue-50/80 backdrop-blur-md border border-blue-200 rounded-3xl text-sm text-blue-900 font-semibold shadow-sm">
           <Icon icon="solar:shield-check-bold-duotone" className="w-6 h-6 text-blue-500 shrink-0 mt-0.5" />
-          <span className="leading-relaxed">Reports are generated per-case. Company-wide combined reports are out of scope (Section 3.2). Download happens immediately — no history is stored.</span>
+          <span className="leading-relaxed">Reports are generated per-case. Download happens immediately — no history is stored.</span>
         </div>
 
         {/* Case Selector */}
