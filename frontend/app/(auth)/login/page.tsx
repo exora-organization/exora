@@ -11,7 +11,7 @@ import Script from "next/script";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, UserPlus, Globe } from "lucide-react";
 import logoImg from "../../../public/logo.png";
 
-import { signIn } from "../../../lib/firebase/auth";
+import { signIn, getFirebaseAuthErrorMessage } from "../../../lib/firebase/auth";
 import { apiAuth } from "../../../lib/api/auth";
 import { apiUsers } from "../../../lib/api/users";
 import { useQueryClient } from "@tanstack/react-query";
@@ -134,7 +134,7 @@ function LoginForm() {
         router.push(finalPath);
       }
     } catch (err: any) {
-      setError(err.message || "Failed to login. Please check your credentials.");
+      setError(getFirebaseAuthErrorMessage(err));
     } finally {
       setIsLoading(false);
     }

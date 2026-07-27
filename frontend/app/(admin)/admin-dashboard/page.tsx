@@ -170,7 +170,12 @@ export default function AdminDashboardPage() {
                 <div key={app.companyId || idx} className="p-4 bg-[#FAF8F3] rounded-2xl border border-[#E8E3D9] flex items-center justify-between gap-4">
                   <div>
                     <h5 className="text-sm font-extrabold text-[#1F2937]">{app.companyName}</h5>
-                    <p className="text-xs text-[#6B7280]">Applicant: {app.applicant?.email || app.companyName}</p>
+                    <p className="text-xs text-[#6B7280]">
+                      Applicant:{" "}
+                      {app.applicant?.displayName === "Deleted User" || (!app.applicant?.displayName && !app.applicant?.email)
+                        ? "Deleted User"
+                        : app.applicant?.displayName || app.applicant?.email || app.companyName}
+                    </p>
                   </div>
                   <Link href={`/admin-company-applications`}>
                     <button className="px-3.5 py-1.5 bg-[#00A651] hover:bg-[#008F44] text-white text-xs font-bold rounded-xl cursor-pointer">

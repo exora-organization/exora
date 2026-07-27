@@ -7,7 +7,7 @@ import * as z from "zod";
 import Image from "next/image";
 import Link from "next/link";
 import { Mail, ArrowRight } from "lucide-react";
-import { resetPassword } from "../../../lib/firebase/auth";
+import { resetPassword, getFirebaseAuthErrorMessage } from "../../../lib/firebase/auth";
 import logoImg from "../../../public/logo.png";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
@@ -41,7 +41,7 @@ export default function ResetPasswordPage() {
       await resetPassword(data.email);
       setSuccess(true);
     } catch (err: any) {
-      setError(err.message || "Failed to send reset email.");
+      setError(getFirebaseAuthErrorMessage(err));
     } finally {
       setIsLoading(false);
     }
