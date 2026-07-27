@@ -9,6 +9,7 @@ import { useUserProfile } from "../../../hooks/useUserProfile";
 import { ConfirmWarningDialog } from "../../../components/ui/confirm-warning-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "../../../components/ui/dialog";
 import { Icon } from "@iconify/react";
+import { toast } from "sonner";
 
 const ROLE_OPTIONS = [
   { value: "company_owner", label: "Company Owner", desc: "Executive overview, full team management & company settings", icon: "solar:buildings-bold-duotone", badgeClass: "bg-[#EBF8F2] text-[#00A651] border-[#00A651]/30" },
@@ -49,7 +50,7 @@ export default function UserManagementPage() {
     selectedRole: "export_manager",
   });
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch, isRefetching } = useQuery({
     queryKey: ["admin-users"],
     queryFn: () => apiUsers.listUsers(),
     enabled: !!firebaseUser && !authLoading,
@@ -144,11 +145,33 @@ export default function UserManagementPage() {
     });
   };
 
+  const handleRefresh = async () => {
+    try {
+      const res = await refetch();
+      if (res.isSuccess) {
+        toast.success("User list refreshed successfully!");
+      }
+    } catch {
+      toast.error("Failed to refresh user list.");
+    }
+  };
+
   return (
     <div className="space-y-10 max-w-7xl mx-auto pb-10 text-[#1F2937]">
-      <div>
-        <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">User Management</h2>
-        <p className="text-[#4B5563] mt-2 font-medium">Manage platform users, roles, and access permissions.</p>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <div>
+          <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">User Management</h2>
+          <p className="text-[#4B5563] mt-2 font-medium">Manage platform users, roles, and access permissions.</p>
+        </div>
+        <Button
+          onClick={handleRefresh}
+          disabled={isRefetching}
+          variant="outline"
+          className="border-[#00A651] text-[#00A651] hover:bg-[#EBF8F2] active:scale-95 rounded-xl font-bold h-10 px-6 self-start sm:self-auto flex items-center gap-2 transition-all shadow-sm"
+        >
+          <Icon icon="solar:restart-bold-duotone" className={`w-4 h-4 transition-transform ${isRefetching ? "animate-spin text-[#00A651]" : ""}`} />
+          {isRefetching ? "Refreshing..." : "Refresh"}
+        </Button>
       </div>
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
@@ -179,7 +202,7 @@ export default function UserManagementPage() {
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className={`space-y-4 transition-all duration-300 ${isRefetching ? "opacity-60 pointer-events-none scale-[0.99]" : "opacity-100 scale-100"}`}>
         {sortedUsers.length === 0 ? (
           <div className="flex justify-center py-12 text-[#9CA3AF] font-bold">
             No users found.
