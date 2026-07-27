@@ -11,6 +11,7 @@ import { apiFinancial } from "../../../../lib/api/financial";
 import { apiPricing } from "../../../../lib/api/pricing";
 import { apiRisk } from "../../../../lib/api/risk";
 import { apiAdvisor } from "../../../../lib/api/advisor";
+import { apiScenario } from "../../../../lib/api/scenario";
 import { apiDocuments } from "../../../../lib/api/documents";
 import { CaseSubNav } from "../../../../components/export-case/CaseSubNav";
 import { CaseProgressStepper } from "../../../../components/export-case/CaseProgressStepper";
@@ -19,6 +20,7 @@ import { StageNotReadyState } from "../../../../components/export-case/StageNotR
 import { CostingForm } from "../../../../components/export-case/CostingForm";
 import { FinancialAnalysis } from "../../../../components/export-case/FinancialAnalysis";
 import { AIAdvisorWorkspace } from "../../../../components/export-case/AIAdvisorWorkspace";
+import { ScenarioComparisonMatrix } from "../../../../components/export-case/ScenarioComparisonMatrix";
 
 import { notificationStore } from "../../../../lib/services/notificationStore";
 import { Button } from "../../../../components/ui/button";
@@ -72,6 +74,12 @@ export default function FinanceExportCaseDetailPage() {
   const { data: advisorData } = useQuery({
     queryKey: ["advisor", caseId],
     queryFn: () => apiAdvisor.getRecommendation(caseId),
+    retry: false,
+  });
+
+  const { data: scenariosData } = useQuery({
+    queryKey: ["scenarios", caseId],
+    queryFn: () => apiScenario.list(caseId),
     retry: false,
   });
 
@@ -135,6 +143,18 @@ export default function FinanceExportCaseDetailPage() {
           <h2 className="text-3xl font-extrabold text-[#1F2937]">{exportCase.name}</h2>
           <p className="text-xs text-[#6B7280] mt-1 font-medium">Finance Staff Workspace · EXORA Tenant Pro</p>
         </div>
+        <span className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold tracking-wider uppercase border ${
+          exportCase.status === "finalized" ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
+          exportCase.status === "in_review" ? "bg-amber-50 text-amber-800 border-amber-200" :
+          "bg-gray-50 text-gray-700 border-gray-200"
+        }`}>
+          <span className={`w-2 h-2 rounded-full ${
+            exportCase.status === "finalized" ? "bg-emerald-500" :
+            exportCase.status === "in_review" ? "bg-amber-500" :
+            "bg-gray-500"
+          }`}></span>
+          {exportCase.status.replace("_", " ")}
+        </span>
       </div>
 
       {/* Case Sub Navigation Tabs */}
@@ -227,7 +247,7 @@ export default function FinanceExportCaseDetailPage() {
 
       {/* TAB CONTENT: Scenario */}
       {currentTab === "scenario" && (
-        <div className="space-y-4">
+        <div className="space-y-6">
           <ViewOnlyBanner ownerRoleName="Export Manager" dataTopic="Transaction Scenario Simulation" />
           <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-3">
             <h4 className="text-base font-extrabold text-[#1F2937]">Transaction Scenarios (Managed by Export Manager)</h4>
@@ -235,6 +255,7 @@ export default function FinanceExportCaseDetailPage() {
               Export Manager simulates alternative market conditions, Incoterm variations, and margin overrides for this case.
             </p>
           </div>
+          <ScenarioComparisonMatrix scenarios={scenariosData?.data?.scenarios || []} />
         </div>
       )}
 

@@ -55,9 +55,23 @@ export default function CaseDetailLayout({ children }: { children: React.ReactNo
 
       {/* Case Header */}
       {exportCase && (
-        <div>
-          <h2 className="text-3xl font-extrabold text-[#1F2937]">{exportCase.name}</h2>
-          <p className="text-xs text-[#6B7280] mt-1 font-medium">Export Manager Workspace · EXORA Tenant Pro</p>
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <h2 className="text-3xl font-extrabold text-[#1F2937]">{exportCase.name}</h2>
+            <p className="text-xs text-[#6B7280] mt-1 font-medium">Export Manager Workspace · EXORA Tenant Pro</p>
+          </div>
+          <span className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold tracking-wider uppercase border ${
+            exportCase.status === "finalized" ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
+            exportCase.status === "in_review" ? "bg-amber-50 text-amber-800 border-amber-200" :
+            "bg-gray-50 text-gray-700 border-gray-200"
+          }`}>
+            <span className={`w-2 h-2 rounded-full ${
+              exportCase.status === "finalized" ? "bg-emerald-500" :
+              exportCase.status === "in_review" ? "bg-amber-500" :
+              "bg-gray-500"
+            }`}></span>
+            {exportCase.status.replace("_", " ")}
+          </span>
         </div>
       )}
 

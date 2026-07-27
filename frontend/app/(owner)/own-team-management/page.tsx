@@ -215,7 +215,7 @@ export default function TeamManagementPage() {
             Active Team Members
           </h3>
           <div className="text-[11px] font-black uppercase tracking-widest px-4 py-2 bg-[#EBF8F2] text-[#00A651] rounded-xl border border-[#00A651]/20 shrink-0">
-            {filteredMembers.length} of {teamMembers.length} Members
+            {filteredMembers.length} of {teamMembers.filter((m) => m.status !== "deleted").length} Members
           </div>
         </div>
         {/* Member Search & Filter */}

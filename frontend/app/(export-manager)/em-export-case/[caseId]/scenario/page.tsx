@@ -11,6 +11,7 @@ import { Badge } from "../../../../../components/ui/badge";
 import { Alert, AlertTitle, AlertDescription } from "../../../../../components/ui/alert";
 import { CreateScenarioRequest } from "../../../../../lib/types/scenario";
 import { toast } from "sonner";
+import { ScenarioComparisonMatrix } from "../../../../../components/export-case/ScenarioComparisonMatrix";
 
 export default function ScenarioAnalysisPage() {
   const params = useParams();
@@ -136,7 +137,7 @@ export default function ScenarioAnalysisPage() {
   const comparisonScenarios = scenarios.filter((s) => selectedIds.includes(s.scenarioId));
 
   return (
-    <div className="space-y-6 pt-2 pb-8">
+    <div className="space-y-8 pt-2 pb-8">
 
       {errorMsg && (
         <Alert variant="destructive">
@@ -145,8 +146,9 @@ export default function ScenarioAnalysisPage() {
         </Alert>
       )}
 
-      <div className="grid gap-6 md:grid-cols-3">
-        {/* Left Column: Create Form */}
+      {/* Top 2-Column Section */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+        {/* Left Column: Create Simulation Form */}
         <div>
           <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl overflow-hidden hover:-translate-y-1 transition-transform">
             <div className="bg-white/50 backdrop-blur-sm border-b border-white/60 px-6 py-5">
@@ -216,7 +218,7 @@ export default function ScenarioAnalysisPage() {
           </div>
         </div>
 
-        {/* Right Column: Scenario List and Comparison Matrix */}
+        {/* Right Column: Scenario List */}
         <div className="md:col-span-2 space-y-6">
           <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl overflow-hidden hover:-translate-y-1 transition-transform">
             <div className="bg-white/50 backdrop-blur-sm border-b border-white/60 px-6 py-5">
@@ -331,74 +333,11 @@ export default function ScenarioAnalysisPage() {
               )}
             </div>
           </div>
-
-          {/* Comparison Matrix Table */}
-          {comparisonScenarios.length > 0 && (
-            <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl overflow-hidden hover:-translate-y-1 transition-transform">
-              <div className="bg-amber-50/50 backdrop-blur-sm border-b border-amber-100 px-6 py-5">
-                <h3 className="text-xl font-extrabold text-amber-900">Comparison Matrix</h3>
-                <p className="text-sm font-medium text-amber-700/80 mt-1">Side-by-side comparison of selected scenarios.</p>
-              </div>
-              <div className="overflow-x-auto p-2">
-                <table className="w-full text-left text-sm border-collapse">
-                  <thead>
-                    <tr className="border-b-2 border-gray-100 text-[10px] font-bold uppercase tracking-widest text-[#9CA3AF]">
-                      <th className="px-6 py-4">Metric</th>
-                      {comparisonScenarios.map((sc) => (
-                        <th key={sc.scenarioId} className="px-6 py-4 min-w-[150px] font-extrabold text-[#1F2937] text-sm">
-                          {sc.name}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    <tr className="hover:bg-[#F9FAFB] transition-colors">
-                      <td className="px-6 py-4 font-bold text-[#4B5563]">Incoterm</td>
-                      {comparisonScenarios.map((sc) => (
-                        <td key={sc.scenarioId} className="px-6 py-4 whitespace-nowrap">
-                          <Badge className="bg-slate-100 text-slate-700 hover:bg-slate-200 border-none rounded-full px-3 uppercase font-bold">{sc.incoterm}</Badge>
-                        </td>
-                      ))}
-                    </tr>
-                    <tr className="hover:bg-[#F9FAFB] transition-colors">
-                      <td className="px-6 py-4 font-bold text-[#4B5563]">Total Cost (IDR)</td>
-                      {comparisonScenarios.map((sc) => (
-                        <td key={sc.scenarioId} className="px-6 py-4 whitespace-nowrap font-black text-[#1F2937]">
-                          {sc.totalCostIDR.toLocaleString()} IDR
-                        </td>
-                      ))}
-                    </tr>
-                    <tr className="hover:bg-[#F9FAFB] transition-colors">
-                      <td className="px-6 py-4 font-bold text-[#4B5563]">Selling Price (IDR)</td>
-                      {comparisonScenarios.map((sc) => (
-                        <td key={sc.scenarioId} className="px-6 py-4 whitespace-nowrap font-black text-blue-700">
-                          {sc.sellingPriceIDR.toLocaleString()} IDR
-                        </td>
-                      ))}
-                    </tr>
-                    <tr className="hover:bg-emerald-50/50 transition-colors">
-                      <td className="px-6 py-4 font-bold text-[#4B5563]">Selling Price (USD)</td>
-                      {comparisonScenarios.map((sc) => (
-                        <td key={sc.scenarioId} className="px-6 py-4 whitespace-nowrap text-emerald-700 font-black text-lg">
-                          ${sc.sellingPriceUSD.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                        </td>
-                      ))}
-                    </tr>
-                    <tr className="hover:bg-[#F9FAFB] transition-colors">
-                      <td className="px-6 py-4 font-bold text-[#4B5563]">Margin (%)</td>
-                      {comparisonScenarios.map((sc) => (
-                        <td key={sc.scenarioId} className="px-6 py-4 whitespace-nowrap font-black text-[#1F2937]">
-                          {sc.actualMarginPct}%
-                        </td>
-                      ))}
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
         </div>
       </div>
+
+      {/* Standalone Full-Width Comparison Matrix at the Bottom */}
+      <ScenarioComparisonMatrix scenarios={comparisonScenarios} />
     </div>
   );
 }
