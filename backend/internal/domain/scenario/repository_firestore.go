@@ -2,6 +2,7 @@ package scenario
 
 import (
 	"context"
+	"sort"
 	"time"
 
 	"cloud.google.com/go/firestore"
@@ -34,7 +35,6 @@ func (r *FirestoreRepository) Create(ctx context.Context, s *Scenario) error {
 func (r *FirestoreRepository) ListByCaseID(ctx context.Context, caseID string) ([]*Scenario, error) {
 	iter := r.client.Collection(collection).
 		Where("caseId", "==", caseID).
-		OrderBy("createdAt", firestore.Desc).
 		Documents(ctx)
 
 	var results []*Scenario
@@ -53,6 +53,11 @@ func (r *FirestoreRepository) ListByCaseID(ctx context.Context, caseID string) (
 		s.ID = doc.Ref.ID
 		results = append(results, &s)
 	}
+
+	sort.Slice(results, func(i, j int) bool {
+		return results[i].CreatedAt.After(results[j].CreatedAt)
+	})
+
 	return results, nil
 }
 
@@ -78,4 +83,18 @@ func (r *FirestoreRepository) GetByIDs(ctx context.Context, caseID string, ids [
 		results = append(results, &s)
 	}
 	return results, nil
+}
+
+func (r *FirestoreRepository) Update(ctx context.Context, scenarioID string, updates map[string]any) error {
+	var firestoreUpdates []firestore.Update
+	for k, v := range updates {
+		firestoreUpdates = append(firestoreUpdates, firestore.Update{Path: k, Value: v})
+	}
+	_, err := r.client.Collection(collection).Doc(scenarioID).Update(ctx, firestoreUpdates)
+	return err
+}
+
+func (r *FirestoreRepository) Delete(ctx context.Context, scenarioID string) error {
+	_, err := r.client.Collection(collection).Doc(scenarioID).Delete(ctx)
+	return err
 }

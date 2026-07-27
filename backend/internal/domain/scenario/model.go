@@ -41,3 +41,10 @@ type ScenarioListItem struct {
 	ActualMarginPct float64  `json:"actualMarginPct"`
 	CreatedAt       string   `json:"createdAt"`
 }
+// UpdateScenarioRequest is the request body for PATCH /scenarios/{scenarioId}.
+type UpdateScenarioRequest struct {
+	Name                 string   `json:"name" validate:"required,min=2,max=200"`
+	Incoterm             string   `json:"incoterm" validate:"required,oneof=EXW FOB CFR CIF"`
+	TargetMarginOverride *float64 `json:"targetMarginOverride,omitempty" validate:"omitempty,gt=0,lte=100"`
+	Notes                string   `json:"notes,omitempty" validate:"omitempty,max=500"`
+}
