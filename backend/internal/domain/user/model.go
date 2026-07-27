@@ -11,6 +11,7 @@ const (
 
 	StatusActive   = "active"
 	StatusDisabled = "disabled"
+	StatusDeleted  = "deleted"
 )
 
 type User struct {
@@ -32,7 +33,7 @@ type RegisterRequest struct {
 
 type UpdateUserRequest struct {
 	DisplayName *string `json:"displayName,omitempty" validate:"omitempty,min=1,max=100"`
-	Status      *string `json:"status,omitempty" validate:"omitempty,oneof=active disabled"`
+	Status      *string `json:"status,omitempty" validate:"omitempty,oneof=active disabled deleted"`
 }
 
 type ChangeRoleRequest struct {

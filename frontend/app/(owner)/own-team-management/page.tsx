@@ -165,7 +165,7 @@ export default function TeamManagementPage() {
   const invitations = invitesData?.data?.items || [];
 
   const filteredMembers = useMemo(() => {
-    let arr = [...teamMembers];
+    let arr = teamMembers.filter((m) => m.status !== "deleted");
     if (memberSearch.trim()) {
       const q = memberSearch.toLowerCase();
       arr = arr.filter(

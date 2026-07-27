@@ -42,7 +42,7 @@ func (m *AuthMiddleware) RequireProfile(next http.Handler) http.Handler {
 				return
 			}
 		}
-		if profile.Status == user.StatusDisabled {
+		if profile.Status == user.StatusDisabled || profile.Status == user.StatusDeleted {
 			apperror.Write(w, apperror.ErrAccountDisabled)
 			return
 		}

@@ -14,9 +14,12 @@ import { RoleBadge } from "../../components/ui/RoleBadge";
 import logoImg from "../../public/logo.png";
 import { Icon } from "@iconify/react";
 
+import { apiCompany } from "../../lib/api/company";
+import { useQuery } from "@tanstack/react-query";
+
 const NAV_ITEMS = [
   { name: "Registration Status", href: "/guest-dashboard", icon: "solar:clock-circle-bold-duotone" },
-  { name: "Apply New Company", href: "/register-company", icon: "solar:add-circle-bold-duotone" },
+  { name: "Apply New Company", href: "/guest-company-application", icon: "solar:add-circle-bold-duotone" },
 ];
 
 export default function GuestLayout({ children }: { children: React.ReactNode }) {
@@ -24,6 +27,16 @@ export default function GuestLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+
+  const { data: statusData } = useQuery({
+    queryKey: ["application-status"],
+    queryFn: () => apiCompany.getApplicationStatus(),
+    retry: false,
+  });
+
+  const appStatus = statusData?.data?.status;
+  // Apply New Company is enabled ONLY if application was rejected by Admin or no application exists yet
+  const canApplyNew = !appStatus || (appStatus as string) === "none" || (appStatus as string) === "rejected";
 
   useEffect(() => {
     if (role && role !== "guest") {
@@ -103,6 +116,25 @@ export default function GuestLayout({ children }: { children: React.ReactNode })
             <nav className="flex-1 px-4 py-4 space-y-1">
               {NAV_ITEMS.map((item) => {
                 const isActive = pathname === item.href;
+                const isApplyNew = item.href === "/guest-company-application";
+                const isDisabled = isApplyNew && !canApplyNew;
+
+                if (isDisabled) {
+                  return (
+                    <div
+                      key={item.href}
+                      title="Apply New Company is only available after your previous application has been rejected by an Admin."
+                      className="flex items-center justify-between px-4 py-3.5 rounded-2xl opacity-40 cursor-not-allowed bg-gray-50 text-gray-400 font-extrabold text-xs select-none"
+                    >
+                      <div className="flex items-center gap-3.5">
+                        <Icon icon={item.icon} className="w-5 h-5" />
+                        <span className="tracking-wide">{item.name}</span>
+                      </div>
+                      <Icon icon="solar:lock-keyhole-bold-duotone" className="w-4 h-4 text-gray-400 shrink-0" />
+                    </div>
+                  );
+                }
+
                 return (
                   <Link
                     key={item.href}

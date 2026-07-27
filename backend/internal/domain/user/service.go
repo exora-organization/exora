@@ -96,10 +96,11 @@ func (s *Service) Delete(ctx context.Context, userID string) (map[string]any, er
 	if s.firebaseAuth != nil && u.FirebaseUID != "" {
 		_ = s.firebaseAuth.DeleteUser(ctx, u.FirebaseUID)
 	}
-	if err := s.repo.Delete(ctx, userID); err != nil {
+	u.Status = StatusDeleted
+	if err := s.repo.Update(ctx, u); err != nil {
 		return nil, err
 	}
-	return map[string]any{"userId": userID, "deleted": true}, nil
+	return map[string]any{"userId": userID, "deleted": true, "status": StatusDeleted}, nil
 }
 
 func (s *Service) ChangeRole(ctx context.Context, userID string, req ChangeRoleRequest) (*UserResponse, error) {
