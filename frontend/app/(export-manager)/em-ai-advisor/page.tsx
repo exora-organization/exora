@@ -16,6 +16,7 @@ import { GenerateAdvisorRequest, AdvisorRecommendation } from "../../../lib/type
 import { toast } from "sonner";
 import { apiClient } from "../../../lib/api/client";
 import { PdfPreviewModal } from "../../../components/ui/pdf-preview-modal";
+import { downloadDocument } from "../../../lib/utils/pdf-downloader";
 import { auth } from "../../../lib/firebase/client";
 
 interface ChatEntry {

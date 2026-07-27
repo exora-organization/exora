@@ -11,6 +11,76 @@ import { ExportCaseListItem } from "../../../lib/types/export-case";
 import { PdfPreviewModal } from "../../../components/ui/pdf-preview-modal";
 import { EmptyState } from "../../../components/ui/EmptyState";
 import { auth } from "../../../lib/firebase/client";
+import ReactMarkdown from "react-markdown";
+
+const markdownComponents = {
+  h1: ({ children }: any) => (
+    <h1 className="text-lg font-extrabold text-[#1F2937] border-b border-emerald-200/60 pb-2 mb-4 flex items-center gap-2 tracking-tight">
+      <Icon icon="solar:stars-minimalistic-bold-duotone" className="w-5 h-5 text-amber-500 shrink-0" />
+      {children}
+    </h1>
+  ),
+  h2: ({ children }: any) => (
+    <h2 className="text-base font-extrabold text-[#1F2937] border-b border-emerald-100 pb-2 mt-5 mb-2.5 flex items-center gap-2">
+      <Icon icon="solar:shield-check-bold-duotone" className="w-4 h-4 text-[#00A651] shrink-0" />
+      {children}
+    </h2>
+  ),
+  h3: ({ children }: any) => (
+    <h3 className="text-xs font-black uppercase tracking-wider text-[#00A651] mt-5 mb-2 flex items-center gap-2">
+      <span className="w-2 h-2 rounded-full bg-[#00A651]" />
+      {children}
+    </h3>
+  ),
+  p: ({ children }: any) => (
+    <p className="text-xs text-[#374151] leading-relaxed my-2 font-medium">
+      {children}
+    </p>
+  ),
+  ul: ({ children }: any) => (
+    <ul className="space-y-2 my-3 pl-1">
+      {children}
+    </ul>
+  ),
+  li: ({ children }: any) => (
+    <li className="text-xs text-[#374151] font-semibold flex items-start gap-2.5 bg-white/80 p-2.5 rounded-xl border border-emerald-100/60">
+      <Icon icon="solar:check-read-bold-duotone" className="w-4 h-4 text-[#00A651] shrink-0 mt-0.5" />
+      <span className="flex-1">{children}</span>
+    </li>
+  ),
+  strong: ({ children }: any) => {
+    const str = String(children);
+    if (str === "Proceed") {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-0.5 bg-emerald-100 border border-emerald-300 text-emerald-800 font-extrabold text-xs rounded-xl uppercase tracking-wider">
+          <Icon icon="solar:check-circle-bold" className="w-4 h-4 text-emerald-600" /> Proceed
+        </span>
+      );
+    }
+    if (str === "Review Required" || str === "Proceed with Caution") {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-0.5 bg-amber-100 border border-amber-300 text-amber-900 font-extrabold text-xs rounded-xl uppercase tracking-wider">
+          <Icon icon="solar:danger-triangle-bold" className="w-4 h-4 text-amber-600" /> {str}
+        </span>
+      );
+    }
+    if (str === "Not Recommended") {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-0.5 bg-rose-100 border border-rose-300 text-rose-900 font-extrabold text-xs rounded-xl uppercase tracking-wider">
+          <Icon icon="solar:close-circle-bold" className="w-4 h-4 text-rose-600" /> Not Recommended
+        </span>
+      );
+    }
+    return <strong className="font-extrabold text-[#1F2937]">{children}</strong>;
+  },
+  hr: () => <hr className="my-5 border-emerald-100" />,
+  em: ({ children }: any) => (
+    <em className="block p-3.5 bg-white/70 border border-emerald-200/60 rounded-2xl text-xs text-emerald-900 font-medium not-italic mt-5">
+      <Icon icon="solar:info-circle-bold-duotone" className="w-4 h-4 inline mr-2 text-[#00A651] align-text-bottom" />
+      {children}
+    </em>
+  ),
+};
 
 export default function ExportFeasibilityReportPage() {
   const [selectedCaseId, setSelectedCaseId] = useState<string>("");
@@ -199,9 +269,11 @@ export default function ExportFeasibilityReportPage() {
                     </span>
                   </div>
                 </div>
-                <p className="text-sm text-emerald-950 font-semibold leading-relaxed p-4 bg-white/60 rounded-xl border border-emerald-100/50">
-                  {recommendation.answer}
-                </p>
+                <div className="p-5 md:p-6 bg-white/80 rounded-2xl border border-emerald-100/80 shadow-xs">
+                  <ReactMarkdown components={markdownComponents}>
+                    {recommendation.answer}
+                  </ReactMarkdown>
+                </div>
               </div>
             ) : (
               <div className="flex items-start gap-4 p-5 bg-amber-50 border border-amber-200 rounded-2xl text-amber-800 text-sm font-semibold shadow-sm">
