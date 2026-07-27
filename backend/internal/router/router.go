@@ -172,7 +172,7 @@ func New(deps Dependencies, h Handlers) http.Handler {
 							r.With(middleware.RequireRoles("company_owner", "export_manager", "finance_staff")).Get("/pricing", h.Pricing.Get)
 
 							r.With(middleware.RequireRoles("finance_staff", "export_manager", "company_owner", "admin")).Get("/financial-analysis", h.Financial.GetAnalysis)
-							r.With(middleware.RequireRoles("finance_staff", "export_manager", "admin")).Post("/financial-analysis/recalculate", h.Financial.Recalculate)
+							r.With(middleware.RequireRoles("finance_staff", "admin")).Post("/financial-analysis/recalculate", h.Financial.Recalculate)
 
 							r.With(middleware.RequireRoles("export_manager")).Post("/scenarios", h.Scenario.Create)
 							r.With(middleware.RequireRoles("export_manager")).Patch("/scenarios/{scenarioId}", h.Scenario.Update)
