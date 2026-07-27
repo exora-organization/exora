@@ -42,16 +42,22 @@ func (s *Service) createInvitation(ctx context.Context, email, role string) (*In
 
 	email = strings.ToLower(strings.TrimSpace(email))
 
-	// BUG-018: Prevent inviting an email that is already an active team member
-	if existing, err := s.users.GetByEmail(ctx, email); err == nil {
+	// Prevent inviting a user who is already registered as an active member of any company
+	if existing, err := s.users.GetByEmail(ctx, email); err == nil && existing.Status != user.StatusDeleted {
 		if existing.CompanyID == u.CompanyID {
-			return nil, apperror.New("CONFLICT", "this email address already belongs to an active team member", 409)
+			return nil, apperror.New("CONFLICT", "This email is already registered as a team member in your company.", 409)
+		}
+		if existing.CompanyID != "" {
+			return nil, apperror.New("CONFLICT", "This user is already registered under another company. They must be removed from their current company first.", 409)
+		}
+		if existing.Role == user.RoleAdmin {
+			return nil, apperror.New("CONFLICT", "System Administrator accounts cannot be invited to a company team.", 409)
 		}
 	}
 
 	// BUG-019: Prevent duplicate pending invitations for the same email
 	if _, err := s.repo.GetPendingByEmailAndCompany(ctx, email, u.CompanyID); err == nil {
-		return nil, apperror.New("CONFLICT", "a pending invitation already exists for this email address", 409)
+		return nil, apperror.New("CONFLICT", "A pending invitation already exists for this email address.", 409)
 	}
 
 	token, err := generateToken()
@@ -160,6 +166,18 @@ func (s *Service) Accept(ctx context.Context, token string) (*AcceptResponse, er
 			CompanyID:        u.CompanyID,
 			InvitationStatus: StatusAccepted,
 		}, nil
+	}
+
+	// Prevent any user who already belongs to another company from accepting this invitation
+	if existing.CompanyID != "" && existing.CompanyID != inv.CompanyID {
+		if existing.Role == user.RoleCompanyOwner {
+			return nil, apperror.New("CONFLICT", "As a Company Owner, you cannot join another company before transferring your ownership.", 409)
+		}
+		return nil, apperror.New("CONFLICT", "You are already registered as a team member under another company. Please contact your company administrator before joining.", 409)
+	}
+
+	if existing.Role == user.RoleAdmin {
+		return nil, apperror.New("CONFLICT", "System Administrator accounts cannot join a company team.", 409)
 	}
 
 	existing.Role = inv.Role

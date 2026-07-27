@@ -56,10 +56,10 @@ export default function InvitePage() {
 
   // 3. Auto-Accept if already logged in and valid invitation
   useEffect(() => {
-    if (!authLoading && isAuthenticated && previewData?.data?.status === "pending" && !acceptMut.isPending) {
+    if (!authLoading && isAuthenticated && previewData?.data?.status === "pending" && !acceptMut.isPending && !acceptError) {
       acceptMut.mutate();
     }
-  }, [authLoading, isAuthenticated, previewData, acceptMut]);
+  }, [authLoading, isAuthenticated, previewData, acceptMut, acceptError]);
 
   const invite = previewData?.data;
 
@@ -71,7 +71,7 @@ export default function InvitePage() {
     return <InvitationStatus status="network_error" error={(previewError as any).message} />;
   }
 
-  if (previewLoading || authLoading || acceptMut.isPending || !invite) {
+  if (previewLoading || acceptMut.isPending || !invite) {
     return <LoadingScreen />;
   }
 

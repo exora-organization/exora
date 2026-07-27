@@ -4,6 +4,7 @@ import { InvitationPreview } from "../../lib/types/invitation";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "../ui/card";
 import { AcceptInvitationButton } from "./AcceptInvitationButton";
 import { Alert, AlertTitle, AlertDescription } from "../ui/alert";
+import { Icon } from "@iconify/react";
 
 interface InvitationCardProps {
   invite: InvitationPreview;
@@ -47,13 +48,18 @@ export function InvitationCard({ invite, token, isAuthenticated, acceptError }: 
           </div>
           
           {acceptError && (
-             <Alert variant="destructive">
-               <AlertTitle>Error</AlertTitle>
-               <AlertDescription>{acceptError}</AlertDescription>
-             </Alert>
+            <Alert variant="destructive" className="border-rose-300 bg-rose-50 text-rose-900 rounded-2xl p-4">
+              <AlertTitle className="font-extrabold text-sm flex items-center gap-2 text-rose-800">
+                <Icon icon="solar:danger-circle-bold-duotone" className="w-5 h-5 text-rose-600 shrink-0" />
+                Unable to Join Team
+              </AlertTitle>
+              <AlertDescription className="text-xs font-semibold text-rose-700 mt-1 leading-relaxed">
+                {acceptError}
+              </AlertDescription>
+            </Alert>
           )}
 
-          {isAuthenticated ? (
+          {isAuthenticated && !acceptError ? (
             <div className="pt-4 text-center">
               <p className="text-sm text-gray-500 animate-pulse">Accepting invitation...</p>
             </div>
