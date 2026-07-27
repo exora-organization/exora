@@ -51,7 +51,7 @@ export function InvitationCard({ invite, token, isAuthenticated, acceptError }: 
             <Alert variant="destructive" className="border-rose-300 bg-rose-50 text-rose-900 rounded-2xl p-4">
               <AlertTitle className="font-extrabold text-sm flex items-center gap-2 text-rose-800">
                 <Icon icon="solar:danger-circle-bold-duotone" className="w-5 h-5 text-rose-600 shrink-0" />
-                Tidak Dapat Bergabung
+                Unable to Join Team
               </AlertTitle>
               <AlertDescription className="text-xs font-semibold text-rose-700 mt-1 leading-relaxed">
                 {acceptError}
