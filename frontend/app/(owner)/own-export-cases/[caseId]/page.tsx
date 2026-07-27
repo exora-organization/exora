@@ -9,6 +9,7 @@ import { apiCosting } from "../../../../lib/api/costing";
 import { apiFinancial } from "../../../../lib/api/financial";
 import { apiRisk } from "../../../../lib/api/risk";
 import { apiAdvisor } from "../../../../lib/api/advisor";
+import { apiScenario } from "../../../../lib/api/scenario";
 import { CaseSubNav } from "../../../../components/export-case/CaseSubNav";
 import { CaseProgressStepper } from "../../../../components/export-case/CaseProgressStepper";
 import { ViewOnlyBanner } from "../../../../components/export-case/ViewOnlyBanner";
@@ -16,6 +17,7 @@ import { StageNotReadyState } from "../../../../components/export-case/StageNotR
 import { CostingReadOnlyView } from "../../../../components/export-case/CostingReadOnlyView";
 import { FinancialAnalysis } from "../../../../components/export-case/FinancialAnalysis";
 import { AIAdvisorWorkspace } from "../../../../components/export-case/AIAdvisorWorkspace";
+import { ScenarioComparisonMatrix } from "../../../../components/export-case/ScenarioComparisonMatrix";
 import Link from "next/link";
 
 
@@ -68,6 +70,12 @@ export default function OwnerExportCaseDetailPage() {
   const { data: advisorData } = useQuery({
     queryKey: ["advisor", caseId],
     queryFn: () => apiAdvisor.getRecommendation(caseId),
+    retry: false,
+  });
+
+  const { data: scenariosData } = useQuery({
+    queryKey: ["scenarios", caseId],
+    queryFn: () => apiScenario.list(caseId),
     retry: false,
   });
 
@@ -208,7 +216,7 @@ export default function OwnerExportCaseDetailPage() {
 
       {/* TAB CONTENT: Scenario */}
       {currentTab === "scenario" && (
-        <div className="space-y-4">
+        <div className="space-y-6">
           <ViewOnlyBanner ownerRoleName="Export Manager" dataTopic="Transaction Scenario Simulation" />
           <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-3">
             <h4 className="text-base font-extrabold text-[#1F2937]">Transaction Scenarios (Managed by Export Manager)</h4>
@@ -216,6 +224,7 @@ export default function OwnerExportCaseDetailPage() {
               Export Manager simulates alternative market conditions, Incoterm variations, and margin overrides for this case.
             </p>
           </div>
+          <ScenarioComparisonMatrix scenarios={scenariosData?.data?.scenarios || []} />
         </div>
       )}
 
