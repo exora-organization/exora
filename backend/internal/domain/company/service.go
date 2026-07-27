@@ -32,13 +32,16 @@ func (s *Service) Apply(ctx context.Context, req ApplyRequest) (*ApplyResponse, 
 		if existing.Status == StatusApproved {
 			return nil, apperror.New("CONFLICT", "application already approved", 409)
 		}
-		// If application is pending or rejected, allow resubmission
+		// If application is pending or rejected, allow resubmission.
+		// Refresh applicant snapshot in case name/email changed.
 		existing.CompanyName = req.CompanyName
 		existing.BusinessSector = req.BusinessSector
 		existing.Country = req.Country
 		existing.Status = StatusPending
 		existing.RevisionNotes = ""
 		existing.RejectReason = ""
+		existing.ApplicantEmail = u.Email
+		existing.ApplicantName = u.DisplayName
 		existing.UpdatedAt = time.Now().UTC()
 		if err := s.repo.Update(ctx, existing); err != nil {
 			return nil, err
@@ -49,6 +52,8 @@ func (s *Service) Apply(ctx context.Context, req ApplyRequest) (*ApplyResponse, 
 
 	c := &Company{
 		ApplicantUserID: u.ID,
+		ApplicantEmail:  u.Email,
+		ApplicantName:   u.DisplayName,
 		CompanyName:     req.CompanyName,
 		BusinessSector:  req.BusinessSector,
 		Country:         req.Country,

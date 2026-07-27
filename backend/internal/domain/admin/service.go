@@ -38,10 +38,26 @@ func (s *Service) ListApplications(ctx context.Context, status string, limit int
 			SubmittedAt:    c.SubmittedAt.UTC().Format(time.RFC3339),
 		}
 		if applicant != nil {
+			// Live user found — use fresh data and refresh snapshot in response
 			item.Applicant = company.Applicant{
 				UserID:      applicant.ID,
 				Email:       applicant.Email,
 				DisplayName: applicant.DisplayName,
+			}
+		} else {
+			// User account deleted — fall back to snapshot captured at apply time
+			email := c.ApplicantEmail
+			name := c.ApplicantName
+			if email == "" {
+				email = "deleted@unknown"
+			}
+			if name == "" {
+				name = "Deleted User"
+			}
+			item.Applicant = company.Applicant{
+				UserID:      c.ApplicantUserID,
+				Email:       email,
+				DisplayName: name,
 			}
 		}
 		items = append(items, item)

@@ -273,10 +273,24 @@ export default function CompanyApplicationsPage() {
             ) : (
               filtered.map((app) => (
                 <div key={app.companyId} className="flex flex-col md:flex-row items-center justify-between p-6 rounded-3xl bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl hover:-translate-y-1 hover:shadow-2xl transition-all gap-6">
-                  {/* Company Info */}
                   <div className="flex-[2] min-w-[200px]">
                     <h4 className="text-xl font-extrabold text-[#1F2937]">{app.companyName}</h4>
-                    <p className="text-sm font-semibold text-[#4B5563] mt-1">Applicant: {app.applicant?.email || "Unknown"}</p>
+                    <div className="flex items-center gap-2 mt-1 flex-wrap">
+                      {app.applicant?.displayName === "Deleted User" || (!app.applicant?.displayName && !app.applicant?.email) ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-gray-100 text-gray-500 border border-gray-200">
+                          🗑 Deleted User
+                        </span>
+                      ) : (
+                        <>
+                          <span className="text-sm font-semibold text-[#4B5563]">
+                            {app.applicant?.displayName || app.applicant?.email || "Unknown"}
+                          </span>
+                          {app.applicant?.email && app.applicant?.displayName && (
+                            <span className="text-xs text-[#9CA3AF]">({app.applicant.email})</span>
+                          )}
+                        </>
+                      )}
+                    </div>
                   </div>
 
                   {/* Sector */}

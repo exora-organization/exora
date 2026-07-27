@@ -10,17 +10,21 @@ const (
 )
 
 type Company struct {
-	ID             string     `json:"-" firestore:"-"`
-	ApplicantUserID string    `json:"applicantUserId" firestore:"applicantUserId"`
-	CompanyName    string     `json:"companyName" firestore:"companyName"`
-	BusinessSector string     `json:"businessSector" firestore:"businessSector"`
-	Country        string     `json:"country" firestore:"country"`
-	Status         string     `json:"status" firestore:"status"`
-	RevisionNotes  string     `json:"revisionNotes,omitempty" firestore:"revisionNotes,omitempty"`
-	RejectReason   string     `json:"rejectReason,omitempty" firestore:"rejectReason,omitempty"`
-	SubmittedAt    time.Time  `json:"submittedAt" firestore:"submittedAt"`
-	ApprovedAt     *time.Time `json:"approvedAt,omitempty" firestore:"approvedAt,omitempty"`
-	UpdatedAt      time.Time  `json:"updatedAt" firestore:"updatedAt"`
+	ID              string     `json:"-" firestore:"-"`
+	ApplicantUserID string     `json:"applicantUserId" firestore:"applicantUserId"`
+	// Snapshot of applicant info captured at apply time.
+	// Used to preserve historical records if the user account is later deleted.
+	ApplicantEmail  string     `json:"applicantEmail" firestore:"applicantEmail"`
+	ApplicantName   string     `json:"applicantName" firestore:"applicantName"`
+	CompanyName     string     `json:"companyName" firestore:"companyName"`
+	BusinessSector  string     `json:"businessSector" firestore:"businessSector"`
+	Country         string     `json:"country" firestore:"country"`
+	Status          string     `json:"status" firestore:"status"`
+	RevisionNotes   string     `json:"revisionNotes,omitempty" firestore:"revisionNotes,omitempty"`
+	RejectReason    string     `json:"rejectReason,omitempty" firestore:"rejectReason,omitempty"`
+	SubmittedAt     time.Time  `json:"submittedAt" firestore:"submittedAt"`
+	ApprovedAt      *time.Time `json:"approvedAt,omitempty" firestore:"approvedAt,omitempty"`
+	UpdatedAt       time.Time  `json:"updatedAt" firestore:"updatedAt"`
 }
 
 func (c *Company) GetCompanyID() string { return c.ID }

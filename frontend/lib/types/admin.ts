@@ -1,6 +1,7 @@
 export interface ApplicationApplicant {
   userId: string;
   email: string;
+  displayName: string;
 }
 
 export interface AdminCompanyApplication {
