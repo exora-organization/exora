@@ -62,7 +62,7 @@ export function CostingForm({ caseId, initialData }: CostingFormProps) {
   const isReadOnly = profile?.role !== "finance_staff" && profile?.role !== "admin";
   const isFinanceStaff = profile?.role === "finance_staff";
 
-  const caseBasePath = isFinanceStaff ? `/fs-case/${caseId}` : `/em-export-case/${caseId}`;
+  const caseBasePath = isFinanceStaff ? `/fs-export-cases/${caseId}?tab=cost` : `/em-export-case/${caseId}`;
 
   const {
     register,
@@ -283,18 +283,12 @@ export function CostingForm({ caseId, initialData }: CostingFormProps) {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="flex flex-col-reverse sm:flex-row justify-between gap-6 border-t border-[#E8E3D9] p-8 bg-gray-50/50">
-          <Button type="button" onClick={() => router.push(caseBasePath)} className="bg-[#00A651] hover:bg-[#008F44] text-white px-10 py-4 rounded-full font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all w-full sm:w-auto h-auto flex items-center justify-center gap-2">
-            <Icon icon="solar:arrow-left-bold" className="w-5 h-5" />
-            Back to Case
-          </Button>
-          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
-            {!isReadOnly && (
-              <Button type="submit" disabled={mutation.isPending} className="bg-[#00A651] hover:bg-[#008F44] text-white px-10 py-4 rounded-full font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all w-full sm:w-auto h-auto">
-                {mutation.isPending ? "Saving..." : "Save Cost Data"}
-              </Button>
-            )}
-          </div>
+        <CardFooter className="flex justify-end gap-6 border-t border-[#E8E3D9] p-8 bg-gray-50/50">
+          {!isReadOnly && (
+            <Button type="submit" disabled={mutation.isPending} className="bg-[#00A651] hover:bg-[#008F44] text-white px-10 py-4 rounded-full font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all w-full sm:w-auto h-auto">
+              {mutation.isPending ? "Saving..." : "Save Cost Data"}
+            </Button>
+          )}
         </CardFooter>
       </form>
     </Card>

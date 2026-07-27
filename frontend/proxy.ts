@@ -15,6 +15,8 @@ const PUBLIC_ROUTES = [
   "/reset-password",
   "/verify-email",
   "/invite",
+  "/terms-of-service",
+  "/privacy-policy",
 ];
 
 export function proxy(request: NextRequest) {

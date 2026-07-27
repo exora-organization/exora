@@ -139,7 +139,7 @@ export default function GuestDashboardPage() {
             </p>
           </div>
           <Link
-            href="/register-company"
+            href="/guest-company-application"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-[#00A651] hover:bg-[#008F44] text-white text-xs font-black uppercase tracking-wider shadow-md hover:shadow-lg transition-all"
           >
             <Icon icon="solar:add-circle-bold-duotone" className="w-5 h-5" /> Submit Company Application
@@ -174,7 +174,7 @@ export default function GuestDashboardPage() {
                 </p>
                 <div className="pt-2">
                   <Link
-                    href="/register-company"
+                    href="/guest-company-application"
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-sm"
                   >
                     <Icon icon="solar:pen-new-square-bold-duotone" className="w-4 h-4" /> Complete Documents & Resubmit

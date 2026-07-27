@@ -19,7 +19,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const NAV_ITEMS = [
   { name: "Registration Status", href: "/guest-dashboard", icon: "solar:clock-circle-bold-duotone" },
-  { name: "Apply New Company", href: "/register-company", icon: "solar:add-circle-bold-duotone" },
+  { name: "Apply New Company", href: "/guest-company-application", icon: "solar:add-circle-bold-duotone" },
 ];
 
 export default function GuestLayout({ children }: { children: React.ReactNode }) {
@@ -116,7 +116,7 @@ export default function GuestLayout({ children }: { children: React.ReactNode })
             <nav className="flex-1 px-4 py-4 space-y-1">
               {NAV_ITEMS.map((item) => {
                 const isActive = pathname === item.href;
-                const isApplyNew = item.href === "/register-company";
+                const isApplyNew = item.href === "/guest-company-application";
                 const isDisabled = isApplyNew && !canApplyNew;
 
                 if (isDisabled) {

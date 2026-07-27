@@ -84,16 +84,25 @@ export default function UserManagementPage() {
     }
   });
 
+  const [activeTab, setActiveTab] = useState<"active" | "deleted">("active");
   const [sortBy, setSortBy] = useState<string>("name_asc");
 
   if (isLoading) return <div className="p-8 text-center font-bold text-[#1F2937]">Loading users...</div>;
   if (error) return <div className="p-8 text-center font-bold text-red-500">Failed to load users</div>;
 
   const users = data?.data?.items || [];
-  const filteredUsers = users.filter(u => 
-    u.displayName?.toLowerCase().includes(search.toLowerCase()) || 
-    u.email.toLowerCase().includes(search.toLowerCase())
-  );
+  const deletedUsersCount = users.filter(u => u.status === "deleted").length;
+
+  const filteredUsers = users.filter(u => {
+    const matchesSearch = 
+      u.displayName?.toLowerCase().includes(search.toLowerCase()) || 
+      u.email.toLowerCase().includes(search.toLowerCase());
+    
+    if (activeTab === "deleted") {
+      return matchesSearch && u.status === "deleted";
+    }
+    return matchesSearch && u.status !== "deleted";
+  });
 
   const sortedUsers = [...filteredUsers].sort((a, b) => {
     switch (sortBy) {
@@ -163,15 +172,51 @@ export default function UserManagementPage() {
           <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">User Management</h2>
           <p className="text-[#4B5563] mt-2 font-medium">Manage platform users, roles, and access permissions.</p>
         </div>
-        <Button
-          onClick={handleRefresh}
-          disabled={isRefetching}
-          variant="outline"
-          className="border-[#00A651] text-[#00A651] hover:bg-[#EBF8F2] active:scale-95 rounded-xl font-bold h-10 px-6 self-start sm:self-auto flex items-center gap-2 transition-all shadow-sm"
+        <div className="flex items-center gap-3">
+          <Button
+            onClick={handleRefresh}
+            disabled={isRefetching}
+            variant="outline"
+            className="border-[#00A651] text-[#00A651] hover:bg-[#EBF8F2] active:scale-95 rounded-xl font-bold h-10 px-5 flex items-center gap-2 transition-all shadow-sm"
+          >
+            <Icon icon="solar:restart-bold-duotone" className={`w-4 h-4 transition-transform ${isRefetching ? "animate-spin text-[#00A651]" : ""}`} />
+            {isRefetching ? "Refreshing..." : "Refresh"}
+          </Button>
+        </div>
+      </div>
+
+      {/* Tabs Navigation: Active Users vs Deleted Users */}
+      <div className="flex items-center gap-3 border-b border-gray-200 pb-4">
+        <button
+          onClick={() => setActiveTab("active")}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl font-extrabold text-sm transition-all cursor-pointer ${
+            activeTab === "active"
+              ? "bg-[#00A651] text-white shadow-md shadow-[#00A651]/20"
+              : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+          }`}
         >
-          <Icon icon="solar:restart-bold-duotone" className={`w-4 h-4 transition-transform ${isRefetching ? "animate-spin text-[#00A651]" : ""}`} />
-          {isRefetching ? "Refreshing..." : "Refresh"}
-        </Button>
+          <Icon icon="solar:users-group-two-rounded-bold-duotone" className="w-4 h-4" />
+          Active & Disabled Users
+        </button>
+
+        <button
+          onClick={() => setActiveTab("deleted")}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl font-extrabold text-sm transition-all cursor-pointer relative ${
+            activeTab === "deleted"
+              ? "bg-gray-800 text-white shadow-md shadow-gray-800/20"
+              : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+          }`}
+        >
+          <Icon icon="solar:trash-bin-trash-bold-duotone" className="w-4 h-4 text-red-400" />
+          Deleted Users
+          {deletedUsersCount > 0 && (
+            <span className={`ml-1 px-2 py-0.5 rounded-full text-xs font-black ${
+              activeTab === "deleted" ? "bg-red-500 text-white" : "bg-red-100 text-red-700"
+            }`}>
+              {deletedUsersCount}
+            </span>
+          )}
+        </button>
       </div>
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
@@ -239,64 +284,81 @@ export default function UserManagementPage() {
               <div className="flex-1">
                 <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Status</p>
                 <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-wide capitalize ${
-                  user.status === "active" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                  user.status === "active"
+                    ? "bg-green-100 text-green-700"
+                    : user.status === "deleted"
+                    ? "bg-gray-100 text-gray-700 border border-gray-300"
+                    : "bg-red-100 text-red-700"
                 }`}>
-                  <span className={`w-2 h-2 rounded-full ${user.status === "active" ? "bg-green-500" : "bg-red-500"}`}></span>
-                  {user.status === "active" ? "Active" : "Disabled"}
+                  <span className={`w-2 h-2 rounded-full ${
+                    user.status === "active"
+                      ? "bg-green-500"
+                      : user.status === "deleted"
+                      ? "bg-gray-500"
+                      : "bg-red-500"
+                  }`}></span>
+                  {user.status === "active" ? "Active" : user.status === "deleted" ? "🗑 Deleted" : "Disabled"}
                 </span>
               </div>
 
               {/* Actions */}
               <div className="flex items-center gap-4 md:ml-4">
-                <button 
-                  onClick={() => openRoleModal(user)}
-                  disabled={changeRoleMutation.isPending}
-                  className="border-2 border-[#00A651] text-[#00A651] hover:bg-[#00A651] hover:text-white px-4 py-2 rounded-2xl text-xs font-extrabold transition-all disabled:opacity-50 cursor-pointer shadow-xs"
-                >
-                  Change Role
-                </button>
-                
-                <button 
-                  onClick={() => {
-                    const newStatus = user.status === "active" ? "disabled" : "active";
-                    setConfirmDialog({
-                      isOpen: true,
-                      title: newStatus === "disabled" ? "Disable User Account" : "Enable User Account",
-                      description: newStatus === "disabled"
-                        ? `Are you sure you want to disable the account of ${user.displayName || user.email}?`
-                        : `Are you sure you want to restore access to the account of ${user.displayName || user.email}?`,
-                      actionLabel: newStatus === "disabled" ? "Disable" : "Enable",
-                      severity: newStatus === "disabled" ? "danger" : "info",
-                      onConfirm: () => {
-                        updateStatusMutation.mutate({ userId: user.userId, status: newStatus });
-                      }
-                    });
-                  }}
-                  disabled={updateStatusMutation.isPending}
-                  className="text-[#4B5563] hover:text-[#1F2937] text-xs font-bold transition-colors disabled:opacity-50 cursor-pointer"
-                >
-                  {user.status === "active" ? "Disable" : "Enable"}
-                </button>
-                
-                <button 
-                  onClick={() => {
-                    setConfirmDialog({
-                      isOpen: true,
-                      title: "Permanently Delete User Profile",
-                      description: `WARNING: You are about to permanently delete the profile of ${user.displayName || user.email} (${user.userId}).`,
-                      actionLabel: "Delete User",
-                      severity: "danger",
-                      confirmText: "DELETE",
-                      onConfirm: () => {
-                        deleteUserMutation.mutate(user.userId);
-                      }
-                    });
-                  }}
-                  disabled={deleteUserMutation.isPending}
-                  className="text-red-500 hover:text-red-700 text-xs font-bold transition-colors disabled:opacity-50 cursor-pointer"
-                >
-                  Delete
-                </button>
+                {user.status !== "deleted" ? (
+                  <>
+                    <button 
+                      onClick={() => openRoleModal(user)}
+                      disabled={changeRoleMutation.isPending}
+                      className="border-2 border-[#00A651] text-[#00A651] hover:bg-[#00A651] hover:text-white px-4 py-2 rounded-2xl text-xs font-extrabold transition-all disabled:opacity-50 cursor-pointer shadow-xs"
+                    >
+                      Change Role
+                    </button>
+                    
+                    <button 
+                      onClick={() => {
+                        const newStatus = user.status === "active" ? "disabled" : "active";
+                        setConfirmDialog({
+                          isOpen: true,
+                          title: newStatus === "disabled" ? "Disable User Account" : "Enable User Account",
+                          description: newStatus === "disabled"
+                            ? `Are you sure you want to disable the account of ${user.displayName || user.email}?`
+                            : `Are you sure you want to restore access to the account of ${user.displayName || user.email}?`,
+                          actionLabel: newStatus === "disabled" ? "Disable" : "Enable",
+                          severity: newStatus === "disabled" ? "danger" : "info",
+                          onConfirm: () => {
+                            updateStatusMutation.mutate({ userId: user.userId, status: newStatus });
+                          }
+                        });
+                      }}
+                      disabled={updateStatusMutation.isPending}
+                      className="text-[#4B5563] hover:text-[#1F2937] text-xs font-bold transition-colors disabled:opacity-50 cursor-pointer"
+                    >
+                      {user.status === "active" ? "Disable" : "Enable"}
+                    </button>
+                    
+                    <button 
+                      onClick={() => {
+                        setConfirmDialog({
+                          isOpen: true,
+                          title: "Mark User Account as Deleted",
+                          description: `Are you sure you want to mark ${user.displayName || user.email} as deleted? Their Firebase Auth login will be removed, but their record will be kept for history.`,
+                          actionLabel: "Delete User",
+                          severity: "danger",
+                          confirmText: "DELETE",
+                          confirmPlaceholder: "Type DELETE to confirm user removal",
+                          onConfirm: () => {
+                            deleteUserMutation.mutate(user.userId);
+                          }
+                        });
+                      }}
+                      disabled={deleteUserMutation.isPending}
+                      className="text-red-500 hover:text-red-700 text-xs font-bold transition-colors disabled:opacity-50 cursor-pointer"
+                    >
+                      Delete
+                    </button>
+                  </>
+                ) : (
+                  <span className="text-xs font-bold text-gray-400 italic">Account Deleted</span>
+                )}
               </div>
             </div>
           ))

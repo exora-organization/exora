@@ -8,6 +8,6 @@ export interface UserProfile {
   role: UserRole;
   companyId: string | null;
   companyStatus?: "pending" | "approved" | "rejected" | null;
-  status: "active" | "disabled";
+  status: "active" | "disabled" | "deleted";
   createdAt?: string;
 }
