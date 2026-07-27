@@ -61,7 +61,7 @@ export default function RevisionPage() {
       <div className="group bg-white/95 backdrop-blur-xl border border-white/60 p-6 sm:p-10 rounded-[2rem] shadow-xl hover:shadow-2xl transition-all duration-300 relative z-10 w-full max-w-xl my-8">
         <div className="flex items-center justify-center space-x-3 mb-8 text-center relative z-10">
           <div className="relative w-10 h-10 flex items-center justify-center shrink-0">
-            <Image src={logoImg} alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <Image src={logoImg} loading="eager" alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <h1 className="font-extrabold text-[#1a2b3c] tracking-tight text-2xl leading-tight">EXORA</h1>
         </div>
