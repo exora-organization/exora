@@ -35,6 +35,7 @@ export function CompanyApplicationForm({ initialData, onSuccess, isRevision = fa
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<ApplicationFormValues>({
     resolver: zodResolver(applicationSchema),
@@ -54,6 +55,14 @@ export function CompanyApplicationForm({ initialData, onSuccess, isRevision = fa
       });
     }
   }, [initialData, reset]);
+
+  const currentCountry = watch("country") || "";
+  const supportedCountries = [
+    "singapore", "malaysia", "thailand", "vietnam", "china", 
+    "india", "japan", "south korea", "united states", "united arab emirates", "uae", "united arab emirates (uae)"
+  ];
+  const normalizedCountry = currentCountry.trim().toLowerCase();
+  const showCountryWarning = normalizedCountry !== "" && !supportedCountries.includes(normalizedCountry);
 
   const onSubmit = async (data: ApplicationFormValues) => {
     setIsSubmitting(true);
@@ -119,34 +128,22 @@ export function CompanyApplicationForm({ initialData, onSuccess, isRevision = fa
 
         <div className="space-y-2">
           <Label htmlFor="country" className="text-xs font-black text-gray-800 tracking-widest uppercase ml-4">Country</Label>
-          <div className="relative">
-            <select
-              id="country"
-              className="w-full px-6 py-4 h-14 rounded-full border-2 border-[#CDEBE0] focus:outline-none focus:ring-4 focus:ring-[#00A651]/20 focus:border-[#00A651] transition-all bg-[#EBF8F2] hover:bg-[#E3F4EC] hover:border-[#00A651]/40 hover:shadow-md shadow-sm text-[#1F2937] appearance-none cursor-pointer"
-              {...register("country")}
-            >
-              <option value="" disabled hidden>Select Country</option>
-              <option value="Singapore">Singapore</option>
-              <option value="Malaysia">Malaysia</option>
-              <option value="Thailand">Thailand</option>
-              <option value="Vietnam">Vietnam</option>
-              <option value="China">China</option>
-              <option value="India">India</option>
-              <option value="Japan">Japan</option>
-              <option value="South Korea">South Korea</option>
-              <option value="United States">United States</option>
-              <option value="United Arab Emirates (UAE)">United Arab Emirates (UAE)</option>
-            </select>
-            {/* Custom dropdown arrow */}
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-6">
-              <svg className="h-4 w-4 text-[#80988E]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </div>
-          </div>
-          {errors.country && (
+          <Input
+            id="country"
+            placeholder="e.g. Indonesia, Singapore"
+            className="w-full px-6 py-4 h-14 rounded-full border-2 border-[#CDEBE0] focus:outline-none focus:ring-4 focus:ring-[#00A651]/20 focus:border-[#00A651] transition-all bg-[#EBF8F2] hover:bg-[#E3F4EC] hover:border-[#00A651]/40 hover:shadow-md shadow-sm text-[#1F2937] placeholder:text-[#80988E]"
+            {...register("country")}
+          />
+          {errors.country ? (
             <p className="text-sm text-red-500 font-bold ml-4">{errors.country.message}</p>
-          )}
+          ) : showCountryWarning ? (
+            <div className="ml-2 mt-2 p-3 bg-amber-50 border border-amber-200 rounded-2xl flex gap-2.5 items-start shadow-sm">
+              <svg className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+              <p className="text-[11px] font-bold text-amber-800 leading-relaxed pr-2">
+                AI Recommendation Advisor is currently available for selected countries only. Other Exora features remain available.
+              </p>
+            </div>
+          ) : null}
         </div>
 
         {error && (
@@ -158,7 +155,7 @@ export function CompanyApplicationForm({ initialData, onSuccess, isRevision = fa
         <div className="pt-2">
           <Button
             type="submit"
-            className="w-full h-12 bg-gradient-to-r from-[#0a9b5c] to-[#08824d] hover:from-[#08824d] hover:to-[#06683e] text-white font-extrabold tracking-widest uppercase rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+            className="w-full h-12 bg-gradient-to-r from-[#0a9b5c] to-[#08824d] hover:from-[#08824d] hover:to-[#06683e] text-white font-extrabold tracking-widest uppercase rounded-full shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
             disabled={isSubmitting}
           >
             {isSubmitting ? "SUBMITTING..." : (isRevision ? "RESUBMIT APPLICATION" : "SUBMIT APPLICATION")}

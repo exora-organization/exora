@@ -115,7 +115,7 @@ export default function GuestDashboardPage() {
         <button
           onClick={handleReloadStatus}
           disabled={isRefetching}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#00A651] text-[#00A651] hover:bg-[#EBF8F2] active:scale-95 text-xs font-bold transition-all shadow-xs disabled:opacity-50 cursor-pointer self-start sm:self-auto"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#00A651] hover:bg-[#008F44] text-white active:scale-95 text-xs font-bold transition-all shadow-md disabled:opacity-50 cursor-pointer self-start sm:self-auto"
         >
           <Icon icon="solar:restart-bold-duotone" className={`w-4 h-4 ${isRefetching ? "animate-spin" : ""}`} />
           {isRefetching ? "Reloading..." : "Reload Status"}
@@ -128,7 +128,7 @@ export default function GuestDashboardPage() {
         </div>
       ) : !appData || status === "none" ? (
         /* No application yet */
-        <div className="bg-white rounded-3xl border border-[#E8E3D9] p-8 shadow-sm text-center space-y-5">
+        <div className="bg-white rounded-[2rem] p-8 shadow-md hover:shadow-lg transition-all duration-300 text-center space-y-5">
           <div className="w-16 h-16 rounded-2xl bg-[#EBF8F2] flex items-center justify-center mx-auto text-[#00A651]">
             <Icon icon="solar:buildings-bold-duotone" className="w-8 h-8" />
           </div>
@@ -140,7 +140,7 @@ export default function GuestDashboardPage() {
           </div>
           <Link
             href="/guest-company-application"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-[#00A651] hover:bg-[#008F44] text-white text-xs font-black uppercase tracking-wider shadow-md hover:shadow-lg transition-all"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#00A651] hover:bg-[#008F44] text-white text-xs font-black uppercase tracking-wider shadow-md hover:shadow-lg transition-all"
           >
             <Icon icon="solar:add-circle-bold-duotone" className="w-5 h-5" /> Submit Company Application
           </Link>
@@ -149,7 +149,7 @@ export default function GuestDashboardPage() {
         /* Status Card & Verification Timeline */
         <div className="space-y-6">
           {/* Main Status Hero */}
-          <div className={`rounded-3xl border p-6 md:p-8 ${cfg.bg} ${cfg.border} shadow-sm space-y-6`}>
+          <div className={`rounded-[2rem] p-6 md:p-8 ${cfg.bg} shadow-md hover:shadow-lg transition-all duration-300 space-y-6`}>
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center shadow-xs">
@@ -160,7 +160,7 @@ export default function GuestDashboardPage() {
                   <p className="text-xs font-semibold text-[#4B5563] mt-0.5 max-w-xl">{cfg.description}</p>
                 </div>
               </div>
-              <span className={`px-3.5 py-1.5 rounded-xl border text-xs font-black uppercase tracking-wider ${cfg.badge}`}>
+              <span className={`px-3.5 py-1.5 rounded-full border text-xs font-black uppercase tracking-wider ${cfg.badge}`}>
                 {cfg.badgeText}
               </span>
             </div>
@@ -175,7 +175,7 @@ export default function GuestDashboardPage() {
                 <div className="pt-2">
                   <Link
                     href="/guest-company-application/revision"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-sm"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-sm"
                   >
                     <Icon icon="solar:pen-new-square-bold-duotone" className="w-4 h-4" /> Complete Documents & Resubmit
                   </Link>
@@ -199,7 +199,7 @@ export default function GuestDashboardPage() {
                     }
                     window.location.href = "/own-dashboard";
                   }}
-                  className="px-5 py-2.5 rounded-xl bg-[#00A651] hover:bg-[#008F44] text-white text-xs font-black uppercase tracking-wider shadow-md transition-all cursor-pointer"
+                  className="px-5 py-2.5 rounded-full bg-[#00A651] hover:bg-[#008F44] text-white text-xs font-black uppercase tracking-wider shadow-md transition-all cursor-pointer"
                 >
                   Continue to Set Up Company Account
                 </button>
@@ -208,7 +208,7 @@ export default function GuestDashboardPage() {
           </div>
 
           {/* Verification Process Timeline (4 Steps) */}
-          <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 md:p-8 shadow-sm space-y-6">
+          <div className="bg-white rounded-[2rem] p-6 md:p-8 shadow-md hover:shadow-lg transition-all duration-300 space-y-6">
             <h4 className="text-base font-extrabold text-[#1F2937] flex items-center gap-2">
               <Icon icon="solar:route-bold-duotone" className="w-5 h-5 text-[#00A651]" />
               Verification Process Timeline
