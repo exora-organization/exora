@@ -13,7 +13,7 @@ import (
 	"github.com/exora/backend/internal/domain/risk"
 )
 
-// Service handles document generation (SRS FR-020–FR-023).
+// Service handles document generation.
 // Each document type has specific prerequisite data requirements (SRS §7).
 type Service struct {
 	repo        Repository
@@ -45,7 +45,7 @@ func NewService(
 	}
 }
 
-// GenerateQuotation generates SRS FR-020: Quotation document.
+// GenerateQuotation generates a Quotation document.
 // Requires: export_case + cost_data + pricing_results.
 func (s *Service) GenerateQuotation(ctx context.Context, caseID, companyID string) (*GenerateResult, error) {
 	ec, cd, pr, err := s.requireCostAndPricing(ctx, caseID)
@@ -61,7 +61,7 @@ func (s *Service) GenerateQuotation(ctx context.Context, caseID, companyID strin
 	return res, err
 }
 
-// GenerateProforma generates SRS FR-021: Proforma Invoice.
+// GenerateProforma generates a Proforma Invoice.
 // Requires: export_case + cost_data + pricing_results.
 func (s *Service) GenerateProforma(ctx context.Context, caseID, companyID string) (*GenerateResult, error) {
 	ec, cd, pr, err := s.requireCostAndPricing(ctx, caseID)
@@ -77,7 +77,7 @@ func (s *Service) GenerateProforma(ctx context.Context, caseID, companyID string
 	return res, err
 }
 
-// GenerateCostBreakdown generates SRS FR-022: Cost Breakdown Report.
+// GenerateCostBreakdown generates a Cost Breakdown Report.
 // Requires: export_case + cost_data + pricing_results.
 func (s *Service) GenerateCostBreakdown(ctx context.Context, caseID, companyID string) (*GenerateResult, error) {
 	ec, cd, pr, err := s.requireCostAndPricing(ctx, caseID)
@@ -88,7 +88,7 @@ func (s *Service) GenerateCostBreakdown(ctx context.Context, caseID, companyID s
 	return s.saveDocument(ctx, caseID, companyID, TypeCostBreakdown, content)
 }
 
-// GenerateFeasibility generates SRS FR-023: Export Feasibility Report.
+// GenerateFeasibility generates an Export Feasibility Report.
 // Requires: all prerequisites including risk_assessment + advisor_recommendations.
 func (s *Service) GenerateFeasibility(ctx context.Context, caseID, companyID string) (*GenerateResult, error) {
 	ec, cd, pr, err := s.requireCostAndPricing(ctx, caseID)

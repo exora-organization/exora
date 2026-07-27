@@ -101,7 +101,7 @@ func (s *Service) Approve(ctx context.Context, companyID string) (*company.Appro
 }
 
 func (s *Service) Reject(ctx context.Context, companyID string, req company.RejectRequest) (map[string]string, error) {
-	// BUG-030: Trim whitespace before validation to reject whitespace-only input
+	// Trim whitespace before validation to reject whitespace-only input
 	req.Reason = strings.TrimSpace(req.Reason)
 	if err := validator.Validate(req); err != nil {
 		return nil, apperror.ErrValidation
@@ -119,7 +119,7 @@ func (s *Service) Reject(ctx context.Context, companyID string, req company.Reje
 }
 
 func (s *Service) RequestRevision(ctx context.Context, companyID string, req company.RevisionRequest) (map[string]string, error) {
-	// BUG-030: Trim whitespace before validation to reject whitespace-only input
+	// Trim whitespace before validation to reject whitespace-only input
 	req.RevisionNotes = strings.TrimSpace(req.RevisionNotes)
 	if err := validator.Validate(req); err != nil {
 		return nil, apperror.ErrValidation

@@ -9,7 +9,7 @@ import (
 	"github.com/exora/backend/pkg/validator"
 )
 
-// Service handles cost data business logic (SRS FR-010).
+// Service handles cost data business logic.
 // Calculation is pure; persistence is delegated to Repository.
 type Service struct {
 	repo Repository
@@ -33,7 +33,7 @@ func (s *Service) SaveCostData(ctx context.Context, caseID, companyID string, re
 		return nil, apperror.ErrValidation
 	}
 
-	// BUG-032: Quantity must be a positive whole number (units cannot be fractional)
+	// Quantity must be a positive whole number (units cannot be fractional)
 	if req.Quantity != float64(int64(req.Quantity)) || req.Quantity <= 0 {
 		return nil, apperror.New("UNPROCESSABLE", "invalid_quantity: quantity must be a positive whole number", 422)
 	}

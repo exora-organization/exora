@@ -23,7 +23,7 @@ export function useUserProfile() {
         previousUidRef.current = user.uid;
 
         // Only purge stale profile data when a *different* user logs in to avoid
-        // clearing the cache mid-token-refresh for the same user (BUG-028)
+        // clearing the cache mid-token-refresh for the same user
         if (uidChanged) {
           queryClient.removeQueries({ queryKey: ["user-profile"] });
         }

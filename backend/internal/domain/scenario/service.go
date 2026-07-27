@@ -9,7 +9,7 @@ import (
 	"github.com/exora/backend/pkg/validator"
 )
 
-// Service handles scenario analysis (SRS FR-014).
+// Service handles scenario analysis.
 // Each scenario is a pricing variant computed from cost_data with optional overrides.
 type Service struct {
 	repo        Repository

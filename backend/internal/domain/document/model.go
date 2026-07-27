@@ -2,7 +2,7 @@ package document
 
 import "time"
 
-// Document type constants per SRS FR-020–FR-023.
+// Document type constants.
 const (
 	TypeQuotation         = "quotation"
 	TypeProformaInvoice   = "proforma_invoice"

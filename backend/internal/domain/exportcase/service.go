@@ -20,7 +20,7 @@ func NewService(repo Repository) *Service {
 
 // Create performs validation and creates a new export case in draft status, linked to the user's company tenant.
 func (s *Service) Create(ctx context.Context, req CreateRequest) (*CaseResponse, error) {
-	// BUG-024: Trim whitespace before validation to reject whitespace-only input
+	// Trim whitespace before validation to reject whitespace-only input
 	req.Name = strings.TrimSpace(req.Name)
 	req.Product = strings.TrimSpace(req.Product)
 	req.DestinationCountry = strings.TrimSpace(req.DestinationCountry)
@@ -107,7 +107,7 @@ func (s *Service) GetDetail(ctx context.Context, caseID string) (*CaseResponse, 
 }
 
 func (s *Service) Update(ctx context.Context, caseID string, req UpdateRequest) (*CaseResponse, error) {
-	// BUG-024: Trim whitespace on string fields before validation
+	// Trim whitespace on string fields before validation
 	if req.Name != nil {
 		trimmed := strings.TrimSpace(*req.Name)
 		req.Name = &trimmed

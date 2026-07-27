@@ -19,7 +19,7 @@ func NewHandler(service *Service, cases *exportcase.Service) *Handler {
 	return &Handler{service: service, cases: cases}
 }
 
-// Calculate handles POST /v1/export-cases/{caseId}/pricing/calculate (SRS FR-011).
+// Calculate handles POST /v1/export-cases/{caseId}/pricing/calculate.
 func (h *Handler) Calculate(w http.ResponseWriter, r *http.Request) {
 	caseID := r.PathValue("caseId")
 	ec, err := h.cases.GetByID(r.Context(), caseID)
@@ -52,7 +52,7 @@ func (h *Handler) Calculate(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusOK, map[string]any{"caseId": caseID, "pricing": result})
 }
 
-// Get handles GET /v1/export-cases/{caseId}/pricing (SRS FR-012).
+// Get handles GET /v1/export-cases/{caseId}/pricing.
 func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 	caseID := r.PathValue("caseId")
 	if _, err := h.cases.GetByID(r.Context(), caseID); err != nil {

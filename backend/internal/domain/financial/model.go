@@ -2,7 +2,7 @@ package financial
 
 import "time"
 
-// FinancialAnalysis is the SRS FR-013 model persisted to financial_analysis collection.
+// FinancialAnalysis is the model persisted to financial_analysis collection.
 type FinancialAnalysis struct {
 	ID              string    `json:"-" firestore:"-"`
 	CaseID          string    `json:"caseId" firestore:"caseId"`

@@ -9,7 +9,7 @@ import (
 	"github.com/exora/backend/pkg/validator"
 )
 
-// Service handles SRS FR-013 financial analysis.
+// Service handles financial analysis.
 // Depends on costing and pricing repositories to read prerequisite data.
 type Service struct {
 	repo        Repository

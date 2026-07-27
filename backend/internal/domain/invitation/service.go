@@ -55,7 +55,7 @@ func (s *Service) createInvitation(ctx context.Context, email, role string) (*In
 		}
 	}
 
-	// BUG-019: Prevent duplicate pending invitations for the same email
+	// Prevent duplicate pending invitations for the same email
 	if _, err := s.repo.GetPendingByEmailAndCompany(ctx, email, u.CompanyID); err == nil {
 		return nil, apperror.New("CONFLICT", "A pending invitation already exists for this email address.", 409)
 	}
