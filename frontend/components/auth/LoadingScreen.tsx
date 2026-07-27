@@ -11,7 +11,7 @@ export function LoadingScreen() {
 
       <div className="text-center space-y-6 z-10 bg-white/70 backdrop-blur-md p-10 rounded-3xl shadow-xl border border-white flex flex-col items-center">
         <div className="relative w-20 h-20 animate-pulse">
-          <Image src={logoImg} alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+          <Image src={logoImg} loading="eager" alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
         </div>
         
         <div className="flex items-center space-x-3 text-[#1F2937]">

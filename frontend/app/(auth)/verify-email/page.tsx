@@ -99,7 +99,7 @@ function VerifyEmailForm() {
         
         <div className="flex items-center justify-center space-x-3 mb-6 text-center relative z-10">
           <div className="relative w-10 h-10 flex items-center justify-center shrink-0">
-            <Image src={logoImg} alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            <Image src={logoImg} loading="eager" alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <h1 className="font-extrabold text-[#1F2937] tracking-tight text-2xl leading-tight">EXORA</h1>
         </div>

@@ -50,7 +50,7 @@ export function PublicNavbar() {
     <header className="sticky top-0 z-50 w-full px-6 lg:px-12 py-4 flex items-center justify-between bg-white/70 backdrop-blur-xl border-b border-[#E8E3D9] shadow-sm relative">
       <div className="flex items-center space-x-2">
         <div className="relative w-12 h-12 flex items-center justify-center shrink-0">
-          <Image src={logoImg} alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+          <Image src={logoImg} loading="eager" alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
         </div>
         <Link href="/" className="font-extrabold text-[#1F2937] tracking-tight text-xl">EXORA</Link>
       </div>

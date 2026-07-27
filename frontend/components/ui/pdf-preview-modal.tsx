@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { flushSync } from "react-dom";
 import { X, Download, FileText, Loader2, AlertCircle, ZoomIn, ZoomOut } from "lucide-react";
 import { toast } from "sonner";
 
@@ -30,8 +31,13 @@ export function PdfPreviewModal({
 }: PdfPreviewModalProps) {
   const [content, setContent] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fontSize, setFontSize] = useState(13);
+  const [downloadDate, setDownloadDate] = useState(() =>
+    new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" })
+  );
+  const previewRef = useRef<HTMLDivElement>(null);
 
   const fetchPreview = useCallback(async () => {
     if (!documentId) return;
@@ -90,37 +96,82 @@ export function PdfPreviewModal({
   }, [open, onClose]);
 
   const handleDownload = async () => {
-    try {
-      const API_BASE_URL =
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/v1";
-      const { auth } = await import("../../lib/firebase/client");
-      const token = auth.currentUser
-        ? await auth.currentUser.getIdToken()
-        : null;
-
-      const res = await fetch(
-        `${API_BASE_URL}/documents/${documentId}/download`,
-        {
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-        }
+    if (!previewRef.current) {
+      toast.error("Preview not ready. Please wait for the document to load.");
+      return;
+    }
+    setIsDownloading(true);
+    // Update date to the moment the user clicks Download, then flush to DOM
+    // before html-to-image captures the element.
+    flushSync(() => {
+      setDownloadDate(
+        new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" })
       );
+    });
+    try {
+      const [{ toPng }, { default: jsPDF }] = await Promise.all([
+        import("html-to-image"),
+        import("jspdf"),
+      ]);
 
-      if (!res.ok) throw new Error("Download failed");
+      const element = previewRef.current;
 
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
+      // html-to-image uses SVG foreignObject — browser handles all CSS colors
+      // natively (including oklch/lab), so no color parsing issues.
+      const dataUrl = await toPng(element, {
+        pixelRatio: 2,
+        backgroundColor: "#ffffff",
+        width: element.scrollWidth,
+        height: element.scrollHeight,
+      });
+
+      // Build an Image to get pixel dimensions
+      const img = new Image();
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = reject;
+        img.src = dataUrl;
+      });
+
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = img.naturalWidth;
+      const imgHeight = img.naturalHeight;
+      const ratio = pdfWidth / imgWidth;
+      const scaledHeight = imgHeight * ratio;
+
+      // Multi-page: slice the image into A4-height chunks
+      let yPosition = 0;
+      while (yPosition < scaledHeight) {
+        const srcYPx = yPosition / ratio;
+        const srcHPx = Math.min(pdfHeight / ratio, imgHeight - srcYPx);
+        const pageCanvas = document.createElement("canvas");
+        pageCanvas.width = imgWidth;
+        pageCanvas.height = srcHPx;
+        const ctx = pageCanvas.getContext("2d")!;
+        ctx.drawImage(img, 0, srcYPx, imgWidth, srcHPx, 0, 0, imgWidth, srcHPx);
+        const pageImg = pageCanvas.toDataURL("image/png");
+        if (yPosition > 0) pdf.addPage();
+        pdf.addImage(pageImg, "PNG", 0, 0, pdfWidth, srcHPx * ratio);
+        yPosition += pdfHeight;
+      }
+
+      pdf.save(filename.endsWith(".pdf") ? filename : `${filename}.pdf`);
       toast.success(`"${filename}" downloaded successfully!`);
     } catch (err: any) {
       toast.error(err.message || "Download failed.");
+    } finally {
+
+      setIsDownloading(false);
     }
   };
+
 
   if (!open) return null;
 
@@ -155,41 +206,42 @@ export function PdfPreviewModal({
             {/* Zoom controls */}
             <button
               onClick={() => setFontSize((f) => Math.max(9, f - 1))}
-              className="w-8 h-8 rounded-lg border border-[#E8E3D9] flex items-center justify-center hover:bg-gray-100 transition-colors"
+              className="w-8 h-8 rounded-lg border border-[#E8E3D9] flex items-center justify-center hover:bg-[#F3F4F6] transition-colors"
               title="Zoom out"
             >
-              <ZoomOut className="w-4 h-4 text-gray-500" />
+              <ZoomOut className="w-4 h-4 text-[#6B7280]" />
             </button>
-            <span className="text-xs font-bold text-gray-400 w-8 text-center">{fontSize}px</span>
+            <span className="text-xs font-bold text-[#9CA3AF] w-8 text-center">{fontSize}px</span>
             <button
               onClick={() => setFontSize((f) => Math.min(24, f + 1))}
-              className="w-8 h-8 rounded-lg border border-[#E8E3D9] flex items-center justify-center hover:bg-gray-100 transition-colors"
+              className="w-8 h-8 rounded-lg border border-[#E8E3D9] flex items-center justify-center hover:bg-[#F3F4F6] transition-colors"
               title="Zoom in"
             >
-              <ZoomIn className="w-4 h-4 text-gray-500" />
+              <ZoomIn className="w-4 h-4 text-[#6B7280]" />
             </button>
 
             {/* Download */}
             <button
               onClick={handleDownload}
-              className="flex items-center gap-1.5 h-10 px-5 rounded-full bg-[#00A651] hover:bg-[#008F44] text-white text-xs font-bold transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
+              disabled={isDownloading || isLoading || !content}
+              className="flex items-center gap-1.5 h-10 px-5 rounded-full bg-[#00A651] hover:bg-[#008F44] disabled:opacity-60 disabled:cursor-not-allowed text-white text-xs font-bold transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
             >
-              <Download className="w-4 h-4" />
-              Download PDF
+              {isDownloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+              {isDownloading ? "Generating..." : "Download PDF"}
             </button>
 
             {/* Close */}
             <button
               onClick={onClose}
-              className="w-9 h-9 rounded-xl border border-[#E8E3D9] flex items-center justify-center hover:bg-gray-100 transition-colors"
+              className="w-9 h-9 rounded-xl border border-[#E8E3D9] flex items-center justify-center hover:bg-[#F3F4F6] transition-colors"
             >
-              <X className="w-4 h-4 text-gray-500" />
+              <X className="w-4 h-4 text-[#6B7280]" />
             </button>
           </div>
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-auto bg-slate-50/80 p-4 sm:p-8">
+        <div className="flex-1 overflow-auto p-4 sm:p-8" style={{backgroundColor:'#F8FAFC'}}>
           {isLoading && (
             <div className="flex flex-col items-center justify-center h-full gap-4">
               <div className="w-16 h-16 rounded-2xl bg-[#EBF8F2] flex items-center justify-center">
@@ -201,13 +253,13 @@ export function PdfPreviewModal({
 
           {error && !isLoading && (
             <div className="flex flex-col items-center justify-center h-full gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center">
-                <AlertCircle className="w-8 h-8 text-red-500" />
+              <div className="w-16 h-16 rounded-2xl bg-[#FEF2F2] flex items-center justify-center">
+                <AlertCircle className="w-8 h-8 text-[#EF4444]" />
               </div>
-              <p className="text-sm font-bold text-red-700 text-center max-w-sm">{error}</p>
+              <p className="text-sm font-bold text-[#B91C1C] text-center max-w-sm">{error}</p>
               <button
                 onClick={fetchPreview}
-                className="px-4 py-2 rounded-xl bg-red-600 text-white text-xs font-bold hover:bg-red-700 transition-colors"
+                className="px-4 py-2 rounded-xl bg-[#DC2626] text-white text-xs font-bold hover:bg-[#B91C1C] transition-colors"
               >
                 Retry
               </button>
@@ -215,20 +267,38 @@ export function PdfPreviewModal({
           )}
 
           {content && !isLoading && (
-            <div className="max-w-4xl mx-auto bg-white rounded-md shadow-xl border border-gray-200 overflow-hidden mb-8 transition-all">
-              {/* Document header bar */}
-              <div className="px-8 py-4 border-b border-gray-100 bg-gradient-to-r from-emerald-50 to-white flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                  <span className="text-[11px] font-bold text-emerald-700 uppercase tracking-widest">EXORA Official Document</span>
+            <div ref={previewRef} className="max-w-4xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden mb-8 transition-all font-sans" style={{border:'1px solid #E5E7EB'}}>
+              {/* Corporate Letterhead Header (Centered & Clean) */}
+              <div className="px-8 sm:px-12 py-6 bg-white text-center" style={{borderBottom:'1px solid #E5E7EB'}}>
+                <div className="pb-5 max-w-xl mx-auto space-y-1" style={{borderBottom:'2px solid #0F172A'}}>
+                  <h2 className="text-2xl font-black text-[#1F2937] tracking-tight uppercase">EXORA LOGISTICS & TRADE</h2>
+                  <p className="text-xs font-medium leading-normal" style={{color:'#6B7280'}}>
+                    President University, Jababeka Education Park, Cikarang, Indonesia
+                  </p>
+                  <p className="text-xs font-semibold" style={{color:'#334155'}}>
+                    support@exora.com
+                  </p>
                 </div>
-                <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
-                  {new Date().toLocaleDateString("id-ID", { year: "numeric", month: "long", day: "numeric" })}
-                </span>
+
+                <div className="flex items-center justify-between gap-4 pt-4 text-xs">
+                  <div className="text-left">
+                    <span className="text-[10px] font-extrabold uppercase tracking-widest block" style={{color:'#9CA3AF'}}>DOCUMENT</span>
+                    <span className="font-extrabold text-[#1F2937] text-sm uppercase">
+                      {filename.replace(/\.pdf$/i, '').replace(/_/g, ' ')}
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[10px] font-extrabold uppercase tracking-widest block" style={{color:'#9CA3AF'}}>DATE</span>
+                    <span className="font-bold text-[#1F2937]">
+                      {downloadDate}
+                    </span>
+                  </div>
+                </div>
               </div>
-              {/* Content */}
+
+              {/* Document Inner Content */}
               <div
-                className="p-8 sm:p-14 bg-white min-h-[600px] selection:bg-emerald-100"
+                className="p-8 sm:p-12 bg-white min-h-[500px] leading-relaxed"
                 style={{ fontSize: `${fontSize}px` }}
               >
                 {content.split('\n').map((line, i) => {
@@ -238,28 +308,29 @@ export function PdfPreviewModal({
 
                   if (isMainHeader) {
                     return (
-                      <div key={i} className="font-sans font-black text-emerald-800 text-3xl border-b-[4px] border-emerald-500 pb-4 mb-8 tracking-tight">
-                        {line}
+                      <div key={i} className="font-black text-[#1F2937] text-2xl uppercase pb-3 mb-6 tracking-tight flex items-center justify-between" style={{borderBottom:'2px solid #F1F5F9'}}>
+                        <span>{line.replace(/^EXORA —\s*/, '')}</span>
+                        <span className="text-xs font-extrabold text-[#00A651] bg-[#EBF8F2] px-3 py-1 rounded-full uppercase" style={{border:'1px solid rgba(0,166,81,0.3)'}}>OFFICIAL DOCUMENT</span>
                       </div>
                     );
                   }
                   
                   if (isSectionHeader) {
                     return (
-                      <div key={i} className="font-sans font-extrabold text-emerald-700 text-sm mt-10 mb-5 tracking-widest bg-emerald-50 px-4 py-2 rounded-xl inline-block border border-emerald-100">
+                      <div key={i} className="font-black text-[#1F2937] text-xs uppercase tracking-widest mt-8 mb-4 px-4 py-2 rounded-lg" style={{backgroundColor:'#F1F5F9',borderLeft:'4px solid #1E293B'}}>
                         {line.replace(/=/g, '').trim()}
                       </div>
                     );
                   }
 
                   if (isDivider) {
-                    return <div key={i} className="h-px bg-gray-200 my-4"></div>;
+                    return <div key={i} className="h-px my-4" style={{backgroundColor:'#E2E8F0'}}></div>;
                   }
 
                   // Handle Markdown H2
                   if (line.startsWith('## ')) {
                     return (
-                      <div key={i} className="font-sans font-bold text-gray-900 text-lg mt-6 mb-3">
+                      <div key={i} className="font-extrabold text-[#1F2937] text-base mt-6 mb-3">
                         {line.replace(/^##\s*/, '')}
                       </div>
                     );
@@ -269,11 +340,12 @@ export function PdfPreviewModal({
                   if (line.includes(' | ')) {
                     const badges = line.split(' | ');
                     return (
-                      <div key={i} className="flex flex-wrap gap-2 mb-6 font-sans mt-2">
+                      <div key={i} className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6 mt-2">
                         {badges.map((b, idx) => (
-                          <span key={idx} className="bg-slate-50 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-semibold border border-slate-200 shadow-sm">
-                            {b.trim()}
-                          </span>
+                          <div key={idx} className="p-3 rounded-xl" style={{backgroundColor:'#F8FAFC',border:'1px solid #E2E8F0'}}>
+                            <span className="text-[10px] font-bold uppercase tracking-widest block mb-0.5" style={{color:'#9CA3AF'}}>DETAIL #{idx + 1}</span>
+                            <span className="text-xs font-extrabold text-[#1F2937] truncate block">{b.trim()}</span>
+                          </div>
                         ))}
                       </div>
                     );
@@ -285,9 +357,9 @@ export function PdfPreviewModal({
                     const label = parts[0].trim();
                     const value = parts.slice(1).join(': ').trim();
                     return (
-                      <div key={i} className="flex justify-between items-center py-2.5 border-b border-gray-100 border-dashed font-sans hover:bg-slate-50 px-2 rounded-lg transition-colors">
-                        <span className="text-gray-600 font-medium">{label}</span>
-                        <span className="font-bold text-gray-900">{value}</span>
+                      <div key={i} className="flex justify-between items-center py-2.5 px-3 rounded-lg transition-colors font-medium" style={{borderBottom:'1px solid #F1F5F9'}}>
+                        <span className="font-semibold text-xs" style={{color:'#475569'}}>{label}</span>
+                        <span className="font-extrabold text-[#1F2937] text-xs">{value}</span>
                       </div>
                     );
                   }
@@ -307,7 +379,7 @@ export function PdfPreviewModal({
                     const parts = text.split('**');
                     return parts.map((part, idx) => {
                       if (idx % 2 === 1) {
-                        return <strong key={idx} className="font-bold text-gray-900">{part}</strong>;
+                        return <strong key={idx} className="font-extrabold text-[#1F2937]">{part}</strong>;
                       }
                       return <span key={idx}>{part}</span>;
                     });
@@ -316,13 +388,35 @@ export function PdfPreviewModal({
                   return (
                     <div 
                       key={i} 
-                      className={`font-sans text-gray-700 leading-relaxed ${isNumberedList || isBullet ? 'ml-6 mb-3 relative' : 'mb-3'}`}
+                      className={`font-medium text-xs ${isNumberedList || isBullet ? 'ml-5 mb-2 relative' : 'mb-2.5'}`}
+                      style={{color:'#334155'}}
                     >
-                      {isBullet && <span className="absolute -left-5 top-0 text-gray-400">•</span>}
+                      {isBullet && <span className="absolute -left-4 top-0 text-[#00A651] font-bold">•</span>}
                       {renderBold(line)}
                     </div>
                   );
                 })}
+
+                {/* Professional Signature & Authorization Stamp Block (Inspired by Official Commercial Quotes) */}
+                <div className="mt-12 pt-8 flex flex-col sm:flex-row justify-between items-end gap-6" style={{borderTop:'1px solid #E2E8F0'}}>
+                  <div className="text-xs font-medium space-y-1" style={{color:'#64748B'}}>
+                    <p className="font-extrabold text-[#1F2937]">IMPORTANT NOTICE:</p>
+                    <p>• Valid for 30 calendar days from the date of issuance.</p>
+                    <p>• Subject to official EXORA export terms and verified trade compliance protocols.</p>
+                  </div>
+
+                  <div className="text-center shrink-0">
+                    <p className="text-[11px] font-bold uppercase tracking-widest mb-2" style={{color:'#94A3B8'}}>AUTHORIZED SIGNATURE</p>
+                    <div className="w-40 h-16 rounded-xl flex flex-col items-center justify-center p-2 relative" style={{border:'1px dashed #6EE7B7',backgroundColor:'rgba(236,253,245,0.5)'}}>
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-[#00A651] font-black text-[9px] uppercase tracking-tighter opacity-80 rotate-[-12deg]" style={{border:'2px solid #00A651'}}>
+                        EXORA
+                      </div>
+                      <span className="text-[9px] font-bold text-[#00A651] mt-1 uppercase tracking-widest">OFFICIAL STAMP</span>
+                    </div>
+                    <p className="text-xs font-black text-[#1F2937] mt-2">Export Operations Manager</p>
+                    <p className="text-[10px] font-semibold" style={{color:'#64748B'}}>EXORA Trade & Logistics Engine</p>
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -335,10 +429,11 @@ export function PdfPreviewModal({
           </p>
           <button
             onClick={handleDownload}
-            className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-[#E8E3D9] text-[#1F2937] text-xs font-semibold hover:bg-gray-50 transition-colors"
+            disabled={isDownloading || isLoading || !content}
+            className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-[#E8E3D9] text-[#1F2937] text-xs font-semibold hover:bg-[#F9FAFB] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
           >
-            <Download className="w-3.5 h-3.5" />
-            Save File
+            {isDownloading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+            {isDownloading ? "Generating..." : "Save File"}
           </button>
         </div>
       </div>

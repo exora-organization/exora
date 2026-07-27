@@ -65,7 +65,7 @@ export default function GuestLayout({ children }: { children: React.ReactNode })
           <header className="md:hidden flex items-center justify-between bg-white border-b border-[#E8E3D9] px-6 py-4 sticky top-0 z-20 w-full">
             <div className="flex items-center gap-2">
               <div className="relative w-10 h-10 flex items-center justify-center shrink-0">
-                <Image src={logoImg} alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                <Image src={logoImg} loading="eager" alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               </div>
               <h1 className="text-2xl font-extrabold tracking-tight text-[#1F2937]">EXORA</h1>
             </div>
@@ -98,7 +98,7 @@ export default function GuestLayout({ children }: { children: React.ReactNode })
             <div className="p-6 pb-4 border-b border-[#E8E3D9]">
               <div className="flex items-center gap-3 mb-3">
                 <div className="relative w-12 h-12 flex items-center justify-center shrink-0">
-                  <Image src={logoImg} alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  <Image src={logoImg} loading="eager" alt="EXORA Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
                 <div className="flex flex-col justify-center">
                   <h1 className="text-2xl font-extrabold tracking-tight text-[#1F2937] leading-none">EXORA</h1>
