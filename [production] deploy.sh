@@ -45,13 +45,14 @@ cd ../frontend
 
 echo "Cleaning up old build..."
 pkill -f "next build" || true
-rm -rf .next node_modules
+rm -rf .next
 
 echo "Installing dependencies..."
 npm install
 
 echo "Building Next.js..."
 npm run build
+
 
 
 echo ""
