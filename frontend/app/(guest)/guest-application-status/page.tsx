@@ -158,9 +158,18 @@ export default function ApplicationStatusPage() {
             <h2 className="text-2xl font-bold text-red-600 mb-1 tracking-tight">Application Rejected</h2>
             <p className="text-sm text-[#9CA3AF] mb-6">Unfortunately, your application was not approved.</p>
 
-            <p className="text-sm text-[#4B5563] px-4">
-              Please contact support if you believe this was a mistake or if you need further clarification.
+            <div className="p-4 bg-red-50 border border-red-100 rounded-xl text-red-800 text-sm mb-6 text-left">
+              <p className="font-bold text-xs tracking-widest uppercase mb-1">Rejection Reason:</p>
+              <p>{appData.rejectReason || "Please verify your company legal documents."}</p>
+            </div>
+
+            <p className="text-sm text-[#4B5563] px-4 mb-6">
+              You may update your details and resubmit the application, or contact support if you need further clarification.
             </p>
+
+            <PrimaryButton onClick={() => router.push("/guest-company-application/revision")}>
+              RESUBMIT APPLICATION
+            </PrimaryButton>
           </div>
         </Wrapper>
       );

@@ -40,12 +40,12 @@ export default function RevisionPage() {
 
   // Inside component, use useEffect for redirect
   useEffect(() => {
-    if (appData && appData.status !== "revision_requested") {
+    if (appData && appData.status !== "revision_requested" && appData.status !== "rejected") {
       router.push("/guest-dashboard");
     }
   }, [appData, router]);
 
-  if (appData?.status !== "revision_requested") {
+  if (appData?.status !== "revision_requested" && appData?.status !== "rejected") {
     return null;
   }
 
@@ -68,13 +68,21 @@ export default function RevisionPage() {
         
         <div className="relative z-10">
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-amber-600 mb-1 tracking-tight">Revision Requested</h2>
-            <p className="text-sm text-[#9CA3AF]">Please review the admin's feedback and resubmit your application.</p>
+            <h2 className={`text-2xl font-bold mb-1 tracking-tight ${appData.status === "rejected" ? "text-red-600" : "text-amber-600"}`}>
+              {appData.status === "rejected" ? "Application Rejected" : "Revision Requested"}
+            </h2>
+            <p className="text-sm text-[#9CA3AF]">
+              {appData.status === "rejected" 
+                ? "Your application was not approved. Please review the reason below and resubmit." 
+                : "Please review the admin's feedback and resubmit your application."}
+            </p>
           </div>
 
-          <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl text-amber-800 text-sm mb-8 text-left">
-            <p className="font-bold text-xs tracking-widest uppercase mb-1">Admin Notes:</p>
-            <p>{appData.revisionNotes || "No notes provided."}</p>
+          <div className={`p-4 border rounded-xl text-sm mb-8 text-left ${appData.status === "rejected" ? "bg-red-50 border-red-100 text-red-800" : "bg-amber-50 border-amber-100 text-amber-800"}`}>
+            <p className="font-bold text-xs tracking-widest uppercase mb-1">
+              {appData.status === "rejected" ? "Rejection Reason:" : "Admin Notes:"}
+            </p>
+            <p>{(appData.status === "rejected" ? appData.rejectReason : appData.revisionNotes) || "No notes provided."}</p>
           </div>
 
           <CompanyApplicationForm
