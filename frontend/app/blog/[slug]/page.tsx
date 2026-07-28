@@ -43,8 +43,21 @@ export default function BlogDetailPage() {
       <PublicNavbar />
 
       {/* Hero Header */}
-      <div className="bg-[#0C1E1C] text-white pt-32 pb-20 px-6 lg:px-20 relative overflow-hidden">
-        <div className="max-w-4xl mx-auto space-y-6 relative z-10">
+      <div className="relative text-white pt-28 pb-16 px-6 lg:px-20 overflow-hidden min-h-[420px] flex items-end">
+        {/* Article image as full hero background */}
+        <Image
+          src={article.image}
+          alt={article.title}
+          fill
+          priority
+          className="object-cover"
+        />
+        {/* Strong dark overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/75 to-black/55" />
+        {/* Extra dark strip at bottom where content sits */}
+        <div className="absolute bottom-0 left-0 right-0 h-2/3 bg-gradient-to-t from-black/80 to-transparent" />
+
+        <div className="max-w-4xl mx-auto space-y-4 relative z-10 w-full pb-2">
           <button
             onClick={() => router.push("/blog")}
             className="inline-flex items-center gap-2 text-xs font-bold text-[#00A651] bg-[#00A651]/10 px-4 py-2 rounded-full border border-[#00A651]/30 hover:bg-[#00A651]/20 transition-all cursor-pointer"
@@ -53,23 +66,23 @@ export default function BlogDetailPage() {
             Back to Export Insights
           </button>
 
-          <div className="flex items-center gap-4 text-xs font-bold text-[#9CA3AF] uppercase tracking-wider">
+          <div className="flex items-center gap-4 text-xs font-bold text-gray-300 uppercase tracking-wider">
             <span className="bg-[#00A651] text-white px-3 py-1 rounded-full">{article.category}</span>
             <span>{article.readTime}</span>
             <span>·</span>
             <span>{article.publishedAt}</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-black leading-tight tracking-tight text-white">
+          <h1 className="text-3xl sm:text-5xl font-black leading-tight tracking-tight text-white drop-shadow-lg">
             {article.title}
           </h1>
 
-          <p className="text-base sm:text-lg text-gray-300 font-medium leading-relaxed">
+          <p className="text-sm sm:text-base text-gray-200 font-medium leading-relaxed max-w-2xl">
             {article.desc}
           </p>
 
-          <div className="flex items-center gap-3 pt-4 border-t border-white/10 text-xs font-semibold text-gray-400">
-            <div className="w-8 h-8 rounded-full bg-[#00A651] flex items-center justify-center text-white font-extrabold">
+          <div className="flex items-center gap-3 pt-3 border-t border-white/20 text-xs font-semibold text-gray-300">
+            <div className="w-8 h-8 rounded-full bg-[#00A651] flex items-center justify-center text-white font-extrabold shrink-0">
               EX
             </div>
             <div>
@@ -83,16 +96,7 @@ export default function BlogDetailPage() {
       {/* Main Article Container */}
       <main className="max-w-4xl mx-auto px-6 py-12 w-full space-y-10">
 
-        {/* Featured Image */}
-        <div className="relative w-full h-[320px] sm:h-[420px] rounded-3xl overflow-hidden shadow-2xl border border-white/60">
-          <Image
-            src={article.image}
-            alt={article.title}
-            fill
-            priority
-            className="object-cover"
-          />
-        </div>
+
 
         {/* Key Takeaways Box */}
         {article.keyTakeaways && article.keyTakeaways.length > 0 && (

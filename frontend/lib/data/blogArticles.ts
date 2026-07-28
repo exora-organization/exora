@@ -7,7 +7,7 @@ export interface BlogArticle {
   image: string;
   author: string;
   publishedAt: string;
-  content: string; // Markdown or HTML content
+  content: string;
   sources: { title: string; url?: string; org: string }[];
   keyTakeaways: string[];
 }
@@ -15,18 +15,18 @@ export interface BlogArticle {
 export const BLOG_ARTICLES: BlogArticle[] = [
   {
     slug: "understanding-incoterms-exw-fob-cfr-cif",
-    title: "Understanding Incoterms: EXW, FOB, CFR, and CIF",
-    desc: "Learn how different Incoterms influence export pricing, responsibilities, and logistics.",
+    title: "EXW, FOB, CFR, CIF — What Do They Mean and Which One is Right for You?",
+    desc: "Your overseas buyer asked for a \"CIF\" quote — and you're not sure what that means. Here's a plain-language guide to the four most common Incoterms.",
     category: "Incoterms",
     readTime: "5 min read",
     image: "/blog/blog1.jpg",
     author: "EXORA Trade Advisory Team",
     publishedAt: "July 2026",
     keyTakeaways: [
-      "Incoterms define exact risk and cost transfer boundaries between seller and buyer.",
-      "FOB (Free On Board) is the most widely used rule for sea freight exports.",
-      "CIF includes Marine Insurance, whereas CFR leaves insurance to the buyer.",
-      "Choosing the wrong Incoterm can lead to unexpected transport costs or unhedged transit risks."
+      "FOB means you're responsible until goods are loaded onto the ship — after that, the buyer takes over.",
+      "EXW is the simplest for you: the buyer picks up from your warehouse and handles everything else.",
+      "CIF means you pay for shipping AND insurance to the buyer's port — make sure those costs are in your price.",
+      "Choosing the wrong Incoterm can quietly eat your profit margin."
     ],
     sources: [
       { title: "Incoterms® 2020 Rules & Official Guidance", org: "International Chamber of Commerce (ICC)" },
@@ -34,352 +34,462 @@ export const BLOG_ARTICLES: BlogArticle[] = [
       { title: "Export Commercial Terms Handbook", org: "International Trade Centre (ITC)" }
     ],
     content: `
-## Introduction to Incoterms 2020
+## Your Buyer Just Said "Quote Me CIF" — Now What?
 
-International Commercial Terms (**Incoterms**) are a set of 11 standardized trade rules published by the **International Chamber of Commerce (ICC)**. They establish clear boundaries regarding:
-1. **Cost Allocation**: Who pays for transport, packaging, port handling, freight, and insurance?
-2. **Risk Transfer**: At what exact physical location does risk pass from exporter to buyer?
-3. **Documentary Responsibility**: Who is responsible for customs clearance and licenses?
+Picture this: you just received an inquiry from a buyer in Malaysia. They say: *"Please send us a CIF quote to Port Klang."* You open Google, and suddenly you're drowning in acronyms.
 
-Understanding the core differences between **EXW**, **FOB**, **CFR**, and **CIF** is essential to prevent costly pricing misunderstandings.
+Don't worry. Let's break each one down in plain language.
 
 ---
 
-## 1. EXW — Ex Works (Factory Pick-up)
+## 1. EXW — "Come Pick It Up From My Warehouse"
 
-Under **EXW**, the exporter's sole obligation is to make the goods available at their factory or warehouse. 
+**EXW (Ex Works)** is the simplest Incoterm from your side. You just make the goods available at your factory or warehouse. The buyer arranges everything — pickup, export customs, shipping, and insurance.
 
-* **Seller Responsibility**: HPP (COGS), export packaging, and certificate of origin.
-* **Buyer Responsibility**: Inland transport in origin country, export customs clearance, ocean freight, marine insurance, and import clearance.
-* **Risk Transfer**: At the seller's premises when goods are placed at buyer's disposal.
-* **Best Used For**: E-commerce or experienced buyers with strong domestic freight forwarding networks in the seller's country.
+**Best for**: Experienced buyers who already have their own freight agent in your country.
 
----
+**Your risk**: Very low. But your price will also be the lowest, since you're not including any logistics costs.
 
-## 2. FOB — Free On Board (Loaded at Origin Port)
-
-**FOB** is the gold standard for ocean container shipping. The exporter delivers goods onto the vessel nominated by the buyer at the named origin port.
-
-* **Seller Responsibility**: HPP, packaging, certification, and inland transport + origin port loading fees.
-* **Buyer Responsibility**: Ocean freight, marine insurance, destination port charges, and import customs.
-* **Risk Transfer**: Once the goods are loaded on board the vessel at the port of shipment.
-* **Best Used For**: Containerized ocean freight where buyer has preferred shipping lines and better volume rates.
+**Real example**: A garment factory in Bandung sells to a Japanese importer. The importer has their own freight agent in Jakarta, so they pick up directly from the factory. EXW price = your production cost only.
 
 ---
 
-## 3. CFR — Cost and Freight (Freight Paid to Destination)
+## 2. FOB — "I'll Deliver It to the Port. After That, It's On You."
 
-Under **CFR**, the exporter pays for ocean freight to transport the goods to the named destination port. However, marine transit risk passes to the buyer as soon as goods are on board.
+**FOB (Free On Board)** is the most commonly used Incoterm in global trade. You're responsible for getting the goods loaded onto the ship at the departure port. Once it's on the ship, all risk transfers to the buyer.
 
-* **Seller Responsibility**: HPP, packaging, certification, inland transport, and ocean freight.
-* **Buyer Responsibility**: Marine cargo insurance, destination port unloading, and import clearance.
-* **Risk Transfer**: On board the vessel at the origin port (same as FOB).
-* **Best Used For**: Buyers who prefer seller to handle shipping logistics but maintain their own cargo insurance policy.
+**Best for**: Sea freight exports. This is the global standard most buyers are familiar with.
 
----
+**What you cover**: Inland transport to the port + export clearance + loading onto the vessel.
 
-## 4. CIF — Cost, Insurance & Freight (Full Coverage)
+**What the buyer covers**: Ocean freight + cargo insurance + import duties at their end.
 
-Under **CIF**, the exporter pays for ocean freight AND marine cargo insurance covering transit to the destination port.
-
-* **Seller Responsibility**: HPP, packaging, certification, inland transport, ocean freight, and marine cargo insurance.
-* **Buyer Responsibility**: Destination port charges, import customs clearance, and inland transport to final warehouse.
-* **Risk Transfer**: On board the vessel at origin port.
-* **Best Used For**: Initial export transactions where buyers require a complete turnkey delivered price.
+**Quick tip**: If the buyer says "FOB Jakarta," your quoted price must include all costs up to and including loading at Tanjung Priok Port.
 
 ---
 
-## Summary Responsibility Matrix
+## 3. CFR — "I'll Pay for the Ship, But Insurance Is Not My Problem"
 
-| Cost Component | EXW | FOB | CFR | CIF |
-| :--- | :---: | :---: | :---: | :---: |
-| **Packaging & COGS** | Seller | Seller | Seller | Seller |
-| **Inland Transport to Port** | Buyer | Seller | Seller | Seller |
-| **Export Customs & Loading** | Buyer | Seller | Seller | Seller |
-| **Ocean Freight** | Buyer | Buyer | Seller | Seller |
-| **Marine Insurance** | Buyer | Buyer | Buyer | Seller |
-| **Import Clearance** | Buyer | Buyer | Buyer | Buyer |
+**CFR (Cost and Freight)** means you pay for ocean freight to the buyer's destination port, but you do NOT arrange insurance. If the cargo sinks in the middle of the ocean — that's the buyer's risk.
 
+**Best for**: Buyers who already have their own cargo insurance policy.
+
+**What you need to calculate**: Your production cost + ocean freight to destination port. Insurance is excluded from your CFR price.
+
+---
+
+## 4. CIF — "I'll Handle Everything Right to Your Port"
+
+**CIF (Cost, Insurance, and Freight)** is the most comprehensive. You pay for ocean freight AND cargo insurance to the buyer's destination port.
+
+**Best for**: New buyers who don't want to deal with logistics themselves.
+
+**What to include in your CIF price**: Production cost + export packaging + inland trucking + export clearance fees + ocean freight + insurance premium.
+
+**Warning**: Because you're covering more costs, make absolutely sure all of these are factored into your selling price. Many new exporters forget to include insurance and end up with a smaller margin — or even a loss.
+
+---
+
+## Which One Should You Choose?
+
+| Incoterm | Your Cost | Your Risk | Best For |
+|----------|-----------|-----------|----------|
+| EXW | Lowest | Lowest | Experienced buyers |
+| FOB | Medium | Medium | General sea freight |
+| CFR | Higher | Higher | Buyers with own insurance |
+| CIF | Highest | Highest | Buyers who want all-inclusive |
+
+**Advice for new exporters**: Start with **FOB**. It's the most familiar, the most commonly requested, and it splits responsibility fairly between you and your buyer.
 `
   },
+
   {
     slug: "common-mistakes-new-exporters-should-avoid",
-    title: "Common Mistakes New Exporters Should Avoid",
-    desc: "Discover the financial and operational mistakes that often lead to unsuccessful export projects.",
+    title: "7 Mistakes That Cost New Exporters Thousands — And How to Avoid Them",
+    desc: "From underpricing your goods to shipping without a signed contract — here are the most expensive mistakes first-time exporters make.",
     category: "Strategy",
     readTime: "7 min read",
     image: "/blog/blog2.jpg",
     author: "EXORA Risk Advisory Board",
     publishedAt: "July 2026",
     keyTakeaways: [
-      "Never ship on Open Account (O/A) with first-time international buyers.",
-      "Calculate complete landed costs early to avoid margin erosion from hidden port fees.",
-      "Verify destination country health, labeling, and import permit compliance before shipping.",
-      "Hedge against foreign exchange volatility when quoting in foreign currencies."
+      "Never quote a price without calculating ALL costs: freight, insurance, export fees, and bank charges.",
+      "Never ship to a new buyer without at least 30% deposit upfront.",
+      "A Letter of Credit (L/C) is the safest payment method for large first orders.",
+      "Always request a small trial order before committing to a large contract."
     ],
     sources: [
-      { title: "SME Export Readiness & Risk Guide", org: "International Trade Centre (ITC)" },
-      { title: "Exporting Best Practices & Common Pitfalls", org: "U.S. Commercial Service" },
-      { title: "International Trade Finance & Risk Mitigation", org: "Export-Import Bank" }
+      { title: "Common Export Risks & Mitigation Strategies", org: "International Trade Centre (ITC)" },
+      { title: "SME Export Readiness Framework", org: "World Trade Organization (WTO)" },
+      { title: "Export Credit & Payment Risk Guide", org: "Asian Development Bank (ADB)" }
     ],
     content: `
-## Navigating the Challenges of First-Time Exporting
+## You Just Got an Overseas Inquiry — Don't Rush.
 
-Expanding into international markets offers immense growth opportunities for businesses. However, emerging exporters frequently encounter operational and financial pitfalls that can erode profit margins or result in confiscated cargo.
-
-Here are the **top 5 mistakes** new exporters must avoid to ensure sustainable global operations.
+Getting an email from a buyer in Dubai or Singapore is exciting. But this is exactly the moment when many new exporters make costly mistakes. Let's go through the most common ones — so you can avoid them.
 
 ---
 
-## 1. Accepting Unsecured Payment Terms for New Buyers
+## Mistake #1: Underpricing Because You Forgot Hidden Costs
 
-Offering **Open Account (O/A)** terms to an unverified overseas buyer exposes your business to catastrophic non-payment risk. Overseas debt collection is extremely complex, expensive, and often unrecoverable.
+This is the #1 mistake. You quote a price based on your production cost alone, forgetting to include:
 
-* **Solution**: Demand **30% - 50% T/T Advance Deposit** prior to production, with the remaining balance due against shipping documents (Bill of Lading), or request an **Irrevocable Letter of Credit (L/C)** issued by a reputable international bank.
+- Inland trucking to the port
+- Export documentation and port handling fees
+- Ocean freight
+- Cargo insurance premium
+- Bank charges if using L/C
+- Certification or labeling requirements for the destination country
 
----
+**The result**: You land a big order, but after all the real costs are tallied, you barely break even — or you lose money.
 
-## 2. Underestimating Hidden Logistics & Port Demurrage Costs
-
-Many new exporters calculate prices based solely on production costs and ocean freight, forgetting secondary charges such as terminal handling charges (THC), container detention, storage fees, and customs inspection costs.
-
-* **Solution**: Build a comprehensive cost structure that includes packaging, certificates of origin, domestic transport, forwarding fees, and a **5% contingency buffer**.
-
----
-
-## 3. Ignoring Destination Country Technical Standards & Labeling Rules
-
-Shipping goods without confirming destination import requirements (such as food safety regulations, ingredient bans, language labeling, or mandatory certification) often leads to custom holds or mandatory destruction at the buyer's port.
-
-* **Examples**:
-  * **Singapore (SFA)**: Requires strict pesticide residue testing for food imports.
-  * **South Korea (MFDS)**: Mandates detailed Korean-language allergen labels on packaging.
-* **Solution**: Request exact import permit checklists from your buyer or destination customs broker before dispatching cargo.
+**The fix**: Calculate **every cost** before sending your quotation. If you're unsure about freight costs, get a quote from a freight forwarder first.
 
 ---
 
-## 4. Failing to Protect Against Currency Exchange Rate Shifts
+## Mistake #2: Agreeing to "Pay After Delivery" for a New Buyer
 
-When quoting prices in foreign currency (such as USD, EUR, or SGD), a 5% - 10% currency devaluation against your local currency between quotation date and payment arrival can completely wipe out your profit margin.
+If a buyer asks to pay after goods arrive — be careful. It means you've already shipped, you've already spent your capital, but the money isn't in your hands yet.
 
-* **Solution**: Factor in realistic exchange rate buffers or utilize financial hedging tools like **Forward Exchange Contracts (FEC)** with your banking partner.
+If the buyer disappears or disputes the goods — your product is already in their country and very difficult to recover.
+
+**Safer options for new buyers**:
+- **30% deposit** before production + 70% before shipment
+- Or use **L/C (Letter of Credit)** — the buyer's bank guarantees the payment
 
 ---
 
-## 5. Relying on Informal or Incomplete Export Documentation
+## Mistake #3: Not Checking the Buyer's Credibility
 
-Discrepancies in commercial documents (e.g., misspelled buyer names, mismatched HS codes, or incorrect net weights between Invoice and Packing List) will cause bank rejections under Letter of Credit processing and customs delays.
+A legitimate buyer will usually have no problem sharing:
+- Full company name and registered business address
+- Business registration number
+- References from other suppliers they've worked with
 
-* **Solution**: Implement standardized document verification protocols before releasing original Bill of Lading documents.
+If a buyer avoids these questions — treat that as a red flag.
 
+---
+
+## Mistake #4: Incomplete Export Documents
+
+Every destination country has different document requirements. The common ones include:
+
+- **Commercial Invoice**
+- **Packing List**
+- **Bill of Lading** or Airway Bill
+- **Certificate of Origin** (to benefit from ASEAN or bilateral trade tariffs)
+- **Phytosanitary Certificate** if you're exporting agricultural products
+
+Missing documents = goods held at customs. You pay demurrage fees (port storage penalties) while everything gets sorted.
+
+---
+
+## Mistake #5: Not Checking Destination Country Regulations
+
+Your product may be freely sold in Indonesia, but in the destination country there could be:
+- Import restrictions or bans
+- Mandatory local-language labeling
+- Specific packaging size or material requirements
+- Maximum limits on certain ingredients (for food, cosmetics, etc.)
+
+**Real example**: You export chili sauce to Australia. Australia has strict rules on preservative content and requires a specific nutrition label format. Without this, your product can be seized at the border.
+
+---
+
+## Mistake #6: Agreeing to an Incoterm You Don't Understand
+
+Never agree to a trade term you're not familiar with. If the buyer wants "CIF Rotterdam" but you quoted "FOB Surabaya," the cost difference can easily reach millions of rupiah — all of it coming out of your pocket.
+
+---
+
+## Mistake #7: No Written Contract
+
+Email threads are not contracts. Make sure you have a signed **Sales Contract** that covers:
+- Product quantity and specifications
+- Agreed price and Incoterm
+- Delivery schedule
+- Payment terms
+- What happens if there's a dispute
+
+Without a contract, you have no legal ground to stand on if the buyer complains or refuses to pay.
 `
   },
+
   {
     slug: "how-exchange-rates-affect-export-profitability",
-    title: "How Exchange Rates Affect Export Profitability",
-    desc: "Understand how currency fluctuations influence pricing and overall business performance.",
+    title: "The Dollar Goes Up and Down — Here's What That Means for Your Business",
+    desc: "You sell in USD but your costs are in Rupiah. Understanding exchange rates could be the difference between a profitable export and a loss.",
     category: "Finance",
     readTime: "6 min read",
     image: "/blog/blog3.jpg",
-    author: "EXORA Financial Analytics Group",
+    author: "EXORA Financial Advisory Team",
     publishedAt: "July 2026",
     keyTakeaways: [
-      "Currency fluctuations directly impact export revenue and competitiveness.",
-      "Local currency strengthening reduces IDR export revenue when quoting in USD.",
-      "Forward Exchange Contracts (FEC) lock in exchange rates to protect profit margins.",
-      "Natural hedging occurs when export costs and revenues are denominated in the same currency."
+      "When Rupiah weakens vs USD, you earn more Rupiah per dollar — which can boost your margin.",
+      "When Rupiah strengthens, your Rupiah earnings shrink even if the USD price stays the same.",
+      "Always calculate your profit in Rupiah, not just in USD.",
+      "For large orders, ask your bank about forward contracts to lock in today's exchange rate."
     ],
     sources: [
-      { title: "Foreign Exchange Risk Management Guidelines", org: "Bank Indonesia (BI)" },
-      { title: "Currency Volatility & International Trade Stability", org: "International Monetary Fund (IMF)" },
-      { title: "Trade Finance FX Risk Strategies", org: "Trade Finance Global (TFG)" }
+      { title: "Exchange Rate Risk Management for SMEs", org: "International Monetary Fund (IMF)" },
+      { title: "Currency Risk in International Trade", org: "Bank Indonesia" },
+      { title: "Hedging Strategies for Export Businesses", org: "Asian Development Bank (ADB)" }
     ],
     content: `
-## The Impact of Foreign Exchange Dynamics on Export Business
+## A Simple Example That Shows Why Exchange Rates Matter
 
-For international exporters, price calculations and profit margins are inextricably linked to foreign exchange (FX) rates. Because export contracts are quoted in hard currencies like **USD**, **SGD**, or **EUR**, while local production costs are incurred in **IDR**, exchange rate shifts can make the difference between a profitable shipment and a net financial loss.
+You sell rattan furniture to a buyer in Europe for **$10,000 USD**.
 
----
+In January, the USD/IDR rate is Rp 15,000 — so you receive **Rp 150 million**.
 
-## 1. Understanding Transaction Exposure in Exporting
+In June, you land the same order at the same price — but now the rate is Rp 16,500. You receive **Rp 165 million** — that's Rp 15 million more, just from the exchange rate.
 
-**Transaction exposure** occurs when an export sale contract is agreed upon at time $t_0$, but the buyer pays in foreign currency at a later date $t_1$.
+But what if the rate had dropped to Rp 14,000? You'd only receive Rp 140 million — even though your production costs haven't changed.
 
-### Practical Scenario:
-* **Production Cost**: Rp 150.000.000
-* **Quoted Selling Price**: USD 12.000
-* **Rate at Quotation ($t_0$)**: USD 1 = Rp 15.000 $\rightarrow$ **Expected Revenue**: Rp 180.000.000 *(Expected Margin: 16.7%)*
-
-If the IDR appreciates by 5% to **USD 1 = Rp 14.250** when buyer pays 60 days later:
-* **Actual Received Revenue**: $12.000 \times 14.250 =$ **Rp 171.000.000**
-* **Actual Profit Margin**: Drops to **12.2%** *(Loss of Rp 9.000.000 due to currency shift alone!)*
+**This is currency risk.** And it affects every exporter who invoices in USD but pays costs in Rupiah.
 
 ---
 
-## 2. Key Foreign Exchange Strategies for Exporters
+## Two Real Scenarios Exporters Face
 
-To mitigate currency volatility, successful exporters employ three proven strategies:
+### Scenario A: The Rate Works in Your Favor
+You quote a price in March when the rate is Rp 15,500. Payment comes in May when the rate is Rp 16,200.
 
-### A. Forward Exchange Contracts (FEC)
-A **Forward Contract** allows an exporter to lock in a specific exchange rate with their commercial bank for a transaction set to settle at a future date (e.g. 30, 60, or 90 days ahead). This guarantees exact local currency revenue regardless of spot market fluctuations.
+Result: **You earn more Rupiah than expected.** This is a windfall — extra profit from a favorable rate movement.
 
-### B. FX Clause / Exchange Adjustment Clauses
-Include an **Exchange Adjustment Clause** in commercial contracts stating that if the spot exchange rate fluctuates by more than $\pm 5\%$, the USD contract price will be adjusted proportionally.
+### Scenario B: The Rate Works Against You
+You quote a USD price in October. Production takes two months. Payment arrives in January — and the Rupiah has strengthened significantly.
 
-### C. Natural Hedging
-Procure imported raw materials or machinery in the same foreign currency (USD) used for export invoicing. This creates an automatic balance between USD inflows and outflows.
+Result: **You receive fewer Rupiah, but your production cost hasn't changed.** Your margin shrinks — or disappears entirely.
 
 ---
 
-## 3. Best Practices for Setting Baseline Exchange Rates
+## Simple Ways to Protect Yourself
 
-* **Never Use Spot Rate Directly for Long-Term Quotes**: Always apply a 2% - 3% safety margin below current spot rates when calculating minimum acceptable unit prices.
-* **Monitor Central Bank Benchmark Rates**: Track Bank Indonesia (JISDOR) and Federal Reserve interest rate announcements to anticipate currency trends.
+### 1. Always Calculate in Rupiah
+Don't just look at the USD number. Every time you prepare a quotation, convert the expected USD revenue into Rupiah — and compare it against your Rupiah costs.
 
+**Simple formula**:
+USD price × today's exchange rate = Expected IDR revenue
+Expected IDR revenue − Total IDR costs = Your actual profit
+
+### 2. Use a Conservative Exchange Rate When Quoting
+When preparing your price, use an exchange rate **3–5% lower** than today's rate as a safety buffer. If the rate doesn't move against you — you earn more. If it does — you're still safe.
+
+### 3. Request Faster Payment
+The longer the money sits with the buyer (in USD), the longer you're exposed to exchange rate risk. Where possible, negotiate earlier payment terms.
+
+### 4. Ask Your Bank About Forward Contracts
+For large orders (above $50,000), you can lock in today's exchange rate for a future payment date using a **forward contract**. Many Indonesian banks offer this for SME exporters — it's worth asking.
+
+---
+
+## How Exchange Rates Affect Your Competitiveness
+
+Exchange rate movements also affect how competitive your prices look to international buyers.
+
+When the Rupiah weakens, Indonesian products become **cheaper** for foreign buyers — this is actually an opportunity to win more orders over competitors from other countries.
+
+When the Rupiah strengthens, your products become relatively more expensive. Buyers may start comparing you with suppliers from Vietnam, India, or China.
+
+**Bottom line**: Monitor the exchange rate regularly, especially around the time of shipment and payment collection. This isn't about speculation — it's about making sure your business stays profitable.
 `
   },
+
   {
     slug: "preparing-financial-data-before-exporting",
-    title: "Preparing Financial Data Before Exporting",
-    desc: "A practical guide to gathering production costs, logistics expenses, and pricing information.",
+    title: "Before You Export, You Need to Know What Your Goods Actually Cost",
+    desc: "Many new exporters don't know their own cost of goods. This guide helps you calculate every cost before sending your first quotation.",
     category: "Costing",
     readTime: "8 min read",
     image: "/blog/blog4.jpg",
-    author: "EXORA Export Costing Specialist",
+    author: "EXORA Costing Advisory Team",
     publishedAt: "July 2026",
     keyTakeaways: [
-      "Export costing requires adding packaging, certification, and transport onto base HPP.",
-      "Accurate quantity calculation is crucial because fixed logistics costs are amortized per unit.",
-      "Target margin must account for unexpected port fees and payment term financing costs.",
-      "Clean financial data is mandatory for obtaining trade finance from commercial banks."
+      "Your Cost of Goods Sold (COGS) is your starting point — you must know this number before anything else.",
+      "Export costs go beyond freight: packaging, certification, documents, and bank fees all add up.",
+      "Target a minimum 15–25% margin above total cost to cover risks and unexpected expenses.",
+      "If you don't know your exact COGS, you can't negotiate export prices with confidence."
     ],
     sources: [
-      { title: "Export Costing & Pricing Management Framework", org: "ACCA Global" },
-      { title: "Trade Logistics Cost Structure Standards", org: "Global Trade Review (GTR)" },
-      { title: "SME Export Financial Planning Manual", org: "Indonesian Ministry of Trade" }
+      { title: "Export Costing & Pricing Methodology", org: "International Trade Centre (ITC)" },
+      { title: "SME Financial Readiness for Export", org: "World Trade Organization (WTO)" },
+      { title: "Export Finance & Working Capital Guide", org: "Asian Development Bank (ADB)" }
     ],
     content: `
-## Why Accurate Financial Preparation Matters
+## Be Honest: Do You Know Your Exact Cost of Goods?
 
-Before issuing a single proforma invoice to an overseas buyer, an exporting company must construct a rigorous financial cost model. Oversights in initial cost accounting cannot be easily rectified once a binding international contract is signed.
+Many business owners who have been selling locally for years can't answer this question precisely: *"What is your exact cost per unit?"*
 
----
-
-## 1. The 6 Building Blocks of Export Costing
-
-A comprehensive export cost calculation consists of 6 sequential layers:
-
-### Layer 1: HPP / COGS (Cost of Goods Sold)
-Direct raw materials, direct labor, and manufacturing overhead required to produce one unit of product.
-
-### Layer 2: Export Packaging & Bundling
-Specialized export packaging (e.g. moisture-resistant barrier bags, heat-treated wooden pallets ISPM-15, strapping, and corrugated master cartons).
-
-### Layer 3: Certification & Compliance Fees
-Phytosanitary certificates, Halal certification, Health Certificates, COO (Certificate of Origin / Form E), and lab testing fees required by destination authorities.
-
-### Layer 4: Domestic Transportation to Origin Port
-Trucking costs from factory warehouse to origin container terminal (ICD/Port), container stuffing charges, and origin customs inspection fees.
-
-### Layer 5: Ocean / Air Freight & Port Handling (THC)
-Container freight rates, shipping line documentation fees, terminal handling charges, and bunker adjustment factors (BAF).
-
-### Layer 6: Marine Cargo Insurance & Contingency
-Insurance policy covering "All Risks" Institute Cargo Clauses (A) plus a 5% contingency buffer for currency fluctuations and unexpected port waiting times.
+In domestic markets, you can get away with rough estimates. In export? You can't. Because if you don't know your real cost, you can't:
+- Quote a price that's actually profitable
+- Know whether an order is worth taking
+- Negotiate confidently when a buyer tries to push your price down
 
 ---
 
-## 2. Formula for Export Price Determination
+## Step 1: Calculate Your Cost of Goods Sold (COGS)
 
-To determine the minimum selling price per unit under target margin $M\%$:
+COGS is everything you spend to produce one unit of your product. It typically includes:
 
-$$\text{Total Base Cost} = \text{HPP} + \text{Packaging} + \text{Certifications} + \text{Transport} + \text{Freight} + \text{Insurance}$$
+**Raw Materials**
+The cost of every material that goes into one unit — main materials, supporting materials, and basic packaging.
 
-$$\text{Unit Base Cost} = \frac{\text{Total Base Cost}}{\text{Quantity}}$$
+**Direct Labor**
+The wages paid to produce one unit. If you pay workers per piece, this is straightforward. If you pay monthly salaries, divide total monthly wages by the number of units produced per month.
 
-$$\text{Export Selling Price (IDR)} = \frac{\text{Unit Base Cost}}{1 - \frac{M}{100}}$$
+**Factory Overhead**
+Electricity, water, facility rent, machine maintenance — divide by monthly production volume to get cost per unit.
 
-$$\text{Export Selling Price (USD)} = \frac{\text{Export Selling Price (IDR)}}{\text{Exchange Rate}}$$
+**Simple Example:**
+
+| Component | Cost Per Unit |
+|-----------|--------------|
+| Raw materials | Rp 45,000 |
+| Direct labor | Rp 12,000 |
+| Factory overhead | Rp 8,000 |
+| **Total COGS** | **Rp 65,000** |
 
 ---
 
-## 3. Financial Checklist Before First Export Order
+## Step 2: Add All Export-Specific Costs
 
-- [x] Verified factory HPP per unit with exact material bill of materials (BOM).
-- [x] Obtained written quotes from 2+ licensed freight forwarders.
-- [x] Verified heat-treatment compliance (ISPM-15) for wooden pallets.
-- [x] Validated current exchange rate and set 3% safety margin buffer.
-- [x] Confirmed target profit margin aligns with company financial targets.
+This is what new exporters most often forget. Export costs go far beyond just ocean freight.
 
+**Export Packaging**
+Export packaging must be stronger than domestic packaging — reinforced cartons, bubble wrap, wooden pallets. This can add Rp 3,000–15,000 per unit depending on your product.
+
+**Certifications**
+Depending on your product and destination country, you may need: halal certification, phytosanitary certificate, SNI standard compliance, or lab testing. Divide these costs across your total export volume.
+
+**Export Documentation**
+Export declaration (PEB), Certificate of Origin, and other documents. Typically Rp 500,000–2,000,000 per shipment.
+
+**Inland Trucking to Port**
+From your warehouse to the departure port. Get quotes from at least 3 freight forwarders to compare.
+
+**Ocean Freight**
+Depends on cargo volume, weight, and destination port. Your freight forwarder will provide this.
+
+**Cargo Insurance**
+Typically 0.2%–0.5% of cargo value. Don't skip this — if goods are damaged or lost and you have no insurance, the loss is yours entirely.
+
+---
+
+## Step 3: Set a Selling Price That Makes Sense
+
+Once you know your total cost, add your profit margin. For export, **a minimum of 15–20%** above total cost is a safe target — to cover currency risk, potential returns, and unexpected costs.
+
+**Complete Example:**
+
+| Component | Per Unit |
+|-----------|---------|
+| COGS | Rp 65,000 |
+| Export packaging | Rp 8,000 |
+| Certification (divided) | Rp 2,000 |
+| Export documents (divided) | Rp 1,500 |
+| Trucking (divided) | Rp 3,000 |
+| Ocean freight (divided) | Rp 15,000 |
+| Insurance (divided) | Rp 1,500 |
+| **Total cost** | **Rp 96,000** |
+| 20% margin | Rp 19,200 |
+| **FOB Selling Price** | **Rp 115,200** |
+
+If today's USD/IDR rate = Rp 15,800, your FOB price in USD = **$7.29 per unit**.
+
+---
+
+## Why This Matters Before You Negotiate
+
+When you know these numbers, you can negotiate with confidence. You know exactly where your floor price is — the minimum price below which you'd be losing money. You know when an offer makes sense and when to walk away.
+
+Without this data, you're guessing. And guessing in export can turn into very real financial losses.
 `
   },
+
   {
     slug: "using-ai-to-support-export-decisions",
-    title: "Using AI to Support Export Decisions",
-    desc: "Learn how AI powered recommendations can assist businesses in evaluating export opportunities.",
+    title: "AI in Export: What It Actually Does for Exporters Like You",
+    desc: "You don't need to be a tech expert to benefit from AI. Here's how it helps first-time exporters make smarter, safer decisions.",
     category: "Technology",
     readTime: "4 min read",
     image: "/blog/blog5.jpg",
-    author: "EXORA Tech & AI Development Team",
+    author: "EXORA Advisory Team",
     publishedAt: "July 2026",
     keyTakeaways: [
-      "AI models automate complex multi-variable export feasibility calculations in seconds.",
-      "Fact-grounded RAG (Retrieval-Augmented Generation) prevents AI hallucinations.",
-      "AI Decision Advisors combine Incoterms, market risk, and financial margins for executive insights.",
-      "Data integrity & security standards (ISO 27001) ensure trade confidentiality."
+      "AI in export platforms is like an always-available advisor — ask it anything, anytime.",
+      "AI doesn't replace your decisions — it helps you see risks you might have missed.",
+      "The more accurate data you put in, the more useful the recommendation you get out.",
+      "Use AI as a second opinion before committing to a large contract."
     ],
     sources: [
-      { title: "Trade Tech Report: Artificial Intelligence in Global Trade", org: "World Economic Forum (WEF)" },
-      { title: "AI-Driven Supply Chain Transformation", org: "McKinsey & Company" },
-      { title: "ISO/IEC 27001 Information Security in AI Decision Systems", org: "ISO Organization" }
+      { title: "AI Applications in SME Trade Finance", org: "World Economic Forum (WEF)" },
+      { title: "Digital Trade Facilitation Tools for Exporters", org: "International Trade Centre (ITC)" },
+      { title: "Technology Adoption in Export SMEs", org: "McKinsey Global Institute" }
     ],
     content: `
-## The Evolution of Artificial Intelligence in International Trade
+## "AI" — You Don't Have to Be a Tech Person to Benefit From It
 
-International export operations involve analyzing vast amounts of fragmented data: freight rates, Incoterm risk allocations, currency exchange rates, country risk indices, destination tariff structures, and complex trade documentation.
+When you hear the word "AI" or "artificial intelligence," you might picture robots or lines of code — things that feel very far from the world of exporting crafts, agricultural products, or garments.
 
-Modern AI systems — specifically **Retrieval-Augmented Generation (RAG)** architecture — allow exporting companies to evaluate trade opportunities with unprecedented speed, accuracy, and confidence.
+But in the context of export business tools, AI works like this:
 
----
+> You enter your business data → AI analyzes it and gives you a recommendation → You decide what to do with it.
 
-## 1. How AI Decision Assistance Works in Export Management
-
-Rather than relying on generic AI models that can generate unverified claims, enterprise export platforms like **EXORA** utilize a structured 3-stage AI advisory workflow:
-
-
-> **EXORA AI Workflow:**
->
-> **[System Cost & Case Data]** + **[Curated Trade Knowledge Base]**
->
-> ↓
->
-> **[Strict Low-Temperature Prompting (0.15)]**
->
-> ↓
->
-> **[Executive Feasibility & Risk Recommendation Report]**
-
-
-### Key Capabilities:
-1. **Automated Feasibility Scoring**: Instantly combines Profitability (50%), Country Risk (30%), and Payment Term Security (20%) into an objective 0–100 feasibility score.
-2. **Context-Aware Risk Assessment**: Evaluates specific Incoterms (EXW, FOB, CFR, CIF) against buyer payment terms to highlight hidden financial risks.
-3. **Conversational Trade Q&A**: Allows trade managers to simulate "what-if" scenarios (e.g. *"What happens if ocean freight increases by 15%?"*) without altering official reports.
+That's it. No coding required.
 
 ---
 
-## 2. Preventing AI Hallucinations in Financial Trade Advice
+## The Problem Exporters Face Without This Kind of Help
 
-For AI to be usable in corporate trade decision-making, it must adhere to strict **Anti-Hallucination Guardrails**:
-* **Low Temperature Settings (0.15)**: Ensures deterministic, factual responses anchored strictly in verified numerical data.
-* **Verbatim Fact Grounding**: Every price, margin, and percentage cited by the AI must come directly from verified system inputs.
-* **Fallback to Knowledge Base**: When specific country regulations are requested, the AI retrieves information from verified, curated trade repositories rather than unverified web sources.
+Imagine you receive an inquiry from a new buyer in Nigeria — 5,000 units of your handcraft product worth $15,000. Questions immediately start piling up:
+
+- Is this price profitable enough after all costs?
+- How risky is this market? What's the economic situation like in Nigeria right now?
+- They want to pay by bank transfer 60 days after goods arrive. Is that safe?
+- What Incoterm should I use?
+
+If you had to research all of this yourself — it could take days, and your findings might still be incomplete because you don't know where to look.
 
 ---
 
-## 3. The Future of Smart Export Operations
+## What AI Can Actually Do for You
 
-By combining human expertise with AI-powered analytics, exporters can reduce case evaluation time from days to seconds, minimize costly logistics errors, and execute international trade expansion with maximum profitability.
+### 1. Instantly Check if an Order Makes Financial Sense
+You enter your production cost, target selling price, freight cost, and payment terms. The AI immediately tells you: is the margin healthy? Is this order worth taking, based on real numbers?
 
+Think of it like having an accountant who can answer your questions in seconds.
+
+### 2. Flag Risks You Might Have Overlooked
+AI can identify risks you might not have thought of, such as:
+- The destination country has elevated political or economic risk right now
+- The payment terms the buyer is asking for are unusual and potentially dangerous
+- The Incoterm being discussed doesn't match the type of goods or destination port
+
+### 3. Answer "What If" Questions
+You can ask: *"What if ocean freight goes up 20%?"* or *"What if the exchange rate drops to 14,500?"* — and the AI immediately shows you the impact on your margin.
+
+This helps you prepare for different scenarios before you sign any contract.
+
+---
+
+## Important Things to Keep in Mind
+
+**AI is only as good as the data you give it.** If your cost figures are rough estimates, the recommendations will also be rough. The more accurate and complete your data, the more useful the output.
+
+**AI doesn't make decisions for you.** It gives you an analysis, not a final answer. You still decide whether to take the order — because you know your business situation better than any system does.
+
+**Think of AI as a second opinion.** It's like having a knowledgeable business partner available 24 hours a day, who doesn't charge by the hour and never gets tired of your questions.
+
+---
+
+## Who Benefits Most From AI Export Tools?
+
+Ironically, it's not the big exporters who benefit most — it's small and first-time exporters. Large companies already have finance teams, legal teams, and paid consultants.
+
+New exporters don't have those resources. AI tools help level the playing field — giving you access to the kind of analysis that used to be available only to large corporations.
+
+If you're just starting out in export, use these tools. Not because you need to understand technology — but because it's a practical way to make better decisions from day one.
 `
   }
 ];
