@@ -16,6 +16,7 @@ import { Icon } from "@iconify/react";
 
 const NAV_ITEMS = [
   { name: "Executive Dashboard", href: "/own-dashboard", icon: "solar:widget-bold-duotone" },
+  { name: "Company Profile", href: "/own-company-profile", icon: "solar:buildings-bold-duotone" },
   { name: "Export Cases", href: "/own-export-cases", icon: "solar:case-minimalistic-bold-duotone" },
   { name: "Team Management", href: "/own-team-management", icon: "solar:users-group-rounded-bold-duotone" },
   { name: "Executive Reports", href: "/own-feasibility-report", icon: "solar:document-text-bold-duotone" },
@@ -132,30 +133,12 @@ export default function OwnerLayout({ children }: { children: React.ReactNode })
                 <Icon icon="solar:user-circle-bold-duotone" className="w-5 h-5" />
                 <span className="tracking-wide">My Profile</span>
               </Link>
-              <Link
-                href="/own-company-profile"
-                className={`flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all font-extrabold text-xs ${
-                  pathname === "/own-company-profile"
-                    ? "bg-[#00A651] text-white shadow-md shadow-[#00A651]/20"
-                    : "text-[#4B5563] bg-[#FAF8F3] hover:bg-[#EBF8F2] hover:text-[#00A651]"
-                }`}
-              >
-                <Icon icon="solar:buildings-bold-duotone" className="w-5 h-5" />
-                <span className="tracking-wide">Company Profile</span>
-              </Link>
               <LogoutButton className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-2xl h-11 font-extrabold text-xs uppercase tracking-wider bg-red-50 text-red-600 hover:bg-red-500 hover:text-white shadow-sm transition-all mt-1" />
             </div>
           </aside>
 
           {/* Main Workspace */}
           <main className="flex-1 overflow-y-auto w-full max-w-full">
-            <header className="hidden md:flex items-center justify-between bg-white/70 backdrop-blur-md border-b border-[#E8E3D9] px-8 py-4 sticky top-0 z-20">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-extrabold text-gray-400 uppercase tracking-widest">Tenant Scope:</span>
-                <span className="text-xs font-black text-[#00A651] bg-[#EBF8F2] px-2.5 py-1 rounded-lg border border-[#00A651]/20">EXECUTIVE OVERVIEW</span>
-              </div>
-              <HeaderNotificationCenter />
-            </header>
             <div className="p-6 md:p-10 text-[#1F2937]">
               {children}
             </div>

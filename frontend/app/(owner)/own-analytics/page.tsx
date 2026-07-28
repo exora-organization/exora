@@ -6,6 +6,7 @@ import { apiExportCase } from "../../../lib/api/export-case";
 import { useMemo } from "react";
 import Link from "next/link";
 import { Icon } from "@iconify/react";
+import { HeaderNotificationCenter } from "../../../components/navigation/HeaderNotificationCenter";
 
 function BarRow({ label, value, total, colorClass }: { label: string; value: number; total: number; colorClass: string }) {
   const pct = total > 0 ? Math.round((value / total) * 100) : 0;
@@ -70,11 +71,16 @@ export default function OwnerAnalyticsPage() {
   return (
     <div className="space-y-10 max-w-6xl mx-auto pb-12">
       {/* Header */}
-      <div>
-        <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Analytics</h2>
-        <p className="text-sm text-[#6B7280] mt-1 font-medium">
-          Company-wide financial performance, risk exposure, and feasibility distribution
-        </p>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <div>
+          <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Analytics</h2>
+          <p className="text-sm text-[#6B7280] mt-1 font-medium">
+            Company-wide financial performance, risk exposure, and feasibility distribution
+          </p>
+        </div>
+        <div className="hidden md:block">
+          <HeaderNotificationCenter />
+        </div>
       </div>
 
       {/* KPI Row */}
