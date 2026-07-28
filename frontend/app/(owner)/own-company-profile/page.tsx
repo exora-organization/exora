@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { ProfileChangePayload } from "../../../lib/types/company";
 import { notificationStore } from "../../../lib/services/notificationStore";
+import { HeaderNotificationCenter } from "../../../components/navigation/HeaderNotificationCenter";
 
 export default function CompanyProfilePage() {
   const { companyId, loading: profileLoading } = useUserProfile();
@@ -35,6 +36,7 @@ export default function CompanyProfilePage() {
     queryKey: ["pending-change-request", companyId],
     queryFn: () => apiCompany.getPendingChangeRequest(companyId as string),
     enabled: !!companyId,
+    retry: false,
   });
 
   const company = data?.data;
@@ -164,24 +166,28 @@ export default function CompanyProfilePage() {
   return (
     <div className="space-y-10 text-[#1F2937] relative pb-10 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
           <h2 className="text-4xl font-extrabold tracking-tight">Company Profile</h2>
           <p className="text-sm text-[#4B5563] font-medium mt-1">
             Company Profile Overview · Request updates for Admin approval.
-
           </p>
         </div>
-        <div className="flex items-center gap-2 bg-white px-4 py-2.5 rounded-2xl shadow-sm border border-[#E8E3D9]">
-          <span className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-lg ${company?.status === "active" || company?.status === "approved" ? "bg-[#EBF8F2] text-[#00A651]" : "bg-amber-50 text-amber-600"}`}>
-            {company?.status?.replace("_", " ") || "ACTIVE"}
-          </span>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 bg-white/90 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-md border border-white/60">
+            <span className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-lg ${company?.status === "active" || company?.status === "approved" ? "bg-[#EBF8F2] text-[#00A651]" : "bg-amber-50 text-amber-600"}`}>
+              {company?.status?.replace("_", " ") || "ACTIVE"}
+            </span>
+          </div>
+          <div className="hidden md:block">
+            <HeaderNotificationCenter />
+          </div>
         </div>
       </div>
 
       {/* Pending Change Request Alert */}
       {pendingChange && pendingChange.status === "pending" && (
-        <div className="p-6 bg-amber-50 border-2 border-amber-200 rounded-3xl shadow-sm space-y-4">
+        <div className="p-6 bg-amber-50/80 backdrop-blur-md border border-amber-200/60 rounded-3xl shadow-md space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-3 text-amber-900 font-extrabold text-lg">
               <Icon icon="solar:clock-circle-bold-duotone" className="w-6 h-6 text-amber-600 animate-pulse" />
@@ -234,7 +240,7 @@ export default function CompanyProfilePage() {
 
       {/* Approved Change Request Alert */}
       {pendingChange && pendingChange.status === "approved" && dismissedId !== pendingChange.id && (
-        <div className="p-6 bg-[#EBF8F2] border-2 border-[#00A651]/30 rounded-3xl shadow-sm space-y-3 relative">
+        <div className="p-6 bg-[#EBF8F2]/80 backdrop-blur-md border border-[#00A651]/20 rounded-3xl shadow-md space-y-3 relative">
           <div className="flex items-center justify-between flex-wrap gap-3 pr-8">
             <div className="flex items-center gap-3 text-[#00A651] font-extrabold text-lg">
               <Icon icon="solar:check-circle-bold-duotone" className="w-6 h-6 text-[#00A651]" />
@@ -264,7 +270,7 @@ export default function CompanyProfilePage() {
 
       {/* Rejected Change Request Alert */}
       {pendingChange && pendingChange.status === "rejected" && dismissedId !== pendingChange.id && (
-        <div className="p-6 bg-red-50 border-2 border-red-200 rounded-3xl shadow-sm space-y-3 relative">
+        <div className="p-6 bg-red-50/80 backdrop-blur-md border border-red-200/60 rounded-3xl shadow-md space-y-3 relative">
           <div className="flex items-center justify-between flex-wrap gap-3 pr-8">
             <div className="flex items-center gap-3 text-red-700 font-extrabold text-lg">
               <Icon icon="solar:close-circle-bold-duotone" className="w-6 h-6 text-red-600" />
@@ -326,7 +332,7 @@ export default function CompanyProfilePage() {
       </div>
 
       {/* Request Change Section */}
-      <div className="bg-white/90 backdrop-blur-xl border border-[#E8E3D9] shadow-xl rounded-3xl p-8">
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-8">
         <div className="flex items-start justify-between gap-5 flex-wrap">
           <div className="flex-1">
             <h3 className="text-xl font-extrabold text-[#1F2937] mb-2 flex items-center gap-2">

@@ -84,7 +84,7 @@ export function CaseSubNav({ activeTab, onTabChange }: CaseSubNavProps) {
 
   return (
     <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-2.5 my-4 transition-all">
-      <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scroll-smooth">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (

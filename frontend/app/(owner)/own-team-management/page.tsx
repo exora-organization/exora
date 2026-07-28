@@ -9,6 +9,7 @@ import { Icon } from "@iconify/react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "../../../components/ui/dialog";
 import { Button } from "../../../components/ui/button";
+import { HeaderNotificationCenter } from "../../../components/navigation/HeaderNotificationCenter";
 
 export default function TeamManagementPage() {
   const queryClient = useQueryClient();
@@ -196,13 +197,16 @@ export default function TeamManagementPage() {
 
   return (
     <div className="space-y-10 max-w-7xl mx-auto pb-10">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-6">
         <div>
           <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">Team Management</h2>
           <p className="text-sm font-medium text-[#4B5563] mt-1">Manage your team members and invitations</p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <InviteMemberDialog />
+          <div className="hidden md:block">
+            <HeaderNotificationCenter />
+          </div>
         </div>
       </div>
 

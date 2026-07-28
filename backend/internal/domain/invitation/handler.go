@@ -8,6 +8,7 @@ import (
 	"github.com/exora/backend/internal/apperror"
 	"github.com/exora/backend/internal/domain/user"
 	"github.com/exora/backend/pkg/response"
+	"github.com/go-chi/chi/v5"
 )
 
 type Handler struct {
@@ -16,6 +17,13 @@ type Handler struct {
 
 func NewHandler(service *Service) *Handler {
 	return &Handler{service: service}
+}
+
+func getParam(r *http.Request, key string) string {
+	if val := chi.URLParam(r, key); val != "" {
+		return val
+	}
+	return r.PathValue(key)
 }
 
 func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
@@ -28,7 +36,7 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) Preview(w http.ResponseWriter, r *http.Request) {
-	token := r.PathValue("token")
+	token := getParam(r, "token")
 	data, err := h.service.Preview(r.Context(), token)
 	if err != nil {
 		response.Error(w, err)
@@ -38,7 +46,7 @@ func (h *Handler) Preview(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) Accept(w http.ResponseWriter, r *http.Request) {
-	token := r.PathValue("token")
+	token := getParam(r, "token")
 	data, err := h.service.Accept(r.Context(), token)
 	if err != nil {
 		response.Error(w, err)
@@ -67,7 +75,7 @@ func (h *Handler) Invite(ctx context.Context, req user.InviteRequest) (any, erro
 }
 
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
-	invitationID := r.PathValue("invitationId")
+	invitationID := getParam(r, "invitationId")
 	err := h.service.Delete(r.Context(), invitationID)
 	if err != nil {
 		response.Error(w, err)
@@ -75,3 +83,4 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 	response.JSON(w, http.StatusOK, map[string]any{"invitationId": invitationID, "deleted": true})
 }
+

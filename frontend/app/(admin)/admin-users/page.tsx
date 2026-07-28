@@ -10,6 +10,7 @@ import { ConfirmWarningDialog } from "../../../components/ui/confirm-warning-dia
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "../../../components/ui/dialog";
 import { Icon } from "@iconify/react";
 import { toast } from "sonner";
+import { HeaderNotificationCenter } from "../../../components/navigation/HeaderNotificationCenter";
 
 const ROLE_OPTIONS = [
   { value: "company_owner", label: "Company Owner", desc: "Executive overview, full team management & company settings", icon: "solar:buildings-bold-duotone", badgeClass: "bg-[#EBF8F2] text-[#00A651] border-[#00A651]/30" },
@@ -176,12 +177,14 @@ export default function UserManagementPage() {
           <Button
             onClick={handleRefresh}
             disabled={isRefetching}
-            variant="outline"
-            className="border-[#00A651] text-[#00A651] hover:bg-[#EBF8F2] active:scale-95 rounded-xl font-bold h-10 px-5 flex items-center gap-2 transition-all shadow-sm"
+            className="bg-[#00A651] hover:bg-[#008F44] text-white px-5 py-5 rounded-2xl shadow-md hover:shadow-lg font-bold transition-all flex items-center gap-2"
           >
-            <Icon icon="solar:restart-bold-duotone" className={`w-4 h-4 transition-transform ${isRefetching ? "animate-spin text-[#00A651]" : ""}`} />
+            <Icon icon="solar:restart-bold-duotone" className={`w-4 h-4 ${isRefetching ? "animate-spin" : ""}`} />
             {isRefetching ? "Refreshing..." : "Refresh"}
           </Button>
+          <div className="hidden md:block">
+            <HeaderNotificationCenter />
+          </div>
         </div>
       </div>
 
