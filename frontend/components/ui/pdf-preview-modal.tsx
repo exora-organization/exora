@@ -101,73 +101,71 @@ export function PdfPreviewModal({
       return;
     }
     setIsDownloading(true);
-    // Update date to the moment the user clicks Download, then flush to DOM
-    // before html-to-image captures the element.
-    flushSync(() => {
-      setDownloadDate(
-        new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" })
-      );
-    });
+    // Use native browser print by cloning the preview content into the main DOM.
+    // This ensures all Next.js/Tailwind precompiled styles, custom fonts, and colors match EXACTLY.
     try {
-      const [{ toPng }, { default: jsPDF }] = await Promise.all([
-        import("html-to-image"),
-        import("jspdf"),
-      ]);
+      const printContainer = document.createElement("div");
+      printContainer.id = "pdf-print-container";
+      
+      // Clone the content and add a wrapper with A4 dimensions and white background
+      printContainer.innerHTML = `
+        <div style="width: 210mm; margin: 0 auto; background-color: white !important; padding: 10mm;">
+          ${previewRef.current.innerHTML}
+        </div>
+      `;
+      
+      document.body.appendChild(printContainer);
 
-      const element = previewRef.current;
+      // Create a print-specific stylesheet that hides the rest of the application
+      const style = document.createElement("style");
+      style.id = "pdf-print-style";
+      style.textContent = `
+        @media print {
+          /* Hide EVERYTHING in the main app */
+          body > *:not(#pdf-print-container) {
+            display: none !important;
+          }
+          
+          /* Show our print container */
+          #pdf-print-container {
+            display: block !important;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            background-color: white !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          
+          @page {
+            margin: 15mm;
+            size: A4 portrait;
+          }
+        }
+        
+        /* Hide the print container on screen */
+        @media screen {
+          #pdf-print-container {
+            display: none !important;
+          }
+        }
+      `;
+      document.head.appendChild(style);
 
-      // html-to-image uses SVG foreignObject — browser handles all CSS colors
-      // natively (including oklch/lab), so no color parsing issues.
-      const dataUrl = await toPng(element, {
-        pixelRatio: 2,
-        backgroundColor: "#ffffff",
-        width: element.scrollWidth,
-        height: element.scrollHeight,
-      });
+      // Wait a tiny bit for the browser to parse the new nodes
+      setTimeout(() => {
+        window.print();
+        
+        // Cleanup immediately after print dialog closes
+        document.body.removeChild(printContainer);
+        document.head.removeChild(style);
+        
+        setIsDownloading(false);
+      }, 300);
 
-      // Build an Image to get pixel dimensions
-      const img = new Image();
-      await new Promise<void>((resolve, reject) => {
-        img.onload = () => resolve();
-        img.onerror = reject;
-        img.src = dataUrl;
-      });
-
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-        format: "a4",
-      });
-
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = img.naturalWidth;
-      const imgHeight = img.naturalHeight;
-      const ratio = pdfWidth / imgWidth;
-      const scaledHeight = imgHeight * ratio;
-
-      // Multi-page: slice the image into A4-height chunks
-      let yPosition = 0;
-      while (yPosition < scaledHeight) {
-        const srcYPx = yPosition / ratio;
-        const srcHPx = Math.min(pdfHeight / ratio, imgHeight - srcYPx);
-        const pageCanvas = document.createElement("canvas");
-        pageCanvas.width = imgWidth;
-        pageCanvas.height = srcHPx;
-        const ctx = pageCanvas.getContext("2d")!;
-        ctx.drawImage(img, 0, srcYPx, imgWidth, srcHPx, 0, 0, imgWidth, srcHPx);
-        const pageImg = pageCanvas.toDataURL("image/png");
-        if (yPosition > 0) pdf.addPage();
-        pdf.addImage(pageImg, "PNG", 0, 0, pdfWidth, srcHPx * ratio);
-        yPosition += pdfHeight;
-      }
-
-      pdf.save(filename.endsWith(".pdf") ? filename : `${filename}.pdf`);
-      toast.success(`"${filename}" downloaded successfully!`);
     } catch (err: any) {
-      toast.error(err.message || "Download failed.");
-    } finally {
-
+      toast.error(err.message || "Failed to prepare print document.");
       setIsDownloading(false);
     }
   };
@@ -189,54 +187,66 @@ export function PdfPreviewModal({
         style={{ width: "min(900px, 95vw)", height: "min(780px, 90vh)" }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-[#E8E3D9] bg-white/50 shrink-0">
-          <div className="flex items-center gap-3 min-w-0">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b border-[#E8E3D9] bg-white/50 shrink-0 gap-4">
+          <div className="flex items-center gap-3 min-w-0 w-full sm:w-auto">
             <div className="w-9 h-9 rounded-xl bg-[#EBF8F2] flex items-center justify-center shrink-0">
               <FileText className="w-4 h-4 text-[#00A651]" />
             </div>
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <p className="font-extrabold text-[#1F2937] text-sm truncate">{filename}</p>
               <p className="text-[10px] text-[#9CA3AF] font-bold uppercase tracking-wider">
                 Document Preview
               </p>
             </div>
-          </div>
-
-          <div className="flex items-center gap-2 shrink-0 ml-4">
-            {/* Zoom controls */}
-            <button
-              onClick={() => setFontSize((f) => Math.max(9, f - 1))}
-              className="w-8 h-8 rounded-lg border border-[#E8E3D9] flex items-center justify-center hover:bg-[#F3F4F6] transition-colors"
-              title="Zoom out"
-            >
-              <ZoomOut className="w-4 h-4 text-[#6B7280]" />
-            </button>
-            <span className="text-xs font-bold text-[#9CA3AF] w-8 text-center">{fontSize}px</span>
-            <button
-              onClick={() => setFontSize((f) => Math.min(24, f + 1))}
-              className="w-8 h-8 rounded-lg border border-[#E8E3D9] flex items-center justify-center hover:bg-[#F3F4F6] transition-colors"
-              title="Zoom in"
-            >
-              <ZoomIn className="w-4 h-4 text-[#6B7280]" />
-            </button>
-
-            {/* Download */}
-            <button
-              onClick={handleDownload}
-              disabled={isDownloading || isLoading || !content}
-              className="flex items-center gap-1.5 h-10 px-5 rounded-full bg-[#00A651] hover:bg-[#008F44] disabled:opacity-60 disabled:cursor-not-allowed text-white text-xs font-bold transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
-            >
-              {isDownloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-              {isDownloading ? "Generating..." : "Download PDF"}
-            </button>
-
-            {/* Close */}
+            
+            {/* Close button for mobile (shown next to title instead of at the bottom) */}
             <button
               onClick={onClose}
-              className="w-9 h-9 rounded-xl border border-[#E8E3D9] flex items-center justify-center hover:bg-[#F3F4F6] transition-colors"
+              className="sm:hidden w-8 h-8 rounded-xl border border-[#E8E3D9] flex items-center justify-center hover:bg-[#F3F4F6] transition-colors shrink-0"
             >
               <X className="w-4 h-4 text-[#6B7280]" />
             </button>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 shrink-0 w-full sm:w-auto justify-between sm:justify-end">
+            {/* Zoom controls - hidden on very small mobile */}
+            <div className="hidden xs:flex sm:flex items-center gap-1 sm:gap-2">
+              <button
+                onClick={() => setFontSize((f) => Math.max(9, f - 1))}
+                className="w-8 h-8 rounded-lg border border-[#E8E3D9] flex items-center justify-center hover:bg-[#F3F4F6] transition-colors"
+                title="Zoom out"
+              >
+                <ZoomOut className="w-4 h-4 text-[#6B7280]" />
+              </button>
+              <span className="text-xs font-bold text-[#9CA3AF] w-8 text-center">{fontSize}px</span>
+              <button
+                onClick={() => setFontSize((f) => Math.min(24, f + 1))}
+                className="w-8 h-8 rounded-lg border border-[#E8E3D9] flex items-center justify-center hover:bg-[#F3F4F6] transition-colors"
+                title="Zoom in"
+              >
+                <ZoomIn className="w-4 h-4 text-[#6B7280]" />
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2 flex-1 sm:flex-none justify-end">
+              {/* Download */}
+              <button
+                onClick={handleDownload}
+                disabled={isDownloading || isLoading || !content}
+                className="flex flex-1 sm:flex-none justify-center items-center gap-1.5 h-10 px-5 rounded-full bg-[#00A651] hover:bg-[#008F44] disabled:opacity-60 disabled:cursor-not-allowed text-white text-xs font-bold transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
+              >
+                {isDownloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                {isDownloading ? "Generating..." : "Download PDF"}
+              </button>
+
+              {/* Close - hidden on mobile since it's at the top */}
+              <button
+                onClick={onClose}
+                className="hidden sm:flex w-9 h-9 rounded-xl border border-[#E8E3D9] items-center justify-center hover:bg-[#F3F4F6] transition-colors"
+              >
+                <X className="w-4 h-4 text-[#6B7280]" />
+              </button>
+            </div>
           </div>
         </div>
 

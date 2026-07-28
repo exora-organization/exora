@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { HeaderNotificationCenter } from "@/components/navigation/HeaderNotificationCenter";
 import { apiExportCase } from "../../../lib/api/export-case";
 import { Icon } from "@iconify/react";
 import { useState, useMemo } from "react";
@@ -46,11 +47,16 @@ export default function EMDocumentsPage() {
   return (
     <div className="space-y-8 max-w-6xl mx-auto pb-12">
       {/* Header */}
-      <div>
-        <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">Documents</h2>
-        <p className="text-sm text-[#4B5563] font-medium mt-2">
-          Generate Quotation and Proforma Invoice PDFs per case downloadable in 3 clicks.
-        </p>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">Documents</h2>
+          <p className="text-sm text-[#4B5563] font-medium mt-2">
+            Generate Quotation and Proforma Invoice PDFs per case downloadable in 3 clicks.
+          </p>
+        </div>
+        <div className="hidden md:block">
+          <HeaderNotificationCenter />
+        </div>
       </div>
 
       {/* Document type legend */}

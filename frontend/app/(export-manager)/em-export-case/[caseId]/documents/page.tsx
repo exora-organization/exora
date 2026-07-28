@@ -144,30 +144,7 @@ export default function DocumentGenerationPage() {
     onError: handleGenerateError,
   });
 
-  const handleDownload = async (documentId: string, filename: string) => {
-    try {
-      setErrorMsg(null);
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/v1";
-      const token = auth.currentUser ? await auth.currentUser.getIdToken() : null;
-      const res = await fetch(`${API_BASE_URL}/documents/${documentId}/download`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
-      if (!res.ok) throw new Error("Download failed");
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-      toast.success(`"${filename}" downloaded!`);
-    } catch (error: any) {
-      setErrorMsg("Unable to download document.");
-      toast.error("Download failed.");
-    }
-  };
+
 
   if (caseLoading || docsLoading) {
     return <div className="p-8 flex justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div></div>;
@@ -204,7 +181,7 @@ export default function DocumentGenerationPage() {
 
         {exportCase && (
           <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 items-center">
               <div>
                 <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Case Name</p>
                 <p className="font-extrabold text-[#1F2937] truncate mt-1">{exportCase.name}</p>
@@ -311,7 +288,7 @@ export default function DocumentGenerationPage() {
           <div className="bg-white/50 backdrop-blur-sm border-b border-white/60 px-6 py-5">
             <h3 className="text-xl font-extrabold text-[#1F2937]">Generated Documents</h3>
           </div>
-          <div className="p-6">
+          <div className="p-4 sm:p-6 overflow-x-auto">
             {documents.length === 0 ? (
               <div className="text-center py-10 text-[#9CA3AF]">
                 <Icon icon="solar:document-text-bold-duotone" className="h-16 w-16 mx-auto text-gray-300 mb-4" />
@@ -345,16 +322,7 @@ export default function DocumentGenerationPage() {
                             className="text-[#00A651] hover:text-[#008F44] hover:bg-green-50 font-bold rounded-full transition-colors"
                           >
                             <Icon icon="solar:eye-bold-duotone" className="h-5 w-5 mr-1" />
-                            Preview
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDownload(doc.documentId, doc.filename)}
-                            className="text-[#1F2937] hover:text-black hover:bg-gray-100 font-bold rounded-full transition-colors"
-                          >
-                            <Icon icon="solar:download-square-bold-duotone" className="h-5 w-5 mr-1" />
-                            Download
+                            Preview & Save
                           </Button>
                         </div>
                       </TableCell>

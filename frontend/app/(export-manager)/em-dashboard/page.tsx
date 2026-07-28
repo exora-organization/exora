@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { HeaderNotificationCenter } from "@/components/navigation/HeaderNotificationCenter";
 import { useQuery } from "@tanstack/react-query";
 import { apiExportCase } from "../../../lib/api/export-case";
 import { useState, useMemo } from "react";
@@ -50,6 +51,9 @@ export default function ExportManagerDashboardPage() {
           <p className="text-sm text-[#4B5563] font-medium mt-1">Daily task queue & operational case execution</p>
         </div>
         <div className="flex items-center gap-3">
+          <div className="hidden md:block">
+            <HeaderNotificationCenter />
+          </div>
           <Link href="/em-export-case/new">
             <button className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-[#00A651] hover:bg-[#008F44] text-white text-xs font-black uppercase tracking-wider shadow-md hover:shadow-lg transition-all cursor-pointer">
               <Icon icon="solar:add-circle-bold-duotone" className="w-5 h-5" /> New Case
@@ -59,58 +63,58 @@ export default function ExportManagerDashboardPage() {
       </div>
 
       {/* COUNT BADGES / ACTION SIGNALS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-emerald-50 border border-emerald-200 rounded-3xl p-5 shadow-sm space-y-1">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white/90 backdrop-blur-md rounded-3xl p-6 shadow-md border border-white/60 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-black uppercase tracking-widest text-emerald-800">Ready for Pricing</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Ready for Pricing</span>
             <Icon icon="solar:tag-price-bold-duotone" className="w-4 h-4 text-[#00A651]" />
           </div>
-          <p className="text-3xl font-black text-emerald-950">{counts.readyForPricing} Cases</p>
-          <p className="text-[11px] text-emerald-800 font-medium">Unblocked costing data ready for Incoterms strategy</p>
+          <p className="text-3xl font-black text-[#1F2937]">{counts.readyForPricing} Cases</p>
+          <p className="text-[11px] text-gray-500 font-medium">Unblocked costing data ready for Incoterms strategy</p>
         </div>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-3xl p-5 shadow-sm space-y-1">
+        <div className="bg-white/90 backdrop-blur-md rounded-3xl p-6 shadow-md border border-white/60 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-black uppercase tracking-widest text-blue-800">Need Scenario Comparison</span>
-            <Icon icon="solar:map-point-wave-bold-duotone" className="w-4 h-4 text-blue-600" />
+            <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Need Scenario Comparison</span>
+            <Icon icon="solar:map-point-wave-bold-duotone" className="w-4 h-4 text-[#00A651]" />
           </div>
-          <p className="text-3xl font-black text-blue-950">{counts.needScenario} Cases</p>
-          <p className="text-[11px] text-blue-800 font-medium">Pending freight & profit margin simulation</p>
+          <p className="text-3xl font-black text-[#1F2937]">{counts.needScenario} Cases</p>
+          <p className="text-[11px] text-gray-500 font-medium">Pending freight & profit margin simulation</p>
         </div>
 
         {/* Shortcut to Most Recently Updated Case */}
         {mostRecentCase ? (
           <Link
             href={`/em-export-case/${mostRecentCase.caseId}`}
-            className="bg-white border border-[#E8E3D9] hover:border-[#00A651] rounded-3xl p-5 shadow-sm space-y-1 transition-all group cursor-pointer block"
+            className="bg-white/90 backdrop-blur-md rounded-3xl p-6 shadow-md border border-white/60 space-y-2 transition-all group cursor-pointer block"
           >
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Shortcut: Recent Case</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Shortcut: Recent Case</span>
               <Icon icon="solar:arrow-right-bold-duotone" className="w-4 h-4 text-[#00A651] group-hover:translate-x-1 transition-transform" />
             </div>
-            <p className="text-sm font-extrabold text-[#1F2937] truncate">{mostRecentCase.name}</p>
+            <p className="text-3xl font-black text-[#1F2937] truncate leading-tight">{mostRecentCase.name.substring(0, 15)}...</p>
             <p className="text-[11px] text-[#00A651] font-bold">Resume working on recent case →</p>
           </Link>
         ) : (
-          <div className="bg-white border border-[#E8E3D9] rounded-3xl p-5 shadow-sm">
-            <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Shortcut</span>
+          <div className="bg-white/90 backdrop-blur-md rounded-3xl p-6 shadow-md border border-white/60 space-y-2">
+            <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Shortcut</span>
             <p className="text-xs font-bold text-gray-400 mt-2">No active case shortcut available.</p>
           </div>
         )}
       </div>
 
       {/* QUICK SUMMARY: LAST CREATED PRICING SCENARIO */}
-      <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-3">
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 md:p-8 space-y-6">
         <div className="flex items-center justify-between">
           <h4 className="text-base font-extrabold text-[#1F2937] flex items-center gap-2">
-            <Icon icon="solar:calculator-bold-duotone" className="w-5 h-5 text-blue-600" />
+            <Icon icon="solar:calculator-bold-duotone" className="w-5 h-5 text-[#00A651]" />
             Last Created Pricing Scenario Quick Summary
           </h4>
-          <span className="px-2.5 py-0.5 rounded-md bg-blue-100 text-blue-800 text-[10px] font-black uppercase tracking-wider">
+          <span className="px-2.5 py-0.5 rounded-md bg-[#00A651]/10 text-[#00A651] text-[10px] font-black uppercase tracking-wider">
             CIF JAPAN (MARCH)
           </span>
         </div>
-        <div className="p-4 bg-[#FAF8F3] rounded-2xl border border-[#E8E3D9] grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-bold">
+        <div className="p-4 bg-white/50 rounded-2xl border border-white/60 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-bold">
           <div>
             <p className="text-[10px] text-gray-400 uppercase">Incoterm</p>
             <p className="text-sm font-black text-[#1F2937]">CIF Tokyo Port</p>
@@ -131,7 +135,7 @@ export default function ExportManagerDashboardPage() {
       </div>
 
       {/* WORK TASK QUEUE (PRINCIPLE 1) */}
-      <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-4">
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 md:p-8 space-y-6">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-extrabold text-[#1F2937] flex items-center gap-2">
             <Icon icon="solar:case-minimalistic-bold-duotone" className="w-5 h-5 text-[#00A651]" />

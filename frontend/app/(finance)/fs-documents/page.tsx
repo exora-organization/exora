@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { HeaderNotificationCenter } from "@/components/navigation/HeaderNotificationCenter";
 import { apiExportCase } from "../../../lib/api/export-case";
 import { apiClient } from "../../../lib/api/client";
 import { useState } from "react";
@@ -17,28 +18,7 @@ export default function FinanceDocumentsPage() {
   const [reportResult, setReportResult] = useState<{ documentId?: string; filename?: string; generatedAt?: string } | null>(null);
   const [previewModal, setPreviewModal] = useState<{ open: boolean; documentId: string; filename: string }>({ open: false, documentId: "", filename: "" });
 
-  const handleBlobDownload = async (documentId: string, filename: string) => {
-    try {
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/v1";
-      const token = auth.currentUser ? await auth.currentUser.getIdToken() : null;
-      const res = await fetch(`${API_BASE_URL}/documents/${documentId}/download`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
-      if (!res.ok) throw new Error("Download failed");
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-      toast.success(`"${filename}" downloaded!`);
-    } catch (err: any) {
-      toast.error(err.message || "Download failed.");
-    }
-  };
+
 
   const { data: casesData, isLoading: casesLoading } = useQuery({
     queryKey: ["export-cases"],
@@ -86,21 +66,26 @@ export default function FinanceDocumentsPage() {
       />
       <div className="space-y-8 max-w-6xl mx-auto pb-12">
         {/* Header */}
-        <div>
-          <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937] flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-[#EBF8F2] flex items-center justify-center shadow-inner">
-              <Icon icon="solar:document-text-bold-duotone" className="w-6 h-6 text-[#00A651]" />
-            </div>
-            Cost Breakdown Documents
-          </h2>
-          <p className="text-sm text-[#4B5563] font-medium mt-3">
-            Generate cumulative Incoterm cost breakdowns (EXW, FOB, CFR, CIF) into standard PDF reports.
-          </p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937] flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-[#EBF8F2] flex items-center justify-center shadow-inner">
+                <Icon icon="solar:document-text-bold-duotone" className="w-6 h-6 text-[#00A651]" />
+              </div>
+              Cost Breakdown Documents
+            </h2>
+            <p className="text-sm text-[#4B5563] font-medium mt-2">
+              Generate internal Cost Breakdown & Analysis reports in PDF format.
+            </p>
+          </div>
+          <div className="hidden md:block">
+            <HeaderNotificationCenter />
+          </div>
         </div>
 
         {/* Notice */}
-        <div className="flex items-start gap-4 p-5 bg-blue-50/80 backdrop-blur-md border border-blue-200 rounded-3xl text-sm text-blue-900 font-semibold shadow-sm">
-          <Icon icon="solar:shield-check-bold-duotone" className="w-6 h-6 text-blue-500 shrink-0 mt-0.5" />
+        <div className="flex items-start gap-4 p-5 bg-white/90 backdrop-blur-md border border-white/60 rounded-3xl text-sm text-[#1F2937] font-semibold shadow-sm">
+          <Icon icon="solar:shield-check-bold-duotone" className="w-6 h-6 text-[#00A651] shrink-0 mt-0.5" />
           <span className="leading-relaxed">Reports are generated instantly per selected case. Cost details are compiled automatically from configuration sheets. Download happens immediately without history storage.</span>
         </div>
 
@@ -157,14 +142,14 @@ export default function FinanceDocumentsPage() {
             {isGenerating ? (
               <><Icon icon="solar:round-transfer-horizontal-bold-duotone" className="w-5 h-5 animate-spin" /> Generating...</>
             ) : (
-              <><Icon icon="solar:download-square-bold-duotone" className="w-5 h-5" /> Download Report</>
+              <><Icon icon="solar:download-square-bold-duotone" className="w-5 h-5" /> Generate Report</>
             )}
           </button>
         </div>
 
         {/* Result Alert */}
         {reportResult && (
-          <div className="flex items-center gap-4 p-6 bg-emerald-50/90 backdrop-blur-md border border-emerald-300 rounded-3xl shadow-lg animate-in slide-in-from-bottom-4 duration-500">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 p-6 bg-emerald-50/90 backdrop-blur-md border border-emerald-300 rounded-3xl shadow-lg animate-in slide-in-from-bottom-4 duration-500">
             <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 border border-emerald-200">
               <Icon icon="solar:check-circle-bold-duotone" className="w-7 h-7 text-emerald-600" />
             </div>
@@ -177,18 +162,12 @@ export default function FinanceDocumentsPage() {
               )}
             </div>
             {reportResult.documentId && reportResult.filename && (
-              <div className="flex gap-3">
+              <div className="flex gap-3 w-full sm:w-auto mt-2 sm:mt-0 justify-center">
                 <button
                   onClick={() => setPreviewModal({ open: true, documentId: reportResult.documentId!, filename: reportResult.filename! })}
-                  className="px-6 py-2.5 rounded-full bg-white border border-gray-200 text-[#1F2937] text-sm font-bold hover:bg-gray-50 shadow-sm transition-all flex items-center gap-2"
-                >
-                  <Icon icon="solar:eye-bold-duotone" className="w-4 h-4 text-blue-600" /> Preview
-                </button>
-                <button
-                  onClick={() => handleBlobDownload(reportResult.documentId!, reportResult.filename!)}
                   className="px-6 py-2.5 rounded-full bg-[#00A651] text-white text-sm font-bold hover:bg-[#008F44] shadow-md shadow-[#00A651]/20 transition-all flex items-center gap-2"
                 >
-                  <Icon icon="solar:download-square-bold-duotone" className="w-4 h-4" /> Save
+                  <Icon icon="solar:eye-bold-duotone" className="w-4 h-4" /> Preview & Save PDF
                 </button>
               </div>
             )}

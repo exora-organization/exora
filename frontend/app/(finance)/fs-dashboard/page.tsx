@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { HeaderNotificationCenter } from "@/components/navigation/HeaderNotificationCenter";
 import { useQuery } from "@tanstack/react-query";
 import { apiAnalytics } from "../../../lib/api/analytics";
 import { apiExportCase } from "../../../lib/api/export-case";
@@ -50,16 +51,21 @@ export default function FinanceDashboardPage() {
   return (
     <div className="space-y-8 text-[#1F2937] pb-10 max-w-6xl mx-auto">
       {/* Header */}
-      <div>
-        <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Finance Work Dashboard</h2>
-        <p className="text-sm text-[#4B5563] font-medium mt-1">
-          Daily costing queue, financial viability analysis & BEP calculations
-        </p>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Finance Work Dashboard</h2>
+          <p className="text-sm text-[#4B5563] font-medium mt-1">
+            Daily costing queue, financial viability analysis & BEP calculations
+          </p>
+        </div>
+        <div className="hidden md:block">
+          <HeaderNotificationCenter />
+        </div>
       </div>
 
       {/* QUICK SUMMARY NUMBERS (TOTAL COST BREAKDOWN & ROI) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-[#FAF8F3] border border-[#E8E3D9] rounded-3xl p-5 shadow-sm space-y-1">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white/90 backdrop-blur-md rounded-3xl p-6 shadow-md border border-white/60 space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Total Cases Needing Costing</span>
             <Icon icon="solar:calculator-bold-duotone" className="w-4 h-4 text-[#00A651]" />
@@ -68,22 +74,22 @@ export default function FinanceDashboardPage() {
           <p className="text-[11px] text-gray-500 font-medium">Highest priority cost breakdown queue</p>
         </div>
 
-        <div className="bg-emerald-50 border border-emerald-200 rounded-3xl p-5 shadow-sm space-y-1">
+        <div className="bg-white/90 backdrop-blur-md rounded-3xl p-6 shadow-md border border-white/60 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-black uppercase tracking-widest text-emerald-800">Average Portfolio ROI</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Average Portfolio ROI</span>
             <Icon icon="solar:graph-up-bold-duotone" className="w-4 h-4 text-[#00A651]" />
           </div>
-          <p className="text-3xl font-black text-emerald-950">28.4%</p>
-          <p className="text-[11px] text-emerald-800 font-medium">Healthy average return on investment</p>
+          <p className="text-3xl font-black text-[#1F2937]">28.4%</p>
+          <p className="text-[11px] text-gray-500 font-medium">Healthy average return on investment</p>
         </div>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-3xl p-5 shadow-sm space-y-1">
+        <div className="bg-white/90 backdrop-blur-md rounded-3xl p-6 shadow-md border border-white/60 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-black uppercase tracking-widest text-blue-800">Pending Financial Recalc</span>
-            <Icon icon="solar:chart-square-bold-duotone" className="w-4 h-4 text-blue-600" />
+            <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Pending Financial Recalc</span>
+            <Icon icon="solar:chart-square-bold-duotone" className="w-4 h-4 text-[#00A651]" />
           </div>
-          <p className="text-3xl font-black text-blue-950">{needingFinancialRecalc.length} Cases</p>
-          <p className="text-[11px] text-blue-800 font-medium">Cost complete · BEP calculation ready</p>
+          <p className="text-3xl font-black text-[#1F2937]">{needingFinancialRecalc.length} Cases</p>
+          <p className="text-[11px] text-gray-500 font-medium">Cost complete · BEP calculation ready</p>
         </div>
       </div>
 
@@ -122,7 +128,7 @@ export default function FinanceDashboardPage() {
       )}
 
       {/* HIGHEST PRIORITY TASK QUEUE: CASES NEEDING COST INPUT */}
-      <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-4">
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 md:p-8 space-y-6">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-extrabold text-[#1F2937] flex items-center gap-2">
             <Icon icon="solar:calculator-bold-duotone" className="w-5 h-5 text-[#00A651]" />
@@ -169,9 +175,9 @@ export default function FinanceDashboardPage() {
       </div>
 
       {/* SECOND PRIORITY: FINANCIAL RECALCULATIONS */}
-      <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-4">
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 md:p-8 space-y-6">
         <h3 className="text-lg font-extrabold text-[#1F2937] flex items-center gap-2">
-          <Icon icon="solar:chart-square-bold-duotone" className="w-5 h-5 text-blue-600" />
+          <Icon icon="solar:chart-square-bold-duotone" className="w-5 h-5 text-[#00A651]" />
           Cases Pending Financial Recalculation & BEP
         </h3>
 

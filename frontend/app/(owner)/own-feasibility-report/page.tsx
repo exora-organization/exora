@@ -89,28 +89,7 @@ export default function ExportFeasibilityReportPage() {
   const [reportResult, setReportResult] = useState<{ documentId?: string; filename?: string; generatedAt?: string } | null>(null);
   const [previewModal, setPreviewModal] = useState<{ open: boolean; documentId: string; filename: string }>({ open: false, documentId: "", filename: "" });
 
-  const handleBlobDownload = async (documentId: string, filename: string) => {
-    try {
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/v1";
-      const token = auth.currentUser ? await auth.currentUser.getIdToken() : null;
-      const res = await fetch(`${API_BASE_URL}/documents/${documentId}/download`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
-      if (!res.ok) throw new Error("Download failed");
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-      toast.success(`"${filename}" downloaded!`);
-    } catch (err: any) {
-      toast.error(err.message || "Download failed.");
-    }
-  };
+
 
   const { data: casesData, isLoading: casesLoading } = useQuery({
     queryKey: ["owner-export-cases"],
@@ -317,7 +296,7 @@ export default function ExportFeasibilityReportPage() {
 
         {/* Result Banner */}
         {reportResult && (
-          <div className="flex items-center gap-4 p-6 bg-emerald-50/90 backdrop-blur-md border border-emerald-300 rounded-3xl shadow-lg animate-in slide-in-from-bottom-4 duration-500">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 p-6 bg-emerald-50/90 backdrop-blur-md border border-emerald-300 rounded-3xl shadow-lg animate-in slide-in-from-bottom-4 duration-500">
             <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 border border-emerald-200">
               <Icon icon="solar:check-circle-bold-duotone" className="w-7 h-7 text-emerald-600" />
             </div>
@@ -330,18 +309,12 @@ export default function ExportFeasibilityReportPage() {
               )}
             </div>
             {reportResult.documentId && reportResult.filename && (
-              <div className="flex gap-3">
+              <div className="flex gap-3 w-full sm:w-auto mt-2 sm:mt-0 justify-center">
                 <button
                   onClick={() => setPreviewModal({ open: true, documentId: reportResult.documentId!, filename: reportResult.filename! })}
-                  className="px-6 py-2.5 rounded-full bg-white border border-gray-200 text-[#1F2937] text-sm font-bold hover:bg-gray-50 shadow-sm transition-all flex items-center gap-2"
-                >
-                  <Icon icon="solar:eye-bold-duotone" className="w-4 h-4 text-blue-600" /> Preview
-                </button>
-                <button
-                  onClick={() => handleBlobDownload(reportResult.documentId!, reportResult.filename!)}
                   className="px-6 py-2.5 rounded-full bg-[#00A651] text-white text-sm font-bold hover:bg-[#008F44] shadow-md shadow-[#00A651]/20 transition-all flex items-center gap-2"
                 >
-                  <Icon icon="solar:download-minimalistic-bold-duotone" className="w-4 h-4" /> Download
+                  <Icon icon="solar:eye-bold-duotone" className="w-4 h-4" /> Preview & Save PDF
                 </button>
               </div>
             )}
