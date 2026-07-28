@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { apiAdmin } from "../../../lib/api/admin";
 import { useUserProfile } from "../../../hooks/useUserProfile";
 import { Icon } from "@iconify/react";
+import { HeaderNotificationCenter } from "../../../components/navigation/HeaderNotificationCenter";
 
 export default function SystemMonitoringPage() {
   const { firebaseUser, loading: authLoading } = useUserProfile();
@@ -21,9 +22,14 @@ export default function SystemMonitoringPage() {
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto pb-10">
-      <div>
-        <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">System Monitoring</h2>
-        <p className="text-[#4B5563] mt-2 font-medium">Real-time platform statistics based on backend data.</p>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <div>
+          <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">System Monitoring</h2>
+          <p className="text-[#4B5563] mt-2 font-medium">Real-time platform statistics based on backend data.</p>
+        </div>
+        <div className="hidden md:block">
+          <HeaderNotificationCenter />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

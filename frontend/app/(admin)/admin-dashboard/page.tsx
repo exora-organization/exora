@@ -6,6 +6,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { apiAdmin } from "../../../lib/api/admin";
+import { HeaderNotificationCenter } from "../../../components/navigation/HeaderNotificationCenter";
 
 const QUICK_LINKS = [
   { name: "Company Applications Queue", href: "/admin-company-applications", icon: "solar:buildings-bold-duotone", keywords: ["company", "application", "queue", "pending", "verification", "approve", "reject", "review"] },
@@ -95,58 +96,63 @@ export default function AdminDashboardPage() {
           </p>
         </div>
 
-        <div className="relative w-full md:w-80">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onFocus={() => setIsSearchFocused(true)}
-            onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
-            onKeyDown={handleKeyDown}
-            placeholder="Search apps, users, logs..."
-            className="w-full pl-4 pr-10 py-2.5 rounded-2xl border border-[#E8E3D9] shadow-xs focus:outline-none focus:ring-2 focus:ring-[#00A651] bg-white text-xs font-semibold"
-          />
-          <Icon icon="solar:magnifer-bold-duotone" className="absolute right-3.5 top-3 h-4 w-4 text-gray-400" />
-          
-          {/* Global Search Dropdown */}
-          {isSearchFocused && searchQuery.trim() && (filteredQuickLinks.length > 0 || filteredPending.length > 0) && (
-            <div className="absolute top-full mt-2 w-full bg-white border border-[#E8E3D9] rounded-2xl shadow-xl overflow-hidden z-50">
-              {filteredQuickLinks.length > 0 && (
-                <div className="p-2">
-                  <p className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-gray-400">Quick Links</p>
-                  {filteredQuickLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#EBF8F2] transition-colors group"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center group-hover:bg-[#00A651]/10 group-hover:text-[#00A651] text-gray-400 transition-colors">
-                        <Icon icon={link.icon} className="w-4 h-4" />
-                      </div>
-                      <span className="text-xs font-bold text-[#1F2937] group-hover:text-[#00A651] transition-colors">{link.name}</span>
-                    </Link>
-                  ))}
-                </div>
-              )}
-              {filteredPending.length > 0 && (
-                <div className="p-2 border-t border-[#E8E3D9]">
-                  <p className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-gray-400">Pending Companies</p>
-                  {filteredPending.map((app) => (
-                    <Link
-                      key={app.companyId}
-                      href={`/admin-company-applications/${app.companyId}`}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-amber-50 transition-colors group"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center group-hover:bg-amber-100 group-hover:text-amber-600 text-gray-400 transition-colors">
-                        <Icon icon="solar:buildings-bold-duotone" className="w-4 h-4" />
-                      </div>
-                      <span className="text-xs font-bold text-[#1F2937] group-hover:text-amber-700 transition-colors">{app.companyName}</span>
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
+        <div className="flex items-center gap-4 w-full md:w-auto">
+          <div className="relative w-full md:w-80">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+              onKeyDown={handleKeyDown}
+              placeholder="Search apps, users, logs..."
+              className="w-full pl-4 pr-10 py-2.5 rounded-2xl border border-white/60 shadow-md focus:outline-none focus:ring-2 focus:ring-[#00A651] bg-white/90 backdrop-blur-md text-xs font-semibold"
+            />
+            <Icon icon="solar:magnifer-bold-duotone" className="absolute right-3.5 top-3 h-4 w-4 text-gray-400" />
+            
+            {/* Global Search Dropdown */}
+            {isSearchFocused && searchQuery.trim() && (filteredQuickLinks.length > 0 || filteredPending.length > 0) && (
+              <div className="absolute top-full mt-2 w-full bg-white border border-[#E8E3D9] rounded-2xl shadow-xl overflow-hidden z-50">
+                {filteredQuickLinks.length > 0 && (
+                  <div className="p-2">
+                    <p className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-gray-400">Quick Links</p>
+                    {filteredQuickLinks.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#EBF8F2] transition-colors group"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center group-hover:bg-[#00A651]/10 group-hover:text-[#00A651] text-gray-400 transition-colors">
+                          <Icon icon={link.icon} className="w-4 h-4" />
+                        </div>
+                        <span className="text-xs font-bold text-[#1F2937] group-hover:text-[#00A651] transition-colors">{link.name}</span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+                {filteredPending.length > 0 && (
+                  <div className="p-2 border-t border-[#E8E3D9]">
+                    <p className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-gray-400">Pending Companies</p>
+                    {filteredPending.map((app) => (
+                      <Link
+                        key={app.companyId}
+                        href={`/admin-company-applications/${app.companyId}`}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-amber-50 transition-colors group"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center group-hover:bg-amber-100 group-hover:text-amber-600 text-gray-400 transition-colors">
+                          <Icon icon="solar:buildings-bold-duotone" className="w-4 h-4" />
+                        </div>
+                        <span className="text-xs font-bold text-[#1F2937] group-hover:text-amber-700 transition-colors">{app.companyName}</span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+          <div className="hidden md:block">
+            <HeaderNotificationCenter />
+          </div>
         </div>
       </div>
 
@@ -179,7 +185,7 @@ export default function AdminDashboardPage() {
 
       {/* System Health Snapshot & Active Tenants */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-3xl border border-[#E8E3D9] p-5 shadow-sm space-y-2">
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-lg rounded-3xl p-5 hover:shadow-xl transition-all space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">System Uptime (24h)</span>
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
@@ -188,7 +194,7 @@ export default function AdminDashboardPage() {
           <p className="text-[11px] text-gray-500 font-medium">All API services operational</p>
         </div>
 
-        <div className="bg-white rounded-3xl border border-[#E8E3D9] p-5 shadow-sm space-y-2">
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-lg rounded-3xl p-5 hover:shadow-xl transition-all space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Error Rate (24h)</span>
             <Icon icon="solar:shield-check-bold-duotone" className="w-4 h-4 text-blue-500" />
@@ -197,7 +203,7 @@ export default function AdminDashboardPage() {
           <p className="text-[11px] text-gray-500 font-medium">Within nominal threshold</p>
         </div>
 
-        <div className="bg-white rounded-3xl border border-[#E8E3D9] p-5 shadow-sm space-y-2">
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-lg rounded-3xl p-5 hover:shadow-xl transition-all space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Active Tenants</span>
             <Icon icon="solar:buildings-bold-duotone" className="w-4 h-4 text-[#00A651]" />
@@ -208,7 +214,7 @@ export default function AdminDashboardPage() {
           <p className="text-[11px] text-emerald-700 font-bold">+12% MoM growth trend</p>
         </div>
 
-        <div className="bg-white rounded-3xl border border-[#E8E3D9] p-5 shadow-sm space-y-2">
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-lg rounded-3xl p-5 hover:shadow-xl transition-all space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Total System Users</span>
             <Icon icon="solar:users-group-rounded-bold-duotone" className="w-4 h-4 text-[#00A651]" />
@@ -223,7 +229,7 @@ export default function AdminDashboardPage() {
       {/* Queue Details & Anomalies Audit Log */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Application Queue */}
-        <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-4">
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 hover:shadow-2xl transition-all space-y-4">
           <div className="flex items-center justify-between">
             <h4 className="text-base font-extrabold text-[#1F2937] flex items-center gap-2">
               <Icon icon="solar:clock-circle-bold-duotone" className="w-5 h-5 text-blue-500" />
@@ -263,7 +269,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Security Anomalies / Audit Log */}
-        <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-4">
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 hover:shadow-2xl transition-all space-y-4">
           <div className="flex items-center justify-between">
             <h4 className="text-base font-extrabold text-[#1F2937] flex items-center gap-2">
               <Icon icon="solar:shield-warning-bold-duotone" className="w-5 h-5 text-rose-500" />

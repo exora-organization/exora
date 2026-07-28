@@ -192,7 +192,7 @@ export function HeaderNotificationCenter() {
     <div className="relative" ref={containerRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2.5 rounded-2xl bg-white border border-[#E8E3D9] hover:border-[#00A651]/40 text-[#4B5563] hover:text-[#00A651] shadow-sm transition-all cursor-pointer focus:outline-none"
+        className="relative p-2.5 rounded-2xl bg-white/90 backdrop-blur-md border border-white/60 hover:border-[#00A651]/50 text-[#4B5563] hover:text-[#00A651] shadow-md hover:shadow-lg transition-all cursor-pointer focus:outline-none"
         title="Notification Center"
       >
         <Icon icon="solar:bell-bold-duotone" className="w-5 h-5" />
@@ -204,8 +204,8 @@ export function HeaderNotificationCenter() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-white border border-[#E8E3D9] shadow-2xl rounded-3xl p-5 z-50 animate-in fade-in zoom-in-95 duration-200">
-          <div className="flex items-center justify-between pb-3 border-b border-[#E8E3D9] mb-3">
+        <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-white/95 backdrop-blur-xl border border-white/60 shadow-2xl rounded-3xl p-5 z-50 animate-in fade-in zoom-in-95 duration-200">
+          <div className="flex items-center justify-between pb-3 border-b border-gray-100 mb-3">
             <div className="flex items-center gap-2">
               <Icon icon="solar:bell-bold-duotone" className="w-5 h-5 text-[#00A651]" />
               <h4 className="text-base font-extrabold text-[#1F2937]">Workflow Notifications</h4>
