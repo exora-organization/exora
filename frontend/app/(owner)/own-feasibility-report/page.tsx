@@ -12,6 +12,7 @@ import { PdfPreviewModal } from "../../../components/ui/pdf-preview-modal";
 import { EmptyState } from "../../../components/ui/EmptyState";
 import { auth } from "../../../lib/firebase/client";
 import ReactMarkdown from "react-markdown";
+import { HeaderNotificationCenter } from "../../../components/navigation/HeaderNotificationCenter";
 
 const markdownComponents = {
   h1: ({ children }: any) => (
@@ -172,17 +173,23 @@ export default function ExportFeasibilityReportPage() {
         filename={previewModal.filename}
       />
       <div className="space-y-8 max-w-6xl mx-auto pb-12">
-        {/* Header */}
-        <div>
-          <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937] flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+          <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-[#EBF8F2] flex items-center justify-center shadow-inner">
               <Icon icon="solar:document-text-bold-duotone" className="w-6 h-6 text-[#00A651]" />
             </div>
-            Export Feasibility Report
-          </h2>
-          <p className="text-sm text-[#4B5563] font-medium mt-3">
-            Select one export case and generate a PDF report containing metrics, risk scores, feasibility assessment, and AI recommendations.
-          </p>
+            <div>
+              <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">
+                Export Feasibility Report
+              </h2>
+              <p className="text-sm text-[#4B5563] font-medium mt-1">
+                Select one export case and generate a PDF report containing metrics, risk scores, feasibility assessment, and AI recommendations.
+              </p>
+            </div>
+          </div>
+          <div className="hidden md:block">
+            <HeaderNotificationCenter />
+          </div>
         </div>
 
         {/* Notice */}

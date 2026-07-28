@@ -7,6 +7,7 @@ import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { useMemo } from "react";
 import { EmptyState } from "../../../components/ui/EmptyState";
+import { HeaderNotificationCenter } from "../../../components/navigation/HeaderNotificationCenter";
 
 export default function OwnerDashboardPage() {
   const { data: analyticsData, isLoading: isStatsLoading } = useQuery({
@@ -56,16 +57,21 @@ export default function OwnerDashboardPage() {
   return (
     <div className="space-y-8 text-[#1F2937] pb-10 max-w-7xl mx-auto">
       {/* Header */}
-      <div>
-        <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Executive Dashboard</h2>
-        <p className="text-sm text-[#4B5563] font-medium mt-1">
-          Company-wide export portfolio performance & strategic decision signals
-        </p>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <div>
+          <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Executive Dashboard</h2>
+          <p className="text-sm text-[#4B5563] font-medium mt-1">
+            Company-wide export portfolio performance & strategic decision signals
+          </p>
+        </div>
+        <div className="hidden md:block">
+          <HeaderNotificationCenter />
+        </div>
       </div>
 
       {/* KPI Cards Across All Cases */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Link href="/own-export-cases" className="bg-white rounded-3xl border border-[#E8E3D9] p-5 shadow-sm space-y-2 hover:border-[#00A651] transition-all group">
+        <Link href="/own-export-cases" className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-lg rounded-3xl p-5 hover:shadow-2xl transition-all space-y-2 group">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Active Export Cases</span>
             <div className="w-8 h-8 rounded-xl bg-[#EBF8F2] flex items-center justify-center text-[#00A651] group-hover:scale-110 transition-transform">
@@ -76,7 +82,7 @@ export default function OwnerDashboardPage() {
           <p className="text-[11px] text-[#00A651] font-bold">Total active transactions</p>
         </Link>
 
-        <div className="bg-white rounded-3xl border border-[#E8E3D9] p-5 shadow-sm space-y-2">
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-lg rounded-3xl p-5 hover:shadow-xl transition-all space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Projected Portfolio Revenue</span>
             <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500">
@@ -89,7 +95,7 @@ export default function OwnerDashboardPage() {
           <p className="text-[11px] text-gray-500 font-medium">Aggregate USD export value</p>
         </div>
 
-        <div className="bg-white rounded-3xl border border-[#E8E3D9] p-5 shadow-sm space-y-2">
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-lg rounded-3xl p-5 hover:shadow-xl transition-all space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Average Profit Margin</span>
             <div className="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
@@ -100,7 +106,7 @@ export default function OwnerDashboardPage() {
           <p className="text-[11px] text-emerald-700 font-bold">Across calculated Incoterms</p>
         </div>
 
-        <div className="bg-white rounded-3xl border border-[#E8E3D9] p-5 shadow-sm space-y-2">
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-lg rounded-3xl p-5 hover:shadow-xl transition-all space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Avg Feasibility Index</span>
             <div className="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500">
@@ -115,7 +121,7 @@ export default function OwnerDashboardPage() {
       </div>
 
       {/* CASES REQUIRING OWNER DECISION (PRINCIPLE 1) */}
-      <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-4">
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 hover:shadow-2xl transition-all space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
@@ -169,7 +175,7 @@ export default function OwnerDashboardPage() {
       </div>
 
       {/* PORTFOLIO STAGE PROGRESS SUMMARY */}
-      <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-4">
+      <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6 hover:shadow-2xl transition-all space-y-4">
         <h3 className="text-lg font-extrabold text-[#1F2937] flex items-center gap-2">
           <Icon icon="solar:route-bold-duotone" className="w-5 h-5 text-[#00A651]" />
           Portfolio Stage Aggregated Progress

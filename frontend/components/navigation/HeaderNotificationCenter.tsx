@@ -50,6 +50,7 @@ export function HeaderNotificationCenter() {
     enabled: role === "company_owner" && !!companyId,
     staleTime: 30000,
     refetchInterval: 30000,
+    retry: false,
   });
 
   // Fetch guest application status

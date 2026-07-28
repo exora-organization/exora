@@ -19,7 +19,7 @@ export function useUserProfile() {
       setFirebaseUser(user);
       setFirebaseLoading(false);
       if (user) {
-        const uidChanged = previousUidRef.current !== user.uid;
+        const uidChanged = previousUidRef.current !== undefined && previousUidRef.current !== user.uid;
         previousUidRef.current = user.uid;
 
         // Only purge stale profile data when a *different* user logs in to avoid
@@ -37,9 +37,12 @@ export function useUserProfile() {
           }
         });
       } else {
+        const wasLoggedIn = previousUidRef.current !== null && previousUidRef.current !== undefined;
         previousUidRef.current = null;
         document.cookie = "firebaseToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-        queryClient.removeQueries({ queryKey: ["user-profile"] });
+        if (wasLoggedIn) {
+          queryClient.removeQueries({ queryKey: ["user-profile"] });
+        }
       }
     });
 

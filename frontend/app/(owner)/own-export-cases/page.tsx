@@ -7,6 +7,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { ExportCaseListItem } from "../../../lib/types/export-case";
 import { EmptyState } from "../../../components/ui/EmptyState";
+import { HeaderNotificationCenter } from "../../../components/navigation/HeaderNotificationCenter";
 
 const feasibilityLabel = (score?: number) => {
   if (score === undefined || score === null) return { label: "No Score", color: "text-gray-400", bg: "bg-gray-50" };
@@ -43,18 +44,21 @@ export default function OwnerExportCasesPage() {
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto pb-12">
-      {/* Header */}
-      <div>
-        <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Export Cases</h2>
-        <p className="text-sm text-[#6B7280] mt-1 font-medium">
-          Executive Overview · Track company-wide export cases and progress.
-
-        </p>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <div>
+          <h2 className="text-3xl font-extrabold tracking-tight text-[#1F2937]">Export Cases</h2>
+          <p className="text-sm text-[#6B7280] mt-1 font-medium">
+            Executive Overview · Track company-wide export cases and progress.
+          </p>
+        </div>
+        <div className="hidden md:block">
+          <HeaderNotificationCenter />
+        </div>
       </div>
 
       {/* Filters */}
       <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl transition-all p-4 flex flex-wrap gap-3 items-center">
-        <div className="flex items-center gap-2 flex-1 min-w-[200px] bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2">
+        <div className="flex items-center gap-2 flex-1 min-w-[200px] bg-gray-50 border border-gray-100 rounded-xl px-3 py-2">
           <Icon icon="solar:magnifer-linear" className="w-4 h-4 text-gray-400 shrink-0" />
           <input
             className="bg-transparent text-sm w-full outline-none font-medium placeholder:text-gray-400"
@@ -66,7 +70,7 @@ export default function OwnerExportCasesPage() {
         <div className="flex items-center gap-2">
           <Icon icon="solar:filter-bold-duotone" className="w-4 h-4 text-gray-400" />
           <select
-            className="text-sm bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2 font-semibold outline-none"
+            className="text-sm bg-white border border-gray-200 rounded-xl px-3 py-2 font-semibold outline-none"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
@@ -76,7 +80,7 @@ export default function OwnerExportCasesPage() {
             <option value="finalized">Finalized</option>
           </select>
           <select
-            className="text-sm bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2 font-semibold outline-none"
+            className="text-sm bg-white border border-gray-200 rounded-xl px-3 py-2 font-semibold outline-none"
             value={feasibilityFilter}
             onChange={(e) => setFeasibilityFilter(e.target.value)}
           >
