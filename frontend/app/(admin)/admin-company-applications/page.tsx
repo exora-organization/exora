@@ -8,6 +8,7 @@ import { Button } from "../../../components/ui/button";
 import { useUserProfile } from "../../../hooks/useUserProfile";
 import { Icon } from "@iconify/react";
 import { toast } from "sonner";
+import { HeaderNotificationCenter } from "../../../components/navigation/HeaderNotificationCenter";
 import { ProfileChangeResponse } from "../../../lib/types/company";
 import { notificationStore } from "../../../lib/services/notificationStore";
 
@@ -159,27 +160,32 @@ export default function CompanyApplicationsPage() {
           <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">Company Management</h2>
           <p className="text-[#4B5563] mt-2 font-medium">Review initial registration applications and profile change requests.</p>
         </div>
-        <Button
-          onClick={() => {
-            refetchApps();
-            refetchChangeReqs();
-          }}
-          variant="outline"
-          className="border-[#00A651] text-[#00A651] hover:bg-[#EBF8F2] rounded-xl font-bold h-10 px-6 self-start sm:self-auto"
-        >
-          Refresh
-        </Button>
+        <div className="flex items-center gap-3 self-start sm:self-auto">
+          <Button
+            onClick={() => {
+              refetchApps();
+              refetchChangeReqs();
+            }}
+            className="bg-[#00A651] hover:bg-[#008F44] text-white px-5 py-5 rounded-2xl shadow-md hover:shadow-lg font-bold transition-all flex items-center gap-2"
+            disabled={appLoading || changeReqLoading}
+          >
+            <Icon icon="solar:restart-bold-duotone" className={`w-4 h-4 ${(appLoading || changeReqLoading) ? "animate-spin" : ""}`} />
+            {(appLoading || changeReqLoading) ? "Refreshing..." : "Refresh"}
+          </Button>
+          <div className="hidden md:block">
+            <HeaderNotificationCenter />
+          </div>
+        </div>
       </div>
 
       {/* Main Section Navigation Tabs */}
       <div className="flex border-b border-slate-200 gap-6">
         <button
           onClick={() => setActiveMainTab("applications")}
-          className={`pb-4 font-extrabold text-sm flex items-center gap-2 border-b-2 transition-all ${
-            activeMainTab === "applications"
-              ? "border-[#00A651] text-[#00A651]"
-              : "border-transparent text-slate-500 hover:text-slate-800"
-          }`}
+          className={`pb-4 font-extrabold text-sm flex items-center gap-2 border-b-2 transition-all ${activeMainTab === "applications"
+            ? "border-[#00A651] text-[#00A651]"
+            : "border-transparent text-slate-500 hover:text-slate-800"
+            }`}
         >
           <Icon icon="solar:folder-with-files-bold-duotone" className="w-5 h-5" />
           Registration Applications
@@ -190,11 +196,10 @@ export default function CompanyApplicationsPage() {
 
         <button
           onClick={() => setActiveMainTab("change_requests")}
-          className={`pb-4 font-extrabold text-sm flex items-center gap-2 border-b-2 transition-all ${
-            activeMainTab === "change_requests"
-              ? "border-[#00A651] text-[#00A651]"
-              : "border-transparent text-slate-500 hover:text-slate-800"
-          }`}
+          className={`pb-4 font-extrabold text-sm flex items-center gap-2 border-b-2 transition-all ${activeMainTab === "change_requests"
+            ? "border-[#00A651] text-[#00A651]"
+            : "border-transparent text-slate-500 hover:text-slate-800"
+            }`}
         >
           <Icon icon="solar:pen-new-square-bold-duotone" className="w-5 h-5" />
           Profile Change Requests
@@ -210,8 +215,8 @@ export default function CompanyApplicationsPage() {
       {activeMainTab === "applications" && (
         <div className="space-y-6">
           {/* Search & Sort Bar */}
-          <div className="bg-white rounded-2xl border border-[#E8E3D9] shadow-sm p-4 flex flex-wrap gap-3 items-center">
-            <div className="flex items-center gap-2 flex-1 min-w-[220px] bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl px-3 py-2">
+          <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-lg rounded-3xl p-4 flex flex-wrap gap-3 items-center">
+            <div className="flex items-center gap-2 flex-1 min-w-[220px] bg-white border border-gray-200 rounded-xl px-3 py-2">
               <Icon icon="solar:magnifer-bold-duotone" className="w-4 h-4 text-gray-400 shrink-0" />
               <input
                 className="bg-transparent text-sm w-full outline-none font-medium placeholder:text-gray-400"
@@ -247,16 +252,14 @@ export default function CompanyApplicationsPage() {
                 <button
                   key={tab.value}
                   onClick={() => setStatusFilter(tab.value)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
-                    statusFilter === tab.value
-                      ? "bg-[#00A651] text-white shadow-md"
-                      : "bg-white border border-[#E8E3D9] text-[#6B7280] hover:border-[#00A651]/40 hover:text-[#00A651]"
-                  }`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${statusFilter === tab.value
+                    ? "bg-[#00A651] text-white shadow-md"
+                    : "bg-white border border-[#E8E3D9] text-[#6B7280] hover:border-[#00A651]/40 hover:text-[#00A651]"
+                    }`}
                 >
                   {tab.label}
-                  <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-black ${
-                    statusFilter === tab.value ? "bg-white/20 text-white" : "bg-gray-100 text-gray-500"
-                  }`}>
+                  <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-black ${statusFilter === tab.value ? "bg-white/20 text-white" : "bg-gray-100 text-gray-500"
+                    }`}>
                     {count}
                   </span>
                 </button>
@@ -308,14 +311,12 @@ export default function CompanyApplicationsPage() {
                   {/* Status */}
                   <div className="flex-1">
                     <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-1">Status</p>
-                    <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-wide capitalize ${
-                      app.status === "pending" ? "bg-blue-100 text-blue-700" :
+                    <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold tracking-wide capitalize ${app.status === "pending" ? "bg-blue-100 text-blue-700" :
                       app.status === "approved" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-                    }`}>
-                      <span className={`w-2 h-2 rounded-full ${
-                        app.status === "pending" ? "bg-blue-500" :
+                      }`}>
+                      <span className={`w-2 h-2 rounded-full ${app.status === "pending" ? "bg-blue-500" :
                         app.status === "approved" ? "bg-green-500" : "bg-red-500"
-                      }`}></span>
+                        }`}></span>
                       {app.status.replace("_", " ")}
                     </span>
                   </div>
@@ -441,31 +442,28 @@ export default function CompanyApplicationsPage() {
                       <div className="space-y-3">
                         <div>
                           <p className="text-[10px] font-bold text-[#00A651]/70 uppercase tracking-widest">Company Name</p>
-                          <p className={`text-sm font-black ${
-                            req.before?.companyName !== req.after?.companyName
-                              ? "text-[#00A651] underline decoration-[#00A651]/40"
-                              : "text-slate-800"
-                          }`}>
+                          <p className={`text-sm font-black ${req.before?.companyName !== req.after?.companyName
+                            ? "text-[#00A651] underline decoration-[#00A651]/40"
+                            : "text-slate-800"
+                            }`}>
                             {req.after?.companyName || "—"}
                           </p>
                         </div>
                         <div>
                           <p className="text-[10px] font-bold text-[#00A651]/70 uppercase tracking-widest">Business Sector</p>
-                          <p className={`text-sm font-black ${
-                            req.before?.businessSector !== req.after?.businessSector
-                              ? "text-[#00A651] underline decoration-[#00A651]/40"
-                              : "text-slate-800"
-                          }`}>
+                          <p className={`text-sm font-black ${req.before?.businessSector !== req.after?.businessSector
+                            ? "text-[#00A651] underline decoration-[#00A651]/40"
+                            : "text-slate-800"
+                            }`}>
                             {req.after?.businessSector || "—"}
                           </p>
                         </div>
                         <div>
                           <p className="text-[10px] font-bold text-[#00A651]/70 uppercase tracking-widest">Country</p>
-                          <p className={`text-sm font-black ${
-                            req.before?.country !== req.after?.country
-                              ? "text-[#00A651] underline decoration-[#00A651]/40"
-                              : "text-slate-800"
-                          }`}>
+                          <p className={`text-sm font-black ${req.before?.country !== req.after?.country
+                            ? "text-[#00A651] underline decoration-[#00A651]/40"
+                            : "text-slate-800"
+                            }`}>
                             {req.after?.country || "—"}
                           </p>
                         </div>

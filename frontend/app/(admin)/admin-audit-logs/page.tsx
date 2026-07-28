@@ -6,6 +6,7 @@ import { Button } from "../../../components/ui/button";
 import { useState, useMemo } from "react";
 import { useUserProfile } from "../../../hooks/useUserProfile";
 import { Icon } from "@iconify/react";
+import { HeaderNotificationCenter } from "../../../components/navigation/HeaderNotificationCenter";
 import { AuditLog } from "../../../lib/types/admin";
 
 interface AuditLogExtended {
@@ -955,6 +956,9 @@ export default function AuditLogsPage() {
             <Icon icon="solar:refresh-bold-duotone" className={`w-4 h-4 ${isFetching ? "animate-spin" : ""}`} />
             {isFetching ? "Syncing..." : "Sync Logs"}
           </Button>
+          <div className="hidden md:block">
+            <HeaderNotificationCenter />
+          </div>
         </div>
       </div>
 
