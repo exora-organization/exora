@@ -187,54 +187,66 @@ export function PdfPreviewModal({
         style={{ width: "min(900px, 95vw)", height: "min(780px, 90vh)" }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-[#E8E3D9] bg-white/50 shrink-0">
-          <div className="flex items-center gap-3 min-w-0">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b border-[#E8E3D9] bg-white/50 shrink-0 gap-4">
+          <div className="flex items-center gap-3 min-w-0 w-full sm:w-auto">
             <div className="w-9 h-9 rounded-xl bg-[#EBF8F2] flex items-center justify-center shrink-0">
               <FileText className="w-4 h-4 text-[#00A651]" />
             </div>
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <p className="font-extrabold text-[#1F2937] text-sm truncate">{filename}</p>
               <p className="text-[10px] text-[#9CA3AF] font-bold uppercase tracking-wider">
                 Document Preview
               </p>
             </div>
-          </div>
-
-          <div className="flex items-center gap-2 shrink-0 ml-4">
-            {/* Zoom controls */}
-            <button
-              onClick={() => setFontSize((f) => Math.max(9, f - 1))}
-              className="w-8 h-8 rounded-lg border border-[#E8E3D9] flex items-center justify-center hover:bg-[#F3F4F6] transition-colors"
-              title="Zoom out"
-            >
-              <ZoomOut className="w-4 h-4 text-[#6B7280]" />
-            </button>
-            <span className="text-xs font-bold text-[#9CA3AF] w-8 text-center">{fontSize}px</span>
-            <button
-              onClick={() => setFontSize((f) => Math.min(24, f + 1))}
-              className="w-8 h-8 rounded-lg border border-[#E8E3D9] flex items-center justify-center hover:bg-[#F3F4F6] transition-colors"
-              title="Zoom in"
-            >
-              <ZoomIn className="w-4 h-4 text-[#6B7280]" />
-            </button>
-
-            {/* Download */}
-            <button
-              onClick={handleDownload}
-              disabled={isDownloading || isLoading || !content}
-              className="flex items-center gap-1.5 h-10 px-5 rounded-full bg-[#00A651] hover:bg-[#008F44] disabled:opacity-60 disabled:cursor-not-allowed text-white text-xs font-bold transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
-            >
-              {isDownloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-              {isDownloading ? "Generating..." : "Download PDF"}
-            </button>
-
-            {/* Close */}
+            
+            {/* Close button for mobile (shown next to title instead of at the bottom) */}
             <button
               onClick={onClose}
-              className="w-9 h-9 rounded-xl border border-[#E8E3D9] flex items-center justify-center hover:bg-[#F3F4F6] transition-colors"
+              className="sm:hidden w-8 h-8 rounded-xl border border-[#E8E3D9] flex items-center justify-center hover:bg-[#F3F4F6] transition-colors shrink-0"
             >
               <X className="w-4 h-4 text-[#6B7280]" />
             </button>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 shrink-0 w-full sm:w-auto justify-between sm:justify-end">
+            {/* Zoom controls - hidden on very small mobile */}
+            <div className="hidden xs:flex sm:flex items-center gap-1 sm:gap-2">
+              <button
+                onClick={() => setFontSize((f) => Math.max(9, f - 1))}
+                className="w-8 h-8 rounded-lg border border-[#E8E3D9] flex items-center justify-center hover:bg-[#F3F4F6] transition-colors"
+                title="Zoom out"
+              >
+                <ZoomOut className="w-4 h-4 text-[#6B7280]" />
+              </button>
+              <span className="text-xs font-bold text-[#9CA3AF] w-8 text-center">{fontSize}px</span>
+              <button
+                onClick={() => setFontSize((f) => Math.min(24, f + 1))}
+                className="w-8 h-8 rounded-lg border border-[#E8E3D9] flex items-center justify-center hover:bg-[#F3F4F6] transition-colors"
+                title="Zoom in"
+              >
+                <ZoomIn className="w-4 h-4 text-[#6B7280]" />
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2 flex-1 sm:flex-none justify-end">
+              {/* Download */}
+              <button
+                onClick={handleDownload}
+                disabled={isDownloading || isLoading || !content}
+                className="flex flex-1 sm:flex-none justify-center items-center gap-1.5 h-10 px-5 rounded-full bg-[#00A651] hover:bg-[#008F44] disabled:opacity-60 disabled:cursor-not-allowed text-white text-xs font-bold transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
+              >
+                {isDownloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                {isDownloading ? "Generating..." : "Download PDF"}
+              </button>
+
+              {/* Close - hidden on mobile since it's at the top */}
+              <button
+                onClick={onClose}
+                className="hidden sm:flex w-9 h-9 rounded-xl border border-[#E8E3D9] items-center justify-center hover:bg-[#F3F4F6] transition-colors"
+              >
+                <X className="w-4 h-4 text-[#6B7280]" />
+              </button>
+            </div>
           </div>
         </div>
 

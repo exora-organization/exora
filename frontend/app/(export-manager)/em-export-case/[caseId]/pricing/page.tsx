@@ -207,7 +207,7 @@ export default function PricingPage() {
 
       {pricingResult && (
         <div className="space-y-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-5 hover:-translate-y-1 transition-transform">
               <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">
                 Total Cost ({pricingResult.incoterm} Scope)
@@ -232,13 +232,13 @@ export default function PricingPage() {
           </div>
 
           <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl overflow-hidden">
-            <div className="bg-white/50 backdrop-blur-sm border-b border-white/60 px-6 py-5 flex items-center justify-between">
+            <div className="bg-white/50 backdrop-blur-sm border-b border-white/60 px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
               <h3 className="text-xl font-extrabold text-[#1F2937]">Cost Breakdown ({pricingResult.incoterm})</h3>
               <span className="text-xs font-bold text-gray-500">
                 Amounts reflect exporter obligations under <strong>{pricingResult.incoterm}</strong>
               </span>
             </div>
-            <div className="p-6">
+            <div className="p-4 sm:p-6 overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow className="border-b-2 border-gray-100 hover:bg-transparent">

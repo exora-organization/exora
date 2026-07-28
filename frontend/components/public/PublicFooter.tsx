@@ -62,7 +62,7 @@ export function PublicFooter() {
             © 2026 EXORA. All rights reserved.
           </p>
           <p className="text-sm text-[#9CA3AF] font-medium mt-4 md:mt-0">
-            Version 1.0
+            Version 2.0
           </p>
         </div>
       </div>

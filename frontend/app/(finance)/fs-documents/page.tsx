@@ -149,7 +149,7 @@ export default function FinanceDocumentsPage() {
 
         {/* Result Alert */}
         {reportResult && (
-          <div className="flex items-center gap-4 p-6 bg-emerald-50/90 backdrop-blur-md border border-emerald-300 rounded-3xl shadow-lg animate-in slide-in-from-bottom-4 duration-500">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 p-6 bg-emerald-50/90 backdrop-blur-md border border-emerald-300 rounded-3xl shadow-lg animate-in slide-in-from-bottom-4 duration-500">
             <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 border border-emerald-200">
               <Icon icon="solar:check-circle-bold-duotone" className="w-7 h-7 text-emerald-600" />
             </div>
@@ -162,7 +162,7 @@ export default function FinanceDocumentsPage() {
               )}
             </div>
             {reportResult.documentId && reportResult.filename && (
-              <div className="flex gap-3">
+              <div className="flex gap-3 w-full sm:w-auto mt-2 sm:mt-0 justify-center">
                 <button
                   onClick={() => setPreviewModal({ open: true, documentId: reportResult.documentId!, filename: reportResult.filename! })}
                   className="px-6 py-2.5 rounded-full bg-[#00A651] text-white text-sm font-bold hover:bg-[#008F44] shadow-md shadow-[#00A651]/20 transition-all flex items-center gap-2"
