@@ -136,8 +136,16 @@ func (s *Service) Accept(ctx context.Context, token string) (*AcceptResponse, er
 		claims = &actor.FirebaseClaims{UID: u.FirebaseUID, Email: u.Email}
 	}
 
-	if claims.Email != inv.Email {
-		return nil, apperror.ErrForbidden
+	userEmail := strings.ToLower(strings.TrimSpace(claims.Email))
+	if userEmail == "" {
+		if u, ok := actor.FromContext(ctx); ok {
+			userEmail = strings.ToLower(strings.TrimSpace(u.Email))
+		}
+	}
+	targetEmail := strings.ToLower(strings.TrimSpace(inv.Email))
+
+	if userEmail != targetEmail {
+		return nil, apperror.New("FORBIDDEN", fmt.Sprintf("Undangan ini dikirim untuk %s, tetapi Anda saat ini login sebagai %s. Silakan login dengan akun yang diundang.", inv.Email, claims.Email), 403)
 	}
 
 	now := time.Now().UTC()

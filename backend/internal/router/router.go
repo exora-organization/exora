@@ -97,6 +97,7 @@ func New(deps Dependencies, h Handlers) http.Handler {
 				r.With(deps.RateLimiter.Limit, middleware.Audit("user_login", deps.AuditLogger)).Post("/auth/login", h.Auth.Login)
 				r.Post("/auth/logout", h.Auth.Logout)
 				r.Get("/users/me", h.User.Me)
+				r.Post("/invitations/{token}/accept", h.Invitation.Accept)
 
 				r.Group(func(r chi.Router) {
 					r.Use(deps.Auth.RequireEmailVerified)
@@ -120,7 +121,6 @@ func New(deps Dependencies, h Handlers) http.Handler {
 					r.With(middleware.RequireRoles("company_owner")).Get("/invitations", h.Invitation.List)
 					r.With(middleware.RequireRoles("company_owner")).Post("/invitations/resend", h.Invitation.Resend)
 					r.With(middleware.RequireRoles("company_owner")).Delete("/invitations/{invitationId}", h.Invitation.Delete)
-					r.Post("/invitations/{token}/accept", h.Invitation.Accept)
 
 					// Admin
 					r.With(
