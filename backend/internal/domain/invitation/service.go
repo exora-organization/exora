@@ -145,7 +145,7 @@ func (s *Service) Accept(ctx context.Context, token string) (*AcceptResponse, er
 	targetEmail := strings.ToLower(strings.TrimSpace(inv.Email))
 
 	if userEmail != targetEmail {
-		return nil, apperror.New("FORBIDDEN", fmt.Sprintf("Undangan ini dikirim untuk %s, tetapi Anda saat ini login sebagai %s. Silakan login dengan akun yang diundang.", inv.Email, claims.Email), 403)
+		return nil, apperror.New("FORBIDDEN", fmt.Sprintf("This invitation was sent to %s, but you are currently logged in as %s. Please log in with the invited email address.", inv.Email, claims.Email), 403)
 	}
 
 	now := time.Now().UTC()
