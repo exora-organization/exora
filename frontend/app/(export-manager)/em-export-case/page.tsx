@@ -1,7 +1,8 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
+import { HeaderNotificationCenter } from "@/components/navigation/HeaderNotificationCenter";
 import { apiExportCase } from "../../../lib/api/export-case";
 import { Button } from "../../../components/ui/button";
 import { useUserProfile } from "../../../hooks/useUserProfile";
@@ -9,6 +10,7 @@ import { useState, useMemo } from "react";
 import { Icon } from "@iconify/react";
 import { ExportCaseListItem } from "../../../lib/types/export-case";
 import { EmptyState } from "../../../components/ui/EmptyState";
+import { toast } from "sonner";
 
 const STATUS_TABS = [
   { label: "All", value: "all" },
@@ -43,6 +45,25 @@ export default function ExportCaseListPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [feasibilityFilter, setFeasibilityFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
+  
+  const queryClient = useQueryClient();
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => apiExportCase.delete(id),
+    onSuccess: () => {
+      toast.success("Export case deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["export-cases"] });
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Failed to delete export case");
+    },
+  });
+
+  const handleDelete = (e: React.MouseEvent, id: string) => {
+    e.preventDefault();
+    if (confirm("Are you sure you want to delete this export case? This action cannot be undone.")) {
+      deleteMutation.mutate(id);
+    }
+  };
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["export-cases"],
@@ -114,23 +135,35 @@ export default function ExportCaseListPage() {
             {canCreate ? "Manage your company's export plans and monitor execution progress." : "Review your company's export plans."}
           </p>
         </div>
-        {canCreate && (
-          <Link href="/em-export-case/new">
-            <Button className="bg-[#00A651] hover:bg-[#008F44] text-white font-bold rounded-2xl flex items-center gap-2 px-6 py-6 shadow-md hover:shadow-lg transition-all">
-              <Icon icon="solar:add-circle-bold-duotone" className="w-5 h-5" />
-              New Case
-            </Button>
-          </Link>
-        )}
+        <div className="flex items-center gap-3">
+          <div className="hidden md:block">
+            <HeaderNotificationCenter />
+          </div>
+          {canCreate && (
+            <Link href="/em-export-case/new">
+              <Button className="bg-[#00A651] hover:bg-[#008F44] text-white font-bold rounded-2xl flex items-center gap-2 px-6 py-6 shadow-md hover:shadow-lg transition-all">
+                <Icon icon="solar:add-circle-bold-duotone" className="w-5 h-5" />
+                New Case
+              </Button>
+            </Link>
+          )}
+        </div>
       </div>
 
       {/* Action Required Badge */}
       {cases.filter((c) => c.status === "in_review" || c.status === "draft").length > 0 && (
-        <div className="flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-2xl text-xs font-extrabold text-amber-900 shadow-sm">
-          <Icon icon="solar:bell-bold-duotone" className="w-5 h-5 text-amber-600 shrink-0" />
-          <span>
-            Action Required: You have {cases.filter((c) => c.status === "in_review" || c.status === "draft").length} export cases requiring Pricing or Risk Assessment simulation.
-          </span>
+        <div className="bg-[#EBF8F2] border-2 border-[#00A651]/40 rounded-3xl p-6 shadow-sm flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-[#00A651] text-white flex items-center justify-center shadow-md shrink-0">
+            <Icon icon="solar:bell-bing-bold-duotone" className="w-6 h-6 animate-bounce" />
+          </div>
+          <div>
+            <span className="px-2.5 py-0.5 rounded-md bg-[#00A651]/20 text-[#00A651] text-[10px] font-black uppercase tracking-wider">
+              Action Required
+            </span>
+            <p className="text-sm font-extrabold text-[#1F2937] mt-1">
+              You have {cases.filter((c) => c.status === "in_review" || c.status === "draft").length} export cases requiring Pricing or Risk Assessment simulation.
+            </p>
+          </div>
         </div>
       )}
 
@@ -236,12 +269,20 @@ export default function ExportCaseListPage() {
                 </div>
 
                 {/* Actions Button */}
-                <div className="flex items-center md:ml-4 shrink-0">
+                <div className="flex items-center md:ml-4 shrink-0 gap-2">
                   <Link href={`/em-export-case/${c.caseId}`} className="inline-block">
                     <button className="bg-[#00A651] hover:bg-[#008F44] text-white font-bold rounded-xl px-5 py-2.5 text-[13px] shadow-md shadow-[#00A651]/20 cursor-pointer">
                       View Detail
                     </button>
                   </Link>
+                  <Link href={`/em-export-case/${c.caseId}/edit`} className="inline-block">
+                    <button className="bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl px-4 py-2.5 text-[13px] shadow-md shadow-amber-500/20 cursor-pointer flex items-center justify-center">
+                      <Icon icon="solar:pen-bold" className="w-4 h-4" />
+                    </button>
+                  </Link>
+                  <button onClick={(e) => handleDelete(e, c.caseId)} className="bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl px-4 py-2.5 text-[13px] shadow-md shadow-rose-500/20 cursor-pointer flex items-center justify-center">
+                    <Icon icon="solar:trash-bin-trash-bold" className="w-4 h-4" />
+                  </button>
                 </div>
 
               </div>

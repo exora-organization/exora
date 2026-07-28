@@ -20,7 +20,7 @@ func NewHandler(service *Service, cases *exportcase.Service) *Handler {
 	return &Handler{service: service, cases: cases}
 }
 
-// Create handles POST /v1/export-cases/{caseId}/scenarios (SRS FR-014).
+// Create handles POST /v1/export-cases/{caseId}/scenarios.
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	caseID := r.PathValue("caseId")
 	ec, err := h.cases.GetByID(r.Context(), caseID)
@@ -56,7 +56,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// Compare handles GET /v1/export-cases/{caseId}/scenarios/compare?scenarioIds=id1,id2 (SRS FR-014).
+// Compare handles GET /v1/export-cases/{caseId}/scenarios/compare?scenarioIds=id1,id2.
 func (h *Handler) Compare(w http.ResponseWriter, r *http.Request) {
 	caseID := r.PathValue("caseId")
 	if _, err := h.cases.GetByID(r.Context(), caseID); err != nil {

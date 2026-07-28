@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
+import { HeaderNotificationCenter } from "@/components/navigation/HeaderNotificationCenter";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/navigation";
 import { useUserProfile } from "../../../hooks/useUserProfile";
@@ -222,16 +223,21 @@ export default function AiAdvisorPage() {
   if (role === "admin") {
     return (
       <div className="space-y-10 max-w-6xl mx-auto pb-12 text-[#1F2937]">
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h2 className="text-4xl font-extrabold tracking-tight">AI Advisor System Diagnostics</h2>
             <p className="text-sm font-medium text-[#4B5563] mt-1">
               Platform-wide RAG telemetry, query latency statistics, index compliance rates, and debugging drill-down.
             </p>
           </div>
-          <Button onClick={() => refetchHealth()} variant="outline" className="border-gray-300 text-gray-700 bg-white">
-            <Icon icon="solar:restart-bold-duotone" className="w-4 h-4 mr-2" /> Refetch Metrics
-          </Button>
+          <div className="flex items-center gap-4">
+            <Button onClick={() => refetchHealth()} className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-[#00A651] hover:bg-[#008F44] text-white text-xs font-black uppercase tracking-wider shadow-md hover:shadow-lg transition-all cursor-pointer h-auto">
+              <Icon icon="solar:restart-bold-duotone" className="w-5 h-5" /> Refetch Metrics
+            </Button>
+            <div className="hidden md:block">
+              <HeaderNotificationCenter />
+            </div>
+          </div>
         </div>
 
         {/* SLA Metrics Cards */}
@@ -413,25 +419,25 @@ export default function AiAdvisorPage() {
         </div>
 
         {/* System Activity & Anomaly Console Logs */}
-        <div className="bg-slate-950 text-emerald-400 font-mono text-xs rounded-3xl p-6 md:p-8 shadow-2xl border border-slate-900 relative overflow-hidden">
-          <div className="absolute top-3 right-4 flex space-x-1">
-            <div className="w-3 h-3 rounded-full bg-red-500"></div>
-            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-            <div className="w-3 h-3 rounded-full bg-green-500"></div>
+        <div className="bg-white/90 backdrop-blur-xl border border-white/60 font-mono text-xs shadow-xl rounded-3xl p-6 md:p-8 transition-all hover:shadow-2xl relative overflow-hidden">
+          <div className="absolute top-4 right-4 flex space-x-1.5 opacity-50">
+            <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+            <div className="w-2.5 h-2.5 rounded-full bg-amber-400"></div>
+            <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
           </div>
-          <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 border-b border-gray-800 pb-2">RAG Diagnostic logs & Anomalies</h4>
-          <div className="space-y-2.5 max-h-[220px] overflow-y-auto pr-2 select-text">
+          <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 border-b border-gray-200 pb-2">RAG Diagnostic logs & Anomalies</h4>
+          <div className="space-y-2.5 max-h-[220px] overflow-y-auto pr-2 select-text text-gray-700">
             {health?.anomalyLogs?.map((log, i) => (
               <p key={i} className="leading-relaxed">
-                <span className="text-gray-500">[{new Date(log.timestamp).toLocaleTimeString()}]</span>{" "}
+                <span className="text-gray-400">[{new Date(log.timestamp).toLocaleTimeString()}]</span>{" "}
                 <span className={`font-black ${log.severity === "ERROR"
-                    ? "text-red-500"
+                    ? "text-red-600"
                     : log.severity === "WARN"
-                      ? "text-yellow-500"
-                      : "text-blue-500"
+                      ? "text-amber-600"
+                      : "text-blue-600"
                   }`}>[{log.severity}]</span>{" "}
-                <span className="text-sky-400">[{log.module}]</span>{" "}
-                <span className="text-slate-200">{log.message}</span>
+                <span className="text-indigo-500">[{log.module}]</span>{" "}
+                <span className="text-gray-800">{log.message}</span>
               </p>
             ))}
           </div>
@@ -630,11 +636,16 @@ export default function AiAdvisorPage() {
         filename={previewModal.filename}
       />
       <div className="space-y-10 max-w-6xl mx-auto pb-12 text-[#1F2937]">
-        <div>
-          <h2 className="text-4xl font-extrabold tracking-tight">AI Advisor</h2>
-          <p className="text-sm font-medium text-[#4B5563] mt-1">
-            Compile insights, evaluate trade finance options, and simulate Incoterm routes across all active cases.
-          </p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h2 className="text-4xl font-extrabold tracking-tight">AI Advisor</h2>
+            <p className="text-sm font-medium text-[#4B5563] mt-1">
+              Compile insights, evaluate trade finance options, and simulate Incoterm routes across all active cases.
+            </p>
+          </div>
+          <div className="hidden md:block">
+            <HeaderNotificationCenter />
+          </div>
         </div>
 
         {errorMsg && (

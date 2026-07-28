@@ -20,7 +20,7 @@ func NewHandler(service *Service, cases *exportcase.Service) *Handler {
 	return &Handler{service: service, cases: cases}
 }
 
-// PutCostData handles PUT /v1/export-cases/{caseId}/cost-data (SRS FR-010).
+// PutCostData handles PUT /v1/export-cases/{caseId}/cost-data.
 func (h *Handler) PutCostData(w http.ResponseWriter, r *http.Request) {
 	caseID := r.PathValue("caseId")
 	ec, err := h.cases.GetByID(r.Context(), caseID)

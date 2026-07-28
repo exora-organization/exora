@@ -16,7 +16,7 @@ import (
 	"github.com/exora/backend/internal/platform/gemini"
 )
 
-// Service handles the AI Decision Advisor (SRS FR-017, FR-018).
+// Service handles the AI Decision Advisor.
 // Prerequisite: cost_data MUST exist (TC-AI-001 → 422 if missing).
 type Service struct {
 	gemini      *gemini.Client

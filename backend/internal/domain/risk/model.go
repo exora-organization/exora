@@ -31,7 +31,7 @@ const (
 	FeasibilityLow      = "Low Feasibility"
 )
 
-// RiskAssessment is the SRS FR-015/FR-016 model persisted to risk_assessments collection.
+// RiskAssessment is the model persisted to risk_assessments collection.
 type RiskAssessment struct {
 	ID                    string    `json:"-" firestore:"-"`
 	CaseID                string    `json:"caseId" firestore:"caseId"`

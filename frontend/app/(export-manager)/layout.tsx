@@ -44,10 +44,10 @@ export default function ExportManagerLayout({ children }: { children: React.Reac
   return (
     <ProtectedRoute>
       {isRedirecting ? (
-        <div className="h-screen w-screen flex items-center justify-center bg-[#FAF8F3]" />
+        <div className="h-screen w-screen flex items-center justify-center bg-[#EBF8F2]" />
       ) : (
         <RoleGuard allowedRoles={["export_manager"]}>
-          <div className="h-screen overflow-hidden flex flex-col md:flex-row bg-[#FAF8F3] transition-colors">
+          <div className="h-screen overflow-hidden flex flex-col md:flex-row bg-[#EBF8F2] transition-colors">
 
           {/* Mobile Header */}
           <header className="md:hidden flex items-center justify-between bg-white border-b border-[#E8E3D9] px-6 py-4 sticky top-0 z-20 w-full">
@@ -137,13 +137,7 @@ export default function ExportManagerLayout({ children }: { children: React.Reac
 
           {/* Main Workspace */}
           <main className="flex-1 overflow-y-auto w-full max-w-full">
-            <header className="hidden md:flex items-center justify-between bg-white/70 backdrop-blur-md border-b border-[#E8E3D9] px-8 py-4 sticky top-0 z-20">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-extrabold text-gray-400 uppercase tracking-widest">Scope:</span>
-                <span className="text-xs font-black text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">OPERATIONAL WORKSPACE</span>
-              </div>
-              <HeaderNotificationCenter />
-            </header>
+
             <div className="p-6 md:p-10 text-[#1F2937]">
               {children}
             </div>

@@ -20,7 +20,7 @@ func NewHandler(service *Service, cases *exportcase.Service) *Handler {
 	return &Handler{service: service, cases: cases}
 }
 
-// CreateRecommendation handles POST /v1/export-cases/{caseId}/advisor/recommendations (SRS FR-018).
+// CreateRecommendation handles POST /v1/export-cases/{caseId}/advisor/recommendations.
 func (h *Handler) CreateRecommendation(w http.ResponseWriter, r *http.Request) {
 	caseID := r.PathValue("caseId")
 	ec, err := h.cases.GetByID(r.Context(), caseID)
@@ -95,7 +95,7 @@ func (h *Handler) Chat(w http.ResponseWriter, r *http.Request) {
 }
 
 
-// GetRecommendation handles GET /v1/export-cases/{caseId}/advisor/recommendations (SRS FR-018).
+// GetRecommendation handles GET /v1/export-cases/{caseId}/advisor/recommendations.
 func (h *Handler) GetRecommendation(w http.ResponseWriter, r *http.Request) {
 	caseID := r.PathValue("caseId")
 	if _, err := h.cases.GetByID(r.Context(), caseID); err != nil {

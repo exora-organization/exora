@@ -19,7 +19,7 @@ func NewHandler(service *Service, cases *exportcase.Service) *Handler {
 	return &Handler{service: service, cases: cases}
 }
 
-// GetAnalysis handles GET /v1/export-cases/{caseId}/financial-analysis?incoterm=CIF (SRS FR-013).
+// GetAnalysis handles GET /v1/export-cases/{caseId}/financial-analysis.
 func (h *Handler) GetAnalysis(w http.ResponseWriter, r *http.Request) {
 	caseID := r.PathValue("caseId")
 	if _, err := h.cases.GetByID(r.Context(), caseID); err != nil {
@@ -53,7 +53,7 @@ func (h *Handler) GetAnalysis(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusOK, map[string]any{"caseId": caseID, "analysis": analysis})
 }
 
-// Recalculate handles POST /v1/export-cases/{caseId}/financial-analysis/recalculate (SRS FR-024).
+// Recalculate handles POST /v1/export-cases/{caseId}/financial-analysis/recalculate.
 func (h *Handler) Recalculate(w http.ResponseWriter, r *http.Request) {
 	caseID := r.PathValue("caseId")
 	ec, err := h.cases.GetByID(r.Context(), caseID)

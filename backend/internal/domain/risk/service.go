@@ -10,7 +10,7 @@ import (
 	"github.com/exora/backend/internal/domain/pricing"
 )
 
-// Service handles SRS FR-015 risk assessment and FR-016 feasibility scoring.
+// Service handles risk assessment and feasibility scoring.
 // GetAssessment auto-derives all risk components from stored data — no manual input required.
 // Per API Contract v2 §11: only GET endpoint exists; auto-calculates and stores on every call.
 type Service struct {

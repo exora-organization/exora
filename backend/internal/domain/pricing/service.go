@@ -8,7 +8,7 @@ import (
 	"github.com/exora/backend/pkg/validator"
 )
 
-// Service handles the Incoterm pricing engine (SRS FR-011, FR-012).
+// Service handles the Incoterm pricing engine.
 // CalculateFromCostData is the primary entry point — loads cost_data and persists result.
 type Service struct {
 	repo        Repository

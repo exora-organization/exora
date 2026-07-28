@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { HeaderNotificationCenter } from "@/components/navigation/HeaderNotificationCenter";
 import { apiExportCase } from "../../../lib/api/export-case";
 import { Icon } from "@iconify/react";
 import { useState, useMemo } from "react";
@@ -62,18 +63,32 @@ export default function FinanceExportCasesPage() {
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto pb-12">
-      <div>
-        <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">Export Cases (Finance Workspace)</h2>
-        <p className="text-sm text-[#4B5563] font-medium mt-2">
-          Manage export costing components and financial viability analysis
-        </p>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h2 className="text-4xl font-extrabold tracking-tight text-[#1F2937]">Export Cases (Finance Workspace)</h2>
+          <p className="text-sm text-[#4B5563] font-medium mt-2">
+            Manage export costing components and financial viability analysis
+          </p>
+        </div>
+        <div className="hidden md:block">
+          <HeaderNotificationCenter />
+        </div>
       </div>
 
       {/* Action Required Badge */}
       {cases.length > 0 && (
-        <div className="flex items-center gap-2 p-4 bg-[#EBF8F2] border border-[#00A651]/30 rounded-2xl text-xs font-extrabold text-[#00A651] shadow-sm">
-          <Icon icon="solar:bell-bold-duotone" className="w-4 h-4 text-[#00A651] shrink-0" />
-          <span>Finance Action: Select a case below to input export costing details and calculate BEP/ROI.</span>
+        <div className="bg-[#EBF8F2] border-2 border-[#00A651]/40 rounded-3xl p-6 shadow-sm flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-[#00A651] text-white flex items-center justify-center shadow-md shrink-0">
+            <Icon icon="solar:bell-bing-bold-duotone" className="w-6 h-6 animate-bounce" />
+          </div>
+          <div>
+            <span className="px-2.5 py-0.5 rounded-md bg-[#00A651]/20 text-[#00A651] text-[10px] font-black uppercase tracking-wider">
+              Finance Action
+            </span>
+            <p className="text-sm font-extrabold text-[#1F2937] mt-1">
+              Select a case below to input export costing details and calculate BEP/ROI.
+            </p>
+          </div>
         </div>
       )}
 

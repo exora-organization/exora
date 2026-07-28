@@ -18,7 +18,7 @@ func NewHandler(service *Service, cases *exportcase.Service) *Handler {
 	return &Handler{service: service, cases: cases}
 }
 
-// GetAssessment handles GET /v1/export-cases/{caseId}/risk-assessment (SRS FR-015, FR-016).
+// GetAssessment handles GET /v1/export-cases/{caseId}/risk-assessment.
 // Auto-derives all risk components from stored cost_data + pricing_results + export_case.
 func (h *Handler) GetAssessment(w http.ResponseWriter, r *http.Request) {
 	caseID := r.PathValue("caseId")

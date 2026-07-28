@@ -231,7 +231,7 @@ export function FinancialAnalysis({ caseId, backUrl, hideBackButton }: Financial
                 <div className="space-y-2">
                   <h4 className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Payment Term Risk commentary</h4>
                   <p className="text-[#4B5563] text-sm leading-relaxed font-medium">
-                    Payment terms hold a <span className="font-extrabold text-[#1F2937]">20% risk factor weight</span> in calculations (FR-015). Ensure secure methods like Irrevocable Letters of Credit (L/C) are requested to minimize counterparty defaults compared to open accounts.
+                    Payment terms hold a <span className="font-extrabold text-[#1F2937]">20% risk factor weight</span> in calculations. Ensure secure methods like Irrevocable Letters of Credit (L/C) are requested to minimize counterparty defaults compared to open accounts.
                   </p>
                 </div>
 
