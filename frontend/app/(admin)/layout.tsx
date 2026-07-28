@@ -20,6 +20,7 @@ const NAV_ITEMS = [
   { name: "User Management", href: "/admin-users", icon: "solar:users-group-rounded-bold-duotone" },
   { name: "Audit Log", href: "/admin-audit-logs", icon: "solar:document-text-bold-duotone" },
   { name: "System Monitoring", href: "/admin-system-monitoring", icon: "solar:monitor-bold-duotone" },
+  { name: "AI Advisor", href: "/admin-ai-advisor", icon: "solar:cpu-bolt-bold-duotone" },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
