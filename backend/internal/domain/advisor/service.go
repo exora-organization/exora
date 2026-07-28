@@ -621,8 +621,8 @@ func (s *Service) GetSystemHealth(ctx context.Context) (*AdvisorHealthStats, err
 			status = "Empty"
 		} else {
 			lastUpdate = info.ModTime().UTC()
-			// If older than 30 days, mark as Outdated
-			if now.Sub(lastUpdate) > 30*24*time.Hour {
+			// If older than 90 days, mark as Outdated
+			if now.Sub(lastUpdate) > 90*24*time.Hour {
 				status = "Outdated"
 			}
 		}

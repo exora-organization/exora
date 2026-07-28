@@ -1,0 +1,22 @@
+{
+  "id": "country_germany",
+  "title": "Germany Country Risk Profile",
+  "category": "country_risk",
+  "source": "Curated by EXORA Advisory Team",
+  "lastUpdated": "2026-07-28",
+  "content": {
+    "country": "Germany",
+    "riskLevel": "Low",
+    "summary": "Germany is Europe's largest economy with an exceptionally stable trade environment, strong legal protections, and high demand for quality goods. It serves as a major trade gateway into the European Union.",
+    "currency": "EUR",
+    "paymentPreference": "Letter of Credit (L/C) or T/T with advance deposit for first-time orders",
+    "bestPractices": [
+      "Strict EU CE marking and product safety compliance",
+      "EU Organic certification required for organic agricultural exports",
+      "Ensure German/English language labeling on commercial packaging",
+      "REACH compliance required for chemical and industrial products"
+    ],
+    "exportRequirements": ["Commercial Invoice", "Packing List", "Bill of Lading", "EU Customs Import Declaration (SAD)", "EUR.1 / Certificate of Origin"],
+    "leadTime": "24-32 days sea freight from Tanjung Priok (Jakarta) to Hamburg/Bremerhaven"
+  }
+}
