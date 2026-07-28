@@ -101,73 +101,71 @@ export function PdfPreviewModal({
       return;
     }
     setIsDownloading(true);
-    // Update date to the moment the user clicks Download, then flush to DOM
-    // before html-to-image captures the element.
-    flushSync(() => {
-      setDownloadDate(
-        new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" })
-      );
-    });
+    // Use native browser print by cloning the preview content into the main DOM.
+    // This ensures all Next.js/Tailwind precompiled styles, custom fonts, and colors match EXACTLY.
     try {
-      const [{ toPng }, { default: jsPDF }] = await Promise.all([
-        import("html-to-image"),
-        import("jspdf"),
-      ]);
+      const printContainer = document.createElement("div");
+      printContainer.id = "pdf-print-container";
+      
+      // Clone the content and add a wrapper with A4 dimensions and white background
+      printContainer.innerHTML = `
+        <div style="width: 210mm; margin: 0 auto; background-color: white !important; padding: 10mm;">
+          ${previewRef.current.innerHTML}
+        </div>
+      `;
+      
+      document.body.appendChild(printContainer);
 
-      const element = previewRef.current;
+      // Create a print-specific stylesheet that hides the rest of the application
+      const style = document.createElement("style");
+      style.id = "pdf-print-style";
+      style.textContent = `
+        @media print {
+          /* Hide EVERYTHING in the main app */
+          body > *:not(#pdf-print-container) {
+            display: none !important;
+          }
+          
+          /* Show our print container */
+          #pdf-print-container {
+            display: block !important;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            background-color: white !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          
+          @page {
+            margin: 15mm;
+            size: A4 portrait;
+          }
+        }
+        
+        /* Hide the print container on screen */
+        @media screen {
+          #pdf-print-container {
+            display: none !important;
+          }
+        }
+      `;
+      document.head.appendChild(style);
 
-      // html-to-image uses SVG foreignObject — browser handles all CSS colors
-      // natively (including oklch/lab), so no color parsing issues.
-      const dataUrl = await toPng(element, {
-        pixelRatio: 2,
-        backgroundColor: "#ffffff",
-        width: element.scrollWidth,
-        height: element.scrollHeight,
-      });
+      // Wait a tiny bit for the browser to parse the new nodes
+      setTimeout(() => {
+        window.print();
+        
+        // Cleanup immediately after print dialog closes
+        document.body.removeChild(printContainer);
+        document.head.removeChild(style);
+        
+        setIsDownloading(false);
+      }, 300);
 
-      // Build an Image to get pixel dimensions
-      const img = new Image();
-      await new Promise<void>((resolve, reject) => {
-        img.onload = () => resolve();
-        img.onerror = reject;
-        img.src = dataUrl;
-      });
-
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-        format: "a4",
-      });
-
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = img.naturalWidth;
-      const imgHeight = img.naturalHeight;
-      const ratio = pdfWidth / imgWidth;
-      const scaledHeight = imgHeight * ratio;
-
-      // Multi-page: slice the image into A4-height chunks
-      let yPosition = 0;
-      while (yPosition < scaledHeight) {
-        const srcYPx = yPosition / ratio;
-        const srcHPx = Math.min(pdfHeight / ratio, imgHeight - srcYPx);
-        const pageCanvas = document.createElement("canvas");
-        pageCanvas.width = imgWidth;
-        pageCanvas.height = srcHPx;
-        const ctx = pageCanvas.getContext("2d")!;
-        ctx.drawImage(img, 0, srcYPx, imgWidth, srcHPx, 0, 0, imgWidth, srcHPx);
-        const pageImg = pageCanvas.toDataURL("image/png");
-        if (yPosition > 0) pdf.addPage();
-        pdf.addImage(pageImg, "PNG", 0, 0, pdfWidth, srcHPx * ratio);
-        yPosition += pdfHeight;
-      }
-
-      pdf.save(filename.endsWith(".pdf") ? filename : `${filename}.pdf`);
-      toast.success(`"${filename}" downloaded successfully!`);
     } catch (err: any) {
-      toast.error(err.message || "Download failed.");
-    } finally {
-
+      toast.error(err.message || "Failed to prepare print document.");
       setIsDownloading(false);
     }
   };

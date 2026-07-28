@@ -144,30 +144,7 @@ export default function DocumentGenerationPage() {
     onError: handleGenerateError,
   });
 
-  const handleDownload = async (documentId: string, filename: string) => {
-    try {
-      setErrorMsg(null);
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/v1";
-      const token = auth.currentUser ? await auth.currentUser.getIdToken() : null;
-      const res = await fetch(`${API_BASE_URL}/documents/${documentId}/download`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
-      if (!res.ok) throw new Error("Download failed");
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-      toast.success(`"${filename}" downloaded!`);
-    } catch (error: any) {
-      setErrorMsg("Unable to download document.");
-      toast.error("Download failed.");
-    }
-  };
+
 
   if (caseLoading || docsLoading) {
     return <div className="p-8 flex justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div></div>;
@@ -345,16 +322,7 @@ export default function DocumentGenerationPage() {
                             className="text-[#00A651] hover:text-[#008F44] hover:bg-green-50 font-bold rounded-full transition-colors"
                           >
                             <Icon icon="solar:eye-bold-duotone" className="h-5 w-5 mr-1" />
-                            Preview
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDownload(doc.documentId, doc.filename)}
-                            className="text-[#1F2937] hover:text-black hover:bg-gray-100 font-bold rounded-full transition-colors"
-                          >
-                            <Icon icon="solar:download-square-bold-duotone" className="h-5 w-5 mr-1" />
-                            Download
+                            Preview & Save
                           </Button>
                         </div>
                       </TableCell>

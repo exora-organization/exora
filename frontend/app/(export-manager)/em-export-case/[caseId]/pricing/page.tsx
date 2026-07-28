@@ -301,11 +301,6 @@ export default function PricingPage() {
             </div>
           </div>
 
-          <div className="flex justify-end pt-4">
-            <Button onClick={() => router.push(`/em-export-case/${caseId}/financial`)} className="bg-[#00A651] hover:bg-[#008F44] text-white rounded-full px-8 h-12 text-[13px] font-bold shadow-md hover:shadow-lg transition-all group">
-              Continue to Financial Analysis <Icon icon="solar:arrow-right-bold-duotone" className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </div>
         </div>
       )}
     </div>
