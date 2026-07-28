@@ -137,7 +137,7 @@ export default function PricingPage() {
         </div>
 
         {/* Incoterms Educational Guide Card */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 pt-2 text-xs">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-2">
           {[
             {
               code: "EXW",
@@ -173,25 +173,31 @@ export default function PricingPage() {
               <div
                 key={item.code}
                 onClick={() => setSelectedIncoterm(item.code as any)}
-                className={`p-3.5 rounded-2xl border transition-all cursor-pointer ${
+                className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
                   isSelected
-                    ? "bg-emerald-50/80 border-[#00A651] ring-2 ring-[#00A651]/20"
-                    : "bg-gray-50/60 border-gray-200/80 hover:border-gray-300"
+                    ? "bg-emerald-50/90 border-[#00A651] ring-2 ring-[#00A651]/20 shadow-sm"
+                    : "bg-gray-50/70 border-gray-200 hover:border-gray-300 hover:bg-gray-100/60"
                 }`}
               >
-                <div className="flex items-center justify-between mb-1">
-                  <span className={`font-black ${isSelected ? "text-[#00A651]" : "text-[#1F2937]"}`}>
-                    {item.code}
-                  </span>
-                  {isSelected && (
-                    <Badge className="bg-[#00A651] text-white text-[9px] px-2 py-0">Active</Badge>
-                  )}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className={`text-base font-black ${isSelected ? "text-[#00A651]" : "text-[#1F2937]"}`}>
+                      {item.code}
+                    </span>
+                    {isSelected && (
+                      <Badge className="bg-[#00A651] text-white text-[10px] px-2.5 py-0.5 rounded-full font-bold">Active</Badge>
+                    )}
+                  </div>
+                  <p className="font-extrabold text-[#1F2937] text-xs mb-1.5">{item.name}</p>
+                  <p className="text-xs text-gray-600 font-medium leading-relaxed">{item.desc}</p>
                 </div>
-                <p className="font-bold text-[#1F2937] text-[11px] mb-1">{item.name}</p>
-                <p className="text-[10px] text-gray-500 font-medium leading-relaxed">{item.desc}</p>
-                <div className="mt-2 pt-2 border-t border-gray-200/60 text-[9px] space-y-0.5">
-                  <p className="text-[#00A651] font-extrabold">Includes: {item.scope}</p>
-                  <p className="text-gray-400 font-semibold">Buyer pays: {item.buyerPays}</p>
+                <div className="mt-3 pt-2.5 border-t border-gray-200/80 text-[11px] space-y-1">
+                  <p className="text-[#00A651] font-bold">
+                    <span className="text-gray-400 font-semibold">Includes:</span> {item.scope}
+                  </p>
+                  <p className="text-amber-700 font-bold">
+                    <span className="text-gray-400 font-semibold">Buyer pays:</span> {item.buyerPays}
+                  </p>
                 </div>
               </div>
             );
