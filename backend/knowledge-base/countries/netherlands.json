@@ -1,0 +1,22 @@
+{
+  "id": "country_netherlands",
+  "title": "Netherlands Country Risk Profile",
+  "category": "country_risk",
+  "source": "Curated by EXORA Advisory Team",
+  "lastUpdated": "2026-07-28",
+  "content": {
+    "country": "Netherlands",
+    "riskLevel": "Low",
+    "summary": "The Netherlands is Europe's premier logistical gateway, home to the Port of Rotterdam (Europe's largest sea port). It offers highly efficient port infrastructure, transparent customs processing, and strong credit reliability.",
+    "currency": "EUR",
+    "paymentPreference": "Letter of Credit (L/C) or T/T for established trade partners",
+    "bestPractices": [
+      "Rotterdam port is the main transshipment hub for European distribution",
+      "Comply with EU Food Safety (EFSA) standards for food exports",
+      "Provide phytosanitary certificates for wood and agricultural items",
+      "High emphasis on sustainable and fair-trade packaging"
+    ],
+    "exportRequirements": ["Commercial Invoice", "Packing List", "Bill of Lading", "Certificate of Origin", "Phytosanitary Certificate"],
+    "leadTime": "22-28 days sea freight from Indonesia to Rotterdam"
+  }
+}
