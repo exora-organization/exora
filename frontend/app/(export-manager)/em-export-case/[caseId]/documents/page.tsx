@@ -181,7 +181,7 @@ export default function DocumentGenerationPage() {
 
         {exportCase && (
           <div className="bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-center">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 items-center">
               <div>
                 <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest">Case Name</p>
                 <p className="font-extrabold text-[#1F2937] truncate mt-1">{exportCase.name}</p>
@@ -288,7 +288,7 @@ export default function DocumentGenerationPage() {
           <div className="bg-white/50 backdrop-blur-sm border-b border-white/60 px-6 py-5">
             <h3 className="text-xl font-extrabold text-[#1F2937]">Generated Documents</h3>
           </div>
-          <div className="p-6">
+          <div className="p-4 sm:p-6 overflow-x-auto">
             {documents.length === 0 ? (
               <div className="text-center py-10 text-[#9CA3AF]">
                 <Icon icon="solar:document-text-bold-duotone" className="h-16 w-16 mx-auto text-gray-300 mb-4" />

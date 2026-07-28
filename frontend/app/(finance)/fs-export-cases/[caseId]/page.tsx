@@ -149,9 +149,9 @@ export default function FinanceExportCaseDetailPage() {
       </Link>
 
       {/* Header */}
-      <div className="flex items-start justify-between gap-4 flex-wrap">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-extrabold text-[#1F2937]">{exportCase.name}</h2>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1F2937]">{exportCase.name}</h2>
           <p className="text-xs text-[#6B7280] mt-1 font-medium">Finance Staff Workspace · EXORA Tenant Pro</p>
         </div>
         <span className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold tracking-wider uppercase border ${
@@ -227,13 +227,13 @@ export default function FinanceExportCaseDetailPage() {
             />
           ) : (
             <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h4 className="text-base font-extrabold text-[#1F2937]">Calculated Pricing ({pricing.incoterm})</h4>
-                <span className="px-3 py-1 bg-[#EBF8F2] text-[#00A651] text-xs font-black rounded-lg">
+                <span className="px-3 py-1 bg-[#EBF8F2] text-[#00A651] text-xs font-black rounded-lg w-fit">
                   Target Margin: {pricing.targetMargin || 20}%
                 </span>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-bold">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs font-bold">
                 <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl">
                   <p className="text-[10px] text-emerald-700 uppercase">Selling Price (USD)</p>
                   <p className="text-base font-black text-emerald-800">$ {pricing.sellingPriceUSD?.toLocaleString("en-US", { minimumFractionDigits: 2 }) || "—"}</p>

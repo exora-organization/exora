@@ -237,9 +237,9 @@ export default function ExportCaseDetailPage() {
             />
           ) : (
             <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-5">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h4 className="text-lg font-extrabold text-[#1F2937]">Pricing Engine & Incoterms Execution</h4>
-                <Link href={`/em-export-case/${caseId}/pricing`} className="px-4 py-2 bg-[#00A651] text-white text-xs font-bold rounded-xl shadow-md">
+                <Link href={`/em-export-case/${caseId}/pricing`} className="px-4 py-2 bg-[#00A651] text-white text-xs font-bold rounded-xl shadow-md text-center">
                   Open Pricing Calculator
                 </Link>
               </div>
@@ -292,7 +292,33 @@ export default function ExportCaseDetailPage() {
 
       {/* TAB CONTENT: Advisor */}
       {currentTab === "advisor" && (
-        <AIAdvisorWorkspace caseId={caseId} />
+        <div className="bg-white rounded-3xl border border-[#E8E3D9] p-6 shadow-sm space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <h4 className="text-lg font-extrabold text-[#1F2937] flex items-center gap-2">
+              <Icon icon="solar:lightbulb-bold-duotone" className="w-5 h-5 text-amber-500" />
+              AI Export Advisor Overview
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setConfirmRegenerateOpen(true)}
+                disabled={regenerateAdvisorMutation.isPending}
+                className="text-xs h-8 shadow-sm flex-1 sm:flex-none"
+              >
+                <Icon icon="solar:refresh-bold-duotone" className="w-3.5 h-3.5 mr-1.5" />
+                {regenerateAdvisorMutation.isPending ? "Generating..." : "Refetch Metrics"}
+              </Button>
+              <Link href={`/em-export-case/${caseId}/advisor`} className="flex-1 sm:flex-none">
+                <Button size="sm" className="bg-[#00A651] hover:bg-[#008F44] text-xs h-8 shadow-sm w-full">
+                  <Icon icon="solar:chat-round-line-bold-duotone" className="w-3.5 h-3.5 mr-1.5" />
+                  Full AI Workspace
+                </Button>
+              </Link>
+            </div>
+          </div>
+          <AIAdvisorWorkspace caseId={caseId} />
+        </div>
       )}
 
 

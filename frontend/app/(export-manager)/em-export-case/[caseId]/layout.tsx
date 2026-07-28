@@ -55,9 +55,9 @@ export default function CaseDetailLayout({ children }: { children: React.ReactNo
 
       {/* Case Header */}
       {exportCase && (
-        <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-3xl font-extrabold text-[#1F2937]">{exportCase.name}</h2>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1F2937]">{exportCase.name}</h2>
             <p className="text-xs text-[#6B7280] mt-1 font-medium">Export Manager Workspace · EXORA Tenant Pro</p>
           </div>
           <span className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold tracking-wider uppercase border ${
