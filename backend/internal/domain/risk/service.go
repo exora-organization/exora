@@ -47,7 +47,7 @@ func (s *Service) GetAssessment(ctx context.Context, caseID, companyID string) (
 		return nil, err
 	}
 
-	// --- SRS §5.3 Component Scoring ---
+	// --- Component Scoring ---
 
 	// 1. Country Risk — derived from destination country
 	countryRiskLevel, countryScore := countryRiskScore(ec.DestinationCountry)
@@ -60,7 +60,7 @@ func (s *Service) GetAssessment(ctx context.Context, caseID, companyID string) (
 	targetMargin := cd.TargetMargin
 	profitScore := profitabilityScore(actualMargin, targetMargin)
 
-	// --- SRS §5.4 Feasibility Formula ---
+	// --- Feasibility Formula ---
 	// Feasibility Score = (Profitability × 0.50) + (Country Risk × 0.30) + (Payment Term × 0.20)
 	feasibility := (profitScore * 0.50) + (countryScore * 0.30) + (paymentScore * 0.20)
 	feasibility = round2(feasibility)

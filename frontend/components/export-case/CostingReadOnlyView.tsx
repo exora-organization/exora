@@ -80,9 +80,14 @@ export function CostingReadOnlyView({ cost }: CostingReadOnlyViewProps) {
           <p className="text-base font-black text-amber-900 mt-1">{cost.paymentTerm || "—"}</p>
         </div>
 
-        <div className="p-4 bg-emerald-100/60 rounded-2xl border border-emerald-200 col-span-1 sm:col-span-2">
-          <p className="text-[10px] text-emerald-700 uppercase tracking-wider font-bold">Total Operational Base Cost (Per Unit)</p>
-          <p className="text-lg font-black text-emerald-950 mt-1">Rp {totalBaseCostIDR.toLocaleString("id-ID")}</p>
+        <div className="p-4 bg-emerald-100/60 rounded-2xl border border-emerald-200 col-span-1 sm:col-span-2 flex items-center justify-between flex-wrap gap-2">
+          <div>
+            <p className="text-[10px] text-emerald-700 uppercase tracking-wider font-bold">Total Base Cost (Full CIF Scope)</p>
+            <p className="text-lg font-black text-emerald-950 mt-0.5">Rp {totalBaseCostIDR.toLocaleString("id-ID")}</p>
+          </div>
+          <p className="text-[10px] text-emerald-700 font-medium max-w-xs text-right">
+            Includes all parameters. In <strong>Pricing Engine</strong>, costs adapt to selected Incoterm (e.g. <strong>FOB</strong> excludes Freight & Insurance).
+          </p>
         </div>
       </div>
     </div>

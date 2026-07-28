@@ -3,7 +3,7 @@ package advisor
 import "time"
 
 // AdvisorRecommendation is the Firestore model for advisor_recommendations.
-// Single document per export_case, overwritten on regenerate (SRS §9.1).
+// Single document per export_case, overwritten on regenerate.
 type AdvisorRecommendation struct {
 	ID             string    `json:"-" firestore:"-"`
 	CaseID         string    `json:"caseId" firestore:"caseId"`

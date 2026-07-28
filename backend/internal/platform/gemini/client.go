@@ -62,7 +62,7 @@ func (c *Client) Generate(ctx context.Context, prompt string) (string, error) {
 	bodyData, err := json.Marshal(GenerateRequest{
 		Contents: []Content{{Parts: []Part{{Text: prompt}}}},
 		GenerationConfig: &GenerationConfig{
-			Temperature:     0.55,
+			Temperature:     0.15, // Low temperature = factual, grounded, less hallucination
 			CandidateCount:  1,
 			MaxOutputTokens: 8192,
 		},

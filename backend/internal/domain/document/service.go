@@ -13,8 +13,8 @@ import (
 	"github.com/exora/backend/internal/domain/risk"
 )
 
-// Service handles document generation (SRS FR-020–FR-023).
-// Each document type has specific prerequisite data requirements (SRS §7).
+// Service handles document generation.
+// Each document type has specific prerequisite data requirements.
 type Service struct {
 	repo        Repository
 	costingRepo costing.Repository

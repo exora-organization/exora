@@ -2,7 +2,7 @@ package pricing
 
 import "time"
 
-// Incoterm constants per SRS §5.1.
+// Incoterm constants.
 const (
 	IncotermEXW = "EXW"
 	IncotermFOB = "FOB"
@@ -15,7 +15,7 @@ type CalculatePricingRequest struct {
 	Incoterm string `json:"incoterm" validate:"required,oneof=EXW FOB CFR CIF"`
 }
 
-// IncotermCostBreakdown shows cost build-up per SRS §5.1.
+// IncotermCostBreakdown shows cost build-up per Incoterm.
 type IncotermCostBreakdown struct {
 	HPP            float64 `json:"hpp"`
 	Packaging      float64 `json:"packaging"`

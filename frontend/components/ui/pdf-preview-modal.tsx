@@ -301,15 +301,29 @@ export function PdfPreviewModal({
                 className="p-8 sm:p-12 bg-white min-h-[500px] leading-relaxed"
                 style={{ fontSize: `${fontSize}px` }}
               >
-                {content.split('\n').map((line, i) => {
-                  const isMainHeader = line.startsWith('EXORA —') || line.startsWith('EXORA -');
-                  const isSectionHeader = line.startsWith('===');
-                  const isDivider = line.includes('────────');
+                {content.split('\n').map((rawLine, i) => {
+                  const line = rawLine.trimEnd();
+                  const trimmed = line.trim();
+
+                  const renderBold = (text: string) => {
+                    if (!text.includes('**')) return text;
+                    const parts = text.split('**');
+                    return parts.map((part, idx) => {
+                      if (idx % 2 === 1) {
+                        return <strong key={idx} className="font-extrabold text-[#1F2937]">{part}</strong>;
+                      }
+                      return <span key={idx}>{part}</span>;
+                    });
+                  };
+
+                  const isMainHeader = trimmed.startsWith('EXORA —') || trimmed.startsWith('EXORA -');
+                  const isSectionHeader = trimmed.startsWith('===');
+                  const isDivider = trimmed.includes('────────') || trimmed.startsWith('---');
 
                   if (isMainHeader) {
                     return (
-                      <div key={i} className="font-black text-[#1F2937] text-2xl uppercase pb-3 mb-6 tracking-tight flex items-center justify-between" style={{borderBottom:'2px solid #F1F5F9'}}>
-                        <span>{line.replace(/^EXORA —\s*/, '')}</span>
+                      <div key={i} className="font-black text-[#1F2937] text-xl uppercase pb-3 mb-6 tracking-tight flex items-center justify-between" style={{borderBottom:'2px solid #F1F5F9'}}>
+                        <span>{trimmed.replace(/^EXORA [—-]\s*/, '')}</span>
                         <span className="text-xs font-extrabold text-[#00A651] bg-[#EBF8F2] px-3 py-1 rounded-full uppercase" style={{border:'1px solid rgba(0,166,81,0.3)'}}>OFFICIAL DOCUMENT</span>
                       </div>
                     );
@@ -318,7 +332,7 @@ export function PdfPreviewModal({
                   if (isSectionHeader) {
                     return (
                       <div key={i} className="font-black text-[#1F2937] text-xs uppercase tracking-widest mt-8 mb-4 px-4 py-2 rounded-lg" style={{backgroundColor:'#F1F5F9',borderLeft:'4px solid #1E293B'}}>
-                        {line.replace(/=/g, '').trim()}
+                        {trimmed.replace(/=/g, '').trim()}
                       </div>
                     );
                   }
@@ -327,18 +341,40 @@ export function PdfPreviewModal({
                     return <div key={i} className="h-px my-4" style={{backgroundColor:'#E2E8F0'}}></div>;
                   }
 
-                  // Handle Markdown H2
-                  if (line.startsWith('## ')) {
+                  // Handle Markdown Headers: #, ##, ###, ####
+                  if (trimmed.startsWith('# ')) {
                     return (
-                      <div key={i} className="font-extrabold text-[#1F2937] text-base mt-6 mb-3">
-                        {line.replace(/^##\s*/, '')}
+                      <div key={i} className="font-black text-[#1F2937] text-lg mt-6 mb-3 pb-2 border-b border-slate-200 uppercase tracking-tight">
+                        {renderBold(trimmed.replace(/^#\s+/, ''))}
+                      </div>
+                    );
+                  }
+                  if (trimmed.startsWith('## ')) {
+                    return (
+                      <div key={i} className="font-extrabold text-[#1F2937] text-base mt-6 mb-3 border-b border-slate-100 pb-1">
+                        {renderBold(trimmed.replace(/^##\s+/, ''))}
+                      </div>
+                    );
+                  }
+                  if (trimmed.startsWith('### ')) {
+                    return (
+                      <div key={i} className="font-extrabold text-[#1E293B] text-sm mt-5 mb-2 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#00A651] inline-block shrink-0" />
+                        {renderBold(trimmed.replace(/^###\s+/, ''))}
+                      </div>
+                    );
+                  }
+                  if (trimmed.startsWith('#### ')) {
+                    return (
+                      <div key={i} className="font-bold text-[#334155] text-xs mt-4 mb-2 uppercase tracking-wider">
+                        {renderBold(trimmed.replace(/^####\s+/, ''))}
                       </div>
                     );
                   }
 
                   // Handle Metadata Badges (separated by | )
-                  if (line.includes(' | ')) {
-                    const badges = line.split(' | ');
+                  if (trimmed.includes(' | ') && !trimmed.startsWith('*') && !trimmed.startsWith('-')) {
+                    const badges = trimmed.split(' | ');
                     return (
                       <div key={i} className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6 mt-2">
                         {badges.map((b, idx) => (
@@ -352,8 +388,8 @@ export function PdfPreviewModal({
                   }
 
                   // Handle Tabular Data (lines with colon and 2+ spaces)
-                  if (line.includes(':') && line.match(/:\s{2,}/)) {
-                    const parts = line.split(/:\s{2,}/);
+                  if (trimmed.includes(':') && trimmed.match(/:\s{2,}/)) {
+                    const parts = trimmed.split(/:\s{2,}/);
                     const label = parts[0].trim();
                     const value = parts.slice(1).join(': ').trim();
                     return (
@@ -365,25 +401,14 @@ export function PdfPreviewModal({
                   }
 
                   // Empty lines
-                  if (!line.trim()) {
-                    return <div key={i} className="h-3"></div>;
+                  if (!trimmed) {
+                    return <div key={i} className="h-2"></div>;
                   }
 
-                  // Handle Markdown Lists
-                  const isNumberedList = /^\d+\.\s/.test(line);
-                  const isBullet = line.startsWith('- ');
-
-                  // Parse bold **text**
-                  const renderBold = (text: string) => {
-                    if (!text.includes('**')) return text;
-                    const parts = text.split('**');
-                    return parts.map((part, idx) => {
-                      if (idx % 2 === 1) {
-                        return <strong key={idx} className="font-extrabold text-[#1F2937]">{part}</strong>;
-                      }
-                      return <span key={idx}>{part}</span>;
-                    });
-                  };
+                  // Handle Markdown Bullet & Numbered Lists (*, -, + or 1.)
+                  const isNumberedList = /^\d+\.\s/.test(trimmed);
+                  const isBullet = trimmed.startsWith('* ') || trimmed.startsWith('- ') || trimmed.startsWith('+ ');
+                  const cleanedText = isBullet ? trimmed.replace(/^[\*\-\+]\s+/, '') : trimmed;
 
                   return (
                     <div 
@@ -391,8 +416,10 @@ export function PdfPreviewModal({
                       className={`font-medium text-xs ${isNumberedList || isBullet ? 'ml-5 mb-2 relative' : 'mb-2.5'}`}
                       style={{color:'#334155'}}
                     >
-                      {isBullet && <span className="absolute -left-4 top-0 text-[#00A651] font-bold">•</span>}
-                      {renderBold(line)}
+                      {isBullet && (
+                        <span className="absolute -left-4 top-0.5 text-[#00A651] font-extrabold text-sm leading-none">•</span>
+                      )}
+                      {renderBold(cleanedText)}
                     </div>
                   );
                 })}
