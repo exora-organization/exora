@@ -111,6 +111,10 @@ func countryRiskScore(country string) (string, float64) {
 		return CountryRiskLow, CountryScoreLow
 	case "uae", "united arab emirates":
 		return CountryRiskLow, CountryScoreLow
+	case "germany", "jerman":
+		return CountryRiskLow, CountryScoreLow
+	case "netherlands", "belanda", "holland":
+		return CountryRiskLow, CountryScoreLow
 	case "malaysia":
 		return CountryRiskMedium, CountryScoreMedium
 	case "thailand":
