@@ -346,15 +346,19 @@ Modern AI systems — specifically **Retrieval-Augmented Generation (RAG)** arch
 
 Rather than relying on generic AI models that can generate unverified claims, enterprise export platforms like **EXORA** utilize a structured 3-stage AI advisory workflow:
 
-```
-[System Cost & Case Data] + [Curated Trade Knowledge Base]
-                       │
-                       ▼
-          [Strict Low-Temperature Prompting]
-                       │
-                       ▼
- [Executive Feasibility & Risk Recommendation Report]
-```
+
+> **EXORA AI Workflow:**
+>
+> **[System Cost & Case Data]** + **[Curated Trade Knowledge Base]**
+>
+> ↓
+>
+> **[Strict Low-Temperature Prompting (0.15)]**
+>
+> ↓
+>
+> **[Executive Feasibility & Risk Recommendation Report]**
+
 
 ### Key Capabilities:
 1. **Automated Feasibility Scoring**: Instantly combines Profitability (50%), Country Risk (30%), and Payment Term Security (20%) into an objective 0–100 feasibility score.
