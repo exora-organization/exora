@@ -4,6 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Icon } from "@iconify/react";
 import { BLOG_ARTICLES } from "../../../lib/data/blogArticles";
 import { PublicNavbar } from "../../../components/public/PublicNavbar";
@@ -96,8 +97,6 @@ export default function BlogDetailPage() {
       {/* Main Article Container */}
       <main className="max-w-4xl mx-auto px-6 py-12 w-full space-y-10">
 
-
-
         {/* Key Takeaways Box */}
         {article.keyTakeaways && article.keyTakeaways.length > 0 && (
           <div className="bg-white/90 backdrop-blur-xl border border-emerald-200 rounded-3xl p-6 sm:p-8 shadow-xl space-y-4">
@@ -122,6 +121,7 @@ export default function BlogDetailPage() {
         <article className="bg-white/90 backdrop-blur-xl border border-white/60 rounded-3xl p-8 sm:p-12 shadow-xl">
           <div className="prose prose-slate max-w-none text-gray-800 text-sm sm:text-base leading-relaxed font-medium">
             <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
               components={{
                 h2: ({ children }) => (
                   <h2 className="text-xl sm:text-2xl font-black text-[#1F2937] mt-8 mb-4 pb-2 border-b border-gray-100">
@@ -148,17 +148,23 @@ export default function BlogDetailPage() {
                   </li>
                 ),
                 table: ({ children }) => (
-                  <div className="overflow-x-auto my-6 rounded-2xl border border-gray-200">
-                    <table className="w-full text-xs sm:text-sm text-left">{children}</table>
+                  <div className="overflow-x-auto my-6 rounded-2xl border border-emerald-200/80 shadow-sm bg-white">
+                    <table className="w-full text-xs sm:text-sm text-left border-collapse">{children}</table>
                   </div>
                 ),
                 thead: ({ children }) => (
-                  <thead className="bg-[#F8FAFC] text-gray-900 font-extrabold border-b border-gray-200 uppercase text-[11px] tracking-wider">
+                  <thead className="bg-[#EBF8F2] text-[#1F2937] font-extrabold border-b border-emerald-200 uppercase text-[11px] tracking-wider">
                     {children}
                   </thead>
                 ),
-                th: ({ children }) => <th className="px-4 py-3 font-extrabold">{children}</th>,
-                td: ({ children }) => <td className="px-4 py-3 border-b border-gray-100 font-medium">{children}</td>,
+                tbody: ({ children }) => (
+                  <tbody className="divide-y divide-gray-100 bg-white">{children}</tbody>
+                ),
+                tr: ({ children }) => (
+                  <tr className="hover:bg-emerald-50/40 transition-colors">{children}</tr>
+                ),
+                th: ({ children }) => <th className="px-4 py-3.5 font-black text-[#1F2937] border-b border-emerald-200">{children}</th>,
+                td: ({ children }) => <td className="px-4 py-3 font-medium text-gray-700">{children}</td>,
                 blockquote: ({ children }) => (
                   <blockquote className="p-4 my-4 bg-emerald-50 border-l-4 border-[#00A651] rounded-r-2xl text-xs sm:text-sm text-emerald-900 font-medium italic">
                     {children}

@@ -15,17 +15,17 @@ export interface BlogArticle {
 export const BLOG_ARTICLES: BlogArticle[] = [
   {
     slug: "understanding-incoterms-exw-fob-cfr-cif",
-    title: "EXW, FOB, CFR, CIF — What Do They Mean and Which One is Right for You?",
-    desc: "Your overseas buyer asked for a \"CIF\" quote — and you're not sure what that means. Here's a plain-language guide to the four most common Incoterms.",
+    title: "EXW, FOB, CFR, CIF: Guide to Incoterms & Which One to Choose",
+    desc: "Your overseas buyer asked for a \"CIF\" quote and you're not sure what that means. Here's a plain-language guide to the four most common Incoterms.",
     category: "Incoterms",
     readTime: "5 min read",
     image: "/blog/blog1.jpg",
     author: "EXORA Trade Advisory Team",
     publishedAt: "July 2026",
     keyTakeaways: [
-      "FOB means you're responsible until goods are loaded onto the ship — after that, the buyer takes over.",
+      "FOB means you're responsible until goods are loaded onto the ship. After that, the buyer takes over.",
       "EXW is the simplest for you: the buyer picks up from your warehouse and handles everything else.",
-      "CIF means you pay for shipping AND insurance to the buyer's port — make sure those costs are in your price.",
+      "CIF means you pay for shipping AND insurance to the buyer's port. Make sure those costs are in your price.",
       "Choosing the wrong Incoterm can quietly eat your profit margin."
     ],
     sources: [
@@ -34,7 +34,7 @@ export const BLOG_ARTICLES: BlogArticle[] = [
       { title: "Export Commercial Terms Handbook", org: "International Trade Centre (ITC)" }
     ],
     content: `
-## Your Buyer Just Said "Quote Me CIF" — Now What?
+## Your Buyer Just Said "Quote Me CIF": Now What?
 
 Picture this: you just received an inquiry from a buyer in Malaysia. They say: *"Please send us a CIF quote to Port Klang."* You open Google, and suddenly you're drowning in acronyms.
 
@@ -42,9 +42,9 @@ Don't worry. Let's break each one down in plain language.
 
 ---
 
-## 1. EXW — "Come Pick It Up From My Warehouse"
+## 1. EXW: "Come Pick It Up From My Warehouse"
 
-**EXW (Ex Works)** is the simplest Incoterm from your side. You just make the goods available at your factory or warehouse. The buyer arranges everything — pickup, export customs, shipping, and insurance.
+**EXW (Ex Works)** is the simplest Incoterm from your side. You just make the goods available at your factory or warehouse. The buyer arranges everything: pickup, export customs, shipping, and insurance.
 
 **Best for**: Experienced buyers who already have their own freight agent in your country.
 
@@ -54,7 +54,7 @@ Don't worry. Let's break each one down in plain language.
 
 ---
 
-## 2. FOB — "I'll Deliver It to the Port. After That, It's On You."
+## 2. FOB: "Deliver to Port, Buyer Handles the Rest"
 
 **FOB (Free On Board)** is the most commonly used Incoterm in global trade. You're responsible for getting the goods loaded onto the ship at the departure port. Once it's on the ship, all risk transfers to the buyer.
 
@@ -68,9 +68,9 @@ Don't worry. Let's break each one down in plain language.
 
 ---
 
-## 3. CFR — "I'll Pay for the Ship, But Insurance Is Not My Problem"
+## 3. CFR: "Pay for Freight, Insurance is Buyer's Responsibility"
 
-**CFR (Cost and Freight)** means you pay for ocean freight to the buyer's destination port, but you do NOT arrange insurance. If the cargo sinks in the middle of the ocean — that's the buyer's risk.
+**CFR (Cost and Freight)** means you pay for ocean freight to the buyer's destination port, but you do NOT arrange insurance. If cargo is damaged at sea, that is the buyer's risk.
 
 **Best for**: Buyers who already have their own cargo insurance policy.
 
@@ -78,7 +78,7 @@ Don't worry. Let's break each one down in plain language.
 
 ---
 
-## 4. CIF — "I'll Handle Everything Right to Your Port"
+## 4. CIF: "All-Inclusive Delivery to Destination Port"
 
 **CIF (Cost, Insurance, and Freight)** is the most comprehensive. You pay for ocean freight AND cargo insurance to the buyer's destination port.
 
@@ -86,14 +86,14 @@ Don't worry. Let's break each one down in plain language.
 
 **What to include in your CIF price**: Production cost + export packaging + inland trucking + export clearance fees + ocean freight + insurance premium.
 
-**Warning**: Because you're covering more costs, make absolutely sure all of these are factored into your selling price. Many new exporters forget to include insurance and end up with a smaller margin — or even a loss.
+**Warning**: Because you're covering more costs, make absolutely sure all of these are factored into your selling price. Many new exporters forget to include insurance and end up with a smaller margin or even a loss.
 
 ---
 
 ## Which One Should You Choose?
 
 | Incoterm | Your Cost | Your Risk | Best For |
-|----------|-----------|-----------|----------|
+|---|---|---|---|
 | EXW | Lowest | Lowest | Experienced buyers |
 | FOB | Medium | Medium | General sea freight |
 | CFR | Higher | Higher | Buyers with own insurance |
@@ -105,8 +105,8 @@ Don't worry. Let's break each one down in plain language.
 
   {
     slug: "common-mistakes-new-exporters-should-avoid",
-    title: "7 Mistakes That Cost New Exporters Thousands — And How to Avoid Them",
-    desc: "From underpricing your goods to shipping without a signed contract — here are the most expensive mistakes first-time exporters make.",
+    title: "7 Costly Mistakes First-Time Exporters Make (And How to Avoid Them)",
+    desc: "From underpricing your goods to shipping without a signed contract, here are the most expensive mistakes first-time exporters make.",
     category: "Strategy",
     readTime: "7 min read",
     image: "/blog/blog2.jpg",
@@ -124,9 +124,9 @@ Don't worry. Let's break each one down in plain language.
       { title: "Export Credit & Payment Risk Guide", org: "Asian Development Bank (ADB)" }
     ],
     content: `
-## You Just Got an Overseas Inquiry — Don't Rush.
+## You Just Got an Overseas Inquiry: Don't Rush.
 
-Getting an email from a buyer in Dubai or Singapore is exciting. But this is exactly the moment when many new exporters make costly mistakes. Let's go through the most common ones — so you can avoid them.
+Getting an email from a buyer in Dubai or Singapore is exciting. But this is exactly the moment when many new exporters make costly mistakes. Let's go through the most common ones so you can avoid them.
 
 ---
 
@@ -141,7 +141,7 @@ This is the #1 mistake. You quote a price based on your production cost alone, f
 - Bank charges if using L/C
 - Certification or labeling requirements for the destination country
 
-**The result**: You land a big order, but after all the real costs are tallied, you barely break even — or you lose money.
+**The result**: You land a big order, but after all costs are tallied, you barely break even or lose money.
 
 **The fix**: Calculate **every cost** before sending your quotation. If you're unsure about freight costs, get a quote from a freight forwarder first.
 
@@ -149,13 +149,13 @@ This is the #1 mistake. You quote a price based on your production cost alone, f
 
 ## Mistake #2: Agreeing to "Pay After Delivery" for a New Buyer
 
-If a buyer asks to pay after goods arrive — be careful. It means you've already shipped, you've already spent your capital, but the money isn't in your hands yet.
+If a buyer asks to pay after goods arrive, be careful. It means you've already shipped and spent your capital, but the money isn't in your hands yet.
 
-If the buyer disappears or disputes the goods — your product is already in their country and very difficult to recover.
+If the buyer disappears or disputes the goods, your product is already in their country and hard to recover.
 
 **Safer options for new buyers**:
 - **30% deposit** before production + 70% before shipment
-- Or use **L/C (Letter of Credit)** — the buyer's bank guarantees the payment
+- Or use **L/C (Letter of Credit)** where the buyer's bank guarantees the payment
 
 ---
 
@@ -166,7 +166,7 @@ A legitimate buyer will usually have no problem sharing:
 - Business registration number
 - References from other suppliers they've worked with
 
-If a buyer avoids these questions — treat that as a red flag.
+If a buyer avoids these questions, treat that as a red flag.
 
 ---
 
@@ -180,7 +180,7 @@ Every destination country has different document requirements. The common ones i
 - **Certificate of Origin** (to benefit from ASEAN or bilateral trade tariffs)
 - **Phytosanitary Certificate** if you're exporting agricultural products
 
-Missing documents = goods held at customs. You pay demurrage fees (port storage penalties) while everything gets sorted.
+Missing documents mean goods are held at customs. You pay demurrage fees (port storage penalties) while everything gets sorted.
 
 ---
 
@@ -198,7 +198,7 @@ Your product may be freely sold in Indonesia, but in the destination country the
 
 ## Mistake #6: Agreeing to an Incoterm You Don't Understand
 
-Never agree to a trade term you're not familiar with. If the buyer wants "CIF Rotterdam" but you quoted "FOB Surabaya," the cost difference can easily reach millions of rupiah — all of it coming out of your pocket.
+Never agree to a trade term you're not familiar with. If the buyer wants "CIF Rotterdam" but you quoted "FOB Surabaya," the cost difference can reach millions of rupiah coming straight out of your pocket.
 
 ---
 
@@ -217,7 +217,7 @@ Without a contract, you have no legal ground to stand on if the buyer complains 
 
   {
     slug: "how-exchange-rates-affect-export-profitability",
-    title: "The Dollar Goes Up and Down — Here's What That Means for Your Business",
+    title: "How Dollar Exchange Rate Fluctuations Impact Export Profit",
     desc: "You sell in USD but your costs are in Rupiah. Understanding exchange rates could be the difference between a profitable export and a loss.",
     category: "Finance",
     readTime: "6 min read",
@@ -225,7 +225,7 @@ Without a contract, you have no legal ground to stand on if the buyer complains 
     author: "EXORA Financial Advisory Team",
     publishedAt: "July 2026",
     keyTakeaways: [
-      "When Rupiah weakens vs USD, you earn more Rupiah per dollar — which can boost your margin.",
+      "When Rupiah weakens vs USD, you earn more Rupiah per dollar, boosting your margin.",
       "When Rupiah strengthens, your Rupiah earnings shrink even if the USD price stays the same.",
       "Always calculate your profit in Rupiah, not just in USD.",
       "For large orders, ask your bank about forward contracts to lock in today's exchange rate."
@@ -240,13 +240,13 @@ Without a contract, you have no legal ground to stand on if the buyer complains 
 
 You sell rattan furniture to a buyer in Europe for **$10,000 USD**.
 
-In January, the USD/IDR rate is Rp 15,000 — so you receive **Rp 150 million**.
+In January, the USD/IDR rate is Rp 15,000, so you receive **Rp 150 million**.
 
-In June, you land the same order at the same price — but now the rate is Rp 16,500. You receive **Rp 165 million** — that's Rp 15 million more, just from the exchange rate.
+In June, you land the same order at the same price, but now the rate is Rp 16,500. You receive **Rp 165 million**, which is Rp 15 million more just from the exchange rate.
 
-But what if the rate had dropped to Rp 14,000? You'd only receive Rp 140 million — even though your production costs haven't changed.
+But what if the rate dropped to Rp 14,000? You'd only receive Rp 140 million, even though production costs haven't changed.
 
-**This is currency risk.** And it affects every exporter who invoices in USD but pays costs in Rupiah.
+**This is currency risk.** It affects every exporter who invoices in USD but pays costs in Rupiah.
 
 ---
 
@@ -255,32 +255,32 @@ But what if the rate had dropped to Rp 14,000? You'd only receive Rp 140 million
 ### Scenario A: The Rate Works in Your Favor
 You quote a price in March when the rate is Rp 15,500. Payment comes in May when the rate is Rp 16,200.
 
-Result: **You earn more Rupiah than expected.** This is a windfall — extra profit from a favorable rate movement.
+Result: **You earn more Rupiah than expected.** This is extra profit from favorable rate movement.
 
 ### Scenario B: The Rate Works Against You
-You quote a USD price in October. Production takes two months. Payment arrives in January — and the Rupiah has strengthened significantly.
+You quote a USD price in October. Production takes two months. Payment arrives in January and the Rupiah has strengthened significantly.
 
-Result: **You receive fewer Rupiah, but your production cost hasn't changed.** Your margin shrinks — or disappears entirely.
+Result: **You receive fewer Rupiah while production costs stay the same.** Your margin shrinks or disappears entirely.
 
 ---
 
 ## Simple Ways to Protect Yourself
 
 ### 1. Always Calculate in Rupiah
-Don't just look at the USD number. Every time you prepare a quotation, convert the expected USD revenue into Rupiah — and compare it against your Rupiah costs.
+Don't just look at the USD number. Every time you prepare a quotation, convert expected USD revenue into Rupiah and compare it against your Rupiah costs.
 
 **Simple formula**:
 USD price × today's exchange rate = Expected IDR revenue
 Expected IDR revenue − Total IDR costs = Your actual profit
 
 ### 2. Use a Conservative Exchange Rate When Quoting
-When preparing your price, use an exchange rate **3–5% lower** than today's rate as a safety buffer. If the rate doesn't move against you — you earn more. If it does — you're still safe.
+When preparing your price, use an exchange rate **3-5% lower** than today's rate as a safety buffer. If the rate doesn't move against you, you earn more. If it does, you're still safe.
 
 ### 3. Request Faster Payment
-The longer the money sits with the buyer (in USD), the longer you're exposed to exchange rate risk. Where possible, negotiate earlier payment terms.
+The longer the money sits with the buyer in USD, the longer you're exposed to exchange rate risk. Where possible, negotiate earlier payment terms.
 
 ### 4. Ask Your Bank About Forward Contracts
-For large orders (above $50,000), you can lock in today's exchange rate for a future payment date using a **forward contract**. Many Indonesian banks offer this for SME exporters — it's worth asking.
+For large orders (above $50,000), you can lock in today's exchange rate for a future payment date using a **forward contract**. Many Indonesian banks offer this for SME exporters.
 
 ---
 
@@ -288,11 +288,11 @@ For large orders (above $50,000), you can lock in today's exchange rate for a fu
 
 Exchange rate movements also affect how competitive your prices look to international buyers.
 
-When the Rupiah weakens, Indonesian products become **cheaper** for foreign buyers — this is actually an opportunity to win more orders over competitors from other countries.
+When the Rupiah weakens, Indonesian products become **cheaper** for foreign buyers, creating an opportunity to win more orders over competitors.
 
 When the Rupiah strengthens, your products become relatively more expensive. Buyers may start comparing you with suppliers from Vietnam, India, or China.
 
-**Bottom line**: Monitor the exchange rate regularly, especially around the time of shipment and payment collection. This isn't about speculation — it's about making sure your business stays profitable.
+**Bottom line**: Monitor the exchange rate regularly around shipment and payment collection to keep your business profitable.
 `
   },
 
@@ -306,9 +306,9 @@ When the Rupiah strengthens, your products become relatively more expensive. Buy
     author: "EXORA Costing Advisory Team",
     publishedAt: "July 2026",
     keyTakeaways: [
-      "Your Cost of Goods Sold (COGS) is your starting point — you must know this number before anything else.",
+      "Your Cost of Goods Sold (COGS) is your starting point. You must know this number before anything else.",
       "Export costs go beyond freight: packaging, certification, documents, and bank fees all add up.",
-      "Target a minimum 15–25% margin above total cost to cover risks and unexpected expenses.",
+      "Target a minimum 15-25% margin above total cost to cover risks and unexpected expenses.",
       "If you don't know your exact COGS, you can't negotiate export prices with confidence."
     ],
     sources: [
@@ -321,7 +321,7 @@ When the Rupiah strengthens, your products become relatively more expensive. Buy
 
 Many business owners who have been selling locally for years can't answer this question precisely: *"What is your exact cost per unit?"*
 
-In domestic markets, you can get away with rough estimates. In export? You can't. Because if you don't know your real cost, you can't:
+In domestic markets, you can get away with rough estimates. In export, you can't. Because if you don't know your real cost, you can't:
 - Quote a price that's actually profitable
 - Know whether an order is worth taking
 - Negotiate confidently when a buyer tries to push your price down
@@ -333,18 +333,18 @@ In domestic markets, you can get away with rough estimates. In export? You can't
 COGS is everything you spend to produce one unit of your product. It typically includes:
 
 **Raw Materials**
-The cost of every material that goes into one unit — main materials, supporting materials, and basic packaging.
+The cost of every material that goes into one unit, including main materials, supporting materials, and basic packaging.
 
 **Direct Labor**
 The wages paid to produce one unit. If you pay workers per piece, this is straightforward. If you pay monthly salaries, divide total monthly wages by the number of units produced per month.
 
 **Factory Overhead**
-Electricity, water, facility rent, machine maintenance — divide by monthly production volume to get cost per unit.
+Electricity, water, facility rent, machine maintenance divided by monthly production volume.
 
 **Simple Example:**
 
 | Component | Cost Per Unit |
-|-----------|--------------|
+|---|---|
 | Raw materials | Rp 45,000 |
 | Direct labor | Rp 12,000 |
 | Factory overhead | Rp 8,000 |
@@ -357,13 +357,13 @@ Electricity, water, facility rent, machine maintenance — divide by monthly pro
 This is what new exporters most often forget. Export costs go far beyond just ocean freight.
 
 **Export Packaging**
-Export packaging must be stronger than domestic packaging — reinforced cartons, bubble wrap, wooden pallets. This can add Rp 3,000–15,000 per unit depending on your product.
+Export packaging must be stronger than domestic packaging (reinforced cartons, bubble wrap, wooden pallets). This adds Rp 3,000-15,000 per unit depending on your product.
 
 **Certifications**
-Depending on your product and destination country, you may need: halal certification, phytosanitary certificate, SNI standard compliance, or lab testing. Divide these costs across your total export volume.
+Depending on your product and destination country, you may need halal certification, phytosanitary certificate, SNI standard compliance, or lab testing. Divide these costs across your total export volume.
 
 **Export Documentation**
-Export declaration (PEB), Certificate of Origin, and other documents. Typically Rp 500,000–2,000,000 per shipment.
+Export declaration (PEB), Certificate of Origin, and other documents. Typically Rp 500,000-2,000,000 per shipment.
 
 **Inland Trucking to Port**
 From your warehouse to the departure port. Get quotes from at least 3 freight forwarders to compare.
@@ -372,18 +372,18 @@ From your warehouse to the departure port. Get quotes from at least 3 freight fo
 Depends on cargo volume, weight, and destination port. Your freight forwarder will provide this.
 
 **Cargo Insurance**
-Typically 0.2%–0.5% of cargo value. Don't skip this — if goods are damaged or lost and you have no insurance, the loss is yours entirely.
+Typically 0.2%-0.5% of cargo value. Don't skip this. If goods are damaged or lost without insurance, the loss is yours entirely.
 
 ---
 
 ## Step 3: Set a Selling Price That Makes Sense
 
-Once you know your total cost, add your profit margin. For export, **a minimum of 15–20%** above total cost is a safe target — to cover currency risk, potential returns, and unexpected costs.
+Once you know your total cost, add your profit margin. For export, **a minimum of 15-20%** above total cost is a safe target to cover currency risk, potential returns, and unexpected costs.
 
 **Complete Example:**
 
 | Component | Per Unit |
-|-----------|---------|
+|---|---|
 | COGS | Rp 65,000 |
 | Export packaging | Rp 8,000 |
 | Certification (divided) | Rp 2,000 |
@@ -401,9 +401,9 @@ If today's USD/IDR rate = Rp 15,800, your FOB price in USD = **$7.29 per unit**.
 
 ## Why This Matters Before You Negotiate
 
-When you know these numbers, you can negotiate with confidence. You know exactly where your floor price is — the minimum price below which you'd be losing money. You know when an offer makes sense and when to walk away.
+When you know these numbers, you can negotiate with confidence. You know exactly where your floor price is: the minimum price below which you'd lose money. You know when an offer makes sense and when to walk away.
 
-Without this data, you're guessing. And guessing in export can turn into very real financial losses.
+Without this data, you're guessing. And guessing in export can turn into real financial losses.
 `
   },
 
@@ -417,8 +417,8 @@ Without this data, you're guessing. And guessing in export can turn into very re
     author: "EXORA Advisory Team",
     publishedAt: "July 2026",
     keyTakeaways: [
-      "AI in export platforms is like an always-available advisor — ask it anything, anytime.",
-      "AI doesn't replace your decisions — it helps you see risks you might have missed.",
+      "AI in export platforms is like an always-available advisor: ask it anything, anytime.",
+      "AI doesn't replace your decisions; it helps you see risks you might have missed.",
       "The more accurate data you put in, the more useful the recommendation you get out.",
       "Use AI as a second opinion before committing to a large contract."
     ],
@@ -428,9 +428,9 @@ Without this data, you're guessing. And guessing in export can turn into very re
       { title: "Technology Adoption in Export SMEs", org: "McKinsey Global Institute" }
     ],
     content: `
-## "AI" — You Don't Have to Be a Tech Person to Benefit From It
+## Practical AI for Exporters: No Coding Required
 
-When you hear the word "AI" or "artificial intelligence," you might picture robots or lines of code — things that feel very far from the world of exporting crafts, agricultural products, or garments.
+When you hear "AI" or "artificial intelligence," you might picture robots or lines of code: things that feel far from exporting crafts, agricultural products, or garments.
 
 But in the context of export business tools, AI works like this:
 
@@ -442,14 +442,14 @@ That's it. No coding required.
 
 ## The Problem Exporters Face Without This Kind of Help
 
-Imagine you receive an inquiry from a new buyer in Nigeria — 5,000 units of your handcraft product worth $15,000. Questions immediately start piling up:
+Imagine you receive an inquiry from a new buyer in Nigeria for 5,000 units of your handcraft product worth $15,000. Questions immediately start piling up:
 
 - Is this price profitable enough after all costs?
 - How risky is this market? What's the economic situation like in Nigeria right now?
 - They want to pay by bank transfer 60 days after goods arrive. Is that safe?
 - What Incoterm should I use?
 
-If you had to research all of this yourself — it could take days, and your findings might still be incomplete because you don't know where to look.
+If you had to research all of this yourself, it could take days and findings might still be incomplete.
 
 ---
 
@@ -462,12 +462,12 @@ Think of it like having an accountant who can answer your questions in seconds.
 
 ### 2. Flag Risks You Might Have Overlooked
 AI can identify risks you might not have thought of, such as:
-- The destination country has elevated political or economic risk right now
-- The payment terms the buyer is asking for are unusual and potentially dangerous
-- The Incoterm being discussed doesn't match the type of goods or destination port
+- Destination country has elevated political or economic risk right now
+- Payment terms requested by buyer are unusual and potentially dangerous
+- Incoterm being discussed doesn't match the type of goods or destination port
 
 ### 3. Answer "What If" Questions
-You can ask: *"What if ocean freight goes up 20%?"* or *"What if the exchange rate drops to 14,500?"* — and the AI immediately shows you the impact on your margin.
+You can ask: *"What if ocean freight goes up 20%?"* or *"What if the exchange rate drops to 14,500?"* and the AI immediately shows the impact on your margin.
 
 This helps you prepare for different scenarios before you sign any contract.
 
@@ -477,19 +477,19 @@ This helps you prepare for different scenarios before you sign any contract.
 
 **AI is only as good as the data you give it.** If your cost figures are rough estimates, the recommendations will also be rough. The more accurate and complete your data, the more useful the output.
 
-**AI doesn't make decisions for you.** It gives you an analysis, not a final answer. You still decide whether to take the order — because you know your business situation better than any system does.
+**AI doesn't make decisions for you.** It gives you an analysis, not a final answer. You still decide whether to take the order because you know your business situation best.
 
-**Think of AI as a second opinion.** It's like having a knowledgeable business partner available 24 hours a day, who doesn't charge by the hour and never gets tired of your questions.
+**Think of AI as a second opinion.** It's like having a knowledgeable business partner available 24/7.
 
 ---
 
 ## Who Benefits Most From AI Export Tools?
 
-Ironically, it's not the big exporters who benefit most — it's small and first-time exporters. Large companies already have finance teams, legal teams, and paid consultants.
+Small and first-time exporters benefit most from these tools. Large companies already have finance teams, legal teams, and paid consultants.
 
-New exporters don't have those resources. AI tools help level the playing field — giving you access to the kind of analysis that used to be available only to large corporations.
+AI tools level the playing field by giving access to analysis previously reserved for large corporations.
 
-If you're just starting out in export, use these tools. Not because you need to understand technology — but because it's a practical way to make better decisions from day one.
+Using these tools from day one is a practical way to make better decisions.
 `
   }
 ];
